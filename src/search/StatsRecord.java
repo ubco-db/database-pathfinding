@@ -10,19 +10,19 @@ import java.util.Arrays;
  */
 public class StatsRecord 
 {
-	private int statesExpandedHC;			// States expanded during hill climbing
-	private long statesExpanded;				// States expanded during LRTA*/A* or other search algorithm (does not include HC states if applicable)	
-	private long statesUpdated;				// States updated during LRTA*/A* or other search algorithm
+	// private int statesExpandedHC;			// States expanded during hill climbing
+	private long statesExpanded;				// States expanded during LRTA*/A* or other search algorithm (does not include HC states if applicable)
+	private long statesUpdated;					// States updated during LRTA*/A* or other search algorithm
 	
-	private int pathLength;					// Path length as found by algorithm	
-	private int pathCost;					// Cost of path found
-	private long time;						// Time in milliseconds
+	private int pathLength;						// Path length as found by algorithm
+	private int pathCost;						// Cost of path found
+	private long time;							// Time in milliseconds
 	// private long maxTime;					// Maximum move time in nanoseconds
 	
-	private long revisits;					// Number of state revisits
+	private long revisits;						// Number of state revisits
 	private long[] moveTimes = new long[100];
-	private int arrayCount = 0;				// Number of moves in the array
-	private int moveCount = 0;				// Number of moves tracked
+	private int arrayCount = 0;					// Number of moves in the array
+	private int moveCount = 0;					// Number of moves tracked
 	private int[] maxMoveNum = new int[100];	// Track the top most expensive 100 moves
 	private int subgoals;
 	
@@ -63,7 +63,7 @@ public class StatsRecord
 
 	public StatsRecord(StatsRecord st)
 	{
-		statesExpandedHC = st.statesExpandedHC;
+	//	statesExpandedHC = st.statesExpandedHC;
 		statesExpanded = st.statesExpanded;
 		statesUpdated = st.statesUpdated;
 		pathLength = st.pathLength;
@@ -80,7 +80,7 @@ public class StatsRecord
 	
 	public StatsRecord computeDiff(StatsRecord st)
 	{	StatsRecord rec = new StatsRecord();
-		rec.statesExpandedHC = this.statesExpandedHC-st.statesExpandedHC;
+	//	rec.statesExpandedHC = this.statesExpandedHC-st.statesExpandedHC;
 		rec.statesExpanded = this.statesExpanded - st.statesExpanded;
 		rec.statesUpdated = this.statesUpdated - st.statesUpdated;
 		rec.pathLength = this.pathLength - st.pathLength;
@@ -96,7 +96,7 @@ public class StatsRecord
 	
 	public void merge(StatsRecord st)
 	{	
-		this.statesExpandedHC = this.statesExpandedHC+st.statesExpandedHC;
+	//	this.statesExpandedHC = this.statesExpandedHC+st.statesExpandedHC;
 		this.statesExpanded = this.statesExpanded + st.statesExpanded;
 		this.statesUpdated = this.statesUpdated + st.statesUpdated;
 		this.pathLength = this.pathLength + st.pathLength;
@@ -108,14 +108,6 @@ public class StatsRecord
 	//		this.maxTime = st.maxTime;
 		this.revisits += st.revisits;
 		this.moveTimes = st.moveTimes;
-	}
-	
-	public int getStatesExpandedHC() {
-		return statesExpandedHC;
-	}
-
-	public void setStatesExpandedHC(int statesExpandedHC) {
-		this.statesExpandedHC = statesExpandedHC;
 	}
 
 	public long getStatesExpanded() {
@@ -132,9 +124,6 @@ public class StatsRecord
 
 	public void setPathLength(int pathLength) {
 		this.pathLength = pathLength;
-	}
-	public void incrementStatesExpandedHC(int num)
-	{	statesExpandedHC += num;	
 	}
 	
 	public void incrementStatesExpanded(long num)
@@ -163,30 +152,26 @@ public class StatsRecord
 	
 	public String toString()
 	{
-		StringBuffer buf = new StringBuffer(100);
-		buf.append("Path cost: ");
-		buf.append(pathCost);				
-		buf.append("\tPath length: ");
-		buf.append(pathLength);		
-		buf.append("\nStates HC: ");
-		buf.append(statesExpandedHC);
-		buf.append("\t States Expanded: ");
-		buf.append(statesExpanded);		
-		buf.append("\tStates updated: ");
-		buf.append(statesUpdated);
-		buf.append("\tTime: ");
-		buf.append(time);	
-		buf.append("\tMaxTime: ");
-		buf.append(moveTimes[0]);
-	//	buf.append(maxTime);	
-		buf.append("\tRevisits: ");
-		buf.append(revisits);	
-		return buf.toString();
+		return "Path cost: " +
+				pathCost +
+				"\tPath length: " +
+				pathLength +
+				"\t States Expanded: " +
+				statesExpanded +
+				"\tStates updated: " +
+				statesUpdated +
+				"\tTime: " +
+				time +
+				"\tMaxTime: " +
+				moveTimes[0] +
+				//	buf.append(maxTime);
+				"\tRevisits: " +
+				revisits;
 	}
 	
 	public void clear()
 	{
-		statesExpandedHC = 0;
+	//	statesExpandedHC = 0;
 		statesExpanded = 0;		
 		pathLength = 0;		
 		pathCost = 0;
