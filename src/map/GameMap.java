@@ -53,7 +53,6 @@ public class GameMap {
 
     private GameMap parentMap;        // Map that this map was derived from
     private int[] numRegions;        // Number of regions in each sector (only used for sector abstraction)
-//	private RegionSearchProblem abstractProblem;		// Only used for PRA*
 
     public GameMap() {
     }
@@ -67,64 +66,6 @@ public class GameMap {
                 squares[i][j] = ' ';
 
         mapInit();
-    }
-
-    public GameMap(GameMap map, HashMap<Integer, Integer> visitedStates) {
-        rows = map.rows;
-        cols = map.cols;
-        squares = new int[rows][cols];
-        int numEmpty = 0;
-        for (int i = 0; i < rows; i++)
-            for (int j = 0; j < cols; j++) {
-                squares[i][j] = map.squares[i][j];
-                if (!isWall(i, j))
-                    numEmpty++;
-            }
-
-        mapInit();
-
-        // Determine total visited states and total count
-        Iterator<Entry<Integer, Integer>> it = visitedStates.entrySet().iterator();
-        int num = 0, count = 0, max = 0;
-        while (it.hasNext()) {
-            Entry<Integer, Integer> et = it.next();
-            int visits = et.getValue();
-            num++;
-            count += visits;
-            if (visits > max)
-                max = visits;
-        }
-        int step = max / 10;
-        if (step == 0)
-            step = 1;
-        System.out.println("Number of states visited: " + num + " # empty states: " + numEmpty + " Total visits: " + count + " Max visits: " + max + " Step size: " + step);
-
-        // Now copy over values for the visited states to map (base is 100)
-        it = visitedStates.entrySet().iterator();
-        int base = 100;
-        while (it.hasNext()) {
-            Entry<Integer, Integer> et = it.next();
-            int stateId = et.getKey();
-            int visits = et.getValue();
-            int val = (visits / step) * step;
-            if (val >= step * 10)
-                val = step * 9;
-            val = base + val;
-            squares[getRow(stateId)][getCol(stateId)] = val;
-            // System.out.println("Updated state row: "+getRow(stateId)+" Col: "+getCol(stateId)+" to: "+val);
-        }
-
-        // Define heat colors
-        colors.put(base, Color.BLUE);
-        colors.put(base + step, Color.BLUE);
-        colors.put(base + step * 2, Color.GREEN);
-        colors.put(base + step * 3, Color.GREEN);
-        colors.put(base + step * 4, Color.YELLOW);
-        colors.put(base + step * 5, Color.YELLOW);
-        colors.put(base + step * 6, Color.ORANGE);
-        colors.put(base + step * 7, Color.ORANGE);
-        colors.put(base + step * 8, Color.RED);
-        colors.put(base + step * 9, Color.RED);
     }
 
     public static int computeDistance(int startId, int goalId, int ncols, HeuristicFunction heuristic) {
@@ -283,7 +224,7 @@ public class GameMap {
     public void load(String fileName) {
         try (Scanner sc = new Scanner(new File(fileName))) {
 
-            String st = sc.nextLine();    // Drop first line which is format
+            String st = sc.nextLine();     // Drop first line which is formatted
             if (!st.contains("type")) {    // Map is in binary format
                 sc.close();
                 this.loadMap(fileName);
@@ -323,9 +264,9 @@ public class GameMap {
     public void loadMap(String fileName) {
         try (Scanner sc = new Scanner(new File(fileName))) {
 
-            String st = sc.nextLine();            // Number of rows. e.g. height 139
+            String st = sc.nextLine();              // Number of rows. e.g. height 139
             rows = Integer.parseInt(st.substring(7).trim());
-            st = sc.nextLine();            // Number of cols. e.g. width 148
+            st = sc.nextLine();                     // Number of cols. e.g. width 148
             cols = Integer.parseInt(st.substring(6).trim());
             squares = new int[rows][cols];
             mapInit();
@@ -343,87 +284,12 @@ public class GameMap {
         }
     }
 
-    public void rotate() {
-        // Rotate 90 degrees
-        int curRows = rows, curCols = cols;
-
-        int[][] vals = new int[curCols][curRows];
-
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                vals[j][rows - 1 - i] = this.squares[i][j];
-            }
-        }
-        this.squares = vals;
-        this.rows = curCols;
-        this.cols = curRows;
-    }
-
-    public void save(String fileName) {
-        try (PrintWriter out = new PrintWriter(fileName)) {
-            out.println("height " + rows);
-            out.println("width " + cols);
-
-            for (int i = 0; i < rows; i++) {
-                for (int j = 0; j < cols; j++) {
-                    out.print(this.squares[i][j]);
-                    out.print("\t");
-                }
-                out.println();
-            }
-        } catch (FileNotFoundException e) {
-            System.out.println("Error with output file: " + e);
-        }
-    }
-
-    public void print() {
-        for (int i = 0; i < rows; i++)
-            for (int j = 0; j < cols; j++)
-                System.out.print((char) squares[i][j]);
-        System.out.println();
-    }
-
     public boolean isWall(int r, int c) {
         return squares[r][c] == WALL_CHAR;
     }
 
-    public boolean isWall(int id) {
-        return squares[getRow(id)][getCol(id)] == WALL_CHAR;
-    }
-
-    public SparseMask createCoverageMask(byte[][] coverage) {
-        // Display the coverage as a mask on the current map
-        // 0-20 - red, 21-49 - orange, 50-80 - yellow, 81-99 - blue 100 - green
-        SparseMask currentMask = new SparseMask();
-        Color col;
-        for (int r = 0; r < rows; r++) {
-            for (int c = 0; c < cols; c++) {
-                if (!isWall(r, c)) {    // Determine all cells that are reachable from this one via database entries
-                    int val = coverage[r][c];
-                    if (val <= 20)
-                        col = Color.red;
-                    else if (val <= 49)
-                        col = Color.orange;
-                    else if (val <= 80)
-                        col = Color.yellow;
-                    else if (val <= 99)
-                        col = Color.blue;
-                    else
-                        col = Color.green;
-                    ChangeRecord rec = new ChangeRecord(r, c, col, 1);
-                    currentMask.add(rec);
-                }
-            }
-        }
-        return currentMask;
-    }
-
     public boolean isValid(int r, int c) {
         return (c >= 0 && r >= 0 && r < rows && c < cols);
-    }
-
-    public boolean isValid(int id) {
-        return (getCol(id) >= 0 && getRow(id) >= 0 && getRow(id) < rows && getCol(id) < cols);
     }
 
     /**
@@ -437,10 +303,6 @@ public class GameMap {
         return (c >= maxC - gridSize && r >= maxR - gridSize && r < maxR && c < maxC && squares[r][c] == EMPTY_CHAR);
     }
 
-
-    public boolean isInRange(int r, int c, int maxR, int maxC, int gridSize) {
-        return (c >= maxC - gridSize && r >= maxR - gridSize && r < maxR && c < maxC);
-    }
 
     public GameMap copyMap() {
         GameMap result = new GameMap(this.rows, this.cols);
@@ -462,10 +324,6 @@ public class GameMap {
         // Copy all colors
         result.colors.putAll(this.colors);
         return result;
-    }
-
-    public char setChar(int num) {
-        return (char) ('0' + num);
     }
 
     /*
@@ -2631,8 +2489,4 @@ public class GameMap {
         long endTime = System.currentTimeMillis();
         System.out.println("Time to compute centroids: " + (endTime - currentTime));
     }
-
-//	public RegionSearchProblem getAbstractProblem() {
-//		return abstractProblem;
-//	}
 }

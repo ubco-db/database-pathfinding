@@ -17,20 +17,20 @@ public class EvaluateHeuristic {
     @SuppressWarnings("unchecked")
     public static void main(String[] argv) {
         String[] scenarios = {
-                "012_100",                //0
+                "012_100",              //0
                 "mm_8_1024",            //1
-                "mm_cs_4_1000",            //2
-                "mm_de_5_1000",            //3
+                "mm_cs_4_1000",         //2
+                "mm_de_5_1000",         //3
                 "mm_cs_4_1000_hard",    //4
                 "mm_de_5_1000_hard",    //5
                 "small",                //6
-                "maze_5_1250_hard",        //7
+                "maze_5_1250_hard",     //7
                 "smallRoom",            //8
-                "dao/orz900d.map.scen",    //9
-                "dao/all.scen",            //10
+                "dao/orz900d.map.scen", //9
+                "dao/all.scen",         //10
                 "dao/all_hard.scen",    //11
                 "dao/hard.scen",        //12
-                "rmtst01.map.scen",    //13
+                "rmtst01.map.scen",     //13
                 "change.txt"            //14
         };
         String[] algorithmNames = {"A*", "LRTA*", "DLRTA*", "knnLRTA*",
@@ -45,23 +45,11 @@ public class EvaluateHeuristic {
         /*
          * Run configuration variables are below.
          */
-        int scenarioToRun = 0;                        // 12; // Index into scenarios array. Change this
+        int scenarioToRun = 0;                    // 12; // Index into scenarios array. Change this
         // to run a different scenario.
         int[] algorithms = {0, 0, 12};            // Select up to three algorithms to
         // run
-        int heuristicId = 1;                        // (0~5) heuristic function id passing to A* with arbitrary heuristic
-
-
-        // boolean buildPath = true; // Algorithms will build path not just
-        // compute cost of path.
-        boolean showPaths = false;    // If true, paths computed by each algorithm
-        // are printed to standard output.
-        boolean showImage = false;    // If true, will produce a PNG image for the
-        // path produced by each algorithm on each
-        // problem regardless if the path is good or
-        // not.
-        boolean exactDB = true;    // For HCDPS*, true if using exact DB rather
-        // than kd-tree style database.
+        int heuristicId = 1;                      // (0~5) heuristic function id passing to A* with arbitrary heuristic.
 
         String imageDir = "images/";
         String dbPath = "databases/";
@@ -256,7 +244,6 @@ public class EvaluateHeuristic {
         DBStats[] dbStats = new DBStats[algorithmsLength];
         ArrayList<Integer> badProblemNum = new ArrayList<Integer>();
         ArrayList<Integer> noSubgoal = new ArrayList<Integer>();
-//        SubgoalDB[] databases = new SubgoalDB[algorithmsLength];
         GameMap[] maps = new GameMap[algorithmsLength];
         GameMap baseMap = null; // The base map for a scenario problem.
         ArrayList<SearchState>[] paths = new ArrayList[algorithmsLength];
@@ -391,15 +378,6 @@ public class EvaluateHeuristic {
                     drevis = SearchUtil.distanceRevisits(path);
                 }
                 stats.setRevisits(revis);
-
-//                if (showPaths) {
-//                    System.out.println("Path: ");
-//                    SearchUtil.printPath(problem, path);
-//                }
-//                if (showImage)
-//                    baseMap.outputImage(imageDir + padNum(i + 1, numDigits)
-//                                    + "_" + abbrv[algorithms[j]] + ".png", path,
-//                            subgoals[j]);
             } // end test algorithms on a problem
 
 
@@ -421,6 +399,5 @@ public class EvaluateHeuristic {
         for (int i = 0; i < digits - st.length(); i++)
             st = "0" + st;
         return st;
-
     }
 }
