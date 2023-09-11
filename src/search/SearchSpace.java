@@ -1,7 +1,6 @@
 package search;
 
 import database.DBStatsRecord;
-import map.GameMap;
 import map.GroupRecord;
 import util.CircularQueue;
 import util.ExpandArray;
@@ -22,6 +21,8 @@ import java.util.*;
  */
 public class SearchSpace {
     public static int EMPTY_CHAR = 0;
+    public static final char WALL_CHAR = '*';
+    public static final int START_NUM = 50;
 
     private SearchProblem problem;
     private HashMap<Integer, GroupRecord> groups;
@@ -100,7 +101,7 @@ public class SearchSpace {
         SearchSpace abstractSpace = new SearchSpace(problem);
         problem.setSearchSpace(this);
         abstractSpace.colors = this.colors;
-        int currentNum = GameMap.START_NUM;
+        int currentNum = START_NUM;
         GroupRecord group;
         SearchState currentState = new SearchState();
         abstractSpace.groups = new HashMap<Integer, GroupRecord>();
@@ -195,8 +196,7 @@ public class SearchSpace {
                     // Merge this group into the new group as long as it is connected to all members currently in the group
                     // See if all groups currently in clique are neighbors with this one
                     inClique = true;
-                    for (int k = 0; k < groupsInClique.size(); k++) {
-                        GroupRecord gInClique = groupsInClique.get(k);
+                    for (GroupRecord gInClique : groupsInClique) {
                         if (!gInClique.isNeighbor(neighborGroup)) {
                             inClique = false;
                             break;
@@ -337,7 +337,7 @@ public class SearchSpace {
     }
 
     private Color getColor(int val) {
-        if (val == GameMap.WALL_CHAR)
+        if (val == WALL_CHAR)
             return Color.BLACK;
         else if (val == SearchSpace.EMPTY_CHAR)
             return Color.WHITE;
@@ -552,8 +552,8 @@ public class SearchSpace {
             // Get all neighbors for this state and see what group they are in
             state.id = i;
             neighbors = problem.getNeighbors(state);
-            for (int k = 0; k < neighbors.size(); k++) {
-                s = neighbors.get(k);
+            for (SearchState neighbor : neighbors) {
+                s = neighbor;
                 if (states[s.id] != val)
                     rec.getNeighborIds().add(states[s.id]);
             }
