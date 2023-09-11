@@ -8,16 +8,15 @@ import java.util.Arrays;
  * @author rlawrenc
  */
 public class StatsRecord {
-    private int statesExpandedHC;            // States expanded during hill climbing
+    private int statesExpandedHC;               // States expanded during hill climbing
     private long statesExpanded;                // States expanded during LRTA*/A* or other search algorithm (does not include HC states if applicable)
-    private long statesUpdated;                // States updated during LRTA*/A* or other search algorithm
+    private long statesUpdated;                 // States updated during LRTA*/A* or other search algorithm
 
-    private int pathLength;                    // Path length as found by algorithm
-    private int pathCost;                    // Cost of path found
-    private long time;                        // Time in milliseconds
-    // private long maxTime;					// Maximum move time in nanoseconds
+    private int pathLength;                     // Path length as found by algorithm
+    private int pathCost;                       // Cost of path found
+    private long time;                          // Time in milliseconds
 
-    private long revisits;                    // Number of state revisits
+    private long revisits;                      // Number of state revisits
     private final long[] moveTimes = new long[100];
     private int subgoals;
 
@@ -25,9 +24,9 @@ public class StatsRecord {
         this.revisits = revisits;
     }
 
-    private int closedListSize;                // Maximum size of closed list
-    private int openListSize;                // Maximum size of open list
-    private int maxMemSize;                    // Maximum size of closed/open list together
+    private int closedListSize;                 // Maximum size of closed list
+    private int openListSize;                   // Maximum size of open list
+    private int maxMemSize;                     // Maximum size of closed/open list together
 
     public long getTime() {
         return time;
@@ -101,7 +100,6 @@ public class StatsRecord {
         statesUpdated = 0;
         closedListSize = 0;
         openListSize = 0;
-        //	maxTime = 0;
         revisits = 0;
         Arrays.fill(moveTimes, 0);
     }

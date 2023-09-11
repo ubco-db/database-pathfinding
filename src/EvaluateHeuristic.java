@@ -1,4 +1,3 @@
-import database.DBStats;
 import map.GameMap;
 import scenario.Problem;
 import scenario.Scenario;
@@ -204,7 +203,6 @@ public class EvaluateHeuristic {
          * End of configuration variables.
          */
 
-
         String scenarioFileName = scenarios[scenarioToRun];
         String scenarioName;
         if (scenarioToRun < 9)
@@ -223,17 +221,12 @@ public class EvaluateHeuristic {
         // algorithm, and algorithm statistics.
         ArrayList<StatsRecord>[] problemStats = new ArrayList[algorithmsLength];
         StatsRecord[] overallStats = new StatsRecord[algorithmsLength];
-        DBStats[] dbStats = new DBStats[algorithmsLength];
         GameMap baseMap; // The base map for a scenario problem.
-        ArrayList<SearchState>[] paths = new ArrayList[algorithmsLength];
-        ArrayList<SearchState>[] subgoals = new ArrayList[algorithmsLength];
 
         for (int i = 0; i < algorithmsLength; i++) {
             problemStats[i] = new ArrayList<StatsRecord>(
                     scenario.getNumProblems());
             overallStats[i] = new StatsRecord();
-            subgoals[i] = new ArrayList<SearchState>();
-            dbStats[i] = null;
         }
 
         // These variables track if A* statistics match those in the scenario
@@ -242,19 +235,8 @@ public class EvaluateHeuristic {
 
         ArrayList<SearchState> path;
         StatsRecord stats;
-        // int l =3;
-        // int startProblem = 92481;
-
-        // int startProblem = 128*(l-1);
-        // Run each problem in a scenario.
-        // numProblems = 50000;
-        // startProblem = 981;
-        // numProblems = startProblem+100;
-        // numProblems = startProblem+8;
 
         int startProblem = 0;
-        //numProblems = 47;
-
 
         for (int i = startProblem; i < numProblems; i++) {
 
@@ -282,10 +264,6 @@ public class EvaluateHeuristic {
             for (int j = 0; j < algorithmsLength; j++) {
                 stats = new StatsRecord();
 
-                // System.gc();
-                // try {Thread.sleep(10); }
-                // catch (Exception e) {}
-
                 long currentTime = System.currentTimeMillis();
 
                 AStarHeuristic astarh = new AStarHeuristic(problem, heuristicList.get(j));
@@ -301,35 +279,10 @@ public class EvaluateHeuristic {
                         problemStats[k].add(new StatsRecord());
                     continue; // Do not try to do the other algorithms
                 }
-/*
-				// Verify that A* is getting path that is expected
-				if (p.getOptimalTravelCost() != stats.getPathCost())
-					System.out
-							.println("A*H_f" + j + " path costs is different than expected.  Expected: "
-									+ p.getOptimalTravelCost()
-									+ "\tActual: " + stats.getPathCost());
-				else {
-					int difficulty = (int) (p.getAStarDifficulty() * 1000);
-					System.out.println("Expected: "
-							+ difficulty
-							+ " Actual: "
-							+ (stats.getStatesExpanded() * 1000 / stats
-									.getPathLength()));
-					countAStarCosts++;
-					if (difficulty == stats.getStatesExpanded() * 1000
-							/ stats.getPathLength()) {
-						System.out
-								.println("A*H path cost and difficulty are as expected.");
-						countAStarDiff++;
-					} else
-						System.out
-								.println("A*H path cost is as expected BUT A* difficulty does not match.");
-				}
-*/
+
                 stats.setTime(System.currentTimeMillis() - currentTime);
                 StatsCompare.mergeRecords(overallStats[j], stats);
                 problemStats[j].add(stats);
-                paths[j] = path;
 
                 // Count the # of revisits
                 int revis = SearchUtil.countRevisits(path);

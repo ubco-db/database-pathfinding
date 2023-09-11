@@ -107,14 +107,12 @@ public class AStarHeuristic implements SearchAlgorithm {
             if (state != null) {
                 if (state.g > newG) {
                     SearchState st = new SearchState(state);
-                    //st.updateCost(newG, problem.computeDistance(st, goal));
                     st.updateCost(newG, problem.computeDistance(st, goal, heuristic));
                     st.prev = current;
                     openList.add(st);
                     openListLookup.put(stateId, st);
                 }
             } else {
-                //next.updateCost(newG, problem.computeDistance(next, goal));
                 next.updateCost(newG, problem.computeDistance(next, goal, heuristic));
                 next.prev = current;
                 openList.add(next);
@@ -134,8 +132,6 @@ public class AStarHeuristic implements SearchAlgorithm {
         while (curr != null) {
             path.add(0, curr);
             if (curr.prev != null)
-                //	cost += problem.computeDistance(curr, curr.prev);
-                //  cost += problem.computeDistance(curr, curr.prev, heuristic);
                 cost += problem.getMoveCost(curr, curr.prev);
             curr = curr.prev;
             len++;
