@@ -11,9 +11,6 @@ public class SearchState implements Comparable<SearchState> {
 
     public SearchState prev;
 
-    public SearchState() {
-    }
-
     public SearchState(SearchState st) {
         this.id = st.id;
         this.cost = st.cost;
@@ -39,12 +36,6 @@ public class SearchState implements Comparable<SearchState> {
         this.cost = this.g + this.h;
     }
 
-    public void updateWCost(int g, int h, double weight) {
-        this.h = h;
-        this.g = g;
-        this.cost = this.g + this.h * weight;
-    }
-
     public boolean equals(SearchState s1) {
         return this.id == s1.id;
     }
@@ -59,11 +50,4 @@ public class SearchState implements Comparable<SearchState> {
         return "Id: " + id + " U: " + updated + " f: " + cost + " g: " + g + " h: " + h + " Cost: " + cost;
     }
 
-    public double getCost() {
-        return cost;
-    }
-
-    public void setCost(int cost) {
-        this.cost = cost;
-    }
 }

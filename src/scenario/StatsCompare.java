@@ -3,88 +3,11 @@ package scenario;
 
 import search.StatsRecord;
 
-import java.io.PrintWriter;
-import java.util.ArrayList;
-
 
 public class StatsCompare {
 
     public StatsCompare() {
         super();
-    }
-
-    private ArrayList<StatsRecord> records;
-
-
-    public void addRecord(StatsRecord rec) {
-        records.add(rec);
-    }
-
-    /*
-     * Compares the results from three statistic records and outputs the result.
-     */
-    public static void compareRecords(StatsRecord rec1, StatsRecord rec2, StatsRecord rec3, String[] algName) {
-        long val1 = rec1.getPathLength(), val2 = rec2.getPathLength(), val3 = rec3.getPathLength();
-        System.out.println("Path length: " + algName[0] + ": " + val1 + "\t" + algName[1] + ": " + val2 + "\t" + algName[2] + ": " + val3);
-        double subL = 0, subS = 0;
-        if (val1 != 0) {
-            subL = 1000 * val2 / val1 / 1000.0;
-            subS = 1000 * val3 / val1 / 1000.0;
-        }
-        System.out.println("             Suboptimal " + algName[1] + ": " + subL + "\t" + algName[2] + ": " + subS);
-
-        val1 = rec1.getPathCost();
-        val2 = rec2.getPathCost();
-        val3 = rec3.getPathCost();
-        System.out.println("Path cost:   " + algName[0] + ": " + val1 + "\t" + algName[1] + ": " + val2 + "\t" + algName[2] + ": " + val3);
-        subL = 0;
-        subS = 0;
-        if (val1 != 0) {
-            subL = 1000 * val2 / val1 / 1000.0;
-            subS = 1000 * val3 / val1 / 1000.0;
-        }
-        System.out.println("             Suboptimal " + algName[1] + ": " + subL + "\t" + algName[2] + ": " + subS);
-
-        val1 = rec1.getStatesExpanded();
-        val2 = rec2.getStatesExpanded();
-        val3 = rec3.getStatesExpanded();
-        int valHC = rec3.getStatesExpandedHC();
-        System.out.println("States expanded: " + algName[0] + ": " + val1 + "\t" + algName[1] + ": " + val2 + "\t" + algName[2] + ": " + (val3 + valHC));
-
-        val1 = rec1.getStatesUpdated();
-        val2 = rec2.getStatesUpdated();
-        val3 = rec3.getStatesUpdated();
-        System.out.println("States updated:  " + algName[0] + ": " + val1 + "\t" + algName[1] + ": " + val2 + "\t" + algName[2] + ": " + val3);
-
-        val1 = rec1.getTime();
-        val2 = rec2.getTime();
-        val3 = rec3.getTime();
-        System.out.println("Time:  " + algName[0] + ": " + val1 + "\t" + algName[1] + ": " + val2 + "\t" + algName[2] + ": " + val3);
-
-        val1 = rec1.getOpenListSize();
-        val2 = rec2.getOpenListSize();
-        val3 = rec3.getOpenListSize();
-        System.out.println("Max. open list:  " + algName[0] + ": " + val1 + "\t" + algName[1] + ": " + val2 + "\t" + algName[2] + ": " + val3);
-
-        val1 = rec1.getClosedListSize();
-        val2 = rec2.getClosedListSize();
-        val3 = rec3.getClosedListSize();
-        System.out.println("Max. closed list:  " + algName[0] + ": " + val1 + "\t" + algName[1] + ": " + val2 + "\t" + algName[2] + ": " + val3);
-
-        val1 = rec1.getMaxMemSize();
-        val2 = rec2.getMaxMemSize();
-        val3 = rec3.getMaxMemSize();
-        System.out.println("Max. mem size:  " + algName[0] + ": " + val1 + "\t" + algName[1] + ": " + val2 + "\t" + algName[2] + ": " + val3);
-
-        val1 = rec1.getSubgoals();
-        val2 = rec2.getSubgoals();
-        val3 = rec3.getSubgoals();
-        System.out.println("Subgoals used:  " + algName[0] + ": " + val1 + "\t" + algName[1] + ": " + val2 + "\t" + algName[2] + ": " + val3);
-
-/*		if (rec3.getOpenListSize() == 1359){
-			int i = 1/0;
-		}*/
-
     }
 
     /*
@@ -117,21 +40,21 @@ public class StatsCompare {
         for (int i = 0; i < arrLen; i++) {
             // path length results
             val[i] = recArr[i].getPathLength();
-            sb1.append(algName[i] + ": " + val[i]);
+            sb1.append(algName[i]).append(": ").append(val[i]);
             double sub = 0;
             if (val[0] != 0)
                 sub = 1000 * val[i] / val[0] / 1000.0;
 
-            sb1.append(",  Suboptimal: " + sub + "\n");
+            sb1.append(",  Suboptimal: ").append(sub).append("\n");
 
             // path cost results
             cost[i] = recArr[i].getPathCost();
-            sb2.append(algName[i] + ": " + cost[i]);
+            sb2.append(algName[i]).append(": ").append(cost[i]);
             sub = 0;
             if (cost[0] != 0)
                 sub = 1000 * cost[i] / cost[0] / 1000.0;
 
-            sb2.append(",  Suboptimal: " + sub + "\n");
+            sb2.append(",  Suboptimal: ").append(sub).append("\n");
 
             // states Expanded
             double speedup = 0;
@@ -155,26 +78,26 @@ public class StatsCompare {
                 if (j >= 15)
                     speedup = recArr[i].getStatesExpanded() / recArr[14].getStatesExpanded();
 
-                sb3.append(algName[i] + ", " + recArr[i].getStatesExpanded() + ",  Speedup, " + speedup + "\n");
+                sb3.append(algName[i]).append(", ").append(recArr[i].getStatesExpanded()).append(",  Speedup, ").append(speedup).append("\n");
             } else {
-                sb3.append(algName[i] + ", " + recArr[i].getStatesExpanded() + "\n");
+                sb3.append(algName[i]).append(", ").append(recArr[i].getStatesExpanded()).append("\n");
             }
 
 
             // states Updated
-            sb4.append(algName[i] + ": " + recArr[i].getStatesUpdated() + "\n");
+            sb4.append(algName[i]).append(": ").append(recArr[i].getStatesUpdated()).append("\n");
 
-            // tiime
-            sb5.append(algName[i] + ": " + recArr[i].getTime() + "\n");
+            // time
+            sb5.append(algName[i]).append(": ").append(recArr[i].getTime()).append("\n");
 
             // Max. open list
-            sb6.append(algName[i] + ": " + recArr[i].getOpenListSize() + "\n");
+            sb6.append(algName[i]).append(": ").append(recArr[i].getOpenListSize()).append("\n");
 
             // Max. close list
-            sb7.append(algName[i] + ": " + recArr[i].getClosedListSize() + "\n");
+            sb7.append(algName[i]).append(": ").append(recArr[i].getClosedListSize()).append("\n");
 
             // Max. mem size:
-            sb8.append(algName[i] + ": " + recArr[i].getMaxMemSize() + "\n");
+            sb8.append(algName[i]).append(": ").append(recArr[i].getMaxMemSize()).append("\n");
 
         }
 
@@ -187,63 +110,6 @@ public class StatsCompare {
         System.out.println(sb7);
         System.out.println(sb8);
 
-    }
-
-    /*
-     * Compares the results from three statistic records and outputs the result in tab separated format.
-     */
-    public static void compareRecordsCSV(StatsRecord rec1, StatsRecord rec2, StatsRecord rec3, PrintWriter out) {
-        long val1 = rec1.getPathLength(), val2 = rec2.getPathLength(), val3 = rec3.getPathLength();
-        out.print(val1 + "\t" + val2 + "\t" + val3);
-        double subL = 0, subS = 0;
-        if (val1 != 0) {
-            subL = 1000 * val2 / val1 / 1000.0;
-            subS = 1000 * val3 / val1 / 1000.0;
-        }
-        out.print("\t" + subL + "\t" + subS);
-
-        val1 = rec1.getPathCost();
-        val2 = rec2.getPathCost();
-        val3 = rec3.getPathCost();
-        out.print("\t" + val1 + "\t" + val2 + "\t" + val3);
-        subL = 0;
-        subS = 0;
-        if (val1 != 0) {
-            subL = 1000 * val2 / val1 / 1000.0;
-            subS = 1000 * val3 / val1 / 1000.0;
-        }
-        out.print("\t" + subL + "\t" + subS);
-
-        val1 = rec1.getStatesExpanded();
-        val2 = rec2.getStatesExpanded();
-        val3 = rec3.getStatesExpanded();
-        int valHC = rec3.getStatesExpandedHC();
-        out.print("\t" + val1 + "\t" + val2 + "\t" + (val3 + valHC));
-
-        val1 = rec1.getStatesUpdated();
-        val2 = rec2.getStatesUpdated();
-        val3 = rec3.getStatesUpdated();
-        out.print("\t" + val1 + "\t" + val2 + "\t" + val3);
-
-        val1 = rec1.getTime();
-        val2 = rec2.getTime();
-        val3 = rec3.getTime();
-        out.print("\t" + val1 + "\t" + val2 + "\t" + val3);
-
-        val1 = rec1.getOpenListSize();
-        val2 = rec2.getOpenListSize();
-        val3 = rec3.getOpenListSize();
-        out.print("\t" + val1 + "\t" + val2 + "\t" + val3);
-
-        val1 = rec1.getClosedListSize();
-        val2 = rec2.getClosedListSize();
-        val3 = rec3.getClosedListSize();
-        out.print("\t" + val1 + "\t" + val2 + "\t" + val3);
-
-        val1 = rec1.getMaxMemSize();
-        val2 = rec2.getMaxMemSize();
-        val3 = rec3.getMaxMemSize();
-        out.println("\t" + val1 + "\t" + val2 + "\t" + val3);
     }
 
     /**

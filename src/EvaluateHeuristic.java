@@ -1,5 +1,4 @@
 import database.DBStats;
-import database.DBStatsRecord;
 import map.GameMap;
 import scenario.Problem;
 import scenario.Scenario;
@@ -33,26 +32,12 @@ public class EvaluateHeuristic {
                 "rmtst01.map.scen",     //13
                 "change.txt"            //14
         };
-        String[] algorithmNames = {"A*", "LRTA*", "DLRTA*", "knnLRTA*",
-                "TBA*", "HCDPS", "A*DPS", "LRTA*DPS", "HCDPS+", "A* cutoff",
-                "Weighted A*", "BEAM", "BULB", "LSS-LRTA*", "aLSS-LRTA*",
-                "TreeLRTA*", "PRA*", "CoverLRTA", "Cover2", "JStar", "JStar2", "A*+heuristic"};
-        String[] abbrv = {"a", "lrta", "dlrta", "knn", "tba", "hcdps", "adps",
-                "lrtadps", "hcdps+", "acutoff", "wa", "beam", "bulb",
-                "lsslrta", "alsslrta", "treeltra", "pra", "cover", "cover2",
-                "JStar", "JStar2", "AHrt"};
 
         /*
          * Run configuration variables are below.
          */
         int scenarioToRun = 0;                    // 12; // Index into scenarios array. Change this
         // to run a different scenario.
-        int[] algorithms = {0, 0, 12};            // Select up to three algorithms to
-        // run
-        int heuristicId = 1;                      // (0~5) heuristic function id passing to A* with arbitrary heuristic.
-
-        String imageDir = "images/";
-        String dbPath = "databases/";
 
         /*
          * Heuristic functions list
@@ -154,9 +139,9 @@ public class EvaluateHeuristic {
                         int goalCol = goalId - goalRow * ncols; //x_g
                         int diffCol = startCol - goalCol < 0 ? goalCol - startCol : startCol - goalCol; //delta_x
 
-                        int min = goalRow < diffRow ? goalRow : diffRow;
+                        int min = Math.min(goalRow, diffRow);
 
-                        int max1 = 100 < min + startRow ? min + startRow : 100;
+                        int max1 = Math.max(100, min + startRow);
 
                         int max2 = diffCol - diffRow < 0 ? diffRow : diffCol;
 
@@ -179,7 +164,7 @@ public class EvaluateHeuristic {
 
                         double p1 = 11.5 * Math.sqrt((startRow + diffRow) * (startRow + diffRow) * diffRow);
                         double p2 = diffCol * goalRow;
-                        double max = p1 < p2 ? p2 : p1;
+                        double max = Math.max(p1, p2);
                         return (int) Math.round(max);
                     }
                 }
@@ -197,9 +182,9 @@ public class EvaluateHeuristic {
                         int goalCol = goalId - goalRow * ncols; //x_g
                         int diffCol = startCol - goalCol < 0 ? goalCol - startCol : startCol - goalCol; //delta_x
 
-                        int min = diffCol < goalCol ? goalCol : diffCol;
+                        int min = Math.max(diffCol, goalCol);
 
-                        int max = diffRow < diffCol + min ? diffCol + min : diffRow;
+                        int max = Math.max(diffRow, diffCol + min);
 
                         return max * max;
                     }
@@ -226,8 +211,6 @@ public class EvaluateHeuristic {
             scenarioName = "scenarios/" + scenarioFileName + ".txt";
         else
             scenarioName = "scenarios/" + scenarioFileName;
-        String mapFileName = null;
-        DBStatsRecord rec = null;
         SearchProblem problem = null;
 
         // Load the scenario information
@@ -238,14 +221,10 @@ public class EvaluateHeuristic {
 
         // Store information on bad problems, subgoal databases if needed by the
         // algorithm, and algorithm statistics.
-        ArrayList<StatsRecord>[] badProblems = new ArrayList[algorithmsLength];
         ArrayList<StatsRecord>[] problemStats = new ArrayList[algorithmsLength];
         StatsRecord[] overallStats = new StatsRecord[algorithmsLength];
         DBStats[] dbStats = new DBStats[algorithmsLength];
-        ArrayList<Integer> badProblemNum = new ArrayList<Integer>();
-        ArrayList<Integer> noSubgoal = new ArrayList<Integer>();
-        GameMap[] maps = new GameMap[algorithmsLength];
-        GameMap baseMap = null; // The base map for a scenario problem.
+        GameMap baseMap; // The base map for a scenario problem.
         ArrayList<SearchState>[] paths = new ArrayList[algorithmsLength];
         ArrayList<SearchState>[] subgoals = new ArrayList[algorithmsLength];
 
@@ -259,17 +238,9 @@ public class EvaluateHeuristic {
 
         // These variables track if A* statistics match those in the scenario
         // file.
-        int count = 0, countAStarCosts = 0, countAStarDiff = 0;
+        int count = 0;
 
-        // This is used to nicely format the output of problem numbers.
-        int numDigits = 2;
-        if (numProblems > 100)
-            numDigits = 3;
-
-        long startTime = System.currentTimeMillis();
-        boolean mapSwitch = false;
-
-        ArrayList<SearchState> path = null;
+        ArrayList<SearchState> path;
         StatsRecord stats;
         // int l =3;
         // int startProblem = 92481;
@@ -290,20 +261,11 @@ public class EvaluateHeuristic {
             Problem p = scenario.getProblem(i);
 
             String mapName = p.getMapName();
-            stats = new StatsRecord();
-            mapSwitch = false;
 
-            // Load map and/or database if different than last problem
+            // Load map and/or database if different from last problem
             if (lastMapName == null || !lastMapName.equals(mapName)) {
-                mapSwitch = true;
                 baseMap = new GameMap(mapName);
                 problem = new MapSearchProblem(baseMap);
-                mapFileName = mapName;
-                int slashIndex = mapName.lastIndexOf('/');
-                if (slashIndex >= 0)
-                    mapFileName = mapName.substring(slashIndex + 1);
-                mapFileName = mapFileName
-                        .substring(0, mapFileName.indexOf('.'));
                 lastMapName = mapName;
             }
 
@@ -371,11 +333,10 @@ public class EvaluateHeuristic {
 
                 // Count the # of revisits
                 int revis = SearchUtil.countRevisits(path);
-                int drevis = 0;
 
                 if (revis > 0) {
                     System.out.println("Revisits: " + revis);
-                    drevis = SearchUtil.distanceRevisits(path);
+                    SearchUtil.distanceRevisits(path);
                 }
                 stats.setRevisits(revis);
             } // end test algorithms on a problem
@@ -393,11 +354,4 @@ public class EvaluateHeuristic {
 
     }
 
-    public static String padNum(int num, int digits) {
-        String st = "" + num;
-
-        for (int i = 0; i < digits - st.length(); i++)
-            st = "0" + st;
-        return st;
-    }
 }
