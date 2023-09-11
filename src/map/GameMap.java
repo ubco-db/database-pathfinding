@@ -3,7 +3,7 @@ package map;
 import search.SearchState;
 import util.HeuristicFunction;
 
-import java.awt.*;
+import java.awt.Color;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -18,20 +18,17 @@ import java.util.Scanner;
  * Maps can also be displayed on the screen.
  */
 public class GameMap {
-    public static final int EDGECOST_CARDINAL = 1; // TODO: Previously 10
-    public static final int EDGECOST_DIAGONAL = 14;
     public static final char WALL_CHAR = '*';
     public static final char EMPTY_CHAR = ' ';
 
     public int rows, cols;
     public int[][] squares;
+
     public HashMap<Integer, Color> colors;
     public int states;
-
     public static int computeDistance(int startId, int goalId, int ncols, HeuristicFunction heuristic) {
         return heuristic.apply(startId, goalId, ncols);
     }
-
 
     public void mapInit() {
         colors = new HashMap<Integer, Color>();
@@ -52,6 +49,10 @@ public class GameMap {
                 this.loadMap(fileName);
                 return;
             }
+
+            // seems like the only maps without a type are 1-WH-flipped.map and 2-orz103d-flipped.map
+
+            System.out.println("THIS ONE: " + fileName);
 
             st = sc.nextLine();            // Number of rows. e.g. height 139
             rows = Integer.parseInt(st.substring(7).trim());
@@ -106,8 +107,8 @@ public class GameMap {
         }
     }
 
-    public boolean isWall(int r, int c) {
-        return squares[r][c] == WALL_CHAR;
+    public boolean notWall(int r, int c) {
+        return squares[r][c] != WALL_CHAR;
     }
 
     public boolean isValid(int r, int c) {
@@ -144,36 +145,15 @@ public class GameMap {
      */
 
     public ArrayList<SearchState> getNeighbors(int r, int c) {
-        // 8-way pathfinding
-		/*
-    	result.clear();
-    	if (isValid(r - 1, c - 1) && !isWall(r - 1, c - 1)) // Top left
-			result.add(getState(this.getId(r-1,c-1)));
-    	if (isValid(r - 1, c) && !isWall(r - 1, c))	// Above
-			result.add(getState(this.getId(r-1,c)));
-    	if (isValid(r - 1, c+1) && !isWall(r - 1, c + 1)) // Top right
-			result.add(getState(this.getId(r-1,c+1)));
-    	if (isValid(r + 1, c - 1) && !isWall(r + 1, c - 1)) // Bottom left
-			result.add(getState(this.getId(r+1,c-1)));
-    	if (isValid(r + 1, c) && !isWall(r + 1, c))// Bottom
-			result.add(getState(this.getId(r+1,c)));
-		if (isValid(r + 1, c + 1) && !isWall(r + 1, c + 1)) // Bottom right
-			result.add(getState(this.getId(r+1,c+1)));
-		if (isValid(r, c - 1) && !isWall(r, c - 1)) // Left
-			result.add(getState(this.getId(r,c-1)));
-		if (isValid(r, c + 1) && !isWall(r, c + 1)) // Right
-			result.add(getState(this.getId(r,c+1)));
-		return result;
-		*/
         // 4-way pathfinding
         result.clear();
-        if (isValid(r - 1, c) && !isWall(r - 1, c))    // Above
+        if (isValid(r - 1, c) && notWall(r - 1, c))     // Above
             result.add(getState(this.getId(r - 1, c)));
-        if (isValid(r + 1, c) && !isWall(r + 1, c))// Bottom
+        if (isValid(r + 1, c) && notWall(r + 1, c))     // Bottom
             result.add(getState(this.getId(r + 1, c)));
-        if (isValid(r, c - 1) && !isWall(r, c - 1)) // Left
+        if (isValid(r, c - 1) && notWall(r, c - 1))     // Left
             result.add(getState(this.getId(r, c - 1)));
-        if (isValid(r, c + 1) && !isWall(r, c + 1)) // Right
+        if (isValid(r, c + 1) && notWall(r, c + 1))     // Right
             result.add(getState(this.getId(r, c + 1)));
         return result;
     }

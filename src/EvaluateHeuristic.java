@@ -16,34 +16,126 @@ public class EvaluateHeuristic {
     public static void main(String[] argv) {
         String[] scenarios = {
                 "012_100",              //0
-                "mm_8_1024",            //1
-                "mm_cs_4_1000",         //2
-                "mm_de_5_1000",         //3
-                "mm_cs_4_1000_hard",    //4
-                "mm_de_5_1000_hard",    //5
-                "small",                //6
-                "maze_5_1250_hard",     //7
-                "smallRoom",            //8
-                "dao/orz900d.map.scen", //9
-                "dao/all.scen",         //10
-                "dao/all_hard.scen",    //11
-                "dao/hard.scen",        //12
-                "rmtst01.map.scen",     //13
-                "change.txt"            //14
+                "maze_5_1250_hard",     //1
+                "mm_8_1024",            //2 -- TODO: running out of heap space in this scenario (because paths not found)
+                "mm_cs_4_1000",         //3 -- TODO: ArrayIndexOutOfBoundsException: Index 9784627 out of bounds for length 6000000
+                "mm_de_5_1000",         //4 -- TODO: ArrayIndexOutOfBoundsException: Index 13505876 out of bounds for length 6000000
         };
 
         /*
          * Run configuration variables are below.
          */
-        int scenarioToRun = 0;                    // 12; // Index into scenarios array. Change this
-        // to run a different scenario.
-
-        /*
-         * Heuristic functions list
-         */
+        int scenarioToRun = 0;      // 4; // Index into scenarios array. Change this to run a different scenario.
 
         ArrayList<HeuristicFunction> heuristicList = new ArrayList<>();
 
+        int algorithmsLength = populateHeuristicList(heuristicList).size();
+
+        String[] algNames = new String[algorithmsLength];
+        for (int i = 0; i < algorithmsLength; i++)
+            algNames[i] = "A* with f" + i;
+        /*
+         * End of configuration variables.
+         */
+
+        String scenarioFileName = scenarios[scenarioToRun];
+        String scenarioName = "scenarios/" + scenarioFileName + ".txt";
+        SearchProblem problem = null;
+
+        // Load the scenario information
+        Scenario scenario = new Scenario(scenarioName);
+        int numProblems = scenario.getNumProblems();
+        String lastMapName = null; // Stores last map name. Used to detect when
+        // switch to new map in a scenario.
+
+        // Store information algorithm statistics.
+        ArrayList<StatsRecord>[] problemStats = new ArrayList[algorithmsLength];
+        StatsRecord[] overallStats = new StatsRecord[algorithmsLength];
+        GameMap baseMap; // The base map for a scenario problem.
+
+        for (int i = 0; i < algorithmsLength; i++) {
+            problemStats[i] = new ArrayList<StatsRecord>(
+                    scenario.getNumProblems());
+            overallStats[i] = new StatsRecord();
+        }
+
+        // These variables track if A* statistics match those in the scenario file.
+        int count = 0;
+
+        ArrayList<SearchState> path;
+        StatsRecord stats;
+
+        int startProblem = 0;
+
+        for (int i = startProblem; i < numProblems; i++) {
+
+            Problem p = scenario.getProblem(i);
+
+            String mapName = p.getMapName();
+
+            // Load map and/or database if different from last problem
+            if (lastMapName == null || !lastMapName.equals(mapName)) {
+                baseMap = new GameMap(mapName);
+                problem = new MapSearchProblem(baseMap);
+                lastMapName = mapName;
+            }
+
+            // Create start and goal states for the problem
+            SearchState start = new SearchState(p.getStart());
+            SearchState goal = new SearchState(p.getGoal());
+
+            System.out.println("\n\nPerforming problem: " + (i + 1)
+                    + " on map: " + mapName + " Start: "
+                    + problem.idToString(p.getStart().id) + " Goal: "
+                    + problem.idToString(p.getGoal().id));
+            boolean validProblem = true;
+            // Run each algorithm on the problem
+            for (int j = 0; j < algorithmsLength; j++) {
+                stats = new StatsRecord();
+
+                long currentTime = System.currentTimeMillis();
+
+                AStarHeuristic astarh = new AStarHeuristic(problem, heuristicList.get(j));
+                path = astarh.computePath(start, goal, stats);
+
+                if (path == null) {
+                    System.out.println("A*H_f" + j + " is unable to find path between "
+                            + start + " and " + goal);
+                    j = 3;
+                    validProblem = false;
+                    for (int k = 0; k < algorithmsLength; k++)
+                        problemStats[k].add(new StatsRecord());
+                    continue; // Do not try to do the other algorithms
+                }
+
+                stats.setTime(System.currentTimeMillis() - currentTime);
+                StatsCompare.mergeRecords(overallStats[j], stats);
+                problemStats[j].add(stats);
+
+                // Count the # of revisits
+                int revis = SearchUtil.countRevisits(path);
+
+                if (revis > 0) {
+                    System.out.println("Revisits: " + revis);
+                    SearchUtil.distanceRevisits(path);
+                }
+                stats.setRevisits(revis);
+            } // end test algorithms on a problem
+
+
+            if (!validProblem)
+                continue;
+
+            count++;
+
+        } // end problem loop
+
+        System.out.println("\n\nOverall results of " + count + " problems.");
+        StatsCompare.compareRecords(overallStats, algNames);
+
+    }
+
+    private static ArrayList<HeuristicFunction> populateHeuristicList(ArrayList<HeuristicFunction> heuristicList) {
         // f0
         heuristicList.add(
                 new HeuristicFunction() {
@@ -190,121 +282,6 @@ public class EvaluateHeuristic {
                 }
         );
 
-        /*
-         * End of heuristic functions list
-         */
-
-        int algorithmsLength = heuristicList.size();
-
-        String[] algNames = new String[algorithmsLength];
-        for (int i = 0; i < algorithmsLength; i++)
-            algNames[i] = "A* with f" + i;
-        /*
-         * End of configuration variables.
-         */
-
-        String scenarioFileName = scenarios[scenarioToRun];
-        String scenarioName;
-        if (scenarioToRun < 9)
-            scenarioName = "scenarios/" + scenarioFileName + ".txt";
-        else
-            scenarioName = "scenarios/" + scenarioFileName;
-        SearchProblem problem = null;
-
-        // Load the scenario information
-        Scenario scenario = new Scenario(scenarioName);
-        int numProblems = scenario.getNumProblems();
-        String lastMapName = null; // Stores last map name. Used to detect when
-        // switch to new map in a scenario.
-
-        // Store information on bad problems, subgoal databases if needed by the
-        // algorithm, and algorithm statistics.
-        ArrayList<StatsRecord>[] problemStats = new ArrayList[algorithmsLength];
-        StatsRecord[] overallStats = new StatsRecord[algorithmsLength];
-        GameMap baseMap; // The base map for a scenario problem.
-
-        for (int i = 0; i < algorithmsLength; i++) {
-            problemStats[i] = new ArrayList<StatsRecord>(
-                    scenario.getNumProblems());
-            overallStats[i] = new StatsRecord();
-        }
-
-        // These variables track if A* statistics match those in the scenario
-        // file.
-        int count = 0;
-
-        ArrayList<SearchState> path;
-        StatsRecord stats;
-
-        int startProblem = 0;
-
-        for (int i = startProblem; i < numProblems; i++) {
-
-            Problem p = scenario.getProblem(i);
-
-            String mapName = p.getMapName();
-
-            // Load map and/or database if different from last problem
-            if (lastMapName == null || !lastMapName.equals(mapName)) {
-                baseMap = new GameMap(mapName);
-                problem = new MapSearchProblem(baseMap);
-                lastMapName = mapName;
-            }
-
-            // Create start and goal states for the problem
-            SearchState start = new SearchState(p.getStart());
-            SearchState goal = new SearchState(p.getGoal());
-
-            System.out.println("\n\nPerforming problem: " + (i + 1)
-                    + " on map: " + mapName + " Start: "
-                    + problem.idToString(p.getStart().id) + " Goal: "
-                    + problem.idToString(p.getGoal().id));
-            boolean validProblem = true;
-            // Run each algorithm on the problem
-            for (int j = 0; j < algorithmsLength; j++) {
-                stats = new StatsRecord();
-
-                long currentTime = System.currentTimeMillis();
-
-                AStarHeuristic astarh = new AStarHeuristic(problem, heuristicList.get(j));
-                path = astarh.computePath(start, goal, stats);
-
-                if (path == null) {
-                    System.out.println("A*H_f" + j + " is unable to find path between "
-                            + start + " and " + goal);
-                    j = 3;
-                    validProblem = false;
-                    // problemStats[0].add(stats);
-                    for (int k = 0; k < algorithmsLength; k++)
-                        problemStats[k].add(new StatsRecord());
-                    continue; // Do not try to do the other algorithms
-                }
-
-                stats.setTime(System.currentTimeMillis() - currentTime);
-                StatsCompare.mergeRecords(overallStats[j], stats);
-                problemStats[j].add(stats);
-
-                // Count the # of revisits
-                int revis = SearchUtil.countRevisits(path);
-
-                if (revis > 0) {
-                    System.out.println("Revisits: " + revis);
-                    SearchUtil.distanceRevisits(path);
-                }
-                stats.setRevisits(revis);
-            } // end test algorithms on a problem
-
-
-            if (!validProblem)
-                continue;
-
-            count++;
-
-        } // end problem loop
-
-        System.out.println("\n\nOverall results of " + count + " problems.");
-        StatsCompare.compareRecords(overallStats, algNames);
-
+        return heuristicList;
     }
-
 }
