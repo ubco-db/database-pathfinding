@@ -82,11 +82,11 @@ public class GroupRecord {
     }
 
     public String toString() {
-        StringBuffer buf = new StringBuffer(100);
-        buf.append("Id: " + groupId + " Rep. Id: " + groupRepId + " Size: " + numStates);
-        buf.append(" States: " + states.toString());
+        StringBuilder buf = new StringBuilder(100);
+        buf.append("Id: ").append(groupId).append(" Rep. Id: ").append(groupRepId).append(" Size: ").append(numStates);
+        buf.append(" States: ").append(states.toString());
         if (neighborIds != null)
-            buf.append(" Neighbors: " + neighborIds.toString());
+            buf.append(" Neighbors: ").append(neighborIds);
         return buf.toString();
     }
 }

@@ -23,8 +23,7 @@ public class ExpandArray {
     public ExpandArray(ExpandArray a) {
         count = a.count;
         values = new int[count];
-        for (int i = 0; i < a.count; i++)
-            values[i] = a.values[i];
+        System.arraycopy(a.values, 0, values, 0, a.count);
     }
 
     public void addAll(ExpandArray a) {
@@ -65,8 +64,7 @@ public class ExpandArray {
     public void add(int id) {
         if (count >= values.length) {
             int[] tmp = new int[values.length * 10];
-            for (int i = 0; i < count; i++)
-                tmp[i] = values[i];
+            System.arraycopy(values, 0, tmp, 0, count);
             values = tmp;
         }
         values[count++] = id;
@@ -89,12 +87,12 @@ public class ExpandArray {
     }
 
     public String toString() {
-        StringBuffer buf = new StringBuffer(100);
+        StringBuilder buf = new StringBuilder(100);
         buf.append("[");
         if (count > 0)
             buf.append(values[0]);
         for (int i = 1; i < count; i++)
-            buf.append(", " + values[i]);
+            buf.append(", ").append(values[i]);
         buf.append("]");
         return buf.toString();
     }

@@ -392,14 +392,14 @@ public class EvaluateHeuristic {
                 }
                 stats.setRevisits(revis);
 
-                if (showPaths) {
-                    System.out.println("Path: ");
-                    SearchUtil.printPath(problem, path);
-                }
-                if (showImage)
-                    baseMap.outputImage(imageDir + padNum(i + 1, numDigits)
-                                    + "_" + abbrv[algorithms[j]] + ".png", path,
-                            subgoals[j]);
+//                if (showPaths) {
+//                    System.out.println("Path: ");
+//                    SearchUtil.printPath(problem, path);
+//                }
+//                if (showImage)
+//                    baseMap.outputImage(imageDir + padNum(i + 1, numDigits)
+//                                    + "_" + abbrv[algorithms[j]] + ".png", path,
+//                            subgoals[j]);
             } // end test algorithms on a problem
 
 

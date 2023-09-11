@@ -41,7 +41,7 @@ public class AStarHeuristic implements SearchAlgorithm {
 
         boolean foundPath = false;
 
-		// while a path hasn't been found and there are states remaining on the open list
+        // while a path hasn't been found and there are states remaining on the open list
         while (openList.size() > 0) {
             // Find the lowest-cost state so far
             SearchState best = openList.remove();
@@ -91,7 +91,7 @@ public class AStarHeuristic implements SearchAlgorithm {
         // Setup open and closed state list
         PriorityQueue<SearchState> openList = new PriorityQueue<>();            // Note: Does not allow easy updates and searching for entries thus using openListLookup HashMap with it.
         HashMap<Integer, SearchState> openListLookup = new HashMap<>();
-		closedList.clear();
+        closedList.clear();
 
         start.cost = 0;
         start.prev = null;
@@ -101,7 +101,7 @@ public class AStarHeuristic implements SearchAlgorithm {
 
         boolean foundPath = false;
 
-		// while a path hasn't been found and there are states remaining on the open list
+        // while a path hasn't been found and there are states remaining on the open list
         while (openList.size() > 0) {
             // Find the lowest-cost state so far
             SearchState best = openList.remove();
@@ -150,34 +150,34 @@ public class AStarHeuristic implements SearchAlgorithm {
     private void updateNeighbors(SearchState current, SearchState goal, StatsRecord stats,
                                  PriorityQueue<SearchState> openList, BitSet closedList, HashMap<Integer, SearchState> openListLookup) {
         ArrayList<SearchState> neighbors = problem.getNeighbors(current);
-		for (SearchState next : neighbors) {
-			if (closedList.get(next.id))
-				continue;
+        for (SearchState next : neighbors) {
+            if (closedList.get(next.id))
+                continue;
 
-			stats.incrementStatesUpdated(1);
+            stats.incrementStatesUpdated(1);
 
-			int newG = current.g + problem.getMoveCost(current, next);
+            int newG = current.g + problem.getMoveCost(current, next);
 
-			// 	Add state to list.  If already there, update its cost only
-			Integer stateId = new Integer(next.id);        // Build integer object once to save time
-			SearchState state = openListLookup.get(stateId);
-			if (state != null) {
-				if (state.g > newG) {
-					SearchState st = new SearchState(state);
-					//st.updateCost(newG, problem.computeDistance(st, goal));
-					st.updateCost(newG, problem.computeDistance(st, goal, heuristic));
-					st.prev = current;
-					openList.add(st);
-					openListLookup.put(stateId, st);
-				}
-			} else {
-				//next.updateCost(newG, problem.computeDistance(next, goal));
-				next.updateCost(newG, problem.computeDistance(next, goal, heuristic));
-				next.prev = current;
-				openList.add(next);
-				openListLookup.put(stateId, next);
-			}
-		}
+            // 	Add state to list.  If already there, update its cost only
+            Integer stateId = new Integer(next.id);        // Build integer object once to save time
+            SearchState state = openListLookup.get(stateId);
+            if (state != null) {
+                if (state.g > newG) {
+                    SearchState st = new SearchState(state);
+                    //st.updateCost(newG, problem.computeDistance(st, goal));
+                    st.updateCost(newG, problem.computeDistance(st, goal, heuristic));
+                    st.prev = current;
+                    openList.add(st);
+                    openListLookup.put(stateId, st);
+                }
+            } else {
+                //next.updateCost(newG, problem.computeDistance(next, goal));
+                next.updateCost(newG, problem.computeDistance(next, goal, heuristic));
+                next.prev = current;
+                openList.add(next);
+                openListLookup.put(stateId, next);
+            }
+        }
     }
 
     /**
