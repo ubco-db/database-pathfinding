@@ -26,6 +26,7 @@ public class GameMap {
 
     public HashMap<Integer, Color> colors;
     public int states;
+
     public static int computeDistance(int startId, int goalId, int ncols, HeuristicFunction heuristic) {
         return heuristic.apply(startId, goalId, ncols);
     }
@@ -115,7 +116,6 @@ public class GameMap {
         return (c >= 0 && r >= 0 && r < rows && c < cols);
     }
 
-
     private static final ArrayList<SearchState> result = new ArrayList<>(8);
     private static final HashMap<Integer, SearchState> createdStates = new HashMap<>();
     public static Integer[] ints;
@@ -123,7 +123,7 @@ public class GameMap {
     static {
         int size = 6000000;
 
-        // int size = 10000000;//For Map2
+        // int size = 10000000; // For Map2
 
         ints = new Integer[size];
         for (int i = 0; i < size; i++)
@@ -140,10 +140,7 @@ public class GameMap {
         return s;
     }
 
-    /*
-     * Original version with more flexible diagonal moves.
-     */
-
+    // TODO: why is this only 4-way?
     public ArrayList<SearchState> getNeighbors(int r, int c) {
         // 4-way pathfinding
         result.clear();

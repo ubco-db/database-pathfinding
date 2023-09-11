@@ -117,7 +117,6 @@ public class EvaluateHeuristic {
 
                 if (revis > 0) {
                     System.out.println("Revisits: " + revis);
-                    SearchUtil.distanceRevisits(path);
                 }
                 stats.setRevisits(revis);
             } // end test algorithms on a problem
@@ -158,7 +157,6 @@ public class EvaluateHeuristic {
                     }
                 }
         );
-
 
         // f1
         heuristicList.add(

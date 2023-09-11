@@ -1,6 +1,5 @@
 package scenario;
 
-
 import search.SearchState;
 
 import java.io.File;

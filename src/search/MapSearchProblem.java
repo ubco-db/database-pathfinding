@@ -5,13 +5,14 @@ import util.HeuristicFunction;
 
 import java.util.ArrayList;
 
+
 /**
  * Supports grid-based search problems (for game maps).
  *
  * @author rlawrenc
  */
 public class MapSearchProblem extends SearchProblem {
-    private GameMap map;
+    private final GameMap map;
 
     public MapSearchProblem(GameMap map) {
         this.map = map;
@@ -19,7 +20,6 @@ public class MapSearchProblem extends SearchProblem {
 
     public int computeDistance(SearchState start, SearchState goal, HeuristicFunction heuristic) {
         return GameMap.computeDistance(start.id, goal.id, map.cols, heuristic);
-
     }
 
     public ArrayList<SearchState> getNeighbors(SearchState state) {
@@ -29,7 +29,6 @@ public class MapSearchProblem extends SearchProblem {
     public int getMaxSize() {
         return map.rows * map.cols;
     }
-
 
     public GameMap getMap() {
         return map;

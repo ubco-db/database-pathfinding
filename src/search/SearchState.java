@@ -1,6 +1,5 @@
 package search;
 
-
 public class SearchState implements Comparable<SearchState> {
     public int id;
     public double cost;    // f

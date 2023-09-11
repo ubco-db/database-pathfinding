@@ -104,7 +104,6 @@ public class StatsRecord {
         Arrays.fill(moveTimes, 0);
     }
 
-
     public int getPathCost() {
         return pathCost;
     }

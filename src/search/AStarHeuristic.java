@@ -13,7 +13,7 @@ import java.util.PriorityQueue;
  * detect if the node has been previously used (in closed list) in main loop.  Removing items is very costly, so this is trading speed for some extra memory.
  */
 public class AStarHeuristic implements SearchAlgorithm {
-    private SearchProblem problem;
+    private final SearchProblem problem;
     private ArrayList<SearchState> statesExpanded;
     private final BitSet closedList;
     HeuristicFunction heuristic;
