@@ -1,7 +1,7 @@
 package search;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 
 public class SearchUtil {
 
@@ -9,15 +9,16 @@ public class SearchUtil {
         if (path == null)
             return 0;
         else {
-            HashMap<Integer, Integer> states = new HashMap<>(path.size());
+            HashSet<Integer> states = new HashSet<>();
             int revisits = 0;
-            for (SearchState searchState : path) {
-                int id = searchState.id;
-                if (states.containsKey(id))
+
+            for (SearchState searchState: path) {
+                // adding to set if id not already contained, add returns false if id is already contained
+                if (!states.add(searchState.id)) {
                     revisits++;
-                else
-                    states.put(id, id);
+                }
             }
+
             return revisits;
         }
     }

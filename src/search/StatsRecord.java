@@ -76,7 +76,6 @@ public class StatsRecord {
                 time +
                 "\tMaxTime: " +
                 moveTimes[0] +
-                //	buf.append(maxTime);
                 "\tRevisits: " +
                 revisits;
     }

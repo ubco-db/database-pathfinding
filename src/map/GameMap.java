@@ -36,7 +36,7 @@ public class GameMap {
         states = rows * cols;
     }
 
-    public GameMap(String fileName) {    // Loads a map in Vadim's format into data structure
+    public GameMap(String fileName) {       // Loads a map in Vadim's format into data structure
         load(fileName);
         new Random();
     }
@@ -44,20 +44,10 @@ public class GameMap {
     public void load(String fileName) {
         try (Scanner sc = new Scanner(new File(fileName))) {
 
-            String st = sc.nextLine();     // Drop first line which is formatted
-            if (!st.contains("type")) {    // Map is in binary format
-                sc.close();
-                this.loadMap(fileName);
-                return;
-            }
-
-            // seems like the only maps without a type are 1-WH-flipped.map and 2-orz103d-flipped.map
-
-            System.out.println("THIS ONE: " + fileName);
-
-            st = sc.nextLine();            // Number of rows. e.g. height 139
+            sc.nextLine();                  // Drop first line which is formatted
+            String st = sc.nextLine();      // Number of rows. e.g. height 139
             rows = Integer.parseInt(st.substring(7).trim());
-            st = sc.nextLine();            // Number of cols. e.g. width 148
+            st = sc.nextLine();             // Number of cols. e.g. width 148
             cols = Integer.parseInt(st.substring(6).trim());
             sc.nextLine();
             squares = new int[rows][cols];
@@ -80,35 +70,7 @@ public class GameMap {
         }
     }
 
-    /**
-     * This version loads a number-based map.
-     *
-     * @param fileName
-     */
-    public void loadMap(String fileName) {
-        try (Scanner sc = new Scanner(new File(fileName))) {
-
-            String st = sc.nextLine();              // Number of rows. e.g. height 139
-            rows = Integer.parseInt(st.substring(7).trim());
-            st = sc.nextLine();                     // Number of cols. e.g. width 148
-            cols = Integer.parseInt(st.substring(6).trim());
-            squares = new int[rows][cols];
-            mapInit();
-            states = 0;
-
-            for (int i = 0; i < rows; i++) {
-                for (int j = 0; j < cols; j++) {
-                    squares[i][j] = sc.nextInt();
-                }
-            }
-        } catch (FileNotFoundException e) {
-            System.out.println("Did not find input file: " + e);
-        } catch (Exception e) {
-            System.out.println("IO Error: " + e);
-        }
-    }
-
-    public boolean notWall(int r, int c) {
+    public boolean isNotWall(int r, int c) {
         return squares[r][c] != WALL_CHAR;
     }
 
@@ -116,21 +78,21 @@ public class GameMap {
         return (c >= 0 && r >= 0 && r < rows && c < cols);
     }
 
-    private static final ArrayList<SearchState> result = new ArrayList<>(8);
+    private static final ArrayList<SearchState> result = new ArrayList<>(8); // QUESTION: Should this be 4 if we can only move 4 ways?
     private static final HashMap<Integer, SearchState> createdStates = new HashMap<>();
     public static Integer[] ints;
 
     static {
         int size = 6000000;
 
-        // int size = 10000000; // For Map2
+        // int size = 10000000; // For Map2 // QUESTION: Why does Map2 need a different size?
 
         ints = new Integer[size];
         for (int i = 0; i < size; i++)
             ints[i] = i;
     }
 
-    private static SearchState getState(int id) {    // Integer i = new Integer(id);
+    private static SearchState getState(int id) {
         Integer i = ints[id];
         SearchState s = createdStates.get(i);
         if (s == null) {
@@ -140,23 +102,24 @@ public class GameMap {
         return s;
     }
 
-    // TODO: why is this only 4-way?
+    // QUESTION: why is this only 4-way?
     public ArrayList<SearchState> getNeighbors(int r, int c) {
         // 4-way pathfinding
         result.clear();
-        if (isValid(r - 1, c) && notWall(r - 1, c))     // Above
+        if (isValid(r - 1, c) && isNotWall(r - 1, c))     // Above
             result.add(getState(this.getId(r - 1, c)));
-        if (isValid(r + 1, c) && notWall(r + 1, c))     // Bottom
+        if (isValid(r + 1, c) && isNotWall(r + 1, c))     // Bottom
             result.add(getState(this.getId(r + 1, c)));
-        if (isValid(r, c - 1) && notWall(r, c - 1))     // Left
+        if (isValid(r, c - 1) && isNotWall(r, c - 1))     // Left
             result.add(getState(this.getId(r, c - 1)));
-        if (isValid(r, c + 1) && notWall(r, c + 1))     // Right
+        if (isValid(r, c + 1) && isNotWall(r, c + 1))     // Right
             result.add(getState(this.getId(r, c + 1)));
         return result;
     }
 
-
+    // QUESTION: What is Id used for?
     public int getId(int row, int col) {
+        // assigns ids to grid from left to right
         return row * this.cols + col;
     }
 
@@ -169,7 +132,8 @@ public class GameMap {
     }
 
 
-    public int size() {    // Returns the number of visitable states on the map (does not count walls)
+    // Returns the number of visitable states on the map (does not count walls)
+    public int size() {
         int size = 0;
 
         for (int i = 0; i < rows; i++) {

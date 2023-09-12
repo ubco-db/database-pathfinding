@@ -66,12 +66,11 @@ public class StatsCompare {
                     if (len < recArr[j].getPathLength()) {
                         if (j == 0) {
                             speedup = (double) recArr[j].getStatesExpanded() / recArr[i].getStatesExpanded();
-                            break;
                         } else {
                             double slope = ((double) len - recArr[j - 1].getPathLength()) / (recArr[j].getPathLength() - recArr[j - 1].getPathLength());
                             speedup = (recArr[j - 1].getStatesExpanded() + (recArr[j].getStatesExpanded() - recArr[j - 1].getStatesExpanded()) * slope) / recArr[i].getStatesExpanded();
-                            break;
                         }
+                        break;
                     }
                 }
                 if (j >= 15)
@@ -81,7 +80,6 @@ public class StatsCompare {
             } else {
                 sb3.append(algName[i]).append(", ").append(recArr[i].getStatesExpanded()).append("\n");
             }
-
 
             // states Updated
             sb4.append(algName[i]).append(": ").append(recArr[i].getStatesUpdated()).append("\n");
@@ -108,14 +106,13 @@ public class StatsCompare {
         System.out.println(sb6);
         System.out.println(sb7);
         System.out.println(sb8);
-
     }
 
     /**
      * Updates statistics in record 1 with those from record 2.
      *
-     * @param rec1
-     * @param rec2
+     * @param rec1 - record 1
+     * @param rec2 - record 2
      */
     public static void mergeRecords(StatsRecord rec1, StatsRecord rec2) {
         rec1.setPathCost(rec1.getPathCost() + rec2.getPathCost());

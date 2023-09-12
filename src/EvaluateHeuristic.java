@@ -17,9 +17,9 @@ public class EvaluateHeuristic {
         String[] scenarios = {
                 "012_100",              //0
                 "maze_5_1250_hard",     //1
-                "mm_8_1024",            //2 -- TODO: running out of heap space in this scenario (because paths not found)
-                "mm_cs_4_1000",         //3 -- TODO: ArrayIndexOutOfBoundsException: Index 9784627 out of bounds for length 6000000
-                "mm_de_5_1000",         //4 -- TODO: ArrayIndexOutOfBoundsException: Index 13505876 out of bounds for length 6000000
+                "mm_8_1024",            //2 -- FIXME: running out of heap space in this scenario (because paths not found)
+                "mm_cs_4_1000",         //3 -- FIXME: ArrayIndexOutOfBoundsException: Index 9784627 out of bounds for length 6000000
+                "mm_de_5_1000",         //4 -- FIXME: ArrayIndexOutOfBoundsException: Index 13505876 out of bounds for length 6000000
         };
 
         /*
@@ -32,8 +32,10 @@ public class EvaluateHeuristic {
         int algorithmsLength = populateHeuristicList(heuristicList).size();
 
         String[] algNames = new String[algorithmsLength];
-        for (int i = 0; i < algorithmsLength; i++)
+        for (int i = 0; i < algorithmsLength; i++) {
             algNames[i] = "A* with f" + i;
+        }
+
         /*
          * End of configuration variables.
          */
@@ -45,8 +47,7 @@ public class EvaluateHeuristic {
         // Load the scenario information
         Scenario scenario = new Scenario(scenarioName);
         int numProblems = scenario.getNumProblems();
-        String lastMapName = null; // Stores last map name. Used to detect when
-        // switch to new map in a scenario.
+        String lastMapName = null; // Stores last map name. Used to detect when switching to new map in a scenario.
 
         // Store information algorithm statistics.
         ArrayList<StatsRecord>[] problemStats = new ArrayList[algorithmsLength];
@@ -54,12 +55,11 @@ public class EvaluateHeuristic {
         GameMap baseMap; // The base map for a scenario problem.
 
         for (int i = 0; i < algorithmsLength; i++) {
-            problemStats[i] = new ArrayList<StatsRecord>(
-                    scenario.getNumProblems());
+            problemStats[i] = new ArrayList<StatsRecord>(scenario.getNumProblems());
             overallStats[i] = new StatsRecord();
         }
 
-        // These variables track if A* statistics match those in the scenario file.
+        // These variables track if A* statistics match those in the scenario file. // QUESTION: What does that mean?
         int count = 0;
 
         ArrayList<SearchState> path;
@@ -88,6 +88,7 @@ public class EvaluateHeuristic {
                     + " on map: " + mapName + " Start: "
                     + problem.idToString(p.getStart().id) + " Goal: "
                     + problem.idToString(p.getGoal().id));
+
             boolean validProblem = true;
             // Run each algorithm on the problem
             for (int j = 0; j < algorithmsLength; j++) {
@@ -105,7 +106,7 @@ public class EvaluateHeuristic {
                     validProblem = false;
                     for (int k = 0; k < algorithmsLength; k++)
                         problemStats[k].add(new StatsRecord());
-                    continue; // Do not try to do the other algorithms
+                    continue; // Do not try to do the other algorithms // QUESTION: should this not be a break?
                 }
 
                 stats.setTime(System.currentTimeMillis() - currentTime);
@@ -126,12 +127,10 @@ public class EvaluateHeuristic {
                 continue;
 
             count++;
-
         } // end problem loop
 
         System.out.println("\n\nOverall results of " + count + " problems.");
         StatsCompare.compareRecords(overallStats, algNames);
-
     }
 
     private static ArrayList<HeuristicFunction> populateHeuristicList(ArrayList<HeuristicFunction> heuristicList) {

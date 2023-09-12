@@ -15,7 +15,6 @@ public class Problem {
     private int optimalTravelCost;
     private double aStarDifficulty;
 
-
     public Problem(String mapName, SearchState start, SearchState goal, int optimalTravelCost, double starDifficulty) {
         this.mapName = mapName;
         this.start = start;

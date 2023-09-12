@@ -48,5 +48,4 @@ public class SearchState implements Comparable<SearchState> {
     public String toString() {
         return "Id: " + id + " U: " + updated + " f: " + cost + " g: " + g + " h: " + h + " Cost: " + cost;
     }
-
 }
