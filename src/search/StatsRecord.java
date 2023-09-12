@@ -8,7 +8,6 @@ import java.util.Arrays;
  * @author rlawrenc
  */
 public class StatsRecord {
-    private int statesExpandedHC;               // States expanded during hill climbing
     private long statesExpanded;                // States expanded during LRTA*/A* or other search algorithm (does not include HC states if applicable)
     private long statesUpdated;                 // States updated during LRTA*/A* or other search algorithm
 
@@ -40,10 +39,6 @@ public class StatsRecord {
         clear();
     }
 
-    public int getStatesExpandedHC() {
-        return statesExpandedHC;
-    }
-
     public long getStatesExpanded() {
         return statesExpanded;
     }
@@ -54,10 +49,6 @@ public class StatsRecord {
 
     public void setPathLength(int pathLength) {
         this.pathLength = pathLength;
-    }
-
-    public void incrementStatesExpandedHC(int num) {
-        statesExpandedHC += num;
     }
 
     public void incrementStatesExpanded(long num) {
@@ -77,8 +68,6 @@ public class StatsRecord {
                 pathCost +
                 "\tPath length: " +
                 pathLength +
-                "\nStates HC: " +
-                statesExpandedHC +
                 "\t States Expanded: " +
                 statesExpanded +
                 "\tStates updated: " +
@@ -93,7 +82,6 @@ public class StatsRecord {
     }
 
     public void clear() {
-        statesExpandedHC = 0;
         statesExpanded = 0;
         pathLength = 0;
         pathCost = 0;

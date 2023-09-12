@@ -121,7 +121,6 @@ public class StatsCompare {
         rec1.setPathCost(rec1.getPathCost() + rec2.getPathCost());
         rec1.setPathLength(rec1.getPathLength() + rec2.getPathLength());
         rec1.incrementStatesExpanded(rec2.getStatesExpanded());
-        rec1.incrementStatesExpandedHC(rec2.getStatesExpandedHC());
         rec1.incrementStatesUpdated(rec2.getStatesUpdated());
         rec1.setTime(rec1.getTime() + rec2.getTime());
         if (rec1.getOpenListSize() < rec2.getOpenListSize())
