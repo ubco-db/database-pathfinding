@@ -46,4 +46,8 @@ public class MapSearchProblem extends SearchProblem {
     public int getMoveCost(SearchState start, SearchState goal) {
         return getMoveCost(start.id, goal.id);
     }
+
+    public int computeDistance(SearchState start, SearchState goal) {
+        return GameMap.computeDistance(start.id, goal.id, map.cols);
+    }
 }

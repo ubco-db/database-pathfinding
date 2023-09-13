@@ -3,9 +3,10 @@ package map;
 import search.SearchState;
 import util.HeuristicFunction;
 
-import java.awt.Color;
+import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -24,8 +25,24 @@ public class GameMap {
     public int rows, cols;
     public int[][] squares;
 
+    public Point startPoint;
+    public Point goalPoint;
+
     public HashMap<Integer, Color> colors;
     public int states;
+
+    private Random generator;
+
+    public ArrayList<SearchState> path;
+
+    private ArrayList<MapMask> masks;
+    private int currentMask = -1;
+
+    private int panelHeight = 950;
+    private int panelWidth = 950;
+    private int heightOffset = 30;
+    private int cellHeight;
+    private int cellWidth;
 
     public static int computeDistance(int startId, int goalId, int ncols, HeuristicFunction heuristic) {
         return heuristic.apply(startId, goalId, ncols);
@@ -34,6 +51,18 @@ public class GameMap {
     public void mapInit() {
         colors = new HashMap<Integer, Color>();
         states = rows * cols;
+        generator = new Random();
+        masks = new ArrayList<MapMask>();
+        cellHeight = panelHeight / rows;
+        cellWidth = panelWidth / cols;
+        if (cellHeight <= 0)
+            cellHeight = 1;
+        if (cellWidth <= 0)
+            cellWidth = 1;
+        if (cellHeight > cellWidth) {
+            cellHeight = cellWidth;
+        } else
+            cellWidth = cellHeight;
     }
 
     public GameMap(String fileName) {       // Loads a map in Vadim's format into data structure
@@ -144,5 +173,134 @@ public class GameMap {
             }
         }
         return size;
+    }
+
+    // Draws a map on the screen
+    public void draw(Graphics2D g2) {
+        // Make sure everything is square
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                Color col;
+                int val = this.squares[i][j];
+                // Just draw points for speed?
+                if (val == WALL_CHAR)
+                    g2.setColor(Color.BLACK);
+                else if (val == EMPTY_CHAR)
+                    g2.setColor(Color.WHITE);
+                else {    // Lookup color used for this number
+                    col = colors.get(val);
+                    if (col == null) {    // TODO: How to pick color.  Picking a random color for now.
+                        // Should not go in here with map is pre-colored.
+                        // System.out.println("Here in for value: "+val);
+                        col = new Color(generator.nextFloat(), generator.nextFloat(), generator.nextFloat());
+                        colors.put(val, col);
+                    }
+                    g2.setColor(col);
+                }
+                g2.fillRect(j * cellWidth, i * cellHeight + heightOffset, cellWidth, cellHeight);
+            }
+        }
+
+        // Draw the current mask
+        if (currentMask >= 0 && currentMask < masks.size()) {
+            MapMask mask = masks.get(currentMask);
+            mask.init();
+            while (mask.hasNext()) {
+                ChangeRecord rec = mask.next();
+                g2.setColor(rec.color);
+                g2.fillRect(rec.col * cellWidth, rec.row * cellHeight + heightOffset, cellWidth, cellHeight);
+            }
+        }
+    }
+
+    public Point getSquare(Point clickPoint) {
+        if (this.cellHeight == 0)
+            return null;
+        int x = clickPoint.x;
+        int y = clickPoint.y - this.heightOffset;
+        int row = y / cellHeight;
+        int col = x / cellWidth;
+        if (row >= this.rows || col >= this.cols)
+            return null;
+        return new Point(row, col);
+    }
+
+    public void addMask(SparseMask mask) {
+        masks.add(mask);
+    }
+
+    public void clearMasks() {
+        currentMask = -1;
+        this.masks.clear();
+    }
+
+    public void resetMask() {
+        currentMask = 0;
+    }
+
+    public void save(String fileName) {
+        try (PrintWriter out = new PrintWriter(fileName)) {
+            out.println("height " + rows);
+            out.println("width " + cols);
+
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < cols; j++) {
+                    out.print(this.squares[i][j]);
+                    out.print("\t");
+                }
+                out.println();
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("Error with output file: " + e);
+        }
+    }
+
+    public void rotate() {
+        // Rotate 90 degrees
+        int curRows = rows, curCols = cols;
+
+        int[][] vals = new int[curCols][curRows];
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                vals[j][rows - 1 - i] = this.squares[i][j];
+            }
+        }
+        this.squares = vals;
+        this.rows = curCols;
+        this.cols = curRows;
+    }
+
+    public boolean nextMask() {
+        if (currentMask >= 0 && currentMask < masks.size()) {
+            currentMask++;
+            return true;
+        }
+        return false;
+    }
+
+    public boolean prevMask() {
+        if (currentMask > 0) {
+            currentMask--;
+            return true;
+        }
+        return false;
+    }
+
+    public static int computeDistance(int startId, int goalId, int ncols) {
+        // Computes octile distance (quick estimate with no square root) from this state to goal state
+        int startRow = startId / ncols;
+        int goalRow = goalId / ncols;
+        int diffRow = startRow - goalRow;
+
+        int bit31 = diffRow >> 31;                // Compute its absolute value
+        diffRow = (diffRow ^ bit31) - bit31;
+
+        int diffCol = ((startId - startRow * ncols) - (goalId - goalRow * ncols));
+        bit31 = diffCol >> 31;                // Compute its absolute value
+        diffCol = (diffCol ^ bit31) - bit31;
+
+        // return Math.abs(diffRow) *10 + Math.abs(diffCol)*10;
+        return Math.abs(diffRow) + Math.abs(diffCol);
     }
 }
