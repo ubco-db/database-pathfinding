@@ -13,6 +13,8 @@ public abstract class SearchProblem {
 
     public abstract ArrayList<SearchState> getNeighbors(SearchState state);
 
+    public abstract int computeDistance(SearchState start, SearchState goal);
+
     public abstract int computeDistance(SearchState start, SearchState goal, HeuristicFunction heuristic);
 
     public abstract int getMaxSize();
