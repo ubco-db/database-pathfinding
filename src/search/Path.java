@@ -4,68 +4,67 @@ import java.util.ArrayList;
 
 /**
  * Stores path information
- * @author rlawrenc
  *
+ * @author rlawrenc
  */
 public class Path implements Comparable {
 
-	private ArrayList<SearchState> states;
-	private double cost;
-	private int length;
-	private SearchState start, goal;
-	
-	public Path(ArrayList<SearchState> states, double cost, int length, SearchState start, SearchState goal)
-	{	this.states = states;
-		this.cost = cost;
-		this.length = length;
-		this.start = start;
-		this.goal = goal;
-	}
-	
-	public int compareTo(Object p) {
-		if (p instanceof Path)
-			return (int) (this.cost - ((Path) p).cost);
-		return -1;
-	}
+    private ArrayList<SearchState> states;
+    private double cost;
+    private int length;
+    private SearchState start, goal;
 
-	public ArrayList<SearchState> getStates() {
-		return states;
-	}
+    public Path(ArrayList<SearchState> states, double cost, int length, SearchState start, SearchState goal) {
+        this.states = states;
+        this.cost = cost;
+        this.length = length;
+        this.start = start;
+        this.goal = goal;
+    }
 
-	public void setStates(ArrayList<SearchState> states) {
-		this.states = states;
-	}
+    public int compareTo(Object p) {
+        if (p instanceof Path) return (int) (this.cost - ((Path) p).cost);
+        return -1;
+    }
 
-	public double getCost() {
-		return cost;
-	}
+    public ArrayList<SearchState> getStates() {
+        return states;
+    }
 
-	public void setCost(double cost) {
-		this.cost = cost;
-	}
+    public void setStates(ArrayList<SearchState> states) {
+        this.states = states;
+    }
 
-	public int getLength() {
-		return length;
-	}
+    public double getCost() {
+        return cost;
+    }
 
-	public void setLength(int length) {
-		this.length = length;
-	}
+    public void setCost(double cost) {
+        this.cost = cost;
+    }
 
-	public SearchState getStart() {
-		return start;
-	}
+    public int getLength() {
+        return length;
+    }
 
-	public void setStart(SearchState start) {
-		this.start = start;
-	}
+    public void setLength(int length) {
+        this.length = length;
+    }
 
-	public SearchState getGoal() {
-		return goal;
-	}
+    public SearchState getStart() {
+        return start;
+    }
 
-	public void setGoal(SearchState goal) {
-		this.goal = goal;
-	}
-	
+    public void setStart(SearchState start) {
+        this.start = start;
+    }
+
+    public SearchState getGoal() {
+        return goal;
+    }
+
+    public void setGoal(SearchState goal) {
+        this.goal = goal;
+    }
+
 }
