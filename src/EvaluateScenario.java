@@ -36,7 +36,8 @@ public class EvaluateScenario {
 
     @SuppressWarnings("unchecked")
     public static void main(String[] argv) {
-        String[] scenarios = {"012_100",                //0
+        String[] scenarios = {
+                "012_100",                //0
                 "mm_8_1024",              //1
                 "mm_cs_4_1000",           //2
                 "mm_de_5_1000",           //3
@@ -52,11 +53,13 @@ public class EvaluateScenario {
                 "rmtst01.map.scen",       //13
                 "change.txt"              //14
         };
-        String[] algorithmNames = {"A*", // 0
-                "HCDPS",                 // 5
-                "HCDPS+",                // 8
-                "Cover2",                // 18
-                "A*+heuristic"};         // 21
+        String[] algorithmNames = {
+                "A*",                     // 0
+                "HCDPS",                  // 1
+                "HCDPS+",                 // 2
+                "Cover2",                 // 3
+                "A*+heuristic"            // 4
+        };
         String[] abbrv = {"a", "hcdps", "hcdps+", "cover2", "AHrt"};
 
         /*
@@ -146,7 +149,7 @@ public class EvaluateScenario {
                 int goalCol = goalId - goalRow * ncols; //x_g
                 int diffCol = startCol - goalCol < 0 ? goalCol - startCol : startCol - goalCol; //delta_x
 
-                int max = diffCol < diffRow ? diffRow : diffCol;
+                int max = Math.max(diffCol, diffRow);
                 return (int) Math.round(44.9 * max + diffRow);
             }
         });
@@ -180,9 +183,9 @@ public class EvaluateScenario {
                 int goalCol = goalId - goalRow * ncols; //x_g
                 int diffCol = startCol - goalCol < 0 ? goalCol - startCol : startCol - goalCol; //delta_x
 
-                int min = goalRow < diffRow ? goalRow : diffRow;
+                int min = Math.min(goalRow, diffRow);
 
-                int max1 = 100 < min + startRow ? min + startRow : 100;
+                int max1 = Math.max(100, min + startRow);
 
                 int max2 = diffCol - diffRow < 0 ? diffRow : diffCol;
 
@@ -203,7 +206,7 @@ public class EvaluateScenario {
 
                 double p1 = 11.5 * Math.sqrt((startRow + diffRow) * (startRow + diffRow) * diffRow);
                 double p2 = diffCol * goalRow;
-                double max = p1 < p2 ? p2 : p1;
+                double max = Math.max(p1, p2);
                 return (int) Math.round(max);
             }
         });
@@ -219,9 +222,9 @@ public class EvaluateScenario {
                 int goalCol = goalId - goalRow * ncols; //x_g
                 int diffCol = startCol - goalCol < 0 ? goalCol - startCol : startCol - goalCol; //delta_x
 
-                int min = diffCol < goalCol ? goalCol : diffCol;
+                int min = Math.max(diffCol, goalCol);
 
-                int max = diffRow < diffCol + min ? diffCol + min : diffRow;
+                int max = Math.max(diffRow, diffCol + min);
 
                 return max * max;
             }

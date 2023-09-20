@@ -95,7 +95,7 @@ public class SubgoalDynamicDB3 extends SubgoalDBExact {
      * Loads DP table from file to memory.  Neighbor matrix stored in compress RLE form rather than as N x N matrix.
      *
      * @param fileName
-     * @return
+     * @return boolean
      */
     private boolean loadDB(String fileName) {    // Load dynamic programming table and records
         Scanner sc = null;
@@ -200,12 +200,11 @@ public class SubgoalDynamicDB3 extends SubgoalDBExact {
      * @param problem
      * @param groups
      * @param searchAlg
-     * @param dbstats
+     * @param dbStats
      * @param numLevels
      */
-    public void compute(SearchProblem problem, HashMap<Integer, GroupRecord> groups, SearchAlgorithm searchAlg, DBStatsRecord dbstats, int numLevels) {
+    public void compute(SearchProblem problem, HashMap<Integer, GroupRecord> groups, SearchAlgorithm searchAlg, DBStatsRecord dbStats, int numLevels) {
         GroupRecord startGroup;
-        numGroups = groups.size();
         HashSet<Integer> neighbors;
 
         numGroups = groups.size();
@@ -218,11 +217,11 @@ public class SubgoalDynamicDB3 extends SubgoalDBExact {
 
         long startTime = System.currentTimeMillis();
 
-        long baseTime = computeBasePaths2(problem, groups, searchAlg, lowestCost, paths, neighbor, numGroups, numLevels, true, dbstats);
+        long baseTime = computeBasePaths2(problem, groups, searchAlg, lowestCost, paths, neighbor, numGroups, numLevels, true, dbStats);
 
         long endTime = System.currentTimeMillis();
 
-        dbstats.addStat(16, baseTime);
+        dbStats.addStat(16, baseTime);
 
         System.out.println("Performing dynamic programming to generate paths.");
         // Now the dynamic programming portion
@@ -236,9 +235,8 @@ public class SubgoalDynamicDB3 extends SubgoalDBExact {
                 startGroup = groups.get(i + GameMap.START_NUM);
                 // Process all neighbors of this node
                 neighbors = GameDB.getNeighbors(groups, startGroup, numLevels);
-                Iterator<Integer> it = neighbors.iterator();
-                while (it.hasNext()) {
-                    int neighborId = it.next() - GameMap.START_NUM;
+                for (Integer integer : neighbors) {
+                    int neighborId = integer - GameMap.START_NUM;
                     // Compute new costs for all locations based on value of neighbor
                     for (int j = 0; j < numGroups; j++) {
                         if (i == j) continue;
@@ -261,10 +259,10 @@ public class SubgoalDynamicDB3 extends SubgoalDBExact {
 
         long dpTime = endTime - System.currentTimeMillis();
         System.out.println("Time to compute paths via dynamic programming: " + dpTime);
-        dbstats.addStat(15, dpTime);
+        dbStats.addStat(15, dpTime);
         long overallTime = endTime - startTime;
         System.out.println("Total DB compute time: " + overallTime);
-        dbstats.addStat(10, overallTime);
+        dbStats.addStat(10, overallTime);
     }
 
     public void compressDP(int[][] neighbor) {
@@ -285,7 +283,7 @@ public class SubgoalDynamicDB3 extends SubgoalDBExact {
     }
 
     // This version does not assume a full matrix but rather an adjacency list representation
-    public long computeBasePaths2(SearchProblem problem, HashMap<Integer, GroupRecord> groups, SearchAlgorithm searchAlg, int[][] lowestCost, int[][][] paths, int[][] neighbor, int numGroups, int numLevels, boolean asSubgoals, DBStatsRecord dbstats) {
+    public long computeBasePaths2(SearchProblem problem, HashMap<Integer, GroupRecord> groups, SearchAlgorithm searchAlg, int[][] lowestCost, int[][][] paths, int[][] neighbor, int numGroups, int numLevels, boolean asSubgoals, DBStatsRecord dbStats) {
         int goalGroupLoc, startGroupLoc;
         GroupRecord startGroup, goalGroup;
         HashSet<Integer> neighbors;
@@ -314,7 +312,7 @@ public class SubgoalDynamicDB3 extends SubgoalDBExact {
             int count = 0;
             while (it.hasNext()) {
                 // Compute the shortest path between center representative of both groups
-                int goalGroupId = (Integer) it.next();
+                int goalGroupId = it.next();
                 goalGroup = groups.get(goalGroupId);
 
                 path = astar.computePath(new SearchState(startGroup.groupRepId), new SearchState(goalGroup.groupRepId), stats);
@@ -344,8 +342,8 @@ public class SubgoalDynamicDB3 extends SubgoalDBExact {
         long baseTime = endTime - currentTime;
         System.out.println("Time to compute base paths: " + (baseTime));
         System.out.println("Base neighbors generated paths: " + numBase + " Number of states: " + numStates);
-        dbstats.addStat(9, numStates);        // Set number of subgoals.  Will be changed by a version that pre-computes all paths but will not be changed for the dynamic version.
-        dbstats.addStat(8, numBase);        // # of records (only corresponds to base paths)
+        dbStats.addStat(9, numStates);  // Set number of subgoals.  Will be changed by a version that pre-computes all paths but will not be changed for the dynamic version.
+        dbStats.addStat(8, numBase);    // # of records (only corresponds to base paths)
         return baseTime;
     }
 

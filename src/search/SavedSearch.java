@@ -13,7 +13,7 @@ public class SavedSearch {
     private int numClosed;                // Number of items in the closed list
     private int currentCL;                // Current closed length
 
-    private static int GROWTH_FACTOR = 4;        // Amount to re-size heap when overflows
+    private static final int GROWTH_FACTOR = 4;        // Amount to re-size heap when overflows
 
     public SavedSearch(int size) {
         int hashSize = size * 2;

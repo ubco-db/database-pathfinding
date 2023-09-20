@@ -8,11 +8,11 @@ import search.SearchState;
  * @author rlawrenc
  */
 public class Problem {
-    private String mapName;
+    private final String mapName;
     private SearchState start;
     private SearchState goal;
-    private int optimalTravelCost;
-    private double aStarDifficulty;
+    private final int optimalTravelCost;
+    private final double aStarDifficulty;
 
 
     public Problem(String mapName, SearchState start, SearchState goal, int optimalTravelCost, double starDifficulty) {

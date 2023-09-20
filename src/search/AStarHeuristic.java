@@ -13,9 +13,9 @@ import java.util.PriorityQueue;
  * detect if the node has been previously used (in closed list) in main loop.  Removing items is very costly, so this is trading speed for some extra memory.
  */
 public class AStarHeuristic implements SearchAlgorithm {
-    private SearchProblem problem;
+    private final SearchProblem problem;
     private ArrayList<SearchState> statesExpanded;
-    private BitSet closedList;
+    private final BitSet closedList;
     HeuristicFunction heuristic;
 
     public AStarHeuristic(SearchProblem problem, HeuristicFunction heuristic) {
@@ -148,8 +148,8 @@ public class AStarHeuristic implements SearchAlgorithm {
             int newG = current.g + problem.getMoveCost(current, next);
 
             // 	Add state to list.  If already there, update its cost only
-            Integer stateid = next.id;        // Build integer object once to save time
-            SearchState state = openListLookup.get(stateid);
+            Integer stateId = next.id;        // Build integer object once to save time
+            SearchState state = openListLookup.get(stateId);
             if (state != null) {
                 if (state.g > newG) {
                     SearchState st = new SearchState(state);
@@ -157,14 +157,14 @@ public class AStarHeuristic implements SearchAlgorithm {
                     st.updateCost(newG, problem.computeDistance(st, goal, heuristic));
                     st.prev = current;
                     openList.add(st);
-                    openListLookup.put(stateid, st);
+                    openListLookup.put(stateId, st);
                 }
             } else {
                 //next.updateCost(newG, problem.computeDistance(next, goal));
                 next.updateCost(newG, problem.computeDistance(next, goal, heuristic));
                 next.prev = current;
                 openList.add(next);
-                openListLookup.put(stateid, next);
+                openListLookup.put(stateId, next);
             }
         }
     }

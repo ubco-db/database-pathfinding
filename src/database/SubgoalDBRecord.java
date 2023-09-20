@@ -19,9 +19,9 @@ public class SubgoalDBRecord {
     private int id;
     private int startId;
     private int goalId;
-    private int searchDepth;
+    private final int searchDepth;
     // Use a custom array rather than an ArrayList of objects to save memory.
-    private int[] stateIds;
+    private final int[] stateIds;
 
     public SubgoalDBRecord(int startId, int goalId, int[] subgoalIds, int depth) {
         super();
@@ -121,10 +121,10 @@ public class SubgoalDBRecord {
      * Computes a path from the compressed record given the search algorithm to expand the record with.
      *
      * @param alg
-     * @return
+     * @return ArrayList<SearchState>
      */
     public ArrayList<SearchState> computePath(SearchAlgorithm alg) {
-        ArrayList<SearchState> path = new ArrayList<SearchState>();
+        ArrayList<SearchState> path = new ArrayList<>();
 
         SearchState start = new SearchState(this.startId);
         SearchState goal = new SearchState(this.goalId);
@@ -136,9 +136,9 @@ public class SubgoalDBRecord {
             for (int stateId : this.stateIds) {
                 ArrayList<SearchState> tmp = alg.computePath(currStart, new SearchState(stateId), stats);
                 currStart = new SearchState(stateId);
-                path = SearchUtil.mergePaths(path, tmp);
+                SearchUtil.mergePaths(path, tmp);
             }
-            path = SearchUtil.mergePaths(path, alg.computePath(currStart, goal, stats));
+            SearchUtil.mergePaths(path, alg.computePath(currStart, goal, stats));
         }
 
         return path;

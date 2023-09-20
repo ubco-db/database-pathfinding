@@ -70,7 +70,7 @@ public class SubgoalDB {
      * Adds record to database.
      *
      * @param rec
-     * @return
+     * @return boolean
      */
     public boolean addRecord(SubgoalDBRecord rec) {
         records.add(rec);
@@ -85,7 +85,7 @@ public class SubgoalDB {
      * @param rec
      * @param startId
      * @param goalId
-     * @return
+     * @return int
      */
     public int computeDistance(SearchProblem problem, SubgoalDBRecord rec, int startId, int goalId) {
         int dist1 = problem.computeDistance(rec.getStartId(), startId);
@@ -101,11 +101,11 @@ public class SubgoalDB {
      * @param problem
      * @param start
      * @param goal
-     * @return
+     * @return ArrayList<SubgoalDBRecord>
      */
     public ArrayList<SubgoalDBRecord> findNearest(SearchProblem problem, SearchState start, SearchState goal, int max) {
         int j;
-        ArrayList<SubgoalDBRecord> best = new ArrayList<SubgoalDBRecord>();
+        ArrayList<SubgoalDBRecord> best = new ArrayList<>();
         for (SubgoalDBRecord rec : records) {
             int dist = computeDistance(problem, rec, start.id, goal.id);
 
@@ -134,11 +134,11 @@ public class SubgoalDB {
      * @param max      - number of results to return
      * @param stats
      * @param used
-     * @return
+     * @return ArrayList<SubgoalDBRecord>
      */
     public ArrayList<SubgoalDBRecord> findNearest(SearchProblem problem, SearchState start, SearchState goal, SearchAlgorithm searchAlg, int max, StatsRecord stats, ArrayList<SubgoalDBRecord> used) {
         ArrayList<SubgoalDBRecord> results = findNearest(problem, start, goal, max);
-        ArrayList<SubgoalDBRecord> resultsHC = new ArrayList<SubgoalDBRecord>(1);
+        ArrayList<SubgoalDBRecord> resultsHC = new ArrayList<>(1);
 
         // Filter out those that are not HC-reachable
         for (int i = 0; i < results.size() && i < max; i++) {
@@ -159,7 +159,7 @@ public class SubgoalDB {
      * Converts a path of states into a fixed array of state ids.
      *
      * @param path
-     * @return
+     * @return int[]
      */
     public static int[] convertPathToIds(ArrayList<SearchState> path) {
         int[] idPath = new int[path.size()];
@@ -186,7 +186,7 @@ public class SubgoalDB {
      * Returns true if file exists (more general than just if subgoal database exists).
      *
      * @param fileName
-     * @return
+     * @return boolean
      */
     public boolean exists(String fileName) {
         File f = new File(fileName);
@@ -197,7 +197,7 @@ public class SubgoalDB {
      * Loads a database of records.
      *
      * @param fileName
-     * @return
+     * @return boolean
      */
     public boolean load(String fileName) {
         Scanner sc = null;

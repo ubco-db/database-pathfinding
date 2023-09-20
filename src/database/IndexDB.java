@@ -23,13 +23,13 @@ public class IndexDB {
     private int numRegions;
     private int[][] groups;
 
-    private static int maxSize = 1000000;
-    private static int htStepSize = 1000;
+    private static final int MAX_SIZE = 1000000;
+    private static final int HT_STEP_SIZE = 1000;
 
     public IndexDB() {
         count = 0;
-        nodeIds = new int[maxSize];
-        seedIds = new int[maxSize];
+        nodeIds = new int[MAX_SIZE];
+        seedIds = new int[MAX_SIZE];
         numRegions = 0;
     }
 
@@ -55,17 +55,17 @@ public class IndexDB {
      */
     public void buildHT() {    // Builds a HT from an existing sorted array
         int maxId = nodeIds[count - 1];
-        hashTable = new int[maxId / htStepSize + 1];
+        hashTable = new int[maxId / HT_STEP_SIZE + 1];
         hashTable[0] = 0;
-        for (int i = 1; i < maxId / htStepSize; i++) {
-            hashTable[i] = findLoc(i * htStepSize);
+        for (int i = 1; i < maxId / HT_STEP_SIZE; i++) {
+            hashTable[i] = findLoc(i * HT_STEP_SIZE);
         }
         System.out.println("Hash table size: " + hashTable.length);
     }
 
     public int findHT(int nodeId) {
 
-        int htloc = nodeId / htStepSize;
+        int htloc = nodeId / HT_STEP_SIZE;
         if (htloc >= hashTable.length) htloc = hashTable.length - 1;
 
         int loc = hashTable[htloc];
@@ -79,25 +79,17 @@ public class IndexDB {
     }
 
     public int find(int nodeId) {
-        int loc = Arrays.binarySearch(nodeIds, 0, count, nodeId);
-        if (loc >= 0) return seedIds[loc];    // Exact match with record in index
-        else {    // Find appropriate record based on range
-            loc = (loc + 2) * -1;
-            if (loc > nodeIds.length) loc = 0;
-            if (loc < 0) loc = 0;
-            return seedIds[loc];
-        }
+        return seedIds[findLoc(nodeId)];
     }
 
     public int findLoc(int nodeId) {
         int loc = Arrays.binarySearch(nodeIds, 0, count, nodeId);
-        if (loc >= 0) return loc;    // Exact match with record in index
-        else {    // Find appropriate record based on range
+        if (loc < 0) { // Not an exact match with record in index, find appropriate record based on range
             loc = (loc + 2) * -1;
             if (loc > nodeIds.length) loc = 0;
             if (loc < 0) loc = 0;
-            return loc;
         }
+        return loc;
     }
 
     public int getCount() {
@@ -165,7 +157,6 @@ public class IndexDB {
             System.out.println("Error with output file: " + e);
         }
     }
-
 
     public void print() {
         System.out.println(count);

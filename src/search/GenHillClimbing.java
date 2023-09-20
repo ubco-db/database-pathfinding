@@ -11,22 +11,19 @@ import java.util.ArrayList;
  * Cutoff is maximum # of moves that can make and be HC reachable
  */
 public class GenHillClimbing implements SearchAbstractAlgorithm {
-    private SearchProblem problem;
-    private int cutoff;
-    private ExpandArray path = new ExpandArray(100);
-    private ExpandArray neighbors = new ExpandArray(10);
-    private ExpandArray neighbors2 = new ExpandArray(10);
-    private boolean doneCall;
-    private boolean tieBreak;
+    private final SearchProblem problem;
+    private final int cutoff;
+    private final ExpandArray path = new ExpandArray(100);
+    private final ExpandArray neighbors = new ExpandArray(10);
+    private final ExpandArray neighbors2 = new ExpandArray(10);
 
     private int nextH, nextId;
 
-    private HeuristicFunction heuristic;
+    private final HeuristicFunction heuristic;
 
     public GenHillClimbing(SearchProblem problem, int cutoff, boolean tieBreak, HeuristicFunction heuristic) {
         this.problem = problem;
         this.cutoff = cutoff;
-        this.tieBreak = tieBreak;
         this.heuristic = heuristic;
     }
 
@@ -85,7 +82,7 @@ public class GenHillClimbing implements SearchAbstractAlgorithm {
         }
     }
 
-    private ExpandArray computeIdPath(int startId, int goalId, StatsRecord stats) {
+    private ExpandArray computeIdPath(int startId, int goalId) {
         int currId = startId;
         int currH;
         int count = 0;
@@ -105,7 +102,6 @@ public class GenHillClimbing implements SearchAbstractAlgorithm {
                 return null;        // No path possible
             }
 
-            doneCall = false;
             getMinDistance(currId, goalId, neighbors);
 
             // Need to check if at a plateau here (need to remember cost up to this point)
@@ -123,10 +119,10 @@ public class GenHillClimbing implements SearchAbstractAlgorithm {
     }
 
     public ArrayList<SearchState> computePath(SearchState start, SearchState goal, StatsRecord stats) {    // Now create objects for path
-        ExpandArray path = computeIdPath(start.id, goal.id, stats);
+        ExpandArray path = computeIdPath(start.id, goal.id);
         if (path == null)
             return null;
-        ArrayList<SearchState> result = new ArrayList<SearchState>(path.num());
+        ArrayList<SearchState> result = new ArrayList<>(path.num());
         for (int i = 0; i < path.num(); i++)
             result.add(new SearchState(path.get(i)));
         SearchUtil.computePathCost(result, stats, problem);
@@ -135,15 +131,15 @@ public class GenHillClimbing implements SearchAbstractAlgorithm {
     }
 
     public boolean isPath(SearchState start, SearchState goal, StatsRecord stats) {
-        return computeIdPath(start.id, goal.id, stats) != null;
+        return computeIdPath(start.id, goal.id) != null;
     }
 
     public boolean isPath(int startId, int goalId, StatsRecord stats) {
-        return computeIdPath(startId, goalId, stats) != null;
+        return computeIdPath(startId, goalId) != null;
     }
 
     public int isPath(int startId, int goalId, StatsRecord stats, SavedSearch database) {
-        return computePath(startId, goalId, stats, database);
+        return computePath(startId, goalId, database);
 		/*
 		// This computes the cost
 		int lastId = path.get(0);
@@ -158,7 +154,7 @@ public class GenHillClimbing implements SearchAbstractAlgorithm {
 		*/
     }
 
-    private int computePath(int startId, int goalId, StatsRecord stats, SavedSearch database) {
+    private int computePath(int startId, int goalId, SavedSearch database) {
         int currId = startId;
         int currH;
         int count = 0;

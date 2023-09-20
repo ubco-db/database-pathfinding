@@ -694,7 +694,7 @@ public class GameDB {
      *
      * @return SubgoalDB
      */
-    public SubgoalDB computeHCDBDP(SubgoalDB db, SearchAlgorithm searchAlg, DBStatsRecord dbstats, int numLevels) {
+    public SubgoalDB computeHCDBDP(SubgoalDB db, SearchAlgorithm searchAlg, DBStatsRecord dbStats, int numLevels) {
         GroupRecord startGroup, goalGroup;
         int[] path;
         int SIZE_CUTOFF = 1;
@@ -706,7 +706,7 @@ public class GameDB {
         int[][] neighbor = new int[numGroups][numGroups];
         long startTime = System.currentTimeMillis();
 
-        long baseTime = computeBasePaths(problem, groups, searchAlg, lowestCost, paths, neighbor, numGroups, numLevels, true, dbstats);
+        long baseTime = computeBasePaths(problem, groups, searchAlg, lowestCost, paths, neighbor, numGroups, numLevels, true, dbStats);
 
         long endTime, currentTime = System.currentTimeMillis();
 
@@ -844,13 +844,13 @@ public class GameDB {
         long recordTime = endTime - currentTime;
         System.out.println("Time to compute records: " + recordTime);
         System.out.println("Total DB compute time: " + overallTime);
-        dbstats.addStat(8, count);
-        dbstats.addStat(9, numSubgoals);
-        long neighborTime = (Long) dbstats.getStat(18);
-        dbstats.addStat(10, overallTime + neighborTime);
-        dbstats.addStat(15, dpTime);
-        dbstats.addStat(16, baseTime);
-        dbstats.addStat(17, recordTime);
+        dbStats.addStat(8, count);
+        dbStats.addStat(9, numSubgoals);
+        long neighborTime = (Long) dbStats.getStat(18);
+        dbStats.addStat(10, overallTime + neighborTime);
+        dbStats.addStat(15, dpTime);
+        dbStats.addStat(16, baseTime);
+        dbStats.addStat(17, recordTime);
 
         // Verify by computing all costs
         System.out.println("Total costs: " + totalCost);

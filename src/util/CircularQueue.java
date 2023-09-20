@@ -1,8 +1,8 @@
 package util;
 
 public class CircularQueue {
-    private int maxSize;
-    private int[] data;
+    private final int maxSize;
+    private final int[] data;
     private int front;
     private int rear;
     private int iteratorLoc;

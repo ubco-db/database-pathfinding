@@ -1,11 +1,6 @@
 package scenario;
 
-
 import search.StatsRecord;
-
-import java.io.PrintWriter;
-import java.util.ArrayList;
-
 
 public class StatsCompare {
 

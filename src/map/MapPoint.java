@@ -7,8 +7,8 @@ package map;
  */
 public class MapPoint {
 
-    private int row;
-    private int col;
+    private final int row;
+    private final int col;
 
 
     public MapPoint(int row, int col) {

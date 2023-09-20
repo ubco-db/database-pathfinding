@@ -9,19 +9,19 @@ import java.util.Arrays;
  * @author rlawrenc
  */
 public class StatsRecord {
-    private int statesExpandedHC;            // States expanded during hill climbing
+    private int statesExpandedHC;               // States expanded during hill climbing
     private long statesExpanded;                // States expanded during LRTA*/A* or other search algorithm (does not include HC states if applicable)
-    private long statesUpdated;                // States updated during LRTA*/A* or other search algorithm
+    private long statesUpdated;                 // States updated during LRTA*/A* or other search algorithm
 
-    private int pathLength;                    // Path length as found by algorithm
-    private int pathCost;                    // Cost of path found
-    private long time;                        // Time in milliseconds
+    private int pathLength;                     // Path length as found by algorithm
+    private int pathCost;                       // Cost of path found
+    private long time;                          // Time in milliseconds
     // private long maxTime;					// Maximum move time in nanoseconds
 
-    private long revisits;                    // Number of state revisits
+    private long revisits;                      // Number of state revisits
     private long[] moveTimes = new long[100];
-    private int arrayCount = 0;                // Number of moves in the array
-    private int moveCount = 0;                // Number of moves tracked
+    private int arrayCount = 0;                 // Number of moves in the array
+    private int moveCount = 0;                  // Number of moves tracked
     private int[] maxMoveNum = new int[100];    // Track the top most expensive 100 moves
     private int subgoals;
 
@@ -33,11 +33,11 @@ public class StatsRecord {
         this.revisits = revisits;
     }
 
-    private int closedListSize;                // Maximum size of closed list
-    private int openListSize;                // Maximum size of open list
-    private int maxMemSize;                    // Maximum size of closed/open list together
+    private int closedListSize;                 // Maximum size of closed list
+    private int openListSize;                   // Maximum size of open list
+    private int maxMemSize;                     // Maximum size of closed/open list together
 
-    private int count;                        // A generic count that can be used in different ways by algorithms
+    private int count;                          // A generic count that can be used in different ways by algorithms
 
     public int getCount() {
         return count;

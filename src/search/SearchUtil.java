@@ -4,12 +4,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class SearchUtil {
+
     /**
      * Merges path 2 onto end of path 1 removing the last element of path 1 which is assumed to be the same as the first element in path2
      *
      * @param path1
      * @param path2
-     * @return
+     * @return ArrayList<SearchState>
      */
     public static ArrayList<SearchState> mergePaths(ArrayList<SearchState> path1, ArrayList<SearchState> path2) {
         if (path1.size() > 0) path1.remove(path1.size() - 1);    // Remove last element
@@ -39,7 +40,7 @@ public class SearchUtil {
     public static int countRevisits(ArrayList<SearchState> path) {
         if (path == null) return 0;
         else {
-            HashMap<Integer, Integer> states = new HashMap<Integer, Integer>(path.size());
+            HashMap<Integer, Integer> states = new HashMap<>(path.size());
             int revisits = 0;
             for (SearchState searchState : path) {
                 int id = searchState.id;
@@ -58,7 +59,7 @@ public class SearchUtil {
         int total = 0;
         if (path == null) return 0;
         else {
-            HashMap<Integer, Integer> states = new HashMap<Integer, Integer>(path.size());
+            HashMap<Integer, Integer> states = new HashMap<>(path.size());
             int revisits = 0;
             for (int i = 0; i < path.size(); i++) {
                 int id = path.get(i).id;
@@ -104,7 +105,7 @@ public class SearchUtil {
      * Adds start and end points as subgoals to be consistent with linear version.
      * Basically compresses A* path into HC subgoal array.
      *
-     * @return
+     * @return ArrayList<SearchState>
      */
     public static ArrayList<SearchState> computeSubgoalsBinary(ArrayList<SearchState> path, SearchAlgorithm searchAlg, ArrayList<SearchState> subgoals) {
         subgoals.clear();
@@ -121,7 +122,7 @@ public class SearchUtil {
 
             while (startIndex < endIndex) {
                 current = (startIndex + endIndex) / 2;            // Get mid-point
-                // Determine if can reach this point from the current start using HC
+                // Determine if  this point can be reached from the current start using HC
                 currentGoal = path.get(current);
                 if (!searchAlg.isPath(currentStart, currentGoal, stats)) endIndex = current - 1;
                 else {    // Can HC reach to here from current start, but can we do better?
@@ -151,7 +152,7 @@ public class SearchUtil {
         while (startIndex <= endIndex) {
             current = (startIndex + endIndex) / 2;            // Get mid-point
             // System.out.println("Binary current: "+path.get(current)+" Start: "+path.get(startIndex)+" End: "+path.get(endIndex));
-            // Determine if can reach this point from the current start using HC
+            // Determine if this point can be reached from the current start using HC
             currentGoal = path.get(current);
             if (!searchAlg.isPath(currentStart, currentGoal, stats)) endIndex = current - 1;
             else {    // Can HC reach to here from current start, but can we do better?
@@ -174,7 +175,7 @@ public class SearchUtil {
 		{	
 			current = (startIndex+endIndex)/2;			// Get mid-point
 			System.out.println("Binary current: "+path.get(path.size()-1-current)+" Start: "+path.get(startIndex)+" End: "+path.get(endIndex));
-			// Determine if can reach this point from the current start using HC
+			// Determine if this point can be reached from the current start using HC
 			currentStart = path.get(path.size()-1-current);
 			if (!searchAlg.isPath(currentStart, goal, stats))
 				endIndex = current-1;
@@ -185,7 +186,7 @@ public class SearchUtil {
 			}	
 		}
 		if (best == -1)
-			return null;		// Note: This check is to handle the case that none of the states on the path can HC-reach goal.  Only happens if have not verified that every state in region can both HC to and from them during abstraction.
+			return null;		// Note: This check is to handle the case that none of the states on the path can HC-reach goal.  Only happens if you have not verified that every state in region can both HC to and from them during abstraction.
 		System.out.println("Success current: "+path.get(path.size()-1-best));
 		return path.get(path.size()-1-best);		
 	}
@@ -200,7 +201,7 @@ public class SearchUtil {
         while (startIndex <= endIndex) {
             current = (startIndex + endIndex) / 2;            // Get mid-point
             //System.out.println("Binary current: "+path.get(current)+" Start: "+path.get(startIndex)+" End: "+path.get(endIndex));
-            // Determine if can reach this point from the current start using HC
+            // Determine if this point can be reached from the current start using HC
             currentStart = path.get(current);
             if (searchAlg.isPath(currentStart, goal, stats)) {
                 endIndex = current - 1;
@@ -210,7 +211,7 @@ public class SearchUtil {
             }
         }
         if (best == -1)
-            return null;        // Note: This check is to handle the case that none of the states on the path can HC-reach goal.  Only happens if have not verified that every state in region can both HC to and from them during abstraction.
+            return null;        // Note: This check is to handle the case that none of the states on the path can HC-reach goal.  Only happens if you have not verified that every state in region can both HC to and from them during abstraction.
         //System.out.println("Success current: "+path.get(best));
         return path.get(best);
     }
@@ -232,7 +233,7 @@ public class SearchUtil {
 
             while (startIndex <= endIndex) {
                 current = (startIndex + endIndex) / 2;            // Get mid-point
-                // Determine if can reach this point from the current start using HC
+                // Determine if you can reach this point from the current start using HC
                 currentGoalId = path[current];
                 if (!searchAlg.isPath(currentStartId, currentGoalId, stats)) endIndex = current - 1;
                 else {    // Can HC reach to here from current start, but can we do better?
@@ -262,7 +263,7 @@ public class SearchUtil {
      * @param searchAlg
      * @param tmp
      * @param pathSize
-     * @return
+     * @return int[]
      */
     public static int[] compressPath(int[] path, SearchAlgorithm searchAlg, int[] tmp, int pathSize) {
         StatsRecord stats = new StatsRecord();
@@ -281,7 +282,7 @@ public class SearchUtil {
 
             while (startIndex <= endIndex) {
                 current = (startIndex + endIndex) / 2;            // Get mid-point
-                // Determine if can reach this point from the current start using HC
+                // Determine if this point can be reached from the current start using HC
                 currentGoalId = path[current];
                 if (!searchAlg.isPath(currentStartId, currentGoalId, stats)) endIndex = current - 1;
                 else {    // Can HC reach to here from current start, but can we do better?

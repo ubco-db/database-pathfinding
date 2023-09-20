@@ -131,10 +131,9 @@ public class HeuristicCompare {
 
         MapSearchProblem problem = new MapSearchProblem(map);
 
-
         SearchAlgorithm alg = null;
-        HashSet<Integer> goals = new HashSet<Integer>();
-        HashSet<Integer> starts = new HashSet<Integer>();
+        HashSet<Integer> goals = new HashSet<>();
+        HashSet<Integer> starts = new HashSet<>();
         int goalid, startid;
 
         for (int g = 0; g < numGoals; g++) {
@@ -261,7 +260,7 @@ public class HeuristicCompare {
                 int goalCol = goalId - goalRow * ncols; //x_g
                 int diffCol = startCol - goalCol < 0 ? goalCol - startCol : startCol - goalCol; //delta_x
 
-                int max = diffCol < diffRow ? diffRow : diffCol;
+                int max = Math.max(diffCol, diffRow);
                 return (int) Math.round(44.9 * max + diffRow);
             }
         });
@@ -295,9 +294,9 @@ public class HeuristicCompare {
                 int goalCol = goalId - goalRow * ncols; //x_g
                 int diffCol = startCol - goalCol < 0 ? goalCol - startCol : startCol - goalCol; //delta_x
 
-                int min = goalRow < diffRow ? goalRow : diffRow;
+                int min = Math.min(goalRow, diffRow);
 
-                int max1 = 100 < min + startRow ? min + startRow : 100;
+                int max1 = Math.max(100, min + startRow);
 
                 int max2 = diffCol - diffRow < 0 ? diffRow : diffCol;
 
@@ -318,7 +317,7 @@ public class HeuristicCompare {
 
                 double p1 = 11.5 * Math.sqrt(((startRow + 1) + diffRow) * ((startRow + 1) + diffRow) * diffRow);
                 double p2 = diffCol * (goalRow + 1); //goalRow (heuristic indexes from 1 not 0 so add +1)
-                double max = p1 < p2 ? p2 : p1;
+                double max = Math.max(p1, p2);
                 return (int) Math.round(max);
             }
         });
@@ -334,9 +333,9 @@ public class HeuristicCompare {
                 int goalCol = goalId - goalRow * ncols; //x_g
                 int diffCol = startCol - goalCol < 0 ? goalCol - startCol : startCol - goalCol; //delta_x
 
-                int min = diffCol < goalCol ? goalCol : diffCol;
+                int min = Math.max(diffCol, goalCol);
 
-                int max = diffRow < diffCol + min ? diffCol + min : diffRow;
+                int max = Math.max(diffRow, diffCol + min);
 
                 return max * max;
             }

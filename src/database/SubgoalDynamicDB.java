@@ -14,7 +14,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Scanner;
 
 /**
@@ -26,20 +25,20 @@ import java.util.Scanner;
  * @author rlawrenc
  */
 public class SubgoalDynamicDB extends SubgoalDBExact {
-    private int numGroups;                        // Number of abstract regions
-    private int[][] lowestCost;                    // Lowest cost for DP table.  lowestCost[i][j] is the cost of the lowest path from region i to region j
-    private int[][][] paths;                    // paths[i][j] is array representing a compressed path of state ids from region i to region j of lowest cost path
-    private int[][] neighbor;                    // neighbor[i][j] is region id of next region to visit on lowest cost path from region i to region j (the next hop)
+    private int numGroups;                      // Number of abstract regions
+    private int[][] lowestCost;                 // Lowest cost for DP table. lowestCost[i][j] is the cost of the lowest cost path from region i to region j
+    private int[][][] paths;                    // paths[i][j] is array representing a compressed path of state ids from region i to region j of the lowest cost path
+    private int[][] neighbor;                   // neighbor[i][j] is region id of next region to visit on lowest cost path from region i to region j (the next hop)
 
 
     /**
-     * The method to find the best record changes as now we must piece together a record using the compute DP table rather than return a pre-computed record.
+     * The method to find the best record changes as now we must piece together a record using the compute-DP table rather than return a pre-computed record.
      */
     public ArrayList<SubgoalDBRecord> findNearest(SearchProblem problem, SearchState start, SearchState goal, SearchAlgorithm searchAlg, int max, StatsRecord stats, ArrayList<SubgoalDBRecord> used) {
         int startSeedId = db.findHT(start.id);
         int goalSeedId = db.findHT(goal.id);
 
-        ArrayList<SubgoalDBRecord> result = new ArrayList<SubgoalDBRecord>(1);
+        ArrayList<SubgoalDBRecord> result = new ArrayList<>(1);
 
         // Need to calculate record as will not be stored
         int pathSize;
@@ -64,7 +63,7 @@ public class SubgoalDynamicDB extends SubgoalDBExact {
 
     /**
      * Initializes the dynamic programming table for querying.
-     * Currently just a place holder.
+     * Currently just a placeholder.
      */
     public void init() {
     }
@@ -91,7 +90,7 @@ public class SubgoalDynamicDB extends SubgoalDBExact {
      * This occupies significant space as N gets large, especially because the matrix is sparse.
      *
      * @param fileName
-     * @return
+     * @return boolean
      */
     private boolean loadDB(String fileName) {    // Load dynamic programming table and records
         Scanner sc = null;
@@ -200,10 +199,10 @@ public class SubgoalDynamicDB extends SubgoalDBExact {
      * @param problem
      * @param groups
      * @param searchAlg
-     * @param dbstats
+     * @param dbStats
      * @param numLevels
      */
-    public void compute(SearchProblem problem, HashMap<Integer, GroupRecord> groups, SearchAlgorithm searchAlg, DBStatsRecord dbstats, int numLevels) {
+    public void compute(SearchProblem problem, HashMap<Integer, GroupRecord> groups, SearchAlgorithm searchAlg, DBStatsRecord dbStats, int numLevels) {
         GroupRecord startGroup;
         numGroups = groups.size();
         lowestCost = new int[numGroups][numGroups];
@@ -212,7 +211,7 @@ public class SubgoalDynamicDB extends SubgoalDBExact {
         HashSet<Integer> neighbors;
         long startTime = System.currentTimeMillis();
 
-        long baseTime = GameDB.computeBasePaths(problem, groups, searchAlg, lowestCost, paths, neighbor, numGroups, numLevels, true, dbstats);
+        long baseTime = GameDB.computeBasePaths(problem, groups, searchAlg, lowestCost, paths, neighbor, numGroups, numLevels, true, dbStats);
 
         long endTime, currentTime = System.currentTimeMillis();
 
@@ -228,9 +227,8 @@ public class SubgoalDynamicDB extends SubgoalDBExact {
                 startGroup = groups.get(i + GameMap.START_NUM);
                 // Process all neighbors of this node
                 neighbors = GameDB.getNeighbors(groups, startGroup, numLevels);
-                Iterator<Integer> it = neighbors.iterator();
-                while (it.hasNext()) {
-                    int neighborId = (Integer) it.next() - GameMap.START_NUM;
+                for (Integer integer : neighbors) {
+                    int neighborId = integer - GameMap.START_NUM;
                     // Compute new costs for all locations based on value of neighbor
                     for (int j = 0; j < numGroups; j++) {
                         if (i == j) continue;
@@ -250,10 +248,10 @@ public class SubgoalDynamicDB extends SubgoalDBExact {
         long dpTime = endTime - currentTime;
         System.out.println("Time to compute paths via dynamic programming: " + dpTime);
 
-        dbstats.addStat(16, baseTime);
+        dbStats.addStat(16, baseTime);
         long overallTime = endTime - startTime;
         System.out.println("Total DB compute time: " + overallTime);
-        dbstats.addStat(10, overallTime);
-        dbstats.addStat(15, dpTime);
+        dbStats.addStat(10, overallTime);
+        dbStats.addStat(15, dpTime);
     }
 }

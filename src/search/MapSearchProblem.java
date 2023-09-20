@@ -15,7 +15,7 @@ import java.util.Random;
  * @author rlawrenc
  */
 public class MapSearchProblem extends SearchProblem {
-    private GameMap map;
+    private final GameMap map;
     private int row;
     private int col;
 
@@ -256,11 +256,6 @@ public class MapSearchProblem extends SearchProblem {
 
     public void getNeighbors(int stateId, ExpandArray neighbors) {
         map.getNeighbors(map.getRow(stateId), map.getCol(stateId), neighbors);
-    }
-
-    public boolean isNeighbor(int fromStateId, int toStateId) {    // Is a neighbor if heuristic distance is <= 14 (one move)
-        int dist = computeDistance(fromStateId, toStateId);
-        return (dist < 14);
     }
 
     // Computes the groups in a map

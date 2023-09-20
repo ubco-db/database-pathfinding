@@ -293,7 +293,7 @@ public class GameMap {
             rows = Integer.parseInt(st.substring(7).trim());
             st = sc.nextLine();            // Number of cols. e.g. width 148
             cols = Integer.parseInt(st.substring(6).trim());
-            st = sc.nextLine();            // Just says map
+            sc.nextLine();                  // Just says map
             squares = new int[rows][cols];
             mapInit();
             states = 0;
@@ -441,7 +441,7 @@ public class GameMap {
 
     // Assumes first source val is at row and col and expands out.  Assumes all with same sourceval are reachable from this starting point.
     public void copyMatrixNew(int row, int col, GameMap source, GameMap dest, int sourceval, int destval) {
-        Stack<MapPoint> currentSet = new Stack<MapPoint>();
+        Stack<MapPoint> currentSet = new Stack<>();
         HashMap<Integer, Integer> visited = new HashMap<>();
         currentSet.add(new MapPoint(row, col));
         int count = 0;
@@ -525,7 +525,7 @@ public class GameMap {
         return result;
     }
 
-    public GameMap neighbourCondense() {    // Condenses a group into another group if it has an unique neighbor
+    public GameMap neighbourCondense() {    // Condenses a group into another group if it has a unique neighbor
         GameMap baseMap = this.copyMap();
 
         baseMap.states = this.states;
@@ -642,7 +642,7 @@ public class GameMap {
 
     /**
      * This version allows a state to expand to another one as long as it is HC-reachable from this state.
-     * It will only keep a state though if it that state is closer to it from all of the other seeds.
+     * It will only keep a state though if it that state is closer to it from all the other seeds.
      */
     private GroupRecord expandSpotCover(int seedRow, int seedCol, int currentNum, GameMap baseMap, SearchAbstractAlgorithm searchAlg, SavedSearch currentSet, SavedSearch database, BitSet currentCover) {
         CircularQueue expandSet = new CircularQueue(1000);
@@ -701,7 +701,7 @@ public class GameMap {
 
                             expandSet.insert(id);
                             currentSet.setFound(id, 0);
-                            if (currentCover.get(id) == false)        // State is not currently covered
+                            if (!currentCover.get(id))        // State is not currently covered
                             //	newCover.set(id);
                             {
                                 group.states.add(id);
@@ -1109,7 +1109,7 @@ public class GameMap {
 				if (path == null)	// Must had an early termination
 					continue;
 
-				// Otherwise add record to list of possiblities
+				// Otherwise, add record to list of possibilities
 				problems.add(new Path(path, -1*stats.getPathCost()/optimalCost, stats.getPathLength()));
 			}
 		}

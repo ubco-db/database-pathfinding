@@ -32,34 +32,33 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 
 
-@SuppressWarnings("serial")
 public class GameGUI extends JFrame {
-    private MapPanel panel;
+    private final MapPanel panel;
 
     // Menu items
-    private JMenuItem exitMenuItem;
-    private JMenuItem computeMenuItem;
-    private JMenuItem visualizeMenuItem;
-    private JMenuItem nextMenuItem;
-    private JMenuItem prevMenuItem;
-    private JMenuItem loadMenuItem;
-    private JMenuItem rotateMenuItem;
-    private JMenuItem exportMapMenuItem;
-    private JMenuItem exportDBMenuItem;
-    private JMenuItem computeDBMenuItem;
-    private JMenuItem coverageDBMenuItem;
+    private final JMenuItem exitMenuItem;
+    private final JMenuItem computeMenuItem;
+    private final JMenuItem visualizeMenuItem;
+    private final JMenuItem nextMenuItem;
+    private final JMenuItem prevMenuItem;
+    private final JMenuItem loadMenuItem;
+    private final JMenuItem rotateMenuItem;
+    private final JMenuItem exportMapMenuItem;
+    private final JMenuItem exportDBMenuItem;
+    private final JMenuItem computeDBMenuItem;
+    private final JMenuItem coverageDBMenuItem;
 
-    private JTextField speedField;
-    private JComboBox cbxSearchMethod;
+    private final JTextField speedField;
+    private final JComboBox<String> cbxSearchMethod;
     private String currentPath = System.getProperty("user.dir");
     private SparseMask pathMask;
-    private JTextField locationField;
+    private final JTextField locationField;
     private ArrayList<HeuristicFunction> heuristicList;
 
     /*
      * Configuration constants
      */
-    private int cutoff = 25;                // Maximum # of HC moves
+    private final int CUTOFF = 25;                // Maximum # of HC moves
 
     public static void main(String[] args) {
         GameGUI frame = new GameGUI();
@@ -123,7 +122,7 @@ public class GameGUI extends JFrame {
         p.add(locationField);
         p.add(new JLabel("Animation speed:"));
         p.add(speedField);
-        cbxSearchMethod = new JComboBox();
+        cbxSearchMethod = new JComboBox<>();
         cbxSearchMethod.addItem("A*");
         cbxSearchMethod.addItem("Hill-climbing");
         cbxSearchMethod.addItem("Query subgoals");
@@ -217,15 +216,14 @@ public class GameGUI extends JFrame {
     }
 
     private class MapPanel extends JPanel implements MouseListener, MouseMotionListener {
-        private GameMap map;                    // Current base map being displayed
-        private GameDB database = null;            // Stores groups of cells
-        private SubgoalDB subgoalDB = null;        // Stores database of subgoals
-        private ArrayList<GameMap> maps;        // Stores list of maps which may be derived from base map
-        private ArrayList<String> mapDesc;        // One line text description associated with each derived map
-        private int currentIndex;                // Current index of map in list being displayed
+        private final GameMap map;                      // Current base map being displayed
+        private SubgoalDB subgoalDB = null;             // Stores database of subgoals
+        private final ArrayList<GameMap> maps;          // Stores list of maps which may be derived from base map
+        private final ArrayList<String> mapDesc;        // One line text description associated with each derived map
+        private int currentIndex;                       // Current index of map in list being displayed
 
-        private Timer timer;                    // Timer is used when animating and implements delay between moves
-        private int speed = 10;                    // Delay in ms between moves that are displayed.  Set at 10, but controllable by the user.
+        private Timer timer;                            // Timer is used when animating and implements delay between moves
+        private int speed = 10;                         // Delay in ms between moves that are displayed.  Set at 10, but controllable by the user.
 
         public MapPanel(GameMap mp) {
             map = mp;
@@ -255,7 +253,8 @@ public class GameGUI extends JFrame {
         public void computeDB() {
             GameMap tmp = maps.get(currentIndex);
             MapSearchProblem problem = new MapSearchProblem(tmp);
-            database = new GameDB(problem);
+            // Stores groups of cells
+            GameDB database = new GameDB(problem);
             Object[] possibilities = {"RANDOM - 1000", "RANDOM - 10000", "RANDOM - 20000", "ABSTRACT", "HC REGIONS"};
             String s = (String) JOptionPane.showInputDialog(this, "Enter database type:", "Compute a Database", JOptionPane.PLAIN_MESSAGE, null, possibilities, "RANDOM - 1000");
             DBStatsRecord dbstat = new DBStatsRecord(20);
@@ -368,7 +367,7 @@ public class GameGUI extends JFrame {
 				MapSearchProblem problem = new MapSearchProblem(nmap);
 				st = "Abstraction Level "+k+".  States: "+nmap.states;
 				GameDB database = new GameDB(problem);
-				// Remove these next three lines if do not want to see centroid in group abstraction
+				// Remove these next three lines if you do not want to see centroid in group abstraction
 				database.computeGroups();
 				database.computeCentroids();
 				GameMap nmapCentroid = database.computeCentroidMap();
@@ -382,7 +381,7 @@ public class GameGUI extends JFrame {
             // Computer greedy abstraction
             DBStatsRecord dbstat = new DBStatsRecord();
             MapSearchProblem problem = new MapSearchProblem(map);
-            GameMap greedyMap = map.reachableAbstract(new GenHillClimbing(problem, cutoff * 2), dbstat);
+            GameMap greedyMap = map.reachableAbstract(new GenHillClimbing(problem, CUTOFF * 2), dbstat);
             // GameMap greedyMap = map.reachableAbstract(new GenHillClimbing(map, cutoff*2), dbstat);
             st = "Greedy abstraction.  States: " + greedyMap.states;
             maps.add(greedyMap);
@@ -455,7 +454,7 @@ public class GameGUI extends JFrame {
                         if (searchMethod.equals("Query subgoals")) {    // Show closest 10 subgoals in database
                             records = subgoalDB.findNearest(problem, new SearchState(map.getId(map.startPoint.x, map.startPoint.y)), new SearchState(map.getId(map.goalPoint.x, map.goalPoint.y)), 10);
                         } else {    // Show up to 10 closes hill-climbable reachable subgoals in the database
-                            records = subgoalDB.findNearest(problem, new SearchState(map.getId(map.startPoint.x, map.startPoint.y)), new SearchState(map.getId(map.goalPoint.x, map.goalPoint.y)), new GenHillClimbing(problem, cutoff), 10, stats, null);
+                            records = subgoalDB.findNearest(problem, new SearchState(map.getId(map.startPoint.x, map.startPoint.y)), new SearchState(map.getId(map.goalPoint.x, map.goalPoint.y)), new GenHillClimbing(problem, CUTOFF), 10, stats, null);
                         }
                         // Create the masks to show these choices
                         // Just modify existing mask
@@ -471,7 +470,7 @@ public class GameGUI extends JFrame {
                         }
                         // map.addMask(currentMask);
                     } else {    // Path search cases
-                        ArrayList<SearchState> path, subgoalPath = new ArrayList(50), subgoals = new ArrayList<SearchState>(), expanded = null;
+                        ArrayList<SearchState> path, subgoalPath = new ArrayList<>(50), subgoals = new ArrayList<>(), expanded = null;
                         // Auto compute A*
                         StatsRecord stats = new StatsRecord();
                         switch (searchMethod) {
@@ -596,14 +595,11 @@ public class GameGUI extends JFrame {
         public void mouseEntered(MouseEvent e) {
         }
 
-
         public void mouseExited(MouseEvent e) {
         }
 
-
         public void mousePressed(MouseEvent e) {
         }
-
 
         public void mouseReleased(MouseEvent e) {
         }

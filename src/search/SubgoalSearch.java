@@ -7,12 +7,12 @@ import java.util.ArrayList;
 
 
 public class SubgoalSearch implements SearchAlgorithm {
-    private SearchProblem problem;
-    private SubgoalDB database;
-    private int cutoff;
-    private SearchAlgorithm subgoalSearchAlg;
-    private SearchAlgorithm optCheckSearchAlg;
-    private ArrayList<SearchState> subgoals;
+    private final SearchProblem problem;
+    private final SubgoalDB database;
+    private final int cutoff;
+    private final SearchAlgorithm subgoalSearchAlg;
+    private final SearchAlgorithm optCheckSearchAlg;
+    private final ArrayList<SearchState> subgoals;
 
     public SubgoalSearch(SearchProblem problem, SubgoalDB database, int cutoff, SearchAlgorithm subgoalSearchAlg, SearchAlgorithm optCheckSearchAlg) {
         this.problem = problem;

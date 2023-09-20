@@ -105,7 +105,7 @@ public class Scenario {
                 for (int i = 0; i < numProblems; i++) {
                     st = sc.nextLine();
                     StringTokenizer tokenizer = new StringTokenizer(st);
-                    String id = tokenizer.nextToken();
+                    tokenizer.nextToken(); // id
                     String mapName = tokenizer.nextToken();
                     int startId = Integer.parseInt(tokenizer.nextToken());
                     int goalId = Integer.parseInt(tokenizer.nextToken());
