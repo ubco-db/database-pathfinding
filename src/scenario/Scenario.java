@@ -92,7 +92,8 @@ public class Scenario {
                     int goalX = Integer.parseInt(tokenizer.nextToken());
                     int goalY = Integer.parseInt(tokenizer.nextToken());
                     int goalId = goalY * mapw + goalX;
-                    int cost = (int) Math.round(Double.parseDouble(tokenizer.nextToken()) * 10);
+                    // int cost = (int) Math.round(Double.parseDouble(tokenizer.nextToken()) * 10);
+                    int cost = (int) Math.round(Double.parseDouble(tokenizer.nextToken()));
                     Problem p = new Problem(mapName, new SearchState(startId), new SearchState(goalId), cost, 0);
                     problems.add(p);
                     count++;
@@ -109,7 +110,8 @@ public class Scenario {
                     String mapName = tokenizer.nextToken();
                     int startId = Integer.parseInt(tokenizer.nextToken());
                     int goalId = Integer.parseInt(tokenizer.nextToken());
-                    int cost = (int) Math.round(Double.parseDouble(tokenizer.nextToken()) * 10);
+                    // int cost = (int) Math.round(Double.parseDouble(tokenizer.nextToken()) * 10);
+                    int cost = (int) Math.round(Double.parseDouble(tokenizer.nextToken()));
                     double difficulty = Double.parseDouble(tokenizer.nextToken());
                     Problem p = new Problem(mapName, new SearchState(startId), new SearchState(goalId), cost, difficulty);
                     problems.add(p);
