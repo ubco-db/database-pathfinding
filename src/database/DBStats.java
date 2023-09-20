@@ -11,17 +11,12 @@ import java.util.ArrayList;
  * @author rlawrenc
  */
 public class DBStats {
-    private ArrayList<DBStatsRecord> stats;
-    private ArrayList<String> statsNames;
+    private final ArrayList<DBStatsRecord> stats;
+    private final ArrayList<String> statsNames;
 
     public DBStats() {
         stats = new ArrayList<DBStatsRecord>();
         statsNames = new ArrayList<String>();
-    }
-
-    public void clearStats() {
-        stats.clear();
-        statsNames.clear();
     }
 
     public void addRecord(DBStatsRecord rec) {
@@ -29,15 +24,14 @@ public class DBStats {
     }
 
     public void outputNames(PrintWriter out) {
-        for (int i = 0; i < statsNames.size(); i++) {
-            out.print(StringFunc.pad(statsNames.get(i), 10) + "\t");
+        for (String statsName : statsNames) {
+            out.print(StringFunc.pad(statsName, 10) + "\t");
         }
         out.println();
     }
 
     public void outputData(PrintWriter out) {
-        for (int i = 0; i < stats.size(); i++)
-            stats.get(i).output(out, statsNames);
+        for (DBStatsRecord stat : stats) stat.output(out);
     }
 
     public static void init(DBStats db) {    // Initializes record with default layout that we will use

@@ -30,11 +30,6 @@ public class SubgoalDBExact extends SubgoalDB {
     }
 
 
-    public SubgoalDBExact(SearchProblem problem) {
-        super();
-        this.problem = problem;
-    }
-
     /**
      * Builds compressed RLE index mapping base states to abstraction state representatives.
      * The problem must already encode the mapping in its internal structure.
@@ -69,13 +64,13 @@ public class SubgoalDBExact extends SubgoalDB {
         int startSeedId = db.findHT(start.id);
         int goalSeedId = db.findHT(goal.id);
 
-        ArrayList<SubgoalDBRecord> result = new ArrayList<SubgoalDBRecord>(1);
+        ArrayList<SubgoalDBRecord> result = new ArrayList<>(1);
         SubgoalDBRecord rec = recordMatrix[startSeedId][goalSeedId];
         if (rec == null) {
             if (startSeedId == goalSeedId) {    // This is possible as there is no guarantee that you can go from any two states in a region (need to direct through seed).
                 // Build a record to route in the region with the seed as a subgoal.
                 int seedId = db.getSeedId(startSeedId);
-                rec = new SubgoalDBRecord(99999, start.id, goal.id, new int[]{seedId}, 0);
+                rec = new SubgoalDBRecord(start.id, goal.id, new int[]{seedId}, 0);
                 result.add(rec);
                 return result;
             }
@@ -86,23 +81,6 @@ public class SubgoalDBExact extends SubgoalDB {
     }
 
 
-    public SubgoalDBRecord getRecord(SearchState start, SearchState goal) {
-        int startSeedId = db.findHT(start.id);
-        int goalSeedId = db.findHT(goal.id);
-
-        SubgoalDBRecord rec = recordMatrix[startSeedId][goalSeedId];
-        if (rec == null) {
-            if (startSeedId == goalSeedId) {    // This is possible as there is no guarantee that you can go from any two states in a region (need to direct through seed).
-                // Build a record to route in the region with the seed as a subgoal.
-                int seedId = db.getSeedId(startSeedId);
-                rec = new SubgoalDBRecord(99999, start.id, goal.id, new int[]{seedId}, 0);
-                return rec;
-            }
-            System.out.println("ERROR in findNearest.  Start seed: " + startSeedId + " Goal seed: " + goalSeedId);
-            return null;
-        } else return recordMatrix[startSeedId][goalSeedId];
-    }
-
     /**
      * Initializes the record matrix from the database records for querying.
      * The load populates the list of records but not the matrix lookup form.
@@ -112,8 +90,7 @@ public class SubgoalDBExact extends SubgoalDB {
         // Fill in the record matrix to look up a record based on startSeedId, goalSeedId
         System.out.println("Creating lookup matrix of size: " + numRegions + " x " + numRegions + " = " + numRegions * numRegions);
         recordMatrix = new SubgoalDBRecord[numRegions][numRegions];
-        for (int i = 0; i < records.size(); i++) {
-            SubgoalDBRecord rec = records.get(i);
+        for (SubgoalDBRecord rec : records) {
             int compositeGroupId = rec.getSearchDepth();
             int startId = compositeGroupId / 10000 - 1;
             int goalId = compositeGroupId % 10000;
@@ -141,22 +118,12 @@ public class SubgoalDBExact extends SubgoalDB {
     }
 
     /**
-     * Returns abstract state id given base state id.
-     *
-     * @param stateId
-     * @return
-     */
-    public int getAbstractState(int stateId) {
-        return db.findHT(stateId);
-    }
-
-    /**
      * Given a search problem with all base states mapped to abstract state ids (either directly in the problem or using a SearchSpace object),
-     * creates a RLE compressed index of the mapping to save space.
+     * creates an RLE compressed index of the mapping to save space.
      */
     private void generateIndexDB() {
         db = new IndexDB();
-        HashMap<Integer, Integer> distinctStates = new HashMap<Integer, Integer>(5000);
+        HashMap<Integer, Integer> distinctStates = new HashMap<>(5000);
         SearchState state = new SearchState();
         int lastStateVal = -1;
         int numStates = 0;
@@ -194,7 +161,6 @@ public class SubgoalDBExact extends SubgoalDB {
      * Verification is performed for all records.
      * Uses SubgoalDB verify to verify records and also verifies the index mapping.
      *
-     * @param map
      * @param searchAlg
      */
     public void verify(SearchAlgorithm searchAlg) {

@@ -27,8 +27,8 @@ public class AStarHeuristic implements SearchAlgorithm {
 
     public ArrayList<SearchState> computePath(SearchState start, SearchState goal, StatsRecord stats) {
         // Setup open and closed state list
-        PriorityQueue<SearchState> openList = new PriorityQueue<SearchState>();            // Note: Does not allow easy updates and searching for entries thus using openListLookup HashMap with it.
-        HashMap<Integer, SearchState> openListLookup = new HashMap<Integer, SearchState>();
+        PriorityQueue<SearchState> openList = new PriorityQueue<>();            // Note: Does not allow easy updates and searching for entries thus using openListLookup HashMap with it.
+        HashMap<Integer, SearchState> openListLookup = new HashMap<>();
         closedList.clear();
 
         start.cost = 0;
@@ -84,9 +84,9 @@ public class AStarHeuristic implements SearchAlgorithm {
 
     public boolean isPath(SearchState start, SearchState goal, StatsRecord stats) {
         // Setup open and closed state list
-        PriorityQueue<SearchState> openList = new PriorityQueue<SearchState>();            // Note: Does not allow easy updates and searching for entries thus using openListLookup HashMap with it.
+        PriorityQueue<SearchState> openList = new PriorityQueue<>();            // Note: Does not allow easy updates and searching for entries thus using openListLookup HashMap with it.
         closedList.clear();
-        HashMap<Integer, SearchState> openListLookup = new HashMap<Integer, SearchState>();
+        HashMap<Integer, SearchState> openListLookup = new HashMap<>();
 
         start.cost = 0;
         start.prev = null;
@@ -140,9 +140,7 @@ public class AStarHeuristic implements SearchAlgorithm {
      */
     private void updateNeighbors(SearchState current, SearchState goal, StatsRecord stats, PriorityQueue<SearchState> openList, BitSet closedList, HashMap<Integer, SearchState> openListLookup) {
         ArrayList<SearchState> neighbors = problem.getNeighbors(current);
-        for (int i = 0; i < neighbors.size(); i++) {
-            SearchState next = neighbors.get(i);
-
+        for (SearchState next : neighbors) {
             if (closedList.get(next.id)) continue;
 
             stats.incrementStatesUpdated(1);
@@ -150,7 +148,7 @@ public class AStarHeuristic implements SearchAlgorithm {
             int newG = current.g + problem.getMoveCost(current, next);
 
             // 	Add state to list.  If already there, update its cost only
-            Integer stateid = new Integer(next.id);        // Build integer object once to save time
+            Integer stateid = next.id;        // Build integer object once to save time
             SearchState state = openListLookup.get(stateid);
             if (state != null) {
                 if (state.g > newG) {
@@ -175,7 +173,7 @@ public class AStarHeuristic implements SearchAlgorithm {
      * Builds a path as found by A*.
      */
     public ArrayList<SearchState> buildPath(SearchState goal, StatsRecord stats) {
-        ArrayList<SearchState> path = new ArrayList<SearchState>();
+        ArrayList<SearchState> path = new ArrayList<>();
         // Construct path now
         SearchState curr = goal;
         int len = 0, cost = 0;

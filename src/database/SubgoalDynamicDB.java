@@ -56,7 +56,7 @@ public class SubgoalDynamicDB extends SubgoalDBExact {
         // Does not include start and goal
         subgoals = SearchUtil.computeSubgoalsBinaryByIds(path, searchAlg, tmp, pathSize);
 
-        SubgoalDBRecord rec = new SubgoalDBRecord(1, startId, goalId, subgoals, (startSeedId) * 10000 + goalSeedId);    // TODO: This will probably need to be changed.
+        SubgoalDBRecord rec = new SubgoalDBRecord(startId, goalId, subgoals, (startSeedId) * 10000 + goalSeedId);    // TODO: This will probably need to be changed.
         // System.out.println("Created record between: "+startId+" and "+goalId+" Record: "+rec.toString(problem));
         result.add(rec);
         return result;
@@ -155,9 +155,7 @@ public class SubgoalDynamicDB extends SubgoalDBExact {
         //		lowestCost matrix (numGroups x numGroups)
         //		neighbor matrix (numGroups x numGroups)
         // 		paths matrix (with paths). Each path on a line.  A path is a list of subgoals.  Just have 0 if no states.
-        PrintWriter out = null;
-        try {
-            out = new PrintWriter(fileName);
+        try (PrintWriter out = new PrintWriter(fileName)) {
             out.println(numGroups);
             for (int i = 0; i < numGroups; i++) {
                 for (int j = 0; j < numGroups; j++)
@@ -182,8 +180,6 @@ public class SubgoalDynamicDB extends SubgoalDBExact {
             }
         } catch (FileNotFoundException e) {
             System.out.println("Error with output file: " + e);
-        } finally {
-            if (out != null) out.close();
         }
     }
 
@@ -191,7 +187,6 @@ public class SubgoalDynamicDB extends SubgoalDBExact {
      * Verifies only the index mapping.
      * Does not currently dynamically compute all records then verifies if they are correct.
      *
-     * @param map
      * @param searchAlg
      */
     public void verify(SearchAlgorithm searchAlg) {
@@ -217,7 +212,7 @@ public class SubgoalDynamicDB extends SubgoalDBExact {
         HashSet<Integer> neighbors;
         long startTime = System.currentTimeMillis();
 
-        long baseTime = GameDB.computeBasePaths(problem, groups, this, searchAlg, lowestCost, paths, neighbor, numGroups, numLevels, true, dbstats);
+        long baseTime = GameDB.computeBasePaths(problem, groups, searchAlg, lowestCost, paths, neighbor, numGroups, numLevels, true, dbstats);
 
         long endTime, currentTime = System.currentTimeMillis();
 

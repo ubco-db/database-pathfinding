@@ -3,7 +3,6 @@ package map;
 import util.ExpandArray;
 
 import java.util.HashSet;
-import java.util.Iterator;
 
 public class GroupRecord {
     public int groupId;
@@ -37,14 +36,6 @@ public class GroupRecord {
         return neighborIds;
     }
 
-    public int getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(int groupId) {
-        this.groupId = groupId;
-    }
-
     public int getGroupRepId() {
         return groupRepId;
     }
@@ -57,20 +48,6 @@ public class GroupRecord {
         this.numStates = numStates;
     }
 
-    // Returns true if two groups are neighbors by virtue of one group having a base state that is in the neighbor list of the other.
-    // Since assuming non-directed edges (this works either way as both states should have the same pair of nodes as neighbors in the neighbor lists).
-    public boolean isNeighbor(GroupRecord g) {
-        HashSet<Integer> otherGroupNeighbors = g.getNeighborIds();
-        if (otherGroupNeighbors == null || neighborIds == null) return false;
-
-        Iterator<Integer> it = neighborIds.iterator();
-        while (it.hasNext()) {
-            int nodeId = it.next();
-            if (otherGroupNeighbors.contains(nodeId)) return true;
-        }
-        return false;
-    }
-
     public HashSet<Integer> getComputedNeighborIds() {
         return computedNeighborIds;
     }
@@ -80,10 +57,10 @@ public class GroupRecord {
     }
 
     public String toString() {
-        StringBuffer buf = new StringBuffer(100);
-        buf.append("Id: " + groupId + " Rep. Id: " + groupRepId + " Size: " + numStates);
-        buf.append(" States: " + states.toString());
-        if (neighborIds != null) buf.append(" Neighbors: " + neighborIds.toString());
+        StringBuilder buf = new StringBuilder(100);
+        buf.append("Id: ").append(groupId).append(" Rep. Id: ").append(groupRepId).append(" Size: ").append(numStates);
+        buf.append(" States: ").append(states.toString());
+        if (neighborIds != null) buf.append(" Neighbors: ").append(neighborIds);
         return buf.toString();
     }
 }

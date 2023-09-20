@@ -14,14 +14,6 @@ public class Path implements Comparable {
     private int length;
     private SearchState start, goal;
 
-    public Path(ArrayList<SearchState> states, double cost, int length, SearchState start, SearchState goal) {
-        this.states = states;
-        this.cost = cost;
-        this.length = length;
-        this.start = start;
-        this.goal = goal;
-    }
-
     public int compareTo(Object p) {
         if (p instanceof Path) return (int) (this.cost - ((Path) p).cost);
         return -1;

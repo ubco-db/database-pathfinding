@@ -11,21 +11,18 @@ import java.util.ArrayList;
  * @author rlawrenc
  */
 public class DBStatsRecord {
-    private ArrayList<Object> stats;
+    private final ArrayList<Object> stats;
 
     public DBStatsRecord() {
-        stats = new ArrayList<Object>();
+        stats = new ArrayList<>();
     }
 
     public DBStatsRecord(int size) {
-        stats = new ArrayList<Object>(size);
+        stats = new ArrayList<>(size);
         // Fill with blank-data
-        for (int i = 0; i < size; i++)
+        for (int i = 0; i < size; i++) {
             stats.add("0");
-    }
-
-    public void clearStats() {
-        stats.clear();
+        }
     }
 
     // Assumes array has already been filled with empty values
@@ -33,14 +30,13 @@ public class DBStatsRecord {
         stats.set(pos, value);
     }
 
-
     public Object getStat(int pos) {
         return stats.get(pos);
     }
 
-    public void output(PrintWriter out, ArrayList<String> statsNames) {
-        for (int i = 0; i < stats.size(); i++) {
-            out.print(StringFunc.pad(stats.get(i).toString(), 10) + "\t");
+    public void output(PrintWriter out) {
+        for (Object stat : stats) {
+            out.print(StringFunc.pad(stat.toString(), 10) + "\t");
         }
         out.println();
     }

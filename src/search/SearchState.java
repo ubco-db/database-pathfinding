@@ -39,12 +39,6 @@ public class SearchState implements Comparable<SearchState> {
         this.cost = this.g + this.h;
     }
 
-    public void updateWCost(int g, int h, double weight) {
-        this.h = h;
-        this.g = g;
-        this.cost = this.g + this.h * weight;
-    }
-
     public boolean equals(SearchState s1) {
         return this.id == s1.id;
     }

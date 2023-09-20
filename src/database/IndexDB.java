@@ -26,8 +26,6 @@ public class IndexDB {
     private static int maxSize = 1000000;
     private static int htStepSize = 1000;
 
-    private int comparisons = 0;
-
     public IndexDB() {
         count = 0;
         nodeIds = new int[maxSize];
@@ -73,23 +71,12 @@ public class IndexDB {
         int loc = hashTable[htloc];
 
         while (loc < count - 1 && nodeId >= nodeIds[loc + 1]) {
-            comparisons++;
             loc++;
         }
 
         if (loc == count) loc--;
         return seedIds[loc];
     }
-
-    public void resetComparisons() {
-        comparisons = 0;
-    }
-
-    public int getComparisons() {
-        return comparisons;
-    }
-
-    ;
 
     public int find(int nodeId) {
         int loc = Arrays.binarySearch(nodeIds, 0, count, nodeId);
@@ -133,7 +120,7 @@ public class IndexDB {
      * Verifies the compressed mapping for the search problem (index and hash table).
      *
      * @param problem
-     * @return
+     * @return boolean
      */
     public boolean verify(SearchProblem problem) {
         System.out.println("Verifying base RLE compression of mapping.");
@@ -160,9 +147,7 @@ public class IndexDB {
      * @param fileName
      */
     public void export(String fileName) {
-        PrintWriter out = null;
-        try {
-            out = new PrintWriter(fileName);
+        try (PrintWriter out = new PrintWriter(fileName)) {
             out.println(count);
             out.println(numRegions);
 
@@ -178,8 +163,6 @@ public class IndexDB {
             out.println();
         } catch (FileNotFoundException e) {
             System.out.println("Error with output file: " + e);
-        } finally {
-            if (out != null) out.close();
         }
     }
 
@@ -200,8 +183,7 @@ public class IndexDB {
         System.out.println();
 
         System.out.println("Hash table: ");
-        for (int i = 0; i < hashTable.length; i++)
-            System.out.print(hashTable[i] + "\t");
+        for (int j : hashTable) System.out.print(j + "\t");
         System.out.println();
     }
 
@@ -209,7 +191,7 @@ public class IndexDB {
      * Loads compressed mapping from file into memory.
      *
      * @param fileName
-     * @return
+     * @return boolean
      */
     public boolean load(String fileName) {
         Scanner sc = null;
@@ -255,17 +237,12 @@ public class IndexDB {
         this.numRegions = numRegions;
     }
 
-    public int[][] getGroups() {
-        return groups;
-    }
-
     public void setGroups(int[][] groups) {
         this.groups = groups;
     }
 
     public int getSeedId(int groupId) {
-        for (int i = 0; i < groups.length; i++)
-            if (groups[i][0] == groupId) return groups[i][1];
+        for (int[] group : groups) if (group[0] == groupId) return group[1];
         return -1;
     }
 }

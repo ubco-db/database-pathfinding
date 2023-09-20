@@ -14,8 +14,7 @@ public class SearchUtil {
     public static ArrayList<SearchState> mergePaths(ArrayList<SearchState> path1, ArrayList<SearchState> path2) {
         if (path1.size() > 0) path1.remove(path1.size() - 1);    // Remove last element
         path1.ensureCapacity(path1.size() + path2.size());
-        for (int i = 0; i < path2.size(); i++)
-            path1.add(path2.get(i));
+        path1.addAll(path2);
         return path1;
     }
 
@@ -29,23 +28,10 @@ public class SearchUtil {
         return path1;
     }
 
-    public static int[] mergePathsByIds(int[] path1, int[] path2) {
-        if (path1.length > 0) {
-            int[] newPath = new int[path1.length + path2.length - 1];
-            for (int i = 0; i < path1.length - 1; i++)
-                newPath[i] = path1[i];
-            for (int i = 0; i < path2.length - 1; i++)
-                newPath[i + path1.length - 1] = path1[i + path1.length - 1];
-            return newPath;
-        }
-        return path1;
-    }
-
     public static void printPath(ArrayList<SearchState> path) {
         if (path == null) System.out.println("No path");
         else {
-            for (int i = 0; i < path.size(); i++)
-                System.out.println(path.get(i).id);
+            for (SearchState searchState : path) System.out.println(searchState.id);
         }
     }
 
@@ -55,8 +41,8 @@ public class SearchUtil {
         else {
             HashMap<Integer, Integer> states = new HashMap<Integer, Integer>(path.size());
             int revisits = 0;
-            for (int i = 0; i < path.size(); i++) {
-                int id = path.get(i).id;
+            for (SearchState searchState : path) {
+                int id = searchState.id;
                 if (states.containsKey(id)) revisits++;
                 else states.put(id, id);
             }
@@ -88,40 +74,11 @@ public class SearchUtil {
         }
     }
 
-    public static void validatePath(SearchProblem problem, ArrayList<SearchState> path) {
-        if (path == null) System.out.println("No path");
-        else {
-            for (int i = 0; i < path.size() - 1; i++) {
-                int nodeId = path.get(i).id;
-                int nextId = path.get(i + 1).id;
-
-                // Verify if edge between them and print its cost
-                boolean neighbor = problem.isNeighbor(nodeId, nextId);
-                int cost = problem.computeDistance(nodeId, nextId);
-
-                if (!neighbor) {
-                    System.out.println("Cannot go from: " + nodeId + " to : " + nextId + " there is no edge.  Actual cost: " + cost);
-                }
-            }
-
-        }
-    }
-
     public static void printPath(SearchProblem problem, ArrayList<SearchState> path) {
         if (path == null) System.out.println("No path");
         else {
-            for (int i = 0; i < path.size(); i++)
-                System.out.print(problem.idToString(path.get(i).id) + " ");
+            for (SearchState searchState : path) System.out.print(problem.idToString(searchState.id) + " ");
             System.out.println();
-        }
-    }
-
-    public static void printPath(SearchProblem problem, int[] path) {
-        if (path == null) System.out.println("No path");
-        else {
-            for (int i = 0; i < path.length; i++)
-                if (problem != null) System.out.println(problem.idToString(path[i]));
-                else System.out.println(path[i]);
         }
     }
 
@@ -349,8 +306,7 @@ public class SearchUtil {
     }
 
     public static boolean inStateList(ArrayList<SearchState> path, SearchState state) {
-        for (int i = 0; i < path.size(); i++) {
-            SearchState s = path.get(i);
+        for (SearchState s : path) {
             if (s.id == state.id) return true;
         }
         return false;

@@ -33,7 +33,7 @@ public class SubgoalSearch implements SearchAlgorithm {
         boolean OPTIMIZE_START_DB_PATH = true;
         boolean OPTIMIZE_END_DB_PATH = true;
         boolean OPTIMIZE_CHECK = true;
-        ArrayList<SubgoalDBRecord> used = new ArrayList<SubgoalDBRecord>();
+        ArrayList<SubgoalDBRecord> used = new ArrayList<>();
         ArrayList<SearchState> path, newPath;
         SearchState currentGoal, currentStart;
         SubgoalDBRecord currentRecord = null;

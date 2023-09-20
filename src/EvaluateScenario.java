@@ -66,40 +66,15 @@ public class EvaluateScenario {
         // to run a different scenario.
         int[] algorithms = {0, 1, 4}; // Select up to three algorithms to
         // run
-        int heuristicId = 1; // (0~5) heuristic function id passing to A* with arbitrary heruistic
-        int databaseSize = 10000; // If using knnLRTA*, the size of the database
-        // being used.
-        int g = 1; // Used in all LRTA* variants
-        int cutoff = 250; // For knnLRTA* the maximum # of moves for
-        // hill-climbing checks.
-        int quota = 500; // For TBA*, # of states that it can expand.
-        int lookahead = 10000; // # of states to expanded for LSS LRA*
-        double badProblemSubOpt = 3; // If any algorithm has a path cost
-        // suboptimality worse than this for a
-        // given problem, the problem results
-        // are output as images.
-        int abstractLevel = 9; // For DLRTA*, clique abstraction level used.
+        int heuristicId = 1; // (0~5) heuristic function id passing to A* with arbitrary heuristic
+        int cutoff = 250; // For knnLRTA* the maximum # of moves for hill-climbing checks.
         int numNeighborLevels = 1; // # of neighbor levels for HCDPS
-        double weight = 5; // For weighted A*
-        int beamWidth = 100; // Beam width at each level
-        int maxSize = 2000000; // Maximum # of nodes in memory at once
-        // (BEAM/BULB)
-        int gridSize = 16; // Used by PRA* to define grid size
-        int trailHeads = 1000; // Maximum # of trailheads used by cover
-        // algorithm
-        double minOpt = 1.1; // Minimum suboptimality that LRTA* algorithm must
-        // have for problem to be kept in curated case
-        // base
-        double maxOpt = 2.0; // Maximum suboptimality before LRTA* algorithm is
-        // cutoff (for curation)
-        int maxRecords = 500000; // Maximum # of records after the cover
-        // algorithm
+
+        int trailHeads = 1000; // Maximum # of trailheads used by cover algorithm
+        int maxRecords = 500000; // Maximum # of records after the cover algorithm
         int HCDPSRecords = 0;
 
-        int jStarRecords = 0;
-
-        long[] revisits = new long[3]; // Count the # of times that the path
-        // revisits a state
+        long[] revisits = new long[3]; // Count the # of times that the path revisits a state
         long[] distrevisits = new long[3]; // Sum of distance between state
         // revisits. Eg. If path goes to
         // state A then B then A, distance
@@ -115,8 +90,7 @@ public class EvaluateScenario {
         // path produced by each algorithm on each
         // problem regardless if the path is good or
         // not.
-        boolean exactDB = true; // For HCDPS*, true if using exact DB rather
-        // than kd-tree style database.
+        boolean exactDB = true; // For HCDPS*, true if using exact DB rather than kd-tree style database.
         int dbtype = 2; // 1 - full DP matrix pre-computed, 2 - adjacency list
         // representation (DP computed at run-time), 3 - DP
         // matrix pre-computed but RLE compressed, adjacency
@@ -124,18 +98,9 @@ public class EvaluateScenario {
 
         String imageDir = "images/";
         String dbPath = "databases/";
-        String knnDatabasePath = dbPath + "KNN/";
-        String treeDatabasePath = dbPath + "tree/";
-        String dlrtaDatabasePath = dbPath + "DLRTA/";
-        String praDatabasePath = dbPath + "PRA/";
-        String jStarDatabasePath = dbPath + "JSTAR/";
-        String jStar2DatabasePath = dbPath + "JSTAR2/";
         String coverDatabasePath = dbPath + "cover/";
         String hcDatabasePath;
-        if (exactDB) hcDatabasePath = dbPath + "HC/";
-        else hcDatabasePath = dbPath + "HC/";
-        String acDatabasePath = dbPath + "AC/";
-        String lcDatabasePath = dbPath + "LC/";
+        hcDatabasePath = dbPath + "HC/";
         String binaryOutputPath = "results/";
 
         String[] algNames = new String[algorithms.length];
@@ -150,7 +115,7 @@ public class EvaluateScenario {
          * Heuristic functions list
          */
 
-        ArrayList<HeuristicFunction> heuristicList = new ArrayList<HeuristicFunction>();
+        ArrayList<HeuristicFunction> heuristicList = new ArrayList<>();
 
         // f1
         heuristicList.add(new HeuristicFunction() {
@@ -286,7 +251,6 @@ public class EvaluateScenario {
         ArrayList<StatsRecord>[] problemStats = new ArrayList[algorithms.length];
         StatsRecord[] overallStats = new StatsRecord[algorithms.length];
         DBStats[] dbStats = new DBStats[algorithms.length];
-        ArrayList<Integer> badProblemNum = new ArrayList<Integer>();
         ArrayList<Integer> noSubgoal = new ArrayList<Integer>();
         SubgoalDB[] databases = new SubgoalDB[algorithms.length];
         GameMap[] maps = new GameMap[algorithms.length];
@@ -907,11 +871,12 @@ public class EvaluateScenario {
     }
 
     public static String padNum(int num, int digits) {
-        String st = "" + num;
+        StringBuilder st = new StringBuilder("" + num);
 
-        for (int i = 0; i < digits - st.length(); i++)
-            st = "0" + st;
-        return st;
+        for (int i = 0; i < digits - st.length(); i++) {
+            st.insert(0, "0");
+        }
 
+        return st.toString();
     }
 }

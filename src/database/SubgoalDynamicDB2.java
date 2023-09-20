@@ -23,9 +23,9 @@ import java.util.Scanner;
  * Database where dynamic programming table is not computed offline only the base paths between adjacency neighbors are (and their associated costs).
  * Online, a record is produced by searching the partial complete DP table for the lowest cost path between regions i and j.
  * This path consists of a series of hops between neighbors and each hop's path is combined into a path to solve the entire problem.
- * In effect, this is performing another search on the abstract region space.  The algorithm is currently using Dysktra's but A* may be possible as well.
+ * In effect, this is performing another search on the abstract region space.  The algorithm is currently using Djisktra's but A* may be possible as well.
  * This search is no longer real-time (as number of regions cannot be bounded a priori), so any search using this database cannot also be considered real-time.
- * The savings is that no DP computation needs to be performed which speeds up things when there are a large number of regions and potentially can be useful when
+ * The savings are that no DP computation needs to be performed which speeds up things when there are a large number of regions and potentially can be useful when
  * the state space is changing.
  * DP table only stores direct neighbors (not entire matrix).
  *
@@ -47,7 +47,7 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
         int startGroupId = db.findHT(start.id);
         int goalGroupId = db.findHT(goal.id);
 
-        ArrayList<SubgoalDBRecord> result = new ArrayList<SubgoalDBRecord>(1);
+        ArrayList<SubgoalDBRecord> result = new ArrayList<>(1);
 
         // Need to calculate record as will not be stored
         int pathSize;
@@ -55,7 +55,7 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
         int[] subgoals;
 
         // This code builds only the path required on demand (may incur more time as have to continually merge paths but may save time by avoiding storing/copying lists to do construction)
-        pathSize = GameDB.mergePaths4(startGroupId, goalGroupId, paths, neighbor, lowestCost, neighborId, path, 0, db, problem);
+        pathSize = GameDB.mergePaths4(startGroupId, goalGroupId, paths, neighbor, lowestCost, neighborId, path);
 
         if (pathSize == 0) return null;            // No path between two states
         int startId = path[0];
@@ -64,7 +64,7 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
         // Does not include start and goal
         subgoals = SearchUtil.computeSubgoalsBinaryByIds(path, searchAlg, tmp, pathSize);
 
-        SubgoalDBRecord rec = new SubgoalDBRecord(1, startId, goalId, subgoals, 0);
+        SubgoalDBRecord rec = new SubgoalDBRecord(startId, goalId, subgoals, 0);
         // System.out.println("Created record between: "+startId+" and "+goalId+" Record: "+rec.toString(problem));
         result.add(rec);
         return result;
@@ -166,9 +166,7 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
         //		lowestCost matrix (numGroups x numGroups)
         //		neighbor matrix (numGroups x numGroups)
         // 		paths matrix (with paths). Each path on a line.  A path is a list of subgoals.  Just have 0 if no states.
-        PrintWriter out = null;
-        try {
-            out = new PrintWriter(fileName);
+        try (PrintWriter out = new PrintWriter(fileName)) {
             out.println(numGroups);
             for (int i = 0; i < numGroups; i++) {    // Read each group which has # neighbors as N, neighborId[N], lowest cost[N], neighbor[] and paths on each line
                 int numNeighbors = neighborId[i].length;
@@ -191,8 +189,6 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
             }
         } catch (FileNotFoundException e) {
             System.out.println("Error with output file: " + e);
-        } finally {
-            if (out != null) out.close();
         }
     }
 
@@ -200,7 +196,6 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
      * Verifies only the index mapping.
      * Does not currently dynamically compute all records then verifies if they are correct.
      *
-     * @param map
      * @param searchAlg
      */
     public void verify(SearchAlgorithm searchAlg) {
@@ -215,7 +210,7 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
         neighborId = new int[numGroups][];
         long startTime = System.currentTimeMillis();
 
-        long baseTime = computeBasePaths2(problem, groups, this, searchAlg, lowestCost, paths, neighbor, numGroups, numLevels, true, dbstats);
+        long baseTime = computeBasePaths2(problem, groups, searchAlg, lowestCost, paths, neighbor, numGroups, numLevels, true, dbstats);
 
         long endTime = System.currentTimeMillis();
 
@@ -235,7 +230,7 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
      * @param dbstats
      * @param numLevels
      */
-    public long computeBasePaths2(SearchProblem problem, HashMap<Integer, GroupRecord> groups, SubgoalDB db, SearchAlgorithm searchAlg, int[][] lowestCost, int[][][] paths, int[][] neighbor, int numGroups, int numLevels, boolean asSubgoals, DBStatsRecord dbstats) {
+    public long computeBasePaths2(SearchProblem problem, HashMap<Integer, GroupRecord> groups, SearchAlgorithm searchAlg, int[][] lowestCost, int[][][] paths, int[][] neighbor, int numGroups, int numLevels, boolean asSubgoals, DBStatsRecord dbstats) {
         int goalGroupLoc, startGroupLoc;
         GroupRecord startGroup, goalGroup;
         HashSet<Integer> neighbors;
@@ -266,7 +261,7 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
             int count = 0;
             while (it.hasNext()) {
                 // Compute shortest path between center representative of both groups
-                int goalGroupId = (Integer) it.next();
+                int goalGroupId = it.next();
                 goalGroup = groups.get(goalGroupId);
 
                 path = astar.computePath(new SearchState(startGroup.groupRepId), new SearchState(goalGroup.groupRepId), stats);

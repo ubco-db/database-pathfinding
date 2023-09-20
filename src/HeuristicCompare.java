@@ -185,15 +185,6 @@ public class HeuristicCompare {
 
     }
 
-    public static String padNum(int num, int digits) {
-        String st = "" + num;
-
-        for (int i = 0; i < digits - st.length(); i++)
-            st = "0" + st;
-        return st;
-
-    }
-
     public static ArrayList<HeuristicFunction> createHeuristics() {
         ArrayList<HeuristicFunction> heuristicList = new ArrayList<HeuristicFunction>();
 

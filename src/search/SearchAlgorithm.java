@@ -3,9 +3,9 @@ package search;
 import java.util.ArrayList;
 
 public interface SearchAlgorithm {
-    public ArrayList<SearchState> computePath(SearchState start, SearchState goal, StatsRecord stats);
+    ArrayList<SearchState> computePath(SearchState start, SearchState goal, StatsRecord stats);
 
-    public boolean isPath(SearchState start, SearchState goal, StatsRecord stats);
+    boolean isPath(SearchState start, SearchState goal, StatsRecord stats);
 
-    public boolean isPath(int startId, int goalId, StatsRecord stats);
+    boolean isPath(int startId, int goalId, StatsRecord stats);
 }

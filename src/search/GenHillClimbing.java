@@ -6,7 +6,7 @@ import util.HeuristicFunction;
 import java.util.ArrayList;
 
 /**
- * Returns a path if can get to (r2,c2) from (r1,c1) using only greedy movements (hill-climbing).
+ * Returns a path if you can get to (r2,c2) from (r1,c1) using only greedy movements (hill-climbing).
  * Include start and end in the path.
  * Cutoff is maximum # of moves that can make and be HC reachable
  */
@@ -28,10 +28,6 @@ public class GenHillClimbing implements SearchAbstractAlgorithm {
         this.cutoff = cutoff;
         this.tieBreak = tieBreak;
         this.heuristic = heuristic;
-    }
-
-    public GenHillClimbing(SearchProblem problem, int cutoff, HeuristicFunction heuristic) {
-        this(problem, cutoff, false, heuristic);
     }
 
     public GenHillClimbing(SearchProblem problem, int cutoff, boolean tieBreak) {    // standard de facto standard heuristic
@@ -144,14 +140,6 @@ public class GenHillClimbing implements SearchAbstractAlgorithm {
 
     public boolean isPath(int startId, int goalId, StatsRecord stats) {
         return computeIdPath(startId, goalId, stats) != null;
-    }
-
-    public int getCutoff() {
-        return cutoff;
-    }
-
-    public void setCutoff(int cutoff) {
-        this.cutoff = cutoff;
     }
 
     public int isPath(int startId, int goalId, StatsRecord stats, SavedSearch database) {

@@ -3,29 +3,22 @@ package database;
 import map.GameMap;
 import map.GroupRecord;
 import search.AStar;
-import search.GenHillClimbing;
-import search.Path;
 import search.SearchAbstractAlgorithm;
 import search.SearchAlgorithm;
 import search.SearchProblem;
 import search.SearchState;
 import search.SearchUtil;
 import search.StatsRecord;
-import util.ExpandArray;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.PriorityQueue;
 import java.util.Random;
 
 public class GameDB {
-    private SearchProblem problem;
+    private final SearchProblem problem;
     private HashMap<Integer, GroupRecord> groups;
 
     public GameDB(SearchProblem problem) {
@@ -49,17 +42,14 @@ public class GameDB {
         long currentTime;
         long totalATime = 0, totalSGTime = 0;
         int numSubgoals = 0;
-        int numWithoutSGs = 0, numDup = 0, numFail = 0;
-        int numRandom = 0;
         StatsRecord stats = new StatsRecord();
-        ArrayList<SearchState> subgoals = new ArrayList<SearchState>(5000);
+        ArrayList<SearchState> subgoals = new ArrayList<>(5000);
         for (int i = 0; i < num; i++) {
             do {
                 start = problem.generateRandomState(generator);
                 goal = problem.generateRandomState(generator);
 
                 dist = problem.computeDistance(start, goal);
-                numRandom++;
             } while (dist < minDistance || dist > maxDistance);
 
             // Compute optimal path for set of points
@@ -74,7 +64,6 @@ public class GameDB {
             else {
                 i--;
                 // System.out.println("Start and goal not connected.");
-                numFail++;
                 continue;
             }
 
@@ -82,25 +71,23 @@ public class GameDB {
             {
                 i--;
                 // System.out.println("No subgoals between start and goal.");
-                numWithoutSGs++;
                 continue;
             }
 
             int[] subgoal = new int[subgoals.size() - 2];
 
             for (int k = 1; k < subgoals.size() - 1; k++) {
-                SearchState s = (SearchState) subgoals.get(k);
+                SearchState s = subgoals.get(k);
                 subgoal[k - 1] = s.id;
             }
             numSubgoals += subgoal.length + 1;
 
             // System.out.println("Time to compute subgoals: "+(System.currentTimeMillis()-currentTime));
 
-            SubgoalDBRecord rec = new SubgoalDBRecord(i, start.id, goal.id, subgoal, 0);
+            SubgoalDBRecord rec = new SubgoalDBRecord(start.id, goal.id, subgoal, 0);
             if (!sgdb.addRecord(rec)) {    // Duplicate entry
                 i--;
                 // System.out.println("Duplicate entry");
-                numDup++;
                 continue;
             }
 
@@ -566,26 +553,22 @@ public class GameDB {
             neighbors.addAll(startGroup.getNeighborIds());
 
             // The loop is for level 2 and above
-            HashSet<Integer> neighbors2 = new HashSet<Integer>();
+            HashSet<Integer> neighbors2 = new HashSet<>();
             BitSet done = new BitSet(groups.size());
             GroupRecord neighborGroup;
 
             for (int i = 1; i < numLevels; i++) {
-                Iterator<Integer> it = neighbors.iterator();
-                while (it.hasNext()) {
-                    int neighborId = (Integer) it.next();
+                for (int neighborId : neighbors) {
                     if (done.get(neighborId)) continue;    // Already processed this neighbors set
 
                     done.set(neighborId);
                     neighborGroup = groups.get(neighborId);
                     // Do not itself if already there
-                    Iterator<Integer> it2 = neighborGroup.getNeighborIds().iterator();
-                    while (it2.hasNext()) {
-                        int val = it2.next();
+                    for (int val : neighborGroup.getNeighborIds()) {
                         if (val != startGroup.groupId) neighbors2.add(val);
                     }
 
-                    // neighbors2.addAll(neighborGroup.getNeighborIds());	// TODO: May remove. THis code would add a neighbor of itself.
+                    // neighbors2.addAll(neighborGroup.getNeighborIds());	// TODO: May remove. This code would add a neighbor of itself.
                 }
                 neighbors.addAll(neighbors2);
                 neighbors2.clear();
@@ -597,7 +580,7 @@ public class GameDB {
         return neighbors;
     }
 
-    public static long computeBasePaths(SearchProblem problem, HashMap<Integer, GroupRecord> groups, SubgoalDB db, SearchAlgorithm searchAlg, int[][] lowestCost, int[][][] paths, int[][] neighbor, int numGroups, int numLevels, boolean asSubgoals, DBStatsRecord dbstats) {
+    public static long computeBasePaths(SearchProblem problem, HashMap<Integer, GroupRecord> groups, SearchAlgorithm searchAlg, int[][] lowestCost, int[][][] paths, int[][] neighbor, int numGroups, int numLevels, boolean asSubgoals, DBStatsRecord dbstats) {
         int goalGroupLoc, startGroupLoc;
         GroupRecord startGroup, goalGroup;
         HashSet<Integer> neighbors;
@@ -621,12 +604,10 @@ public class GameDB {
             startGroup = groups.get(i + GameMap.START_NUM);
 
             neighbors = GameDB.getNeighbors(groups, startGroup, numLevels);
-            Iterator<Integer> it = neighbors.iterator();
             // System.out.println("Doing group: "+i+" Neighbors: "+neighbors.size());
             // Generate for each neighbor group
-            while (it.hasNext()) {
-                // Compute shortest path between center representative of both groups
-                int goalGroupId = (Integer) it.next();
+            for (int goalGroupId : neighbors) {
+                // Compute the shortest path between center representative of both groups
                 goalGroup = groups.get(goalGroupId);
 
                 path = astar.computePath(new SearchState(startGroup.groupRepId), new SearchState(goalGroup.groupRepId), stats);
@@ -711,9 +692,8 @@ public class GameDB {
     /**
      * Creates a databases combining all pairs of groups in map using dynamic programming instead of generating all combinations.
      *
-     * @return
+     * @return SubgoalDB
      */
-    @SuppressWarnings("unchecked")
     public SubgoalDB computeHCDBDP(SubgoalDB db, SearchAlgorithm searchAlg, DBStatsRecord dbstats, int numLevels) {
         GroupRecord startGroup, goalGroup;
         int[] path;
@@ -724,10 +704,9 @@ public class GameDB {
         int[][] lowestCost = new int[numGroups][numGroups];
         int[][][] paths = new int[numGroups][numGroups][];
         int[][] neighbor = new int[numGroups][numGroups];
-        HashSet<Integer> neighbors;
         long startTime = System.currentTimeMillis();
 
-        long baseTime = computeBasePaths(problem, groups, db, searchAlg, lowestCost, paths, neighbor, numGroups, numLevels, true, dbstats);
+        long baseTime = computeBasePaths(problem, groups, searchAlg, lowestCost, paths, neighbor, numGroups, numLevels, true, dbstats);
 
         long endTime, currentTime = System.currentTimeMillis();
 
@@ -846,7 +825,7 @@ public class GameDB {
                 if (subgoals == null) numSubgoals++;
                 else numSubgoals += subgoals.length + 1;
 
-                SubgoalDBRecord rec = new SubgoalDBRecord(count, startGroup.groupRepId, goalGroup.groupRepId, subgoals, (startGroup.groupId - GameMap.START_NUM + 1) * 10000 + goalGroup.groupId - GameMap.START_NUM);    // TODO: This will probably need to be changed.
+                SubgoalDBRecord rec = new SubgoalDBRecord(startGroup.groupRepId, goalGroup.groupRepId, subgoals, (startGroup.groupId - GameMap.START_NUM + 1) * 10000 + goalGroup.groupId - GameMap.START_NUM);    // TODO: This will probably need to be changed.
 
                 if (!db.addRecord(rec))
                     System.out.println("Failed to add record connecting HC states: " + i + " and " + j);
@@ -878,29 +857,6 @@ public class GameDB {
         return db;
     }
 
-    @SuppressWarnings("unchecked")
-    void mergePaths2(int i, int j, ArrayList[][] paths, int[][] neighbor, ArrayList<SearchState> path) {
-        int neighborId = neighbor[i][j];
-        if (neighborId == -1) return;
-
-        if (neighborId == j) {    // Path already stored as direct neighbour
-            for (int k = 0; k < paths[i][j].size(); k++)
-                path.add((SearchState) paths[i][j].get(k));
-            return;
-        }
-        if (paths[i][neighborId] == null) return;
-
-        // path.addAll(paths[i][neighborId]);
-        for (int k = 0; k < paths[i][neighborId].size(); k++)
-            path.add((SearchState) paths[i][neighborId].get(k));
-
-        if (paths[neighborId][j] != null) SearchUtil.mergePaths(path, paths[neighborId][j]);
-        else {
-            mergePaths2(neighborId, j, paths, neighbor, path);
-            // SearchUtil.mergePaths(path, paths[neighborId][j]);
-        }
-    }
-
     public static int mergePaths3(int i, int j, int[][][] paths, int[][] neighbor, int[] path, int lastOffset) {
         int neighborId = neighbor[i][j];                    // Lookup neighbor of i to go to that has shortest path to j
         if (neighborId == -1)                                // If no neighbor, i and j must not be connected.
@@ -909,8 +865,10 @@ public class GameDB {
         int start = 0;
         if (lastOffset > 0) start = 1;
 
-        for (int k = start; k < paths[i][neighborId].length; k++)        // Copy (but do not include duplicate start node - start from 1 instead of 0).
-            path[lastOffset + k] = paths[i][neighborId][k];
+        // Copy (but do not include duplicate start node - start from 1 instead of 0).
+        if (paths[i][neighborId].length - start >= 0) {
+            System.arraycopy(paths[i][neighborId], start, path, lastOffset + start, paths[i][neighborId].length - start);
+        }
 
         if (neighborId == j)                                // If neighbor is j itself, then this is the end of the path.
         {
@@ -930,18 +888,16 @@ public class GameDB {
     }
 
     // This version support matrix as an adjacency list and dynamically calculates the best path
-    public static int mergePaths4(int startGroupId, int goalGroupId, int[][][] paths, int[][] neighbor, int[][] lowestCost, int[][] neighborId, int[] path, int lastOffset, IndexDB db, SearchProblem problem) {
+    public static int mergePaths4(int startGroupId, int goalGroupId, int[][][] paths, int[][] neighbor, int[][] lowestCost, int[][] neighborId, int[] path) {
         // Find if this is a neighbor
         int neighborLoc = findInArray(neighborId[startGroupId], goalGroupId);
-        if (neighborLoc != -1)                                                    // Direct neighbor with path stored - just return the path
-        {
-            for (int k = 0; k < paths[startGroupId][neighborLoc].length; k++)
-                path[k] = paths[startGroupId][neighborLoc][k];
+        if (neighborLoc != -1) { // Direct neighbor with path stored - just return the path
+            System.arraycopy(paths[startGroupId][neighborLoc], 0, path, 0, paths[startGroupId][neighborLoc].length);
             return paths[startGroupId][neighborLoc].length;
         }
 
         // Otherwise we need to search to find it
-        // Quick implementation using Dysktra's algorithm but could use A* as well
+        // Quick implementation using Djisktra's algorithm but could use A* as well
         int numGroups = neighbor.length;
         int[] distance = new int[numGroups];
         int[] previous = new int[numGroups];
@@ -1017,15 +973,16 @@ public class GameDB {
         // nextId is group id.  nextLoc is location of that id is adjacency list (array)
         int nextId = distance[count - 2], lastId = startGroupId;
         int nextLoc = findInArray(neighborId[lastId], nextId);
-        for (int k = 0; k < paths[lastId][nextLoc].length; k++)        // Copy (but do not include duplicate start node - start from 1 instead of 0).
-            path[k] = paths[lastId][nextLoc][k];
+        // Copy (but do not include duplicate start node - start from 1 instead of 0).
+        System.arraycopy(paths[lastId][nextLoc], 0, path, 0, paths[lastId][nextLoc].length);
         pathLen += paths[lastId][nextLoc].length;
         lastId = nextId;
         for (int i = count - 3; i >= 0; i--) {
             nextId = distance[i];
             nextLoc = findInArray(neighborId[lastId], nextId);
-            for (int k = 1; k < paths[lastId][nextLoc].length; k++)        // Copy (but do not include duplicate start node - start from 1 instead of 0).
-                path[pathLen - 1 + k] = paths[lastId][nextLoc][k];
+            // Copy (but do not include duplicate start node - start from 1 instead of 0).
+            if (paths[lastId][nextLoc].length >= 1)
+                System.arraycopy(paths[lastId][nextLoc], 1, path, pathLen - 1 + 1, paths[lastId][nextLoc].length - 1);
             pathLen += paths[lastId][nextLoc].length - 1;
             lastId = nextId;
         }
@@ -1096,8 +1053,9 @@ public class GameDB {
         int start = 0;
         if (lastOffset > 0) start = 1;
 
-        for (int k = start; k < paths[startGroupId][neighborLoc].length; k++)        // Copy (but do not include duplicate start node - start from 1 instead of 0).
-            path[lastOffset + k] = paths[startGroupId][neighborLoc][k];
+        // Copy (but do not include duplicate start node - start from 1 instead of 0).
+        if (paths[startGroupId][neighborLoc].length - start >= 0)
+            System.arraycopy(paths[startGroupId][neighborLoc], start, path, lastOffset + start, paths[startGroupId][neighborLoc].length - start);
 
         if (neighborId == goalGroupId)                                            // If neighbor is goal, then this is the end of the path.
             return lastOffset + paths[startGroupId][neighborLoc].length;            // Current size of path
@@ -1108,10 +1066,4 @@ public class GameDB {
         return mergePaths5(neighborId, goalGroupId, paths, neighbors, path, lastOffset, neighborIds, numGroups);
     }
 
-    public class DBRecord {
-        int fromGroup;
-        int toGroup;
-        int subgoalRow;
-        int subgoalCol;
-    }
 }

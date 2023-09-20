@@ -5,7 +5,6 @@ import search.SearchState;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.StringTokenizer;
@@ -72,23 +71,21 @@ public class Scenario {
 	}
 	*/
     public Scenario(String fileName) {
-        Scanner sc = null;
-        try {
-            sc = new Scanner(new File(fileName));
+        try (Scanner sc = new Scanner(new File(fileName))) {
 
             String st = sc.nextLine();
             if (st.contains("version")) {    // Nathan's format: bucket number, map name, map width, map height, start x, start y, goal x, goal y, optimal length
-                // Does not know number of problems before hand
+                // Does not know number of problems beforehand
                 problems = new ArrayList<Problem>(1000);
                 int count = 0;
                 while (sc.hasNextLine()) {
                     st = sc.nextLine();
                     if (st.equals("")) continue;
                     StringTokenizer tokenizer = new StringTokenizer(st);
-                    String bucketid = tokenizer.nextToken();
+                    tokenizer.nextToken();
                     String mapName = tokenizer.nextToken();
                     int mapw = Integer.parseInt(tokenizer.nextToken());
-                    int maph = Integer.parseInt(tokenizer.nextToken());
+                    tokenizer.nextToken();
                     int startX = Integer.parseInt(tokenizer.nextToken());
                     int startY = Integer.parseInt(tokenizer.nextToken());
                     int startId = startY * mapw + startX;
@@ -120,8 +117,6 @@ public class Scenario {
             }
         } catch (FileNotFoundException e) {
             System.out.println("Did not find input file: " + e);
-        } finally {
-            if (sc != null) sc.close();
         }
     }
 
@@ -133,30 +128,4 @@ public class Scenario {
         return problems.get(num);
     }
 
-    public void addProblem(Problem p) {
-        problems.add(p);
-    }
-
-    public void write(String fileName) {
-        PrintWriter out = null;
-        try {
-            out = new PrintWriter(fileName);
-            // Write out the number of problems
-            out.println(problems.size());
-
-            for (int i = 0; i < problems.size(); i++) {
-                Problem p = problems.get(i);
-                out.print((i + 1) + "\t");
-                out.print(p.getMapName() + "\t");
-                out.print(p.getStart().id + "\t");
-                out.print(p.getGoal().id + "\t");
-                out.print(p.getOptimalTravelCost() / 10.0 + "\t");
-                out.println(p.getAStarDifficulty());
-            }
-        } catch (FileNotFoundException e) {
-            System.out.println("Error with output file: " + e);
-        } finally {
-            if (out != null) out.close();
-        }
-    }
 }

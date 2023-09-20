@@ -75,51 +75,13 @@ public class StatsRecord {
         maxMoveNum = st.maxMoveNum;
     }
 
-    public StatsRecord computeDiff(StatsRecord st) {
-        StatsRecord rec = new StatsRecord();
-        rec.statesExpandedHC = this.statesExpandedHC - st.statesExpandedHC;
-        rec.statesExpanded = this.statesExpanded - st.statesExpanded;
-        rec.statesUpdated = this.statesUpdated - st.statesUpdated;
-        rec.pathLength = this.pathLength - st.pathLength;
-        rec.pathCost = this.pathCost - st.pathCost;
-        rec.time = this.time - st.time;
-        rec.closedListSize = this.closedListSize - st.closedListSize;
-        rec.openListSize = this.openListSize - st.openListSize;
-        //	rec.maxTime = this.maxTime - st.maxTime;
-        rec.revisits = this.revisits - st.revisits;
-        return rec;
-    }
-
-
-    public void merge(StatsRecord st) {
-        this.statesExpandedHC = this.statesExpandedHC + st.statesExpandedHC;
-        this.statesExpanded = this.statesExpanded + st.statesExpanded;
-        this.statesUpdated = this.statesUpdated + st.statesUpdated;
-        this.pathLength = this.pathLength + st.pathLength;
-        this.pathCost = this.pathCost + st.pathCost;
-        this.time = this.time + st.time;
-        this.closedListSize = this.closedListSize + st.closedListSize;
-        this.openListSize = this.openListSize + st.openListSize;
-        //	if (this.maxTime < st.maxTime)
-        //		this.maxTime = st.maxTime;
-        this.revisits += st.revisits;
-        this.moveTimes = st.moveTimes;
-    }
 
     public int getStatesExpandedHC() {
         return statesExpandedHC;
     }
 
-    public void setStatesExpandedHC(int statesExpandedHC) {
-        this.statesExpandedHC = statesExpandedHC;
-    }
-
     public long getStatesExpanded() {
         return statesExpanded;
-    }
-
-    public void setStatesExpanded(int statesExpanded) {
-        this.statesExpanded = statesExpanded;
     }
 
     public int getPathLength() {
@@ -142,42 +104,28 @@ public class StatsRecord {
         statesUpdated += num;
     }
 
-    public void incrementCost(int cost) {
-        pathCost += cost;
-    }
-
-    public void incrementLength(int len) {
-        pathLength += len;
-    }
-
-    public void setStatesUpdated(int statesUpdated) {
-        this.statesUpdated = statesUpdated;
-    }
-
     public long getStatesUpdated() {
         return statesUpdated;
     }
 
     public String toString() {
-        StringBuffer buf = new StringBuffer(100);
-        buf.append("Path cost: ");
-        buf.append(pathCost);
-        buf.append("\tPath length: ");
-        buf.append(pathLength);
-        buf.append("\nStates HC: ");
-        buf.append(statesExpandedHC);
-        buf.append("\t States Expanded: ");
-        buf.append(statesExpanded);
-        buf.append("\tStates updated: ");
-        buf.append(statesUpdated);
-        buf.append("\tTime: ");
-        buf.append(time);
-        buf.append("\tMaxTime: ");
-        buf.append(moveTimes[0]);
-        //	buf.append(maxTime);
-        buf.append("\tRevisits: ");
-        buf.append(revisits);
-        return buf.toString();
+        return "Path cost: " +
+                pathCost +
+                "\tPath length: " +
+                pathLength +
+                "\nStates HC: " +
+                statesExpandedHC +
+                "\t States Expanded: " +
+                statesExpanded +
+                "\tStates updated: " +
+                statesUpdated +
+                "\tTime: " +
+                time +
+                "\tMaxTime: " +
+                moveTimes[0] +
+                //	buf.append(maxTime);
+                "\tRevisits: " +
+                revisits;
     }
 
     public void clear() {

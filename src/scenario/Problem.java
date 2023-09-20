@@ -2,10 +2,6 @@ package scenario;
 
 import search.SearchState;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
-
 /**
  * Information about a search problem.
  *
@@ -32,10 +28,6 @@ public class Problem {
         return mapName;
     }
 
-    public void setMapName(String mapName) {
-        this.mapName = mapName;
-    }
-
     public SearchState getStart() {
         return start;
     }
@@ -56,20 +48,8 @@ public class Problem {
         return optimalTravelCost;
     }
 
-    public void setOptimalTravelCost(int optimalTravelCost) {
-        this.optimalTravelCost = optimalTravelCost;
-    }
-
     public double getAStarDifficulty() {
         return aStarDifficulty;
-    }
-
-    public void setAStarDifficulty(double starDifficulty) {
-        aStarDifficulty = starDifficulty;
-    }
-
-    public void write(PrintWriter out) throws IOException {
-        out.println(this.toString());
     }
 
     public String toString() {

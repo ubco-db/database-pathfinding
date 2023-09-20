@@ -15,12 +15,8 @@ public class SavedSearch {
 
     private static int GROWTH_FACTOR = 4;        // Amount to re-size heap when overflows
 
-    public SavedSearch() {
-        this(1024);
-    }
-
     public SavedSearch(int size) {
-        int hashSize = (int) (size * 2);
+        int hashSize = size * 2;
         closedList = new int[hashSize];
         currentCL = hashSize - 1;
         costClosedList = new int[hashSize];

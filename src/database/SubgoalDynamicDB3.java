@@ -29,7 +29,7 @@ import java.util.Scanner;
 public class SubgoalDynamicDB3 extends SubgoalDBExact {
     private int numGroups;
     private int[][][] paths;            // Used during run-time.  Direct paths between actual neighbors.
-    private IndexDB neighbors;            // An RLE compressed mapping of the neighbors matrix.  Used during run-time as are three arrays below.
+    private IndexDB neighbors;            // An RLE compressed mapping of the neighbors' matrix.  Used during run-time as are three arrays below.
     private int[] numNeighbors;            // The number of neighbors for each group
     private int[][] neighborId;            // The neighbor id that the path is for.  E.g. paths[i][j] is a list of states ids for a path from i to some state j (not state id j).  neighborId[i][j] indicates what state it is.
     // Note this is necessary for supporting adjacency list of paths.
@@ -41,7 +41,7 @@ public class SubgoalDynamicDB3 extends SubgoalDBExact {
         int startGroupId = db.findHT(start.id);
         int goalGroupId = db.findHT(goal.id);
 
-        ArrayList<SubgoalDBRecord> result = new ArrayList<SubgoalDBRecord>(1);
+        ArrayList<SubgoalDBRecord> result = new ArrayList<>(1);
 
         // Need to calculate record as will not be stored
         int pathSize;
@@ -58,7 +58,7 @@ public class SubgoalDynamicDB3 extends SubgoalDBExact {
         // Does not include start and goal
         subgoals = SearchUtil.computeSubgoalsBinaryByIds(path, searchAlg, tmp, pathSize);
 
-        SubgoalDBRecord rec = new SubgoalDBRecord(1, startId, goalId, subgoals, 0);
+        SubgoalDBRecord rec = new SubgoalDBRecord(startId, goalId, subgoals, 0);
         // System.out.println("Created record between: "+startId+" and "+goalId+" Record: "+rec.toString(problem));
         result.add(rec);
         return result;
@@ -162,9 +162,7 @@ public class SubgoalDynamicDB3 extends SubgoalDBExact {
         // Format: numGroups
         //		neighbor matrix (numGroups x []) - just stores direct neighbors
         // 		paths matrix (with paths). Each path on a line.  A path is a list of subgoals.  Just have 0 if no states.
-        PrintWriter out = null;
-        try {
-            out = new PrintWriter(fileName);
+        try (PrintWriter out = new PrintWriter(fileName)) {
             out.println(numGroups);
             for (int i = 0; i < numGroups; i++) {    // Read each group
                 int numNeighbors = this.numNeighbors[i];
@@ -182,8 +180,6 @@ public class SubgoalDynamicDB3 extends SubgoalDBExact {
             }
         } catch (FileNotFoundException e) {
             System.out.println("Error with output file: " + e);
-        } finally {
-            if (out != null) out.close();
         }
     }
 
@@ -191,7 +187,6 @@ public class SubgoalDynamicDB3 extends SubgoalDBExact {
      * Verifies only the index mapping.
      * Does not currently dynamically compute all records then verifies if they are correct.
      *
-     * @param map
      * @param searchAlg
      */
     public void verify(SearchAlgorithm searchAlg) {
@@ -223,7 +218,7 @@ public class SubgoalDynamicDB3 extends SubgoalDBExact {
 
         long startTime = System.currentTimeMillis();
 
-        long baseTime = computeBasePaths2(problem, groups, this, searchAlg, lowestCost, paths, neighbor, numGroups, numLevels, true, dbstats);
+        long baseTime = computeBasePaths2(problem, groups, searchAlg, lowestCost, paths, neighbor, numGroups, numLevels, true, dbstats);
 
         long endTime = System.currentTimeMillis();
 
@@ -243,7 +238,7 @@ public class SubgoalDynamicDB3 extends SubgoalDBExact {
                 neighbors = GameDB.getNeighbors(groups, startGroup, numLevels);
                 Iterator<Integer> it = neighbors.iterator();
                 while (it.hasNext()) {
-                    int neighborId = (Integer) it.next() - GameMap.START_NUM;
+                    int neighborId = it.next() - GameMap.START_NUM;
                     // Compute new costs for all locations based on value of neighbor
                     for (int j = 0; j < numGroups; j++) {
                         if (i == j) continue;
@@ -290,7 +285,7 @@ public class SubgoalDynamicDB3 extends SubgoalDBExact {
     }
 
     // This version does not assume a full matrix but rather an adjacency list representation
-    public long computeBasePaths2(SearchProblem problem, HashMap<Integer, GroupRecord> groups, SubgoalDB db, SearchAlgorithm searchAlg, int[][] lowestCost, int[][][] paths, int[][] neighbor, int numGroups, int numLevels, boolean asSubgoals, DBStatsRecord dbstats) {
+    public long computeBasePaths2(SearchProblem problem, HashMap<Integer, GroupRecord> groups, SearchAlgorithm searchAlg, int[][] lowestCost, int[][][] paths, int[][] neighbor, int numGroups, int numLevels, boolean asSubgoals, DBStatsRecord dbstats) {
         int goalGroupLoc, startGroupLoc;
         GroupRecord startGroup, goalGroup;
         HashSet<Integer> neighbors;
@@ -318,7 +313,7 @@ public class SubgoalDynamicDB3 extends SubgoalDBExact {
             // Generate for each neighbor group
             int count = 0;
             while (it.hasNext()) {
-                // Compute shortest path between center representative of both groups
+                // Compute the shortest path between center representative of both groups
                 int goalGroupId = (Integer) it.next();
                 goalGroup = groups.get(goalGroupId);
 

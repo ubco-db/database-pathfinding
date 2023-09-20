@@ -31,10 +31,6 @@ public class CircularQueue {
         return -1;
     }
 
-    public void initIterator() {
-        iteratorLoc = front;
-    }
-
     /**
      * Retrieves the next element using the iterator if it exists.
      * Returns 1 if element exists and fills data structure for data record provided in call.

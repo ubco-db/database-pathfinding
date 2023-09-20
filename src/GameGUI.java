@@ -16,7 +16,6 @@ import search.MapSearchProblem;
 import search.SearchState;
 import search.SearchUtil;
 import search.StatsRecord;
-import search.SubgoalSearch;
 import util.HeuristicFunction;
 
 import javax.swing.*;
@@ -263,7 +262,7 @@ public class GameGUI extends JFrame {
 
             //If a string was returned, say so.
             if ((s != null) && (s.length() > 0)) {
-                if (s.indexOf("RANDOM") >= 0) { // Random database
+                if (s.contains("RANDOM")) { // Random database
                     int size = Integer.parseInt(s.substring(9));
                     subgoalDB = new SubgoalDB();
                     subgoalDB = database.computeRandomDB(size, new GenHillClimbing(problem, 25), dbstat, subgoalDB);
@@ -528,8 +527,7 @@ public class GameGUI extends JFrame {
                             // return;
                         }
                         if (expanded != null) {
-                            for (int i = 0; i < expanded.size(); i++) {
-                                SearchState current = expanded.get(i);
+                            for (SearchState current : expanded) {
                                 int row = map.getRow(current.id);
                                 int col = map.getCol(current.id);
 
@@ -550,8 +548,7 @@ public class GameGUI extends JFrame {
                             }
                         }
                         if (path != null) {
-                            for (int i = 0; i < path.size(); i++) {
-                                SearchState current = path.get(i);
+                            for (SearchState current : path) {
                                 int row = map.getRow(current.id);
                                 int col = map.getCol(current.id);
 
@@ -593,19 +590,6 @@ public class GameGUI extends JFrame {
                     map.resetMask();
                 }
                 repaint();
-            }
-        }
-
-        private void loadDB(boolean val) {
-            JFileChooser jfile = new JFileChooser(currentPath);
-            jfile.setDialogTitle("Open subgoal database file");
-            int returnVal = jfile.showOpenDialog(null);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                String fileName = jfile.getSelectedFile().getAbsolutePath();
-                subgoalDB = new SubgoalDB();
-                this.subgoalDB.load(fileName);
-                // this.subgoalDB.loadAll(fileName);
-                currentPath = jfile.getSelectedFile().getPath();
             }
         }
 
