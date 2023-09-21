@@ -16,14 +16,13 @@ import java.util.Map.Entry;
  * A database of records organized as a 2D matrix from state representatives.
  * Example record[i][j] would navigate from representative of abstract region i to representative of abstract region j.
  * This version is only suitable for algorithms that perform state abstraction.
- * <p>
  * Database also stores RLE compressed version of mapping of state space to abstract state space so region representatives can be found in constant time.
  *
  * @author rlawrenc
  */
 public class SubgoalDBExact extends SubgoalDB {
-    protected IndexDB db;                            // Store base to abstract state mapping
-    protected SubgoalDBRecord[][] recordMatrix;        // Stores records to navigate between region representatives
+    protected IndexDB db;                               // Store base to abstract state mapping
+    protected SubgoalDBRecord[][] recordMatrix;         // Stores records to navigate between region representatives
 
     public SubgoalDBExact() {
         super();
@@ -39,8 +38,8 @@ public class SubgoalDBExact extends SubgoalDB {
     public void computeIndex(SearchProblem problem, DBStatsRecord rec) {
         this.problem = problem;
 
-        generateIndexDB();                    // Generate the RLE compressed index mapping
-        db.buildHT();                        // Build a hash table over the RLE index to allow constant time access
+        generateIndexDB();                      // Generate the RLE compressed index mapping
+        db.buildHT();                           // Build a hash table over the RLE index to allow constant time access
 
         rec.addStat(24, db.getCount());
         rec.addStat(25, db.getHTSize());
@@ -54,7 +53,7 @@ public class SubgoalDBExact extends SubgoalDB {
      */
     public void exportDB(String fileName) {
         super.exportDB(fileName);                // Export the base database of records
-        db.export(fileName + "i");                // Export the mapping
+        db.export(fileName + "i");       // Export the mapping
     }
 
     /**
@@ -150,7 +149,7 @@ public class SubgoalDBExact extends SubgoalDB {
         int count = 0;
         while (it.hasNext()) {
             e = it.next();
-            groupsMapping[count][0] = e.getKey() - GameMap.START_NUM;        // TODO: This is a hack and assume all group numbers start counting from whatever the START_NUM is  (currently 50).
+            groupsMapping[count][0] = e.getKey() - GameMap.START_NUM;        // TODO: This is a hack and assume all group numbers start counting from whatever the START_NUM is (currently 50).
             groupsMapping[count++][1] = e.getValue().groupRepId;
         }
         db.setGroups(groupsMapping);
