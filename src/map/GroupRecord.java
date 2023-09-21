@@ -24,6 +24,20 @@ public class GroupRecord {
         this.neighborIds = neighborIds;
     }
 
+    // Returns true if two groups are neighbors by virtue of one group having a base state that is in the neighbor list of the other.
+    // Since assuming non-directed edges (this works either way as both states should have the same pair of nodes as neighbors in the neighbor lists).
+    public boolean isNeighbor(GroupRecord g)
+    {
+        HashSet<Integer> otherGroupNeighbors = g.getNeighborIds();
+        if (otherGroupNeighbors == null || neighborIds == null)
+            return false;
+
+        for (int nodeId : neighborIds) {
+            if (otherGroupNeighbors.contains(nodeId))
+                return true;
+        }
+        return false;
+    }
 
     public void setNeighbors(ExpandArray neighbors) {
         this.neighborIds = new HashSet<Integer>(neighbors.num());

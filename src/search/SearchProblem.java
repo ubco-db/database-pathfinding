@@ -14,10 +14,17 @@ import java.util.Random;
  * @author rlawrenc
  */
 public abstract class SearchProblem {
+    protected SearchSpace searchSpace;
+
+    public void setSearchSpace(SearchSpace space) {
+        this.searchSpace = space;
+    }
 
     public abstract ArrayList<SearchState> getNeighbors(SearchState state);
 
     public abstract void getNeighbors(int stateId, ExpandArray neighbors);
+
+    public abstract boolean isNeighbor(int fromStateId, int toStateId);
 
     public abstract int computeDistance(SearchState start, SearchState goal);
 
@@ -40,8 +47,6 @@ public abstract class SearchProblem {
     public abstract SearchState generateRandomState(Random generator);
 
     public abstract HashMap<Integer, GroupRecord> getGroups();
-
-    public abstract void computeGroups();
 
     public abstract void computeNeighbors();
 

@@ -1,5 +1,7 @@
 package util;
 
+import java.util.HashSet;
+
 public class ExpandArray {
     private int count;
     private int[] values;
@@ -12,6 +14,37 @@ public class ExpandArray {
     public ExpandArray(int size) {
         count = 0;
         values = new int[size];
+    }
+
+    public ExpandArray(ExpandArray a) {
+        count = a.count;
+        values = new int[count];
+        System.arraycopy(a.values, 0, values, 0, a.count);
+    }
+
+    public void addAll(ExpandArray a) {
+        for (int i = 0; i < a.count; i++)
+            add(a.values[i]);
+    }
+
+    public void addAllDistinct(ExpandArray a) {
+        for (int i = 0; i < a.count; i++) {    // See if it already exists
+            int val = a.values[i];
+            boolean found = false;
+            for (int j = 0; j < count; j++) {
+                if (values[j] == val) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) add(val);
+        }
+    }
+
+    public void addAll(HashSet<Integer> n) {
+        for (Integer integer : n) {
+            add(integer);
+        }
     }
 
     public void add(int id) {

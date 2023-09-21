@@ -125,8 +125,6 @@ public class GameGUI extends JFrame {
         cbxSearchMethod = new JComboBox<>();
         cbxSearchMethod.addItem("A*");
         cbxSearchMethod.addItem("Hill-climbing");
-        cbxSearchMethod.addItem("Query subgoals");
-        cbxSearchMethod.addItem("Query subgoals HC");
         cbxSearchMethod.addItem("Wall hugging");
         cbxSearchMethod.addItem("orz103d");
         cbxSearchMethod.addItem("ost000a");
@@ -169,21 +167,31 @@ public class GameGUI extends JFrame {
     private class MenuListener implements ActionListener {
         public void actionPerformed(ActionEvent event) {  // find the menu that was selected
             Object source = event.getSource();
-            if (source == exitMenuItem) System.exit(0);
-            else if (source == computeMenuItem) panel.compute();
-            else if (source == visualizeMenuItem) panel.visualize();
-            else if (source == nextMenuItem) panel.next();
-            else if (source == prevMenuItem) panel.prev();
-            else if (source == computeDBMenuItem) panel.computeDB();
-            else if (source == coverageDBMenuItem) panel.coverageDB();
-            else if (source == rotateMenuItem) panel.rotate();
+            if (source == exitMenuItem)
+                System.exit(0);
+            else if (source == computeMenuItem)
+                panel.compute();
+            else if (source == visualizeMenuItem)
+                panel.visualize();
+            else if (source == nextMenuItem)
+                panel.next();
+            else if (source == prevMenuItem)
+                panel.prev();
+            else if (source == computeDBMenuItem)
+                panel.computeDB();
+            else if (source == coverageDBMenuItem)
+                panel.coverageDB();
+            else if (source == rotateMenuItem)
+                panel.rotate();
             else if (source == exportMapMenuItem || source == exportDBMenuItem) {
                 JFileChooser jfile = new JFileChooser(currentPath);
                 int returnVal = jfile.showSaveDialog(null);
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     String fileName = jfile.getSelectedFile().getAbsolutePath();
-                    if (source == exportMapMenuItem) panel.exportMap(fileName);
-                    else panel.exportDB(fileName);
+                    if (source == exportMapMenuItem)
+                        panel.exportMap(fileName);
+                    else
+                        panel.exportDB(fileName);
                 }
                 currentPath = jfile.getSelectedFile().getPath();
             } else if (source == loadMenuItem) {
