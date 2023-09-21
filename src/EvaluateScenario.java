@@ -62,7 +62,7 @@ public class EvaluateScenario {
          */
 
         int scenarioToRun = 0;              // Index into scenarios array (12 scenarios total). Change this to run a different scenario.
-        int[] algorithms = {0, 1, 4};       // Select up to three algorithms to run
+        int[] algorithms = {0, 2, 5};       // Select up to three algorithms to run
 
         int heuristicId = 1;                // (0~5) heuristic function id passing to A* with arbitrary heuristic
         int cutoff = 250;                   // For knnLRTA* the maximum # of moves for hill-climbing checks.
