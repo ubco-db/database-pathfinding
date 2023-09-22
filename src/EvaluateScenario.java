@@ -37,8 +37,7 @@ public class EvaluateScenario {
 
     @SuppressWarnings("unchecked")
     public static void main(String[] argv) {
-        String[] scenarios = {
-                "012_100",                      //0
+        String[] scenarios = {"012_100",                      //0
                 "mm_8_1024",                    //1
                 "mm_cs_4_1000",                 //2
                 "mm_de_5_1000",                 //3
@@ -54,15 +53,15 @@ public class EvaluateScenario {
                 "rmtst01.map.scen",             //13
                 "change.txt"                    //14
         };
-        String[] algorithmNames = {"A*", "HCDPS", "HCDPS+", "Cover2", "JStar", "JStar2", "A*+heuristic"};
-        String[] abbrv = {"a", "hcdps", "hcdps+", "cover2", "JStar", "JStar2", "AHrt"};
+        String[] algorithmNames = {"A*", "HCDPS+", "Cover2", "JStar", "JStar2", "A*+heuristic"};
+        String[] abbrv = {"a", "hcdps+", "cover2", "JStar", "JStar2", "AHrt"};
 
         /*
          * Run configuration variables are below.
          */
 
         int scenarioToRun = 0;              // Index into scenarios array (12 scenarios total). Change this to run a different scenario.
-        int[] algorithms = {0, 2, 5};       // Select up to three algorithms to run
+        int[] algorithms = {0, 4, 5};          // Select up to three algorithms to run
 
         int heuristicId = 1;                // (0~5) heuristic function id passing to A* with arbitrary heuristic
         int cutoff = 250;                   // For knnLRTA* the maximum # of moves for hill-climbing checks.
@@ -76,17 +75,18 @@ public class EvaluateScenario {
 
         long[] revisits = new long[3];      // Count the # of times that the path revisits a state
         long[] distrevisits = new long[3];  // Sum of distance between state revisits.
-                                            // E.g. If path goes to state A then B then A, distance is 1.
-                                            // Sum all those distances to see how far you travel before a revisit.
+        // E.g. If path goes to state A then B then A, distance is 1.
+        // Sum all those distances to see how far you travel before a revisit.
 
         // boolean buildPath = true;        // Algorithms will build path not just compute cost of path.
 
         boolean showPaths = false;          // If true, paths computed by each algorithm are printed to standard output.
         boolean showImage = false;          // If true, will produce a PNG image for the path produced by regardless if the path is good or not.
         boolean exactDB = true;             // For HCDPS*, true if using exact DB rather than kd-tree style database.
+        // TODO: figure out which is best
         int dbtype = 2;                     // 1 - full DP matrix pre-computed,
-                                            // 2 - adjacency list representation (DP computed at run-time),
-                                            // 3 - DP matrix pre-computed but RLE compressed, adjacency list for neighbors/paths for each abstract state
+        // 2 - adjacency list representation (DP computed at run-time),
+        // 3 - DP matrix pre-computed but RLE compressed, adjacency list for neighbors/paths for each abstract state
 
         String imageDir = "images/";
         String dbPath = "databases/";
@@ -314,6 +314,8 @@ public class EvaluateScenario {
                 // catch (Exception e) {}
 
                 SearchAbstractAlgorithm alg;
+                GenHillClimbing pathCompressAlg;
+                SubgoalSearch subgoalSearch;
 
                 long currentTime = System.currentTimeMillis();
 
@@ -349,93 +351,7 @@ public class EvaluateScenario {
                             }
                         }
                         break;
-                    case 1: // HCDPS - Hill-climbing abstraction HEBE
-                        alg = new GenHillClimbing(problem, cutoff);
-                        GenHillClimbing pathCompressAlg = new GenHillClimbing(problem, 10000);
-                        // Allow unlimited hill-climbing when compressing records in the database (between record subgoals)
-
-                        if (mapSwitch) { // Load abstract map and database
-                            System.out.println("Loading database.");
-                            String fname, mapfname;
-
-                            if (!exactDB) {
-                                fname = hcDatabasePath + mapFileName + "_HCDL" + numNeighborLevels + "_" + cutoff + ".dat";
-                                mapfname = hcDatabasePath + mapFileName + "_HC_map_cut_" + cutoff + ".txt";
-                                databases[j] = new SubgoalDB();
-                            } else { // Exact database
-                                databases[j] = new SubgoalDBExact();
-                                fname = hcDatabasePath + mapFileName + "_HCDLE" + numNeighborLevels + "_" + cutoff + ".dat";
-                                mapfname = hcDatabasePath + mapFileName + "_HCE_map_cut_" + cutoff + ".txt";
-                            }
-
-                            if (!databases[j].exists(fname) || !databases[j].load(fname)) {
-                                // Generate database
-                                // Always generate map abstraction with database (as needs some of the info - specifically the groups)
-                                System.out.println("Loading map and performing abstraction...");
-                                // GreedyHC map abstraction
-                                if (dbStats[j] == null) {
-                                    dbStats[j] = new DBStats();
-                                    DBStats.init(dbStats[j]);
-                                }
-                                rec = new DBStatsRecord(dbStats[j].getSize());
-                                rec.addStat(0, "HCDPS (" + numNeighborLevels + ")");
-                                rec.addStat(1, numNeighborLevels);
-                                rec.addStat(3, cutoff);
-                                rec.addStat(4, mapFileName);
-                                rec.addStat(5, baseMap.rows);
-                                rec.addStat(6, baseMap.cols);
-                                GameMap greedyMap = baseMap.reachableGridAbstract(cutoff * 2, alg, rec);
-                                System.out.println("Greedy abstraction.  States: " + greedyMap.states + " Time: " + (System.currentTimeMillis() - currentTime));
-                                maps[j] = greedyMap;
-                                maps[j].save(mapfname);
-
-                                System.out.println("Exporting map with areas.");
-                                maps[j].outputImage(hcDatabasePath + mapFileName + "_HC.png", null, null);
-
-                                System.out.println("Exporting map with areas and centroids.");
-                                maps[j].computeCentroidMap().outputImage(hcDatabasePath + mapFileName + "_HC_Centroid.png", null, null);
-
-                                SearchProblem tmpProb = new MapSearchProblem(greedyMap);
-                                GameDB database = new GameDB(tmpProb);
-
-                                if (exactDB) {
-                                    currentTime = System.currentTimeMillis();
-                                    ((SubgoalDBExact) databases[j]).computeIndex(tmpProb, rec);
-                                    rec.addStat(23, System.currentTimeMillis() - currentTime);
-                                }
-
-                                System.out.println("Generating database.");
-                                currentTime = System.currentTimeMillis();
-                                databases[j] = database.computeDBDP2(databases[j], pathCompressAlg, rec, numNeighborLevels);
-                                System.out.println("Time to compute HCDPS database: " + (System.currentTimeMillis() - currentTime));
-                                if (exactDB) {
-                                    ((SubgoalDBExact) databases[j]).init();
-                                }
-                                databases[j].exportDB(fname);
-                                maps[j].computeComplexity(rec);
-                                dbStats[j].addRecord(rec);
-                            } else { // Load map
-                                System.out.println("Loading map.");
-                                maps[j] = new GameMap();
-                                maps[j].loadMap(mapfname);
-                            }
-
-                            databases[j].setProblem(problem);
-                            System.out.println("Verifying database.");
-                            databases[j].verify(pathCompressAlg);
-                            System.out.println("Database verification complete.");
-                            System.out.println("Databases loaded.");
-                            HCDPSRecords = databases[j].getSize();
-                        }
-                        currentTime = System.currentTimeMillis();
-                        /* Same algorithm, just different database. */
-                        SubgoalSearch subgoalSearch = new SubgoalSearch(problem, databases[j], cutoff, pathCompressAlg, alg);
-                        path = subgoalSearch.computePath(start, goal, stats);
-                        subgoals[j] = subgoalSearch.getSubgoals();
-                        if (subgoals[j].size() == 0) noSubgoal.add(i + 1); // Keep track of problems where we found no subgoal
-                        else stats.setSubgoals(subgoals[j].size());
-                        break;
-                    case 2: // HCDPS - Hill-climbing dynamic programming search with  no-precomputed database (just dynamic programming  table and path fragments that are built up on the fly)
+                    case 1: // HCDPS - Hill-climbing dynamic programming search with  no-precomputed database (just dynamic programming  table and path fragments that are built up on the fly)
                         alg = new GenHillClimbing(problem, cutoff);
                         pathCompressAlg = new GenHillClimbing(problem, 10000);
                         // Allow unlimited hill-climbing when compressing records in the database (between record subgoals)
@@ -445,9 +361,12 @@ public class EvaluateScenario {
                             String fname, mapfname;
 
                             // TODO: determine which dbtype is fastest
-                            if (dbtype == 1) databases[j] = new SubgoalDynamicDB();         // Pre-computed DP matrix (matrix representation)
-                            else if (dbtype == 2) databases[j] = new SubgoalDynamicDB2();   // DP matrix in adjacency list representation (computed at run-time)
-                            else if (dbtype == 3) databases[j] = new SubgoalDynamicDB3();   // Pre-computed DP matrix (stored as compressed RLE)
+                            if (dbtype == 1)
+                                databases[j] = new SubgoalDynamicDB();         // Pre-computed DP matrix (matrix representation)
+                            else if (dbtype == 2)
+                                databases[j] = new SubgoalDynamicDB2();   // DP matrix in adjacency list representation (computed at run-time)
+                            else if (dbtype == 3)
+                                databases[j] = new SubgoalDynamicDB3();   // Pre-computed DP matrix (stored as compressed RLE)
 
                             fname = hcDatabasePath + mapFileName + "_HCDLD" + numNeighborLevels + "_" + cutoff + ".dat" + dbtype;
                             mapfname = hcDatabasePath + mapFileName + "_HCE_map_cut_" + cutoff + ".txt";
@@ -526,10 +445,11 @@ public class EvaluateScenario {
                         subgoalSearch = new SubgoalSearch(problem, databases[j], cutoff, pathCompressAlg, alg);
                         path = subgoalSearch.computePath(start, goal, stats);
                         subgoals[j] = subgoalSearch.getSubgoals();
-                        if (subgoals[j].size() == 0) noSubgoal.add(i + 1); // Keep track of problems where we found no subgoal
+                        if (subgoals[j].size() == 0)
+                            noSubgoal.add(i + 1); // Keep track of problems where we found no subgoal
                         else stats.setSubgoals(subgoals[j].size());
                         break;
-                    case 3: // Cover2 (based on HCDPS regioning)
+                    case 2: // Cover2 (based on HCDPS regioning)
 
                         alg = new GenHillClimbing(problem, cutoff);
                         pathCompressAlg = new GenHillClimbing(problem, 10000);
@@ -609,7 +529,7 @@ public class EvaluateScenario {
                         if (subgoals[j].size() == 0) noSubgoal.add(i + 1);
                         else stats.setSubgoals(subgoals[j].size());
                         break;
-                    case 4: // JStar
+                    case 3: // JStar
                         alg = new GenHillClimbing(problem, cutoff);
                         GenHillClimbing pathCompressAlgj = new GenHillClimbing(problem, 10000);
 
@@ -670,50 +590,30 @@ public class EvaluateScenario {
                                 currentTime = System.currentTimeMillis();
 
                                 ((SubgoalDBExact) databases[j]).computeIndex(tmpProb, rec);
-						/*	if (dbtype == 1)
-								((SubgoalDynamicDB) databases[j]).computeIndex(
-										tmpProb, rec);
-							else if (dbtype == 2)
-								((SubgoalDynamicDB2) databases[j])
-										.computeIndex(tmpProb, rec);
-							else if (dbtype == 3)
-								((SubgoalDynamicDB3) databases[j])
-										.computeIndex(tmpProb, rec);
-							rec.addStat(23, System.currentTimeMillis()
-									- currentTime);*/
+
+/*                                if (dbtype == 1) ((SubgoalDynamicDB) databases[j]).computeIndex(tmpProb, rec);
+                                else if (dbtype == 2) ((SubgoalDynamicDB2) databases[j]).computeIndex(tmpProb, rec);
+                                else if (dbtype == 3) ((SubgoalDynamicDB3) databases[j]).computeIndex(tmpProb, rec);
+                                rec.addStat(23, System.currentTimeMillis() - currentTime);*/
 
                                 //System.out.println("Generating database.");
                                 currentTime = System.currentTimeMillis();
                                 databases[j] = database.computeDBDP2(databases[j], pathCompressAlgj, rec, numNeighborLevels);
 
-						/*	if (dbtype == 1)
-								databases[j] = database
-										.computeDynamicDB(
-												(SubgoalDynamicDB) databases[j],
-												pathCompressAlgj, rec,
-												numNeighborLevels);
-							else if (dbtype == 2)
-								databases[j] = database
-										.computeDynamicDB(
-												(SubgoalDynamicDB2) databases[j],
-												pathCompressAlgj, rec,
-												numNeighborLevels);
-							else if (dbtype == 3)
-								databases[j] = database
-										.computeDynamicDB(
-												(SubgoalDynamicDB3) databases[j],
-												pathCompressAlgj, rec,
-												numNeighborLevels);*/
+/*                                if (dbtype == 1)
+                                    databases[j] = database.computeDynamicDB((SubgoalDynamicDB) databases[j], pathCompressAlgj, rec, numNeighborLevels);
+                                else if (dbtype == 2)
+                                    databases[j] = database.computeDynamicDB((SubgoalDynamicDB2) databases[j], pathCompressAlgj, rec, numNeighborLevels);
+                                else if (dbtype == 3)
+                                    databases[j] = database.computeDynamicDB((SubgoalDynamicDB3) databases[j], pathCompressAlgj, rec, numNeighborLevels);*/
 
                                 System.out.println("Time to compute jStar database: " + (System.currentTimeMillis() - currentTime));
 
                                 ((SubgoalDBExact) databases[j]).init();
-							/*if (dbtype == 1)
-								((SubgoalDynamicDB) databases[j]).init();
-							else if (dbtype == 2)
-								((SubgoalDynamicDB2) databases[j]).init();
-							else if (dbtype == 3)
-								((SubgoalDynamicDB3) databases[j]).init();*/
+/*                                if (dbtype == 1) ((SubgoalDynamicDB) databases[j]).init();
+                                else if (dbtype == 2) ((SubgoalDynamicDB2) databases[j]).init();
+                                else if (dbtype == 3) ((SubgoalDynamicDB3) databases[j]).init();*/
+
                                 databases[j].exportDB(fname);
                                 maps[j].computeComplexity(rec);
                                 dbStats[j].addRecord(rec);
@@ -736,11 +636,12 @@ public class EvaluateScenario {
                         path = jstar.computePath(start, goal, stats);
                         subgoals[j] = jstar.getSubgoals();
 
-                        if (subgoals[j].size() == 0) noSubgoal.add(i + 1); // Keep track of problems where we found no subgoal
+                        if (subgoals[j].size() == 0)
+                            noSubgoal.add(i + 1); // Keep track of problems where we found no subgoal
                         else stats.setSubgoals(subgoals[j].size());
                         break;
 
-                    case 5: // JStar
+                    case 4: // JStar
                         alg = new GenHillClimbing(problem, cutoff);
                         GenHillClimbing pathCompressAlgj2 = new GenHillClimbing(problem, 10000);
 
@@ -748,9 +649,12 @@ public class EvaluateScenario {
                             System.out.println("Loading database.");
                             String fname2, mapfname2;
 
-                            if (dbtype == 1) databases[j] = new SubgoalDynamicDB();         // Pre-computed DP matrix (matrix representation)
-                            else if (dbtype == 2) databases[j] = new SubgoalDynamicDB2();   // DP matrix in adjacency list representation (computed at run-time)
-                            else if (dbtype == 3) databases[j] = new SubgoalDynamicDB3();   // Pre-computed DP matrix (stored as compressed RLE)
+                            if (dbtype == 1)
+                                databases[j] = new SubgoalDynamicDB();         // Pre-computed DP matrix (matrix representation)
+                            else if (dbtype == 2)
+                                databases[j] = new SubgoalDynamicDB2();   // DP matrix in adjacency list representation (computed at run-time)
+                            else if (dbtype == 3)
+                                databases[j] = new SubgoalDynamicDB3();   // Pre-computed DP matrix (stored as compressed RLE)
 
                             fname2 = jStar2DatabasePath + mapFileName + "_JSTAR2_G" + gridSize + "_N" + numNeighborLevels + "_C" + cutoff + ".dat";
                             mapfname2 = jStar2DatabasePath + mapFileName + "_JSTAR2_map_C" + cutoff + ".txt";
@@ -835,7 +739,7 @@ public class EvaluateScenario {
                         else stats.setSubgoals(subgoals[j].size());
                         break;
 
-                    case 6: // A* with arbitrary heuristic
+                    case 5: // A* with arbitrary heuristic
                         AStarHeuristic astarh = new AStarHeuristic(problem, heuristicList.get(heuristicId));
                         path = astarh.computePath(start, goal, stats);
 
@@ -847,7 +751,7 @@ public class EvaluateScenario {
                             problemStats[0].add(new StatsRecord()); // Filler records for all
                             problemStats[1].add(new StatsRecord());
                             problemStats[2].add(new StatsRecord());
-                            continue; // Do not try to do the other algorithms
+                            continue; // Do not try to do the other algorithms // QUESTION: Should this be a 'break'?
                         }
 
                         // Verify that A* is getting path that is expected
@@ -981,9 +885,9 @@ public class EvaluateScenario {
                 String binaryOutputName = binaryOutputPath + scenarioFileName;
                 String extendAlgName = "";
                 binaryOutputName = binaryOutputName + "_" + abbrv[algorithms[k]];
-                if (algorithms[k] == 1) extendAlgName += "_L" + numNeighborLevels + "_C" + cutoff;
-                else if (algorithms[k] == 2) extendAlgName += "_L" + numNeighborLevels + "_C" + cutoff + "_D" + dbtype;
-                else if (algorithms[k] == 3)
+                if (algorithms[k] == 1)
+                    extendAlgName += "_L" + numNeighborLevels + "_C" + cutoff + "_D" + dbtype; // HCDPS+
+                else if (algorithms[k] == 2) // Cover2
                     extendAlgName += "_L" + numNeighborLevels + "_C" + cutoff + "_R" + maxRecords;
                 binaryOutputName += extendAlgName + ".txt";
 

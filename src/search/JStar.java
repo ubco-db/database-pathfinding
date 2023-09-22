@@ -42,6 +42,7 @@ public class JStar implements SearchAlgorithm {
         ArrayList<SearchState> pathStart = new ArrayList<SearchState>();
 
         ArrayList<SearchState> pathEnd = new ArrayList<SearchState>();
+
         startTime = System.nanoTime();
         SearchState startRegionCenter = abstractProblem.findRegion2(start, pathStart, 0);
         SearchState goalRegionCenter = abstractProblem.findRegion2(goal, pathEnd, 1);

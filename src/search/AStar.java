@@ -79,7 +79,7 @@ public class AStar implements SearchAlgorithm {
 
     public boolean isPath(SearchState start, SearchState goal, StatsRecord stats) {
         // Setup open and closed state list
-        PriorityQueue<SearchState> openList = new PriorityQueue<>();            // Note: Does not allow easy updates and searching for entries thus using openListLookup HashMap with it.
+        PriorityQueue<SearchState> openList = new PriorityQueue<>(); // Note: Does not allow easy updates and searching for entries thus using openListLookup HashMap with it.
         closedList.clear();
         HashMap<Integer, SearchState> openListLookup = new HashMap<>();
 
@@ -173,7 +173,7 @@ public class AStar implements SearchAlgorithm {
         while (curr != null) {
             path.add(0, curr);
             if (curr.prev != null)
-                //	cost += problem.computeDistance(curr, curr.prev);
+                // cost += problem.computeDistance(curr, curr.prev);
                 cost += problem.getMoveCost(curr, curr.prev);
             curr = curr.prev;
             len++;

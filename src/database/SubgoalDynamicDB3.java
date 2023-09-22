@@ -28,10 +28,10 @@ import java.util.Scanner;
  */
 public class SubgoalDynamicDB3 extends SubgoalDBExact {
     private int numGroups;
-    private int[][][] paths;            // Used during run-time.  Direct paths between actual neighbors.
-    private IndexDB neighbors;            // An RLE compressed mapping of the neighbors' matrix.  Used during run-time as are three arrays below.
-    private int[] numNeighbors;            // The number of neighbors for each group
-    private int[][] neighborId;            // The neighbor id that the path is for.  E.g. paths[i][j] is a list of states ids for a path from i to some state j (not state id j).  neighborId[i][j] indicates what state it is.
+    private int[][][] paths;                // Used during run-time.  Direct paths between actual neighbors.
+    private IndexDB neighbors;              // An RLE compressed mapping of the neighbors' matrix.  Used during run-time as are three arrays below.
+    private int[] numNeighbors;             // The number of neighbors for each group
+    private int[][] neighborId;             // The neighbor id that the path is for.  E.g. paths[i][j] is a list of states ids for a path from i to some state j (not state id j).  neighborId[i][j] indicates what state it is.
     // Note this is necessary for supporting adjacency list of paths.
 
     /**

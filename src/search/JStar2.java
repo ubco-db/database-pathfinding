@@ -22,7 +22,7 @@ public class JStar2 implements SearchAlgorithm {
     }
 
     public ArrayList<SearchState> computePath(SearchState start, SearchState goal, StatsRecord stats) {
-        ArrayList<SubgoalDBRecord> used = new ArrayList<SubgoalDBRecord>();
+        ArrayList<SubgoalDBRecord> used = new ArrayList<>();
         ArrayList<SearchState> newPath;
         SearchState currentStart = start;
         SearchState currentGoal = goal;
@@ -39,7 +39,9 @@ public class JStar2 implements SearchAlgorithm {
         //TODO check if start or goal is still valid
 
         ArrayList<SearchState> path = new ArrayList<SearchState>();
+
         ArrayList<SearchState> pathStart = new ArrayList<SearchState>();
+
         ArrayList<SearchState> pathEnd = new ArrayList<SearchState>();
 
         startTime = System.nanoTime();
@@ -50,7 +52,6 @@ public class JStar2 implements SearchAlgorithm {
         startTime2 = System.nanoTime();
         ArrayList<SubgoalDBRecord> records = database.findNearest(problem, startRegionCenter, goalRegionCenter, subgoalSearchAlg, 1, stats, null);
         endTime = System.nanoTime();
-
 
         if (records.size() >= 1) {
             currentRecord = records.get(0);
