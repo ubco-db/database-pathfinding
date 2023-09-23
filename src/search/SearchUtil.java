@@ -232,7 +232,7 @@ public class SearchUtil {
             if (searchAlg.isPath(currentStartId, currentGoalId, stats)) break;
 
             while (startIndex <= endIndex) {
-                current = (startIndex + endIndex) / 2;            // Get mid-point
+                current = (startIndex + endIndex) / 2;                  // Get mid-point
                 // Determine if you can reach this point from the current start using HC
                 currentGoalId = path[current];
                 if (!searchAlg.isPath(currentStartId, currentGoalId, stats)) endIndex = current - 1;

@@ -22,7 +22,7 @@ public class JStar implements SearchAlgorithm {
     }
 
     public ArrayList<SearchState> computePath(SearchState start, SearchState goal, StatsRecord stats) {
-        ArrayList<SubgoalDBRecord> used = new ArrayList<SubgoalDBRecord>();
+        ArrayList<SubgoalDBRecord> used = new ArrayList<>();
         ArrayList<SearchState> newPath;
         SearchState currentStart = start;
         SearchState currentGoal = goal;
