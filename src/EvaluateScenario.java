@@ -3,9 +3,7 @@ import database.DBStatsRecord;
 import database.GameDB;
 import database.SubgoalDB;
 import database.SubgoalDBExact;
-import database.SubgoalDynamicDB;
 import database.SubgoalDynamicDB2;
-import database.SubgoalDynamicDB3;
 import map.GameMap;
 import scenario.Problem;
 import scenario.Scenario;
@@ -13,7 +11,6 @@ import scenario.StatsCompare;
 import search.AStar;
 import search.AStarHeuristic;
 import search.GenHillClimbing;
-import search.JStar;
 import search.JStar2;
 import search.MapSearchProblem;
 import search.SearchAbstractAlgorithm;
@@ -47,14 +44,14 @@ public class EvaluateScenario {
                 "maze_5_1250_hard",             //7
                 "smallRoom",                    //8
         };
-        String[] algorithmNames = {"A*", "HCDPS+", "Cover2", "JStar", "JStar2", "A*+heuristic"};
-        String[] abbrv = {"a", "hcdps+", "cover2", "JStar", "JStar2", "AHrt"};
+        String[] algorithmNames = {"A*", "HCDPS+", "Cover2", "JStar2", "A*+heuristic"};
+        String[] abbrv = {"a", "hcdps+", "cover2", "JStar2", "AHrt"};
 
         /*
          * Run configuration variables are below.
          */
 
-        int scenarioToRun = 0;              // Index into scenarios array (12 scenarios total). Change this to run a different scenario.
+        int scenarioToRun = 0;              // Index into scenarios array (8 scenarios total). Change this to run a different scenario.
         int[] algorithms = {1, 3, 5};       // Select up to three algorithms to run
 
         int heuristicId = 1;                // (0~5) heuristic function id passing to A* with arbitrary heuristic
@@ -76,11 +73,8 @@ public class EvaluateScenario {
 
         boolean showPaths = false;          // If true, paths computed by each algorithm are printed to standard output.
         boolean showImage = false;          // If true, will produce a PNG image for the path produced by regardless if the path is good or not.
-        boolean exactDB = true;             // For HCDPS*, true if using exact DB rather than kd-tree style database.
-        // TODO: figure out which is best
-        int dbtype = 3;                     // 1 - full DP matrix pre-computed,
-        // 2 - adjacency list representation (DP computed at run-time),
-        // 3 - DP matrix pre-computed but RLE compressed, adjacency list for neighbors/paths for each abstract state
+
+        int dbType = 2;                     // 2 - adjacency list representation (DP computed at run-time)
 
         String imageDir = "images/";
         String dbPath = "databases/";
@@ -352,15 +346,9 @@ public class EvaluateScenario {
                             System.out.println("Loading database.");
                             String fname, mapfname;
 
-                            // TODO: determine which dbtype is fastest
-                            if (dbtype == 1)
-                                databases[j] = new SubgoalDynamicDB();    // Pre-computed DP matrix (matrix representation)
-                            else if (dbtype == 2)
-                                databases[j] = new SubgoalDynamicDB2();   // DP matrix in adjacency list representation (computed at run-time)
-                            else if (dbtype == 3)
-                                databases[j] = new SubgoalDynamicDB3();   // Pre-computed DP matrix (stored as compressed RLE)
+                            databases[j] = new SubgoalDynamicDB2();   // DP matrix in adjacency list representation (computed at run-time)
 
-                            fname = hcDatabasePath + mapFileName + "_HCDLD" + numNeighborLevels + "_" + cutoff + ".dat" + dbtype;
+                            fname = hcDatabasePath + mapFileName + "_HCDLD" + numNeighborLevels + "_" + cutoff + ".dat" + dbType;
                             mapfname = hcDatabasePath + mapFileName + "_HCE_map_cut_" + cutoff + ".txt";
 
                             if (!databases[j].exists(fname) || !databases[j].load(fname)) {
@@ -373,7 +361,7 @@ public class EvaluateScenario {
                                     DBStats.init(dbStats[j]);
                                 }
                                 rec = new DBStatsRecord(dbStats[j].getSize());
-                                rec.addStat(0, "HCDPS+ (" + numNeighborLevels + " - " + dbtype + ")");
+                                rec.addStat(0, "HCDPS+ (" + numNeighborLevels + " - " + dbType + ")");
                                 rec.addStat(1, numNeighborLevels);
                                 rec.addStat(3, cutoff);
                                 rec.addStat(4, mapFileName);
@@ -397,26 +385,17 @@ public class EvaluateScenario {
 
                                 // Computes index on abstract state to ground-level state mapping
                                 currentTime = System.currentTimeMillis();
-                                if (dbtype == 1) ((SubgoalDynamicDB) databases[j]).computeIndex(tmpProb, rec);
-                                else if (dbtype == 2) ((SubgoalDynamicDB2) databases[j]).computeIndex(tmpProb, rec);
-                                else if (dbtype == 3) ((SubgoalDynamicDB3) databases[j]).computeIndex(tmpProb, rec);
+                                ((SubgoalDynamicDB2) databases[j]).computeIndex(tmpProb, rec);
 
                                 rec.addStat(23, System.currentTimeMillis() - currentTime);
 
                                 System.out.println("Generating database.");
                                 currentTime = System.currentTimeMillis();
-                                if (dbtype == 1)
-                                    databases[j] = database.computeDynamicDB((SubgoalDynamicDB) databases[j], pathCompressAlg, rec, numNeighborLevels);
-                                else if (dbtype == 2)
-                                    databases[j] = database.computeDynamicDB((SubgoalDynamicDB2) databases[j], pathCompressAlg, rec, numNeighborLevels);
-                                else if (dbtype == 3)
-                                    databases[j] = database.computeDynamicDB((SubgoalDynamicDB3) databases[j], pathCompressAlg, rec, numNeighborLevels);
+                                databases[j] = database.computeDynamicDB((SubgoalDynamicDB2) databases[j], pathCompressAlg, rec, numNeighborLevels);
 
                                 System.out.println("Time to compute HCDPS database: " + (System.currentTimeMillis() - currentTime));
 
-                                if (dbtype == 1) ((SubgoalDynamicDB) databases[j]).init();
-                                else if (dbtype == 2) ((SubgoalDynamicDB2) databases[j]).init();
-                                else if (dbtype == 3) ((SubgoalDynamicDB3) databases[j]).init();
+                                ((SubgoalDynamicDB2) databases[j]).init();
 
                                 databases[j].exportDB(fname);
                                 maps[j].computeComplexity(rec);
@@ -522,130 +501,13 @@ public class EvaluateScenario {
                         break;
                     case 3: // JStar
                         alg = new GenHillClimbing(problem, cutoff);
-                        GenHillClimbing pathCompressAlgj = new GenHillClimbing(problem, 10000);
-
-                        if (mapSwitch) { // Load abstract map and database
-                            System.out.println("Loading database.");
-                            String fname, mapfname;
-                            databases[j] = new SubgoalDBExact();
-						/*
-						if (dbtype == 1)
-							databases[j] = new SubgoalDynamicDB(); 	// Pre-computed DP matrix (matrix representation)
-						else if (dbtype == 2)
-							databases[j] = new SubgoalDynamicDB2(); // DP matrix in adjacency list representation (computed at run-time)
-						else if (dbtype == 3)
-							databases[j] = new SubgoalDynamicDB3(); // Pre-computed DP matrix (stored as compressed RLE)
-                        */
-                            fname = jStarDatabasePath + mapFileName + "_JSTAR_G" + gridSize + "_N" + numNeighborLevels + "_C" + cutoff + ".dat";
-                            mapfname = jStarDatabasePath + mapFileName + "_JSTAR_map_C" + cutoff + ".txt";
-
-                            if (!databases[j].exists(fname) || !databases[j].load(fname)) {
-                                System.out.println("Loading map and performing abstraction...");
-
-                                // GreedyHC map abstraction
-                                if (dbStats[j] == null) {
-                                    dbStats[j] = new DBStats();
-                                    DBStats.init(dbStats[j]);
-                                }
-                                rec = new DBStatsRecord(dbStats[j].getSize());
-                                rec.addStat(0, "jStar (" + numNeighborLevels + ")");
-                                rec.addStat(1, gridSize);
-                                rec.addStat(3, cutoff);
-                                rec.addStat(4, mapFileName);
-                                rec.addStat(5, baseMap.rows);
-                                rec.addStat(6, baseMap.cols);
-
-
-                                currentTime = System.currentTimeMillis();
-                                maps[j] = baseMap.sectorAbstract2(gridSize);
-                                long resultTime = System.currentTimeMillis() - currentTime;
-                                rec.addStat(12, resultTime);
-                                rec.addStat(10, resultTime);
-                                rec.addStat(11, maps[j].states);
-                                rec.addStat(7, maps[j].states);
-                                dbStats[j].addRecord(rec);
-
-
-                                System.out.println("JStar States Abstraction : " + maps[j].states + " Time: " + (System.currentTimeMillis() - currentTime));
-                                //maps[j].save(mapfname);
-
-                                System.out.println("Exporting map with areas.");
-                                maps[j].outputImage(jStarDatabasePath + mapFileName + "_J.png", null, null);
-
-                                System.out.println("Exporting map with areas and centroids.");
-                                maps[j].computeCentroidMap().outputImage(jStarDatabasePath + mapFileName + "_J_Centroid.png", null, null);
-
-                                SearchProblem tmpProb = new MapSearchProblem(maps[j]);
-                                GameDB database = new GameDB(tmpProb);
-
-                                currentTime = System.currentTimeMillis();
-
-                                ((SubgoalDBExact) databases[j]).computeIndex(tmpProb, rec);
-
-/*                                if (dbtype == 1) ((SubgoalDynamicDB) databases[j]).computeIndex(tmpProb, rec);
-                                else if (dbtype == 2) ((SubgoalDynamicDB2) databases[j]).computeIndex(tmpProb, rec);
-                                else if (dbtype == 3) ((SubgoalDynamicDB3) databases[j]).computeIndex(tmpProb, rec);
-                                rec.addStat(23, System.currentTimeMillis() - currentTime);*/
-
-                                //System.out.println("Generating database.");
-                                currentTime = System.currentTimeMillis();
-                                databases[j] = database.computeDBDP2(databases[j], pathCompressAlgj, rec, numNeighborLevels);
-
-/*                                if (dbtype == 1)
-                                    databases[j] = database.computeDynamicDB((SubgoalDynamicDB) databases[j], pathCompressAlgj, rec, numNeighborLevels);
-                                else if (dbtype == 2)
-                                    databases[j] = database.computeDynamicDB((SubgoalDynamicDB2) databases[j], pathCompressAlgj, rec, numNeighborLevels);
-                                else if (dbtype == 3)
-                                    databases[j] = database.computeDynamicDB((SubgoalDynamicDB3) databases[j], pathCompressAlgj, rec, numNeighborLevels);*/
-
-                                System.out.println("Time to compute jStar database: " + (System.currentTimeMillis() - currentTime));
-
-                                ((SubgoalDBExact) databases[j]).init();
-/*                                if (dbtype == 1) ((SubgoalDynamicDB) databases[j]).init();
-                                else if (dbtype == 2) ((SubgoalDynamicDB2) databases[j]).init();
-                                else if (dbtype == 3) ((SubgoalDynamicDB3) databases[j]).init();*/
-
-                                databases[j].exportDB(fname);
-                                maps[j].computeComplexity(rec);
-                                dbStats[j].addRecord(rec);
-                            } else { // Load map
-                                System.out.println("Loading map.");
-                                //maps[j] = new GameMap();
-                                maps[j] = baseMap.sectorAbstract2(gridSize);
-                                //maps[j].loadMap(mapfname);
-                            }
-                            databases[j].setProblem(problem);
-                            System.out.println("Verifying database.");
-                            databases[j].verify(pathCompressAlgj);
-                            System.out.println("Database verification complete.");
-                            System.out.println("Databases loaded.");
-                            jStarRecords = databases[j].getSize();
-                        }
-                        currentTime = System.currentTimeMillis();
-
-                        JStar jstar = new JStar(problem, maps[j], databases[j]);
-                        path = jstar.computePath(start, goal, stats);
-                        subgoals[j] = jstar.getSubgoals();
-
-                        if (subgoals[j].size() == 0)
-                            noSubgoal.add(i + 1); // Keep track of problems where we found no subgoal
-                        else stats.setSubgoals(subgoals[j].size());
-                        break;
-
-                    case 4: // JStar
-                        alg = new GenHillClimbing(problem, cutoff);
                         GenHillClimbing pathCompressAlgj2 = new GenHillClimbing(problem, 10000);
 
                         if (mapSwitch) { // Load abstract map and database
                             System.out.println("Loading database.");
                             String fname2, mapfname2;
 
-                            if (dbtype == 1)
-                                databases[j] = new SubgoalDynamicDB();         // Pre-computed DP matrix (matrix representation)
-                            else if (dbtype == 2)
-                                databases[j] = new SubgoalDynamicDB2();   // DP matrix in adjacency list representation (computed at run-time)
-                            else if (dbtype == 3)
-                                databases[j] = new SubgoalDynamicDB3();   // Pre-computed DP matrix (stored as compressed RLE)
+                            databases[j] = new SubgoalDynamicDB2();   // DP matrix in adjacency list representation (computed at run-time)
 
                             fname2 = jStar2DatabasePath + mapFileName + "_JSTAR2_G" + gridSize + "_N" + numNeighborLevels + "_C" + cutoff + ".dat";
                             mapfname2 = jStar2DatabasePath + mapFileName + "_JSTAR2_map_C" + cutoff + ".txt";
@@ -686,25 +548,16 @@ public class EvaluateScenario {
 
                                 currentTime = System.currentTimeMillis();
                                 // ((SubgoalDBExact) databases[j]).computeIndex(tmpProb, rec);
-                                if (dbtype == 1) ((SubgoalDynamicDB) databases[j]).computeIndex(tmpProb, rec);
-                                else if (dbtype == 2) ((SubgoalDynamicDB2) databases[j]).computeIndex(tmpProb, rec);
-                                else if (dbtype == 3) ((SubgoalDynamicDB3) databases[j]).computeIndex(tmpProb, rec);
+                                ((SubgoalDynamicDB2) databases[j]).computeIndex(tmpProb, rec);
                                 rec.addStat(23, System.currentTimeMillis() - currentTime);
 
                                 System.out.println("Generating database.");
                                 currentTime = System.currentTimeMillis();
 
-                                if (dbtype == 1)
-                                    databases[j] = database.computeDynamicDB((SubgoalDynamicDB) databases[j], pathCompressAlgj2, rec, numNeighborLevels);
-                                else if (dbtype == 2)
-                                    databases[j] = database.computeDynamicDB((SubgoalDynamicDB2) databases[j], pathCompressAlgj2, rec, numNeighborLevels);
-                                else if (dbtype == 3)
-                                    databases[j] = database.computeDynamicDB((SubgoalDynamicDB3) databases[j], pathCompressAlgj2, rec, numNeighborLevels);
+                                databases[j] = database.computeDynamicDB((SubgoalDynamicDB2) databases[j], pathCompressAlgj2, rec, numNeighborLevels);
                                 System.out.println("Time to compute djStar database: " + (System.currentTimeMillis() - currentTime));
 
-                                if (dbtype == 1) ((SubgoalDynamicDB) databases[j]).init();
-                                else if (dbtype == 2) ((SubgoalDynamicDB2) databases[j]).init();
-                                else if (dbtype == 3) ((SubgoalDynamicDB3) databases[j]).init();
+                                ((SubgoalDynamicDB2) databases[j]).init();
 
                                 databases[j].exportDB(fname2);
                                 maps[j].computeComplexity(rec);
@@ -730,7 +583,7 @@ public class EvaluateScenario {
                         else stats.setSubgoals(subgoals[j].size());
                         break;
 
-                    case 5: // A* with arbitrary heuristic
+                    case 4: // A* with arbitrary heuristic
                         AStarHeuristic astarh = new AStarHeuristic(problem, heuristicList.get(heuristicId));
                         path = astarh.computePath(start, goal, stats);
 
@@ -876,8 +729,8 @@ public class EvaluateScenario {
                 String binaryOutputName = binaryOutputPath + scenarioFileName;
                 String extendAlgName = "";
                 binaryOutputName = binaryOutputName + "_" + abbrv[algorithms[k]];
-                if (algorithms[k] == 1)
-                    extendAlgName += "_L" + numNeighborLevels + "_C" + cutoff + "_D" + dbtype; // HCDPS+
+                if (algorithms[k] == 1) // HCDPS+
+                    extendAlgName += "_L" + numNeighborLevels + "_C" + cutoff + "_D" + dbType;
                 else if (algorithms[k] == 2) // Cover2
                     extendAlgName += "_L" + numNeighborLevels + "_C" + cutoff + "_R" + maxRecords;
                 binaryOutputName += extendAlgName + ".txt";
