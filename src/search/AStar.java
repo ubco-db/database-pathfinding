@@ -60,14 +60,17 @@ public class AStar implements SearchAlgorithm {
             // Update all neighbours of current state.
             updateNeighbors(best, goal, stats, openList, closedList, openListLookup);
 
-            if (openList.size() > stats.getOpenListSize()) stats.setOpenListSize(openList.size());
+            if (openList.size() > stats.getOpenListSize())
+                stats.setOpenListSize(openList.size());
             if (closedListCount + openList.size() > stats.getMaxMemSize())
                 stats.setMaxMemSize(closedListCount + openList.size());
         }
 
         // Update statistics
-        if (closedListCount > stats.getClosedListSize()) stats.setClosedListSize(closedListCount);
-        if (openList.size() > stats.getOpenListSize()) stats.setOpenListSize(openList.size());
+        if (closedListCount > stats.getClosedListSize())
+            stats.setClosedListSize(closedListCount);
+        if (openList.size() > stats.getOpenListSize())
+            stats.setOpenListSize(openList.size());
         if (closedListCount + openList.size() > stats.getMaxMemSize())
             stats.setMaxMemSize(closedListCount + openList.size());
 
@@ -116,14 +119,17 @@ public class AStar implements SearchAlgorithm {
             // Update all neighbours of current state.
             updateNeighbors(best, goal, stats, openList, closedList, openListLookup);
 
-            if (openList.size() > stats.getOpenListSize()) stats.setOpenListSize(openList.size());
+            if (openList.size() > stats.getOpenListSize())
+                stats.setOpenListSize(openList.size());
             if (closedListCount + openList.size() > stats.getMaxMemSize())
                 stats.setMaxMemSize(closedListCount + openList.size());
         }
 
         // Update statistics
-        if (closedListCount > stats.getClosedListSize()) stats.setClosedListSize(closedListCount);
-        if (openList.size() > stats.getOpenListSize()) stats.setOpenListSize(openList.size());
+        if (closedListCount > stats.getClosedListSize())
+            stats.setClosedListSize(closedListCount);
+        if (openList.size() > stats.getOpenListSize())
+            stats.setOpenListSize(openList.size());
         if (closedListCount + openList.size() > stats.getMaxMemSize())
             stats.setMaxMemSize(closedListCount + openList.size());
 
@@ -133,10 +139,12 @@ public class AStar implements SearchAlgorithm {
     /**
      * Code to update the neighbors of an expanded state.
      */
-    private void updateNeighbors(SearchState current, SearchState goal, StatsRecord stats, PriorityQueue<SearchState> openList, BitSet closedList, HashMap<Integer, SearchState> openListLookup) {
+    private void updateNeighbors(SearchState current, SearchState goal, StatsRecord stats,
+                                 PriorityQueue<SearchState> openList, BitSet closedList, HashMap<Integer, SearchState> openListLookup) {
         ArrayList<SearchState> neighbors = problem.getNeighbors(current);
         for (SearchState next : neighbors) {
-            if (closedList.get(next.id)) continue;
+            if (closedList.get(next.id))
+                continue;
 
             stats.incrementStatesUpdated(1);
 

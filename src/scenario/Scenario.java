@@ -1,6 +1,5 @@
 package scenario;
 
-
 import search.SearchState;
 
 import java.io.File;
@@ -20,7 +19,7 @@ public class Scenario {
     /**
      * Load a scenario from a text file.
      *
-     * @param fileName
+     * @param fileName - name of the scenario to execute (scenarios are in the "scenarios" folder)
      */
 	/*
 	public Scenario(String fileName)

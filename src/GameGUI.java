@@ -32,6 +32,9 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 
 
+/**
+ * Implements a GUI that allows the user to load a map, and show how A* or would find a path between two user selected points.
+ */
 public class GameGUI extends JFrame {
     private final MapPanel panel;
 
@@ -137,7 +140,7 @@ public class GameGUI extends JFrame {
         heuristicList = new ArrayList<HeuristicFunction>();
         heuristicList = HeuristicCompare.createHeuristics();
 
-        GameMap mp = new GameMap("maps\\smallMaps\\012.map");
+        GameMap mp = new GameMap("maps/smallMaps/012.map");
         //GameMap mp = new GameMap("maps/wc3maps/divideandconquer.map");
         panel = new MapPanel(mp);
         contentPane.add(panel, "Center");
@@ -145,7 +148,6 @@ public class GameGUI extends JFrame {
         addWindowListener(winlist);
 
         addKeyListener(new KeyAdapt());
-
     }
 
     private class TextFieldListener implements ActionListener {
@@ -158,7 +160,7 @@ public class GameGUI extends JFrame {
         }
     }
 
-    private class WindowCloser extends WindowAdapter {
+    private static class WindowCloser extends WindowAdapter {
         public void windowClosing(WindowEvent event) {
             System.exit(0);
         }
@@ -206,7 +208,6 @@ public class GameGUI extends JFrame {
             panel.requestFocusInWindow();
         }
     }
-
 
     private class KeyAdapt extends KeyAdapter {
         public void keyPressed(KeyEvent evt) {
@@ -348,7 +349,8 @@ public class GameGUI extends JFrame {
 
         public void changeSpeed(int speed) {
             this.speed = speed;
-            if (timer != null) timer.setDelay(speed);
+            if (timer != null)
+                timer.setDelay(speed);
         }
 
         private class TimerAction implements ActionListener {
@@ -416,13 +418,15 @@ public class GameGUI extends JFrame {
         public void next() {
             // Advance first by mask then by map
             if (!maps.get(currentIndex).nextMask()) {
-                if (currentIndex < maps.size() - 1) currentIndex++;
+                if (currentIndex < maps.size() - 1)
+                    currentIndex++;
             }
             repaint();
         }
 
         public void prev() {
-            if (currentIndex > 0) currentIndex--;
+            if (currentIndex > 0)
+                currentIndex--;
             repaint();
         }
 
@@ -431,17 +435,19 @@ public class GameGUI extends JFrame {
             Graphics2D g2 = (Graphics2D) g;
             Font f = new Font("Serif", Font.BOLD, 18);
             g2.setFont(f);
-            if (currentIndex >= mapDesc.size()) return;
+            if (currentIndex >= mapDesc.size())
+                return;
             g2.drawString(mapDesc.get(currentIndex), 10, 15);
-            GameMap mp = maps.get(currentIndex);
-            mp.draw(g2);
+            GameMap map = maps.get(currentIndex);
+            map.draw(g2);
         }
 
         public void mouseClicked(MouseEvent arg0) {
             // Add point
             // Check if a valid square
             Point p = map.getSquare(arg0.getPoint());
-            if (p == null) return;    // Invalid point selected
+            if (p == null) // Invalid point selected
+                return;
             System.out.println("In click. Point: " + p.x + " , " + p.y);
             MapSearchProblem problem = new MapSearchProblem(map);
             if (map.squares[p.x][p.y] != GameMap.WALL_CHAR) {

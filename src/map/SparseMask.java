@@ -2,6 +2,7 @@ package map;
 
 import java.util.ArrayList;
 
+
 /**
  * Implements a sparse mask that overlays different color squares on a 2D map.
  * Usually used to visualize a path or regions in the map.

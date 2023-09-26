@@ -2,6 +2,7 @@ package scenario;
 
 import search.SearchState;
 
+
 /**
  * Information about a search problem.
  *

@@ -2,6 +2,7 @@ package scenario;
 
 import search.StatsRecord;
 
+
 public class StatsCompare {
 
     /*
@@ -76,7 +77,8 @@ public class StatsCompare {
      */
     public static void compareRecords(StatsRecord[] recArr, String[] algName) {
         int arrLen = recArr.length;
-        if (arrLen == 0) return;
+        if (arrLen == 0)
+            return;
 
         long[] val = new long[arrLen];
         long[] cost = new long[arrLen];
@@ -139,7 +141,6 @@ public class StatsCompare {
                 sb3.append(algName[i]).append(", ").append(recArr[i].getStatesExpanded()).append("\n");
             }
 
-
             // states Updated
             sb4.append(algName[i]).append(": ").append(recArr[i].getStatesUpdated()).append("\n");
 
@@ -165,7 +166,6 @@ public class StatsCompare {
         System.out.println(sb6);
         System.out.println(sb7);
         System.out.println(sb8);
-
     }
 
     /**
@@ -181,9 +181,12 @@ public class StatsCompare {
         rec1.incrementStatesExpandedHC(rec2.getStatesExpandedHC());
         rec1.incrementStatesUpdated(rec2.getStatesUpdated());
         rec1.setTime(rec1.getTime() + rec2.getTime());
-        if (rec1.getOpenListSize() < rec2.getOpenListSize()) rec1.setOpenListSize(rec2.getOpenListSize());
-        if (rec1.getClosedListSize() < rec2.getClosedListSize()) rec1.setClosedListSize(rec2.getClosedListSize());
-        if (rec1.getMaxMemSize() < rec2.getMaxMemSize()) rec1.setMaxMemSize(rec2.getMaxMemSize());
+        if (rec1.getOpenListSize() < rec2.getOpenListSize())
+            rec1.setOpenListSize(rec2.getOpenListSize());
+        if (rec1.getClosedListSize() < rec2.getClosedListSize())
+            rec1.setClosedListSize(rec2.getClosedListSize());
+        if (rec1.getMaxMemSize() < rec2.getMaxMemSize())
+            rec1.setMaxMemSize(rec2.getMaxMemSize());
         rec1.setSubgoals(rec1.getSubgoals() + rec2.getSubgoals());
     }
 }

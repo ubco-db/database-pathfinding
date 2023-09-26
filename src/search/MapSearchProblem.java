@@ -147,7 +147,7 @@ public class MapSearchProblem extends SearchProblem {
         map.computeNeighbors();
     }
 
-
+    // QUESTION: Why only 4 directional movement? Why is the move cost 1 and not 10?
     public int getMoveCost(int startId, int goalId) {    // Assumes they are not the same state (as move cost would be zero then)
 
         // return 1; // Update: Only allowing 4 directional movement
