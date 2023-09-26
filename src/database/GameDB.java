@@ -643,20 +643,6 @@ public class GameDB {
         return baseTime;
     }
 
-    public SubgoalDynamicDB computeDynamicDB(SubgoalDynamicDB db, SearchAbstractAlgorithm searchAlg, DBStatsRecord dbstats, int numLevels) {
-        groups = problem.getGroups();
-
-        long current = System.currentTimeMillis();
-        problem.computeNeighbors();
-        long neighborTime = System.currentTimeMillis() - current;
-        dbstats.addStat(18, neighborTime);
-
-        // Generate subgoal databases using the groups
-        db.compute(problem, groups, searchAlg, dbstats, numLevels);
-
-        return db;
-    }
-
     public SubgoalDynamicDB2 computeDynamicDB(SubgoalDynamicDB2 db, SearchAbstractAlgorithm searchAlg, DBStatsRecord dbstats, int numLevels) {
         groups = problem.getGroups();
 
@@ -667,25 +653,6 @@ public class GameDB {
 
         // Generate subgoal databases using the groups
         db.compute(problem, groups, searchAlg, dbstats, numLevels);
-
-        return db;
-    }
-
-    public SubgoalDynamicDB3 computeDynamicDB(SubgoalDynamicDB3 db, SearchAbstractAlgorithm searchAlg, DBStatsRecord dbstats, int numLevels) {
-        groups = problem.getGroups();
-
-        long current = System.currentTimeMillis();
-        problem.computeNeighbors();
-        long neighborTime = System.currentTimeMillis() - current;
-        dbstats.addStat(18, neighborTime);
-
-        // Generate subgoal databases using the groups
-        db.compute(problem, groups, searchAlg, dbstats, numLevels);
-
-
-        int maxSize = groups.size() * groups.size();
-        IndexDB idb = db.getNeighborIndexDB();
-        System.out.println("Neighbor entries: " + maxSize + "\nNumber of DB states: " + idb.getTotalCells() + " Number of records in index DB:  " + idb.getCount() + "\n % of problem size: " + (idb.getCount() * 100.0 / idb.getTotalCells()) + "\n % of problem total size: " + (idb.getCount() * 100.0 / (maxSize)));
 
         return db;
     }
