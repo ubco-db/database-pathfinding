@@ -37,12 +37,11 @@ public class AStarHeuristic implements SearchAlgorithm {
         openList.add(start);
         int closedListCount = 0;
 
-        statesExpanded = new ArrayList<>();
+        statesExpanded = new ArrayList<SearchState>();
 
         boolean foundPath = false;
 
-        // while a path hasn't been found and there are states remaining on the open list
-        while (openList.size() > 0) {
+        while (!foundPath && openList.size() > 0) {
             // Find the lowest-cost state so far
             SearchState best = openList.remove();
             openListLookup.remove(best.id);
@@ -87,6 +86,59 @@ public class AStarHeuristic implements SearchAlgorithm {
         }
     }
 
+    public boolean isPath(SearchState start, SearchState goal, StatsRecord stats) {
+        // Setup open and closed state list
+        PriorityQueue<SearchState> openList = new PriorityQueue<>();            // Note: Does not allow easy updates and searching for entries thus using openListLookup HashMap with it.
+        closedList.clear();
+        HashMap<Integer, SearchState> openListLookup = new HashMap<>();
+
+        start.cost = 0;
+        start.prev = null;
+        openListLookup.put(start.id, start);
+        openList.add(start);
+        int closedListCount = 0;
+
+        boolean foundPath = false;
+
+        while (!foundPath && openList.size() > 0) {
+            // Find the lowest-cost state so far
+            SearchState best = openList.remove();
+            openListLookup.remove(best.id);
+            // System.out.println(problem.idToString(best.id));
+            // System.out.println(((SlidingTileProblem) problem).printTiles(( (SlidingTileState) best.stateData).tiles));
+            if (closedList.get(best.id))
+                continue;                    // Possible that have entry in open list that was not removed
+
+            stats.incrementStatesExpanded(1);
+            statesExpanded.add(best);
+            // If the best location is the finish location then we're done!
+            if (best.equals(goal)) {
+                goal = best;
+                foundPath = true;
+                break;
+            }
+
+            // Add to closed list
+            closedList.set(best.id);
+            closedListCount++;
+
+            // Update all neighbours of current state.
+            updateNeighbors(best, goal, stats, openList, closedList, openListLookup);
+
+            if (openList.size() > stats.getOpenListSize()) stats.setOpenListSize(openList.size());
+            if (closedListCount + openList.size() > stats.getMaxMemSize())
+                stats.setMaxMemSize(closedListCount + openList.size());
+        }
+
+        // Update statistics
+        if (closedListCount > stats.getClosedListSize()) stats.setClosedListSize(closedListCount);
+        if (openList.size() > stats.getOpenListSize()) stats.setOpenListSize(openList.size());
+        if (closedListCount + openList.size() > stats.getMaxMemSize())
+            stats.setMaxMemSize(closedListCount + openList.size());
+
+        return foundPath;
+    }
+
     /**
      * Code to update the neighbors of an expanded state.
      */
@@ -107,12 +159,14 @@ public class AStarHeuristic implements SearchAlgorithm {
             if (state != null) {
                 if (state.g > newG) {
                     SearchState st = new SearchState(state);
+                    //st.updateCost(newG, problem.computeDistance(st, goal));
                     st.updateCost(newG, problem.computeDistance(st, goal, heuristic));
                     st.prev = current;
                     openList.add(st);
                     openListLookup.put(stateId, st);
                 }
             } else {
+                //next.updateCost(newG, problem.computeDistance(next, goal));
                 next.updateCost(newG, problem.computeDistance(next, goal, heuristic));
                 next.prev = current;
                 openList.add(next);
@@ -132,6 +186,8 @@ public class AStarHeuristic implements SearchAlgorithm {
         while (curr != null) {
             path.add(0, curr);
             if (curr.prev != null)
+                //	cost += problem.computeDistance(curr, curr.prev);
+                //  cost += problem.computeDistance(curr, curr.prev, heuristic);
                 cost += problem.getMoveCost(curr, curr.prev);
             curr = curr.prev;
             len++;
@@ -143,6 +199,10 @@ public class AStarHeuristic implements SearchAlgorithm {
 
     public ArrayList<SearchState> getStatesExpanded() {
         return statesExpanded;
+    }
+
+    public boolean isPath(int startId, int goalId, StatsRecord stats) {
+        return computePath(new SearchState(startId), new SearchState(goalId), stats) != null;
     }
 }
 

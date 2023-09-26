@@ -530,6 +530,7 @@ public class GameDB {
 //		System.out.println("Generated database with "+(count)+" entries in time: "+overallTime);
 //		return database;
 //	}
+
     public SubgoalDB computeDBDP2(SubgoalDB db, SearchAlgorithm astarj, DBStatsRecord dbstats, int numLevels) {
         groups = problem.getGroups();
 
@@ -642,20 +643,6 @@ public class GameDB {
         return baseTime;
     }
 
-    public SubgoalDynamicDB computeDynamicDB(SubgoalDynamicDB db, SearchAbstractAlgorithm searchAlg, DBStatsRecord dbstats, int numLevels) {
-        groups = problem.getGroups();
-
-        long current = System.currentTimeMillis();
-        problem.computeNeighbors();
-        long neighborTime = System.currentTimeMillis() - current;
-        dbstats.addStat(18, neighborTime);
-
-        // Generate subgoal databases using the groups
-        db.compute(problem, groups, searchAlg, dbstats, numLevels);
-
-        return db;
-    }
-
     public SubgoalDynamicDB2 computeDynamicDB(SubgoalDynamicDB2 db, SearchAbstractAlgorithm searchAlg, DBStatsRecord dbstats, int numLevels) {
         groups = problem.getGroups();
 
@@ -666,25 +653,6 @@ public class GameDB {
 
         // Generate subgoal databases using the groups
         db.compute(problem, groups, searchAlg, dbstats, numLevels);
-
-        return db;
-    }
-
-    public SubgoalDynamicDB3 computeDynamicDB(SubgoalDynamicDB3 db, SearchAbstractAlgorithm searchAlg, DBStatsRecord dbstats, int numLevels) {
-        groups = problem.getGroups();
-
-        long current = System.currentTimeMillis();
-        problem.computeNeighbors();
-        long neighborTime = System.currentTimeMillis() - current;
-        dbstats.addStat(18, neighborTime);
-
-        // Generate subgoal databases using the groups
-        db.compute(problem, groups, searchAlg, dbstats, numLevels);
-
-
-        int maxSize = groups.size() * groups.size();
-        IndexDB idb = db.getNeighborIndexDB();
-        System.out.println("Neighbor entries: " + maxSize + "\nNumber of DB states: " + idb.getTotalCells() + " Number of records in index DB:  " + idb.getCount() + "\n % of problem size: " + (idb.getCount() * 100.0 / idb.getTotalCells()) + "\n % of problem total size: " + (idb.getCount() * 100.0 / (maxSize)));
 
         return db;
     }
@@ -882,8 +850,11 @@ public class GameDB {
     }
 
     private static int findInArray(int[] ar, int key) {
-        for (int i = 0; i < ar.length; i++)
-            if (ar[i] == key) return i;
+        for (int i = 0; i < ar.length; i++) {
+            if (ar[i] == key) {
+                return i;
+            }
+        }
         return -1;
     }
 
@@ -897,7 +868,7 @@ public class GameDB {
         }
 
         // Otherwise we need to search to find it
-        // Quick implementation using Djisktra's algorithm but could use A* as well
+        // Quick implementation using Dijkstra's algorithm but could use A* as well
         int numGroups = neighbor.length;
         int[] distance = new int[numGroups];
         int[] previous = new int[numGroups];
@@ -925,10 +896,11 @@ public class GameDB {
                 }
             }
 
-            int neighborid = nodes[minLoc];
             if (minLoc == -1) return -1;            // Unreachable
 
-            if (neighborid == goalGroupId)        // Goal node found - stop algorithm so do not expand to all nodes
+            int neighborid = nodes[minLoc];
+
+            if (neighborid == goalGroupId)          // Goal node found - stop algorithm so do not expand to all nodes
                 break;
 
             // Remove this node from the queue
@@ -944,7 +916,7 @@ public class GameDB {
                         distance[neighborLoc] = dist;
                         previous[neighborLoc] = neighborid;
                     }
-                    // TODO: Inefficient.  Only add node if not currently on list.  Do so by searching for it.
+                    // TODO: Inefficient. Only add node if not currently on list. Do so by searching for it.
                     boolean found = false;
                     for (int k = 0; k < count; k++)
                         if (nodes[k] == neighborLoc) {
@@ -960,11 +932,11 @@ public class GameDB {
         // Print path
         count = 0;
         int currentId = goalGroupId;
-        while (currentId != startGroupId) {
+        while (currentId != startGroupId) { // backtrack from goalGroupId to startGroupId
             distance[count++] = currentId;
             currentId = previous[currentId];
         }
-        distance[count++] = startGroupId;
+        distance[count++] = startGroupId; // reverse path is in distance array
 
         // Now produce the actual path
         int pathLen = 0;

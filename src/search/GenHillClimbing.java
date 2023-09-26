@@ -34,11 +34,11 @@ public class GenHillClimbing implements SearchAbstractAlgorithm {
                 int goalRow = goalId / ncols;
                 int diffRow = startRow - goalRow;
 
-                int bit31 = diffRow >> 31;                // Compute its absolute value
+                int bit31 = diffRow >> 31;                  // Compute its absolute value
                 diffRow = (diffRow ^ bit31) - bit31;
 
                 int diffCol = ((startId - startRow * ncols) - (goalId - goalRow * ncols));
-                bit31 = diffCol >> 31;                // Compute its absolute value
+                bit31 = diffCol >> 31;                      // Compute its absolute value
                 diffCol = (diffCol ^ bit31) - bit31;
 
                 if (diffRow > diffCol)                        // TODO: Any way to avoid the if statement here?
@@ -106,8 +106,7 @@ public class GenHillClimbing implements SearchAbstractAlgorithm {
 
             // Need to check if at a plateau here (need to remember cost up to this point)
             //	System.out.println("\t"+problem.idToString(nextId));
-            if (nextH >= currH)    // If current node is better than its best child in a local minima.  No HC path is possible.
-            {
+            if (nextH >= currH) { // If current node is better than its best child in a local minima.  No HC path is possible.
                 return null;
             }
 

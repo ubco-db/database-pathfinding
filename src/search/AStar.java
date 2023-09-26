@@ -22,8 +22,8 @@ public class AStar implements SearchAlgorithm {
 
     public ArrayList<SearchState> computePath(SearchState start, SearchState goal, StatsRecord stats) {
         // Setup open and closed state list
-        PriorityQueue<SearchState> openList = new PriorityQueue<SearchState>();            // Note: Does not allow easy updates and searching for entries thus using openListLookup HashMap with it.
-        HashMap<Integer, SearchState> openListLookup = new HashMap<Integer, SearchState>();
+        PriorityQueue<SearchState> openList = new PriorityQueue<>();            // Note: Does not allow easy updates and searching for entries thus using openListLookup HashMap with it.
+        HashMap<Integer, SearchState> openListLookup = new HashMap<>();
         closedList.clear();
 
         start.cost = 0;
@@ -36,7 +36,7 @@ public class AStar implements SearchAlgorithm {
 
         boolean foundPath = false;
 
-        while (openList.size() > 0) {
+        while (!foundPath && openList.size() > 0) {
             // Find the lowest-cost state so far
             SearchState best = openList.remove();
             openListLookup.remove(best.id);
@@ -74,8 +74,7 @@ public class AStar implements SearchAlgorithm {
         if (closedListCount + openList.size() > stats.getMaxMemSize())
             stats.setMaxMemSize(closedListCount + openList.size());
 
-        if (!foundPath)
-            return null;
+        if (!foundPath) return null;
         else {
             return buildPath(goal, stats);
         }
@@ -83,9 +82,9 @@ public class AStar implements SearchAlgorithm {
 
     public boolean isPath(SearchState start, SearchState goal, StatsRecord stats) {
         // Setup open and closed state list
-        PriorityQueue<SearchState> openList = new PriorityQueue<SearchState>();            // Note: Does not allow easy updates and searching for entries thus using openListLookup HashMap with it.
+        PriorityQueue<SearchState> openList = new PriorityQueue<>(); // Note: Does not allow easy updates and searching for entries thus using openListLookup HashMap with it.
         closedList.clear();
-        HashMap<Integer, SearchState> openListLookup = new HashMap<Integer, SearchState>();
+        HashMap<Integer, SearchState> openListLookup = new HashMap<>();
 
         start.cost = 0;
         start.prev = null;
@@ -95,7 +94,7 @@ public class AStar implements SearchAlgorithm {
 
         boolean foundPath = false;
 
-        while (openList.size() > 0) {
+        while (!foundPath && openList.size() > 0) {
             // Find the lowest-cost state so far
             SearchState best = openList.remove();
             openListLookup.remove(best.id);
@@ -152,21 +151,21 @@ public class AStar implements SearchAlgorithm {
             int newG = current.g + problem.getMoveCost(current, next);
 
             // 	Add state to list.  If already there, update its cost only
-            Integer stateid = new Integer(next.id);        // Build integer object once to save time
-            SearchState state = openListLookup.get(stateid);
+            Integer stateId = next.id;        // Build integer object once to save time
+            SearchState state = openListLookup.get(stateId);
             if (state != null) {
                 if (state.g > newG) {
                     SearchState st = new SearchState(state);
                     st.updateCost(newG, problem.computeDistance(st, goal));
                     st.prev = current;
                     openList.add(st);
-                    openListLookup.put(stateid, st);
+                    openListLookup.put(stateId, st);
                 }
             } else {
                 next.updateCost(newG, problem.computeDistance(next, goal));
                 next.prev = current;
                 openList.add(next);
-                openListLookup.put(stateid, next);
+                openListLookup.put(stateId, next);
             }
         }
     }
@@ -175,14 +174,14 @@ public class AStar implements SearchAlgorithm {
      * Builds a path as found by A*.
      */
     public ArrayList<SearchState> buildPath(SearchState goal, StatsRecord stats) {
-        ArrayList<SearchState> path = new ArrayList<SearchState>();
+        ArrayList<SearchState> path = new ArrayList<>();
         // Construct path now
         SearchState curr = goal;
         int len = 0, cost = 0;
         while (curr != null) {
             path.add(0, curr);
             if (curr.prev != null)
-                //	cost += problem.computeDistance(curr, curr.prev);
+                // cost += problem.computeDistance(curr, curr.prev);
                 cost += problem.getMoveCost(curr, curr.prev);
             curr = curr.prev;
             len++;

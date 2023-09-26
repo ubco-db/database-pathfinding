@@ -23,7 +23,7 @@ import java.util.Scanner;
  * Database where dynamic programming table is not computed offline only the base paths between adjacency neighbors are (and their associated costs).
  * Online, a record is produced by searching the partial complete DP table for the lowest cost path between regions i and j.
  * This path consists of a series of hops between neighbors and each hop's path is combined into a path to solve the entire problem.
- * In effect, this is performing another search on the abstract region space.  The algorithm is currently using Dijkstra's but A* may be possible as well.
+ * In effect, this is performing another search on the abstract region space. The algorithm is currently using Dijkstra's but A* may be possible as well.
  * This search is no longer real-time (as number of regions cannot be bounded a priori), so any search using this database cannot also be considered real-time.
  * The savings are that no DP computation needs to be performed which speeds up things when there are a large number of regions and potentially can be useful when
  * the state space is changing.
@@ -32,11 +32,11 @@ import java.util.Scanner;
  * @author rlawrenc
  */
 public class SubgoalDynamicDB2 extends SubgoalDBExact {
-    private int numGroups;                // Number of abstract regions
-    private int[][] neighborId;            // neighborId[i] stores list of neighbors for i. neighborId[i][j] is state id of jth neighbor of i.
-    private int[][] lowestCost;            // Lowest cost for DP table.  lowestCost[i][j] is the cost of the lowest path from region i to region neighborId[i][j]
-    private int[][][] paths;            // paths[i][j] is array representing a compressed path of state ids from region i to region neighborId[i][j]of lowest cost path
-    private int[][] neighbor;            // neighbor[i][j] is region id of next region to visit on lowest cost path from region i to region neighborId[i][j] (the next hop)
+    private int numGroups;              // Number of abstract regions
+    private int[][] neighborId;         // neighborId[i] stores list of neighbors for i. neighborId[i][j] is state id of jth neighbor of i.
+    private int[][] lowestCost;         // Lowest cost for DP table. lowestCost[i][j] is the cost of the lowest path from region i to region neighborId[i][j]
+    private int[][][] paths;            // paths[i][j] is array representing a compressed path of state ids from region i to region neighborId[i][j] of lowest cost path
+    private int[][] neighbor;           // neighbor[i][j] is region id of next region to visit on lowest cost path from region i to region neighborId[i][j] (the next hop)
 
 
     /**

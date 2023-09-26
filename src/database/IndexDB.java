@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 /**
- * Represents the static abstraction as an index database.  Currently simply using a sorted array and RLE compression.
+ * Represents the static abstraction as an index database. Currently, simply using a sorted array and RLE compression.
  *
  * @author rlawrenc
  */
@@ -63,14 +63,15 @@ public class IndexDB {
         System.out.println("Hash table size: " + hashTable.length);
     }
 
+    // Section 5.2 hcdps.pdf
     public int findHT(int nodeId) {
 
-        int htloc = nodeId / HT_STEP_SIZE;
+        int htloc = nodeId / HT_STEP_SIZE; // ground level state id / k = hash table entry that maps to the RLE entry for ground-level state
         if (htloc >= hashTable.length) htloc = hashTable.length - 1;
 
         int loc = hashTable[htloc];
 
-        while (loc < count - 1 && nodeId >= nodeIds[loc + 1]) {
+        while (loc < count - 1 && nodeId >= nodeIds[loc + 1]) { // scan hashmap to find correct location
             loc++;
         }
 
