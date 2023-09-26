@@ -22,8 +22,8 @@ public class AStar implements SearchAlgorithm {
 
     public ArrayList<SearchState> computePath(SearchState start, SearchState goal, StatsRecord stats) {
         // Setup open and closed state list
-        PriorityQueue<SearchState> openList = new PriorityQueue<>();            // Note: Does not allow easy updates and searching for entries thus using openListLookup HashMap with it.
-        HashMap<Integer, SearchState> openListLookup = new HashMap<>();
+        PriorityQueue<SearchState> openList = new PriorityQueue<SearchState>();            // Note: Does not allow easy updates and searching for entries thus using openListLookup HashMap with it.
+        HashMap<Integer, SearchState> openListLookup = new HashMap<Integer, SearchState>();
         closedList.clear();
 
         start.cost = 0;
@@ -36,7 +36,7 @@ public class AStar implements SearchAlgorithm {
 
         boolean foundPath = false;
 
-        while (!foundPath && openList.size() > 0) {
+        while (openList.size() > 0) {
             // Find the lowest-cost state so far
             SearchState best = openList.remove();
             openListLookup.remove(best.id);
@@ -60,18 +60,22 @@ public class AStar implements SearchAlgorithm {
             // Update all neighbours of current state.
             updateNeighbors(best, goal, stats, openList, closedList, openListLookup);
 
-            if (openList.size() > stats.getOpenListSize()) stats.setOpenListSize(openList.size());
+            if (openList.size() > stats.getOpenListSize())
+                stats.setOpenListSize(openList.size());
             if (closedListCount + openList.size() > stats.getMaxMemSize())
                 stats.setMaxMemSize(closedListCount + openList.size());
         }
 
         // Update statistics
-        if (closedListCount > stats.getClosedListSize()) stats.setClosedListSize(closedListCount);
-        if (openList.size() > stats.getOpenListSize()) stats.setOpenListSize(openList.size());
+        if (closedListCount > stats.getClosedListSize())
+            stats.setClosedListSize(closedListCount);
+        if (openList.size() > stats.getOpenListSize())
+            stats.setOpenListSize(openList.size());
         if (closedListCount + openList.size() > stats.getMaxMemSize())
             stats.setMaxMemSize(closedListCount + openList.size());
 
-        if (!foundPath) return null;
+        if (!foundPath)
+            return null;
         else {
             return buildPath(goal, stats);
         }
@@ -79,9 +83,9 @@ public class AStar implements SearchAlgorithm {
 
     public boolean isPath(SearchState start, SearchState goal, StatsRecord stats) {
         // Setup open and closed state list
-        PriorityQueue<SearchState> openList = new PriorityQueue<>(); // Note: Does not allow easy updates and searching for entries thus using openListLookup HashMap with it.
+        PriorityQueue<SearchState> openList = new PriorityQueue<SearchState>();            // Note: Does not allow easy updates and searching for entries thus using openListLookup HashMap with it.
         closedList.clear();
-        HashMap<Integer, SearchState> openListLookup = new HashMap<>();
+        HashMap<Integer, SearchState> openListLookup = new HashMap<Integer, SearchState>();
 
         start.cost = 0;
         start.prev = null;
@@ -91,7 +95,7 @@ public class AStar implements SearchAlgorithm {
 
         boolean foundPath = false;
 
-        while (!foundPath && openList.size() > 0) {
+        while (openList.size() > 0) {
             // Find the lowest-cost state so far
             SearchState best = openList.remove();
             openListLookup.remove(best.id);
@@ -116,14 +120,17 @@ public class AStar implements SearchAlgorithm {
             // Update all neighbours of current state.
             updateNeighbors(best, goal, stats, openList, closedList, openListLookup);
 
-            if (openList.size() > stats.getOpenListSize()) stats.setOpenListSize(openList.size());
+            if (openList.size() > stats.getOpenListSize())
+                stats.setOpenListSize(openList.size());
             if (closedListCount + openList.size() > stats.getMaxMemSize())
                 stats.setMaxMemSize(closedListCount + openList.size());
         }
 
         // Update statistics
-        if (closedListCount > stats.getClosedListSize()) stats.setClosedListSize(closedListCount);
-        if (openList.size() > stats.getOpenListSize()) stats.setOpenListSize(openList.size());
+        if (closedListCount > stats.getClosedListSize())
+            stats.setClosedListSize(closedListCount);
+        if (openList.size() > stats.getOpenListSize())
+            stats.setOpenListSize(openList.size());
         if (closedListCount + openList.size() > stats.getMaxMemSize())
             stats.setMaxMemSize(closedListCount + openList.size());
 
@@ -133,31 +140,33 @@ public class AStar implements SearchAlgorithm {
     /**
      * Code to update the neighbors of an expanded state.
      */
-    private void updateNeighbors(SearchState current, SearchState goal, StatsRecord stats, PriorityQueue<SearchState> openList, BitSet closedList, HashMap<Integer, SearchState> openListLookup) {
+    private void updateNeighbors(SearchState current, SearchState goal, StatsRecord stats,
+                                 PriorityQueue<SearchState> openList, BitSet closedList, HashMap<Integer, SearchState> openListLookup) {
         ArrayList<SearchState> neighbors = problem.getNeighbors(current);
         for (SearchState next : neighbors) {
-            if (closedList.get(next.id)) continue;
+            if (closedList.get(next.id))
+                continue;
 
             stats.incrementStatesUpdated(1);
 
             int newG = current.g + problem.getMoveCost(current, next);
 
             // 	Add state to list.  If already there, update its cost only
-            Integer stateId = next.id;        // Build integer object once to save time
-            SearchState state = openListLookup.get(stateId);
+            Integer stateid = new Integer(next.id);        // Build integer object once to save time
+            SearchState state = openListLookup.get(stateid);
             if (state != null) {
                 if (state.g > newG) {
                     SearchState st = new SearchState(state);
                     st.updateCost(newG, problem.computeDistance(st, goal));
                     st.prev = current;
                     openList.add(st);
-                    openListLookup.put(stateId, st);
+                    openListLookup.put(stateid, st);
                 }
             } else {
                 next.updateCost(newG, problem.computeDistance(next, goal));
                 next.prev = current;
                 openList.add(next);
-                openListLookup.put(stateId, next);
+                openListLookup.put(stateid, next);
             }
         }
     }
@@ -166,14 +175,14 @@ public class AStar implements SearchAlgorithm {
      * Builds a path as found by A*.
      */
     public ArrayList<SearchState> buildPath(SearchState goal, StatsRecord stats) {
-        ArrayList<SearchState> path = new ArrayList<>();
+        ArrayList<SearchState> path = new ArrayList<SearchState>();
         // Construct path now
         SearchState curr = goal;
         int len = 0, cost = 0;
         while (curr != null) {
             path.add(0, curr);
             if (curr.prev != null)
-                // cost += problem.computeDistance(curr, curr.prev);
+                //	cost += problem.computeDistance(curr, curr.prev);
                 cost += problem.getMoveCost(curr, curr.prev);
             curr = curr.prev;
             len++;

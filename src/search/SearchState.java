@@ -1,6 +1,5 @@
 package search;
 
-
 public class SearchState implements Comparable<SearchState> {
     public int id;
     public double cost;    // f
@@ -10,9 +9,6 @@ public class SearchState implements Comparable<SearchState> {
     public boolean updated = false;
 
     public SearchState prev;
-
-    public SearchState() {
-    }
 
     public SearchState(SearchState st) {
         this.id = st.id;
@@ -44,19 +40,12 @@ public class SearchState implements Comparable<SearchState> {
     }
 
     public int compareTo(SearchState o) {
-        if (this.cost == o.cost) return o.g - this.g;
+        if (this.cost == o.cost)
+            return o.g - this.g;
         return (int) (this.cost - o.cost);
     }
 
     public String toString() {
         return "Id: " + id + " U: " + updated + " f: " + cost + " g: " + g + " h: " + h + " Cost: " + cost;
-    }
-
-    public double getCost() {
-        return cost;
-    }
-
-    public void setCost(int cost) {
-        this.cost = cost;
     }
 }

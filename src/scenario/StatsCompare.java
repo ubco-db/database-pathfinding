@@ -2,73 +2,11 @@ package scenario;
 
 import search.StatsRecord;
 
+
 public class StatsCompare {
 
-    /*
-     * Compares the results from three statistic records and outputs the result.
-     */
-    public static void compareRecords(StatsRecord rec1, StatsRecord rec2, StatsRecord rec3, String[] algName) {
-        long val1 = rec1.getPathLength(), val2 = rec2.getPathLength(), val3 = rec3.getPathLength();
-        System.out.println("Path length: " + algName[0] + ": " + val1 + "\t" + algName[1] + ": " + val2 + "\t" + algName[2] + ": " + val3);
-        double subL = 0, subS = 0;
-        if (val1 != 0) {
-            subL = 1000 * val2 / val1 / 1000.0;
-            subS = 1000 * val3 / val1 / 1000.0;
-        }
-        System.out.println("             Suboptimal " + algName[1] + ": " + subL + "\t" + algName[2] + ": " + subS);
-
-        val1 = rec1.getPathCost();
-        val2 = rec2.getPathCost();
-        val3 = rec3.getPathCost();
-        System.out.println("Path cost:   " + algName[0] + ": " + val1 + "\t" + algName[1] + ": " + val2 + "\t" + algName[2] + ": " + val3);
-        subL = 0;
-        subS = 0;
-        if (val1 != 0) {
-            subL = 1000 * val2 / val1 / 1000.0;
-            subS = 1000 * val3 / val1 / 1000.0;
-        }
-        System.out.println("             Suboptimal " + algName[1] + ": " + subL + "\t" + algName[2] + ": " + subS);
-
-        val1 = rec1.getStatesExpanded();
-        val2 = rec2.getStatesExpanded();
-        val3 = rec3.getStatesExpanded();
-        int valHC = rec3.getStatesExpandedHC();
-        System.out.println("States expanded: " + algName[0] + ": " + val1 + "\t" + algName[1] + ": " + val2 + "\t" + algName[2] + ": " + (val3 + valHC));
-
-        val1 = rec1.getStatesUpdated();
-        val2 = rec2.getStatesUpdated();
-        val3 = rec3.getStatesUpdated();
-        System.out.println("States updated:  " + algName[0] + ": " + val1 + "\t" + algName[1] + ": " + val2 + "\t" + algName[2] + ": " + val3);
-
-        val1 = rec1.getTime();
-        val2 = rec2.getTime();
-        val3 = rec3.getTime();
-        System.out.println("Time:  " + algName[0] + ": " + val1 + "\t" + algName[1] + ": " + val2 + "\t" + algName[2] + ": " + val3);
-
-        val1 = rec1.getOpenListSize();
-        val2 = rec2.getOpenListSize();
-        val3 = rec3.getOpenListSize();
-        System.out.println("Max. open list:  " + algName[0] + ": " + val1 + "\t" + algName[1] + ": " + val2 + "\t" + algName[2] + ": " + val3);
-
-        val1 = rec1.getClosedListSize();
-        val2 = rec2.getClosedListSize();
-        val3 = rec3.getClosedListSize();
-        System.out.println("Max. closed list:  " + algName[0] + ": " + val1 + "\t" + algName[1] + ": " + val2 + "\t" + algName[2] + ": " + val3);
-
-        val1 = rec1.getMaxMemSize();
-        val2 = rec2.getMaxMemSize();
-        val3 = rec3.getMaxMemSize();
-        System.out.println("Max. mem size:  " + algName[0] + ": " + val1 + "\t" + algName[1] + ": " + val2 + "\t" + algName[2] + ": " + val3);
-
-        val1 = rec1.getSubgoals();
-        val2 = rec2.getSubgoals();
-        val3 = rec3.getSubgoals();
-        System.out.println("Subgoals used:  " + algName[0] + ": " + val1 + "\t" + algName[1] + ": " + val2 + "\t" + algName[2] + ": " + val3);
-
-/*		if (rec3.getOpenListSize() == 1359){
-			int i = 1/0;
-		}*/
-
+    public StatsCompare() {
+        super();
     }
 
     /*
@@ -76,7 +14,8 @@ public class StatsCompare {
      */
     public static void compareRecords(StatsRecord[] recArr, String[] algName) {
         int arrLen = recArr.length;
-        if (arrLen == 0) return;
+        if (arrLen == 0)
+            return;
 
         long[] val = new long[arrLen];
         long[] cost = new long[arrLen];
@@ -102,7 +41,8 @@ public class StatsCompare {
             val[i] = recArr[i].getPathLength();
             sb1.append(algName[i]).append(": ").append(val[i]);
             double sub = 0;
-            if (val[0] != 0) sub = 1000 * val[i] / val[0] / 1000.0;
+            if (val[0] != 0)
+                sub = 1000 * val[i] / val[0] / 1000.0;
 
             sb1.append(",  Suboptimal: ").append(sub).append("\n");
 
@@ -110,7 +50,8 @@ public class StatsCompare {
             cost[i] = recArr[i].getPathCost();
             sb2.append(algName[i]).append(": ").append(cost[i]);
             sub = 0;
-            if (cost[0] != 0) sub = 1000 * cost[i] / cost[0] / 1000.0;
+            if (cost[0] != 0)
+                sub = 1000 * cost[i] / cost[0] / 1000.0;
 
             sb2.append(",  Suboptimal: ").append(sub).append("\n");
 
@@ -132,13 +73,13 @@ public class StatsCompare {
                         break;
                     }
                 }
-                if (j >= 15) speedup = recArr[i].getStatesExpanded() / recArr[14].getStatesExpanded();
+                if (j >= 15)
+                    speedup = recArr[i].getStatesExpanded() / recArr[14].getStatesExpanded();
 
                 sb3.append(algName[i]).append(", ").append(recArr[i].getStatesExpanded()).append(",  Speedup, ").append(speedup).append("\n");
             } else {
                 sb3.append(algName[i]).append(", ").append(recArr[i].getStatesExpanded()).append("\n");
             }
-
 
             // states Updated
             sb4.append(algName[i]).append(": ").append(recArr[i].getStatesUpdated()).append("\n");
@@ -165,25 +106,26 @@ public class StatsCompare {
         System.out.println(sb6);
         System.out.println(sb7);
         System.out.println(sb8);
-
     }
 
     /**
      * Updates statistics in record 1 with those from record 2.
      *
-     * @param rec1
-     * @param rec2
+     * @param rec1 - record 1
+     * @param rec2 - record 2
      */
     public static void mergeRecords(StatsRecord rec1, StatsRecord rec2) {
         rec1.setPathCost(rec1.getPathCost() + rec2.getPathCost());
         rec1.setPathLength(rec1.getPathLength() + rec2.getPathLength());
         rec1.incrementStatesExpanded(rec2.getStatesExpanded());
-        rec1.incrementStatesExpandedHC(rec2.getStatesExpandedHC());
         rec1.incrementStatesUpdated(rec2.getStatesUpdated());
         rec1.setTime(rec1.getTime() + rec2.getTime());
-        if (rec1.getOpenListSize() < rec2.getOpenListSize()) rec1.setOpenListSize(rec2.getOpenListSize());
-        if (rec1.getClosedListSize() < rec2.getClosedListSize()) rec1.setClosedListSize(rec2.getClosedListSize());
-        if (rec1.getMaxMemSize() < rec2.getMaxMemSize()) rec1.setMaxMemSize(rec2.getMaxMemSize());
+        if (rec1.getOpenListSize() < rec2.getOpenListSize())
+            rec1.setOpenListSize(rec2.getOpenListSize());
+        if (rec1.getClosedListSize() < rec2.getClosedListSize())
+            rec1.setClosedListSize(rec2.getClosedListSize());
+        if (rec1.getMaxMemSize() < rec2.getMaxMemSize())
+            rec1.setMaxMemSize(rec2.getMaxMemSize());
         rec1.setSubgoals(rec1.getSubgoals() + rec2.getSubgoals());
     }
 }

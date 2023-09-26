@@ -2,12 +2,7 @@ import map.GameMap;
 import scenario.Problem;
 import scenario.Scenario;
 import scenario.StatsCompare;
-import search.AStarHeuristic;
-import search.MapSearchProblem;
-import search.SearchProblem;
-import search.SearchState;
-import search.SearchUtil;
-import search.StatsRecord;
+import search.*;
 import util.HeuristicFunction;
 
 import java.util.ArrayList;
