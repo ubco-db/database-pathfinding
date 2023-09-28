@@ -150,7 +150,7 @@ public class MapSearchProblem extends SearchProblem {
     // QUESTION: Why only 4 directional movement? Why is the move cost 1 and not 10?
     public int getMoveCost(int startId, int goalId) {    // Assumes they are not the same state (as move cost would be zero then)
 
-        // return 1; // Update: Only allowing 4 directional movement
+        // return 10; // Update: Only allowing 4 directional movement
         // Original code
 //		int moveCost = (Math.abs(map.getRow(startId)-map.getRow(goalId)) + Math.abs(map.getCol(startId)-map.getCol(goalId)))*10;
 //		if (moveCost == 20)
@@ -158,10 +158,18 @@ public class MapSearchProblem extends SearchProblem {
 //		 return moveCost;
 
 		// This was current code for a diagonal movement
+        int diff = startId-goalId;
+        int bit31 = diff >> 31;
+        diff = (diff ^ bit31) - bit31;
 
-        int dx = Math.abs(map.getRow(startId) - map.getRow(goalId));
-        int dy = Math.abs(map.getCol(startId) - map.getCol(goalId));
-        return Math.min(dx, dy) * 14 + ((dx + dy) - 2 * Math.min(dx, dy)) * 10;
+        if (diff == 1 || diff == map.cols)
+            return 10;
+        else
+            return 14;
+
+//        int dx = Math.abs(map.getRow(startId) - map.getRow(goalId));
+//        int dy = Math.abs(map.getCol(startId) - map.getCol(goalId));
+//        return Math.min(dx, dy) * 14 + ((dx + dy) - 2 * Math.min(dx, dy)) * 10;
 
         // if (startId == goalId)
         //	return 0;
