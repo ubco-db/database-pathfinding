@@ -99,6 +99,8 @@ public class EvaluateScenario {
 
         ArrayList<HeuristicFunction> heuristicList = new ArrayList<>();
 
+        // QUESTION: are all these heuristics actually admissible?
+
         // f1
         heuristicList.add(new HeuristicFunction() {
             public int apply(int startId, int goalId, int ncols) {
