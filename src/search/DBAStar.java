@@ -6,14 +6,14 @@ import map.GameMap;
 
 import java.util.ArrayList;
 
-public class JStar2 implements SearchAlgorithm {
+public class DBAStar implements SearchAlgorithm {
     private SubgoalDB database;
     private SearchProblem problem;
     private GameMap map;
     private RegionSearchProblem abstractProblem;
     private ArrayList<SearchState> subgoals;
 
-    public JStar2(SearchProblem problem, GameMap abstractmap, SubgoalDB database) {
+    public DBAStar(SearchProblem problem, GameMap abstractmap, SubgoalDB database) {
         this.database = database;
         this.problem = problem;
         this.map = abstractmap;
@@ -116,7 +116,7 @@ public class JStar2 implements SearchAlgorithm {
                 }
 
                 if (newPath == null) { // TODO: Not sure what to do in this case
-                    System.out.println("JStar Unable to find subgoal path between " + problem.idToString(currentStart.id) + " and " + problem.idToString(currentGoal.id));
+                    System.out.println("DBAStar: Unable to find subgoal path between " + problem.idToString(currentStart.id) + " and " + problem.idToString(currentGoal.id));
                     currentGoal = goal;
                     return null;
                 }
