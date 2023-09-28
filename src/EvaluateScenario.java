@@ -259,7 +259,7 @@ public class EvaluateScenario {
         if (numProblems > 100) numDigits = 3;
 
         long startTime = System.currentTimeMillis();
-        boolean mapSwitch = false;
+        boolean mapSwitch;
 
         ArrayList<SearchState> path = null;
         StatsRecord stats;
@@ -502,7 +502,7 @@ public class EvaluateScenario {
                         break;
                     case 3: // DBA*
                         alg = new GenHillClimbing(problem, cutoff);
-                        GenHillClimbing pathCompressAlgj2 = new GenHillClimbing(problem, 10000);
+                        GenHillClimbing pathCompressAlgDba = new GenHillClimbing(problem, 10000);
 
                         if (mapSwitch) { // Load abstract map and database
                             System.out.println("Loading database.");
@@ -539,10 +539,10 @@ public class EvaluateScenario {
                                 dbStats[j].addRecord(rec);
 
                                 System.out.println("Exporting map with areas.");
-                                maps[j].outputImage(dbaStarDatabasePath + mapFileName + "_J2.png", null, null);
+                                maps[j].outputImage(dbaStarDatabasePath + mapFileName + "_DBA.png", null, null);
 
                                 System.out.println("Exporting map with areas and centroids.");
-                                maps[j].computeCentroidMap().outputImage(dbaStarDatabasePath + mapFileName + "_J2_Centroid.png", null, null);
+                                maps[j].computeCentroidMap().outputImage(dbaStarDatabasePath + mapFileName + "_DBA_Centroid.png", null, null);
 
                                 SearchProblem tmpProb = new MapSearchProblem(maps[j]);
                                 GameDB database = new GameDB(tmpProb);
@@ -555,7 +555,7 @@ public class EvaluateScenario {
                                 System.out.println("Generating database.");
                                 currentTime = System.currentTimeMillis();
 
-                                databases[j] = database.computeDynamicDB((SubgoalDynamicDB2) databases[j], pathCompressAlgj2, rec, numNeighborLevels);
+                                databases[j] = database.computeDynamicDB((SubgoalDynamicDB2) databases[j], pathCompressAlgDba, rec, numNeighborLevels);
                                 System.out.println("Time to compute DBAStar database: " + (System.currentTimeMillis() - currentTime));
 
                                 ((SubgoalDynamicDB2) databases[j]).init();
@@ -568,7 +568,7 @@ public class EvaluateScenario {
                             }
                             databases[j].setProblem(problem);
                             System.out.println("Verifying database.");
-                            databases[j].verify(pathCompressAlgj2);
+                            databases[j].verify(pathCompressAlgDba);
                             System.out.println("Database verification complete.");
                             System.out.println("Databases loaded.");
                             dbaStarRecords = databases[j].getSize();
