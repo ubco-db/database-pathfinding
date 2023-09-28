@@ -157,21 +157,20 @@ public class GameMap {
 
     // Computes octile distance (quick estimate with no square root) from this state to goal state
     public static int computeDistance(int startId, int goalId, int ncols) {
-        int startRow = startId / ncols;
-        int goalRow = goalId / ncols;
-        int diffRow = startRow - goalRow;
+//        int startRow = startId / ncols;
+//        int goalRow = goalId / ncols;
+//        int diffRow = startRow - goalRow;
+//
+//        int bit31 = diffRow >> 31;                // Compute its absolute value
+//        diffRow = (diffRow ^ bit31) - bit31;
+//
+//        int diffCol = ((startId - startRow * ncols) - (goalId - goalRow * ncols));
+//        bit31 = diffCol >> 31;                     // Compute its absolute value
+//        diffCol = (diffCol ^ bit31) - bit31;
+//
+//        // return Math.abs(diffRow) *10 + Math.abs(diffCol)*10;
+//        return Math.abs(diffRow) + Math.abs(diffCol);
 
-        int bit31 = diffRow >> 31;                // Compute its absolute value
-        diffRow = (diffRow ^ bit31) - bit31;
-
-        int diffCol = ((startId - startRow * ncols) - (goalId - goalRow * ncols));
-        bit31 = diffCol >> 31;                     // Compute its absolute value
-        diffCol = (diffCol ^ bit31) - bit31;
-
-        // return Math.abs(diffRow) *10 + Math.abs(diffCol)*10;
-        return Math.abs(diffRow) + Math.abs(diffCol);
-
-		/*
 		// Note: This version uses diagonals
 		int startRow = startId/ncols;
 		int goalRow = goalId/ncols;
@@ -181,14 +180,10 @@ public class GameMap {
 		diffRow = (diffRow ^ bit31) - bit31;
 
 		int diffCol = ((startId - startRow*ncols) - (goalId - goalRow*ncols));
-		bit31 = diffCol >> 31;				// Compute its absolute value
+		bit31 = diffCol >> 31;				    // Compute its absolute value
 		diffCol = (diffCol ^ bit31) - bit31;
 
-		if (diffRow > diffCol)						// TODO: Any way to avoid the if statement here?
-			return diffCol * 14 + (diffRow-diffCol) * 10;
-		else
-			return diffRow * 14 + (diffCol-diffRow) * 10;
-		*/
+        return Math.min(diffRow, diffCol) * 14 + ((diffRow + diffCol) - 2 * Math.min(diffRow, diffCol)) * 10;
 
 		/*
 		diffRow = startRow - goalRow;
@@ -773,7 +768,6 @@ public class GameMap {
      */
     public ArrayList<SearchState> getNeighbors(int r, int c) {
         // 8-way pathfinding
-		/*
     	result.clear();
     	if (isValid(r - 1, c - 1) && !isWall(r - 1, c - 1)) // Top left
 			result.add(getState(this.getId(r-1,c-1)));
@@ -792,18 +786,17 @@ public class GameMap {
 		if (isValid(r, c + 1) && !isWall(r, c + 1)) // Right
 			result.add(getState(this.getId(r,c+1)));
 		return result;
-		*/
         // 4-way pathfinding
-        result.clear();
-        if (isValid(r - 1, c) && !isWall(r - 1, c))    // Above
-            result.add(getState(this.getId(r - 1, c)));
-        if (isValid(r + 1, c) && !isWall(r + 1, c))// Bottom
-            result.add(getState(this.getId(r + 1, c)));
-        if (isValid(r, c - 1) && !isWall(r, c - 1)) // Left
-            result.add(getState(this.getId(r, c - 1)));
-        if (isValid(r, c + 1) && !isWall(r, c + 1)) // Right
-            result.add(getState(this.getId(r, c + 1)));
-        return result;
+//        result.clear();
+//        if (isValid(r - 1, c) && !isWall(r - 1, c))    // Above
+//            result.add(getState(this.getId(r - 1, c)));
+//        if (isValid(r + 1, c) && !isWall(r + 1, c))// Bottom
+//            result.add(getState(this.getId(r + 1, c)));
+//        if (isValid(r, c - 1) && !isWall(r, c - 1)) // Left
+//            result.add(getState(this.getId(r, c - 1)));
+//        if (isValid(r, c + 1) && !isWall(r, c + 1)) // Right
+//            result.add(getState(this.getId(r, c + 1)));
+//        return result;
     }
 
 	/*

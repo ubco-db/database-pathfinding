@@ -11,7 +11,7 @@ import scenario.StatsCompare;
 import search.AStar;
 import search.AStarHeuristic;
 import search.GenHillClimbing;
-import search.JStar2;
+import search.DBAStar;
 import search.MapSearchProblem;
 import search.SearchAbstractAlgorithm;
 import search.SearchProblem;
@@ -44,15 +44,15 @@ public class EvaluateScenario {
                 "maze_5_1250_hard",             //7
                 "smallRoom",                    //8
         };
-        String[] algorithmNames = {"A*", "HCDPS+", "Cover2", "JStar2", "A*+heuristic"};
-        String[] abbrv = {"a", "hcdps+", "cover2", "JStar2", "AHrt"};
+        String[] algorithmNames = {"A*", "HCDPS+", "Cover2", "DBA*", "A*+heuristic"};
+        String[] abbrv = {"a", "hcdps+", "cover2", "dba", "AHrt"};
 
         /*
          * Run configuration variables are below.
          */
 
         int scenarioToRun = 0;              // Index into scenarios array (8 scenarios total). Change this to run a different scenario.
-        int[] algorithms = {1, 2, 3};       // Select up to three algorithms to run
+        int[] algorithms = {0, 1, 3};       // Select up to three algorithms to run
 
         int heuristicId = 1;                // (0~5) heuristic function id passing to A* with arbitrary heuristic
         int cutoff = 250;                   // For knnLRTA* the maximum # of moves for hill-climbing checks.
@@ -62,7 +62,7 @@ public class EvaluateScenario {
         int trailHeads = 1000;              // Maximum # of trailheads used by cover algorithm
         int maxRecords = 500000;            // Maximum # of records after the cover algorithm
         int HCDPSRecords = 0;
-        int jStarRecords = 0;
+        int dbaStarRecords = 0;
 
         long[] revisits = new long[3];      // Count the # of times that the path revisits a state
         long[] distrevisits = new long[3];  // Sum of distance between state revisits.
@@ -72,14 +72,13 @@ public class EvaluateScenario {
         // boolean buildPath = true;        // Algorithms will build path not just compute cost of path.
 
         boolean showPaths = false;          // If true, paths computed by each algorithm are printed to standard output.
-        boolean showImage = false;          // If true, will produce a PNG image for the path produced by regardless if the path is good or not.
+        boolean showImage = true;           // If true, will produce a PNG image for the path produced by regardless if the path is good or not.
 
         int dbType = 2;                     // 2 - adjacency list representation (DP computed at run-time)
 
         String imageDir = "images/";
         String dbPath = "databases/";
-        String jStarDatabasePath = dbPath + "JSTAR/";
-        String jStar2DatabasePath = dbPath + "JSTAR2/";
+        String dbaStarDatabasePath = dbPath + "DBA/";
         String coverDatabasePath = dbPath + "cover/";
         String hcDatabasePath;
         hcDatabasePath = dbPath + "HC/";
@@ -99,6 +98,8 @@ public class EvaluateScenario {
          */
 
         ArrayList<HeuristicFunction> heuristicList = new ArrayList<>();
+
+        // QUESTION: are all these heuristics actually admissible?
 
         // f1
         heuristicList.add(new HeuristicFunction() {
@@ -499,7 +500,7 @@ public class EvaluateScenario {
                         if (subgoals[j].size() == 0) noSubgoal.add(i + 1);
                         else stats.setSubgoals(subgoals[j].size());
                         break;
-                    case 3: // JStar
+                    case 3: // DBA*
                         alg = new GenHillClimbing(problem, cutoff);
                         GenHillClimbing pathCompressAlgj2 = new GenHillClimbing(problem, 10000);
 
@@ -509,8 +510,8 @@ public class EvaluateScenario {
 
                             databases[j] = new SubgoalDynamicDB2();   // DP matrix in adjacency list representation (computed at run-time)
 
-                            fname2 = jStar2DatabasePath + mapFileName + "_JSTAR2_G" + gridSize + "_N" + numNeighborLevels + "_C" + cutoff + ".dat";
-                            mapfname2 = jStar2DatabasePath + mapFileName + "_JSTAR2_map_C" + cutoff + ".txt";
+                            fname2 = dbaStarDatabasePath + mapFileName + "_DBA-STAR_G" + gridSize + "_N" + numNeighborLevels + "_C" + cutoff + ".dat";
+                            mapfname2 = dbaStarDatabasePath + mapFileName + "_DBA-STAR_map_C" + cutoff + ".txt";
 
                             if (!databases[j].exists(fname2) || !databases[j].load(fname2)) {
                                 System.out.println("Loading map and performing abstraction...");
@@ -521,7 +522,7 @@ public class EvaluateScenario {
                                     DBStats.init(dbStats[j]);
                                 }
                                 rec = new DBStatsRecord(dbStats[j].getSize());
-                                rec.addStat(0, "djStar (" + numNeighborLevels + ")");
+                                rec.addStat(0, "dbaStar (" + numNeighborLevels + ")");
                                 rec.addStat(1, gridSize);
                                 rec.addStat(3, cutoff);
                                 rec.addStat(4, mapFileName);
@@ -538,10 +539,10 @@ public class EvaluateScenario {
                                 dbStats[j].addRecord(rec);
 
                                 System.out.println("Exporting map with areas.");
-                                maps[j].outputImage(jStar2DatabasePath + mapFileName + "_J2.png", null, null);
+                                maps[j].outputImage(dbaStarDatabasePath + mapFileName + "_J2.png", null, null);
 
                                 System.out.println("Exporting map with areas and centroids.");
-                                maps[j].computeCentroidMap().outputImage(jStar2DatabasePath + mapFileName + "_J2_Centroid.png", null, null);
+                                maps[j].computeCentroidMap().outputImage(dbaStarDatabasePath + mapFileName + "_J2_Centroid.png", null, null);
 
                                 SearchProblem tmpProb = new MapSearchProblem(maps[j]);
                                 GameDB database = new GameDB(tmpProb);
@@ -555,7 +556,7 @@ public class EvaluateScenario {
                                 currentTime = System.currentTimeMillis();
 
                                 databases[j] = database.computeDynamicDB((SubgoalDynamicDB2) databases[j], pathCompressAlgj2, rec, numNeighborLevels);
-                                System.out.println("Time to compute djStar database: " + (System.currentTimeMillis() - currentTime));
+                                System.out.println("Time to compute DBAStar database: " + (System.currentTimeMillis() - currentTime));
 
                                 ((SubgoalDynamicDB2) databases[j]).init();
 
@@ -570,13 +571,13 @@ public class EvaluateScenario {
                             databases[j].verify(pathCompressAlgj2);
                             System.out.println("Database verification complete.");
                             System.out.println("Databases loaded.");
-                            jStarRecords = databases[j].getSize();
+                            dbaStarRecords = databases[j].getSize();
                         }
                         currentTime = System.currentTimeMillis();
 
-                        JStar2 jstar2 = new JStar2(problem, maps[j], databases[j]);
-                        path = jstar2.computePath(start, goal, stats);
-                        subgoals[j] = jstar2.getSubgoals();
+                        DBAStar dbaStar = new DBAStar(problem, maps[j], databases[j]);
+                        path = dbaStar.computePath(start, goal, stats);
+                        subgoals[j] = dbaStar.getSubgoals();
 
                         if (subgoals[j].size() == 0)
                             noSubgoal.add(i + 1); // Keep track of problems where we found no subgoal
@@ -647,7 +648,7 @@ public class EvaluateScenario {
             count++;
 
 			/*
-			// Bad problem for either algorithm #2 or #3
+			// Bad problem for either DLRTA* or knnLRTA
 			boolean badAlg2 = true;
 			if (rec2.getPathCost() > badProblemSubOpt * rec1.getPathCost()
 					|| rec2.getPathCost() < rec1.getPathCost()
@@ -681,13 +682,11 @@ public class EvaluateScenario {
 //        a.add(new SearchState(7595));
 //        a.add(new SearchState(7743));
 //        //Walls.removeWall("C:\\Users\\45222098\\javaworkspace\\GeneralSearch\\maps\\dMap\\012.map",a,baseMap);
-//        Walls.addWall("C:\\Users\\45222098\\javaworkspace\\GeneralSearch\\maps\\dMap\\012.map", a, baseMap);
-//        String dfname = jStar2DatabasePath + mapFileName + "_JSTAR2_G" + gridSize + "_N"
-//                + numNeighborLevels + "_C" + cutoff + ".dat";
+//        Walls.addWall("maps/dMap/012.map", a, baseMap);
+//        String dfname = dbaStarDatabasePath + mapFileName + "_DBA-STAR_G" + gridSize + "_N" + numNeighborLevels + "_C" + cutoff + ".dat";
 //        SubgoalDB recomputeDB = new SubgoalDynamicDB3();
 //        recomputeDB.load(dfname);
 //        RegionSearchProblem.recompute(baseMap, a, gridSize);
-
 
         System.out.println("\n\nOverall results of " + count + " problems.");
         StatsCompare.compareRecords(overallStats[0], overallStats[1],

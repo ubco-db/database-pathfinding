@@ -7,6 +7,6 @@ In order to run the project, add the following folders to your in root directory
 - databases
   - databases/cover
   - databases/HC
-  - databases/JSTAR2
+  - databases/DBA
 - images
 - results
