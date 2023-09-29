@@ -26,26 +26,32 @@ public class EvaluateDynamicScenario {
 
 
     public static void main(String[] args) {
-        // build DBAStar Database
+        ArrayList<SearchState> wallLocation = new ArrayList<>();
+        wallLocation.add(new SearchState(7003));
+        wallLocation.add(new SearchState(7151));
+        wallLocation.add(new SearchState(7299));
+        wallLocation.add(new SearchState(7447));
+        wallLocation.add(new SearchState(7595));
+        wallLocation.add(new SearchState(7743));
 
+        // build DBAStar Database
         GameMap map = new GameMap(MAP_FILE_PATH + MAP_FILE_NAME);
-        computeDBAStarDatabase(map);
+        computeDBAStarDatabase(map, "BW");
 
         // add wall
-        ArrayList<SearchState> a = new ArrayList<>();
-        a.add(new SearchState(7003));
-        a.add(new SearchState(7151));
-        a.add(new SearchState(7299));
-        a.add(new SearchState(7447));
-        a.add(new SearchState(7595));
-        a.add(new SearchState(7743));
-        Walls.addWall("maps/dMap/012.map", a, map);
+        Walls.addWall(MAP_FILE_PATH + MAP_FILE_NAME, wallLocation, map);
+        map = new GameMap(MAP_FILE_PATH + MAP_FILE_NAME);
 
         // recompute database
+        computeDBAStarDatabase(map, "AW");
+
+        // remove wall
+        Walls.removeWall(MAP_FILE_PATH + MAP_FILE_NAME, wallLocation, map);
+
         // compare databases
     }
 
-    private static void computeDBAStarDatabase(GameMap map) {
+    private static void computeDBAStarDatabase(GameMap map, String wallStatus) {
         SearchProblem problem = null;
 
         StatsRecord stats = new StatsRecord();
@@ -69,7 +75,7 @@ public class EvaluateDynamicScenario {
 
         database = new SubgoalDynamicDB2();   // DP matrix in adjacency list representation (computed at run-time)
 
-        fileName = DBA_STAR_DB_PATH + MAP_FILE_NAME + "_DBA-STAR_G" + GRID_SIZE + "_N" + NUM_NEIGHBOUR_LEVELS + "_C" + CUTOFF + ".dat";
+        fileName = DBA_STAR_DB_PATH + wallStatus + MAP_FILE_NAME + "_DBA-STAR_G" + GRID_SIZE + "_N" + NUM_NEIGHBOUR_LEVELS + "_C" + CUTOFF + ".dat";
 
         System.out.println("Loading map and performing abstraction...");
 
@@ -96,10 +102,10 @@ public class EvaluateDynamicScenario {
         dbStats[0].addRecord(rec);
 
         System.out.println("Exporting map with areas.");
-        maps[0].outputImage(DBA_STAR_DB_PATH + MAP_FILE_NAME + "_DBA.png", null, null);
+        maps[0].outputImage(DBA_STAR_DB_PATH + wallStatus + MAP_FILE_NAME + "_DBA.png", null, null);
 
         System.out.println("Exporting map with areas and centroids.");
-        maps[0].computeCentroidMap().outputImage(DBA_STAR_DB_PATH + MAP_FILE_NAME + "_DBA_Centroid.png", null, null);
+        maps[0].computeCentroidMap().outputImage(DBA_STAR_DB_PATH + wallStatus + MAP_FILE_NAME + "_DBA_Centroid.png", null, null);
 
         SearchProblem tmpProb = new MapSearchProblem(maps[0]);
         GameDB gameDB = new GameDB(tmpProb);
