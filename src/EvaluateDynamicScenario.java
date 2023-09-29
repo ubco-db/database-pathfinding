@@ -19,6 +19,7 @@ public class EvaluateDynamicScenario {
 
     final static String MAP_FILE_PATH = "maps/dMap/";
     final static String MAP_FILE_NAME = "012.map";
+    final static String PATH_TO_MAP = MAP_FILE_PATH + MAP_FILE_NAME;
 
     final static int CUTOFF = 250; // The maximum # of moves for hill-climbing checks.
     final static int GRID_SIZE = 16;
@@ -35,18 +36,18 @@ public class EvaluateDynamicScenario {
         wallLocation.add(new SearchState(7743));
 
         // build DBAStar Database
-        GameMap map = new GameMap(MAP_FILE_PATH + MAP_FILE_NAME);
+        GameMap map = new GameMap(PATH_TO_MAP);
         computeDBAStarDatabase(map, "BW");
 
         // add wall
-        Walls.addWall(MAP_FILE_PATH + MAP_FILE_NAME, wallLocation, map);
-        map = new GameMap(MAP_FILE_PATH + MAP_FILE_NAME);
+        Walls.addWall(PATH_TO_MAP, wallLocation, map);
+        map = new GameMap(PATH_TO_MAP);
 
         // recompute database
         computeDBAStarDatabase(map, "AW");
 
         // remove wall
-        Walls.removeWall(MAP_FILE_PATH + MAP_FILE_NAME, wallLocation, map);
+        Walls.removeWall(PATH_TO_MAP, wallLocation, map);
 
         // compare databases
     }
@@ -59,8 +60,7 @@ public class EvaluateDynamicScenario {
         int dbaStarRecords = 0;
 
         SubgoalDynamicDB2 database = new SubgoalDynamicDB2();
-        DBStats[] dbStats = new DBStats[1];
-        GameMap[] maps = new GameMap[1];
+        DBStats dbStats = null;
 
         long currentTime = System.currentTimeMillis();
 
@@ -80,11 +80,10 @@ public class EvaluateDynamicScenario {
         System.out.println("Loading map and performing abstraction...");
 
         // GreedyHC map abstraction
-        if (dbStats[0] == null) {
-            dbStats[0] = new DBStats();
-            DBStats.init(dbStats[0]);
-        }
-        rec = new DBStatsRecord(dbStats[0].getSize());
+        dbStats = new DBStats();
+        DBStats.init(dbStats);
+
+        rec = new DBStatsRecord(dbStats.getSize());
         rec.addStat(0, "dbaStar (" + NUM_NEIGHBOUR_LEVELS + ")");
         rec.addStat(1, GRID_SIZE);
         rec.addStat(3, CUTOFF);
@@ -93,21 +92,21 @@ public class EvaluateDynamicScenario {
         rec.addStat(6, map.cols);
 
         currentTime = System.currentTimeMillis();
-        maps[0] = map.sectorAbstract2(GRID_SIZE);
+        map = map.sectorAbstract2(GRID_SIZE);
         long resultTime = System.currentTimeMillis() - currentTime;
         rec.addStat(12, resultTime);
         rec.addStat(10, resultTime);
-        rec.addStat(11, maps[0].states);
-        rec.addStat(7, maps[0].states);
-        dbStats[0].addRecord(rec);
+        rec.addStat(11, map.states);
+        rec.addStat(7, map.states);
+        dbStats.addRecord(rec);
 
         System.out.println("Exporting map with areas.");
-        maps[0].outputImage(DBA_STAR_DB_PATH + wallStatus + MAP_FILE_NAME + "_DBA.png", null, null);
+        map.outputImage(DBA_STAR_DB_PATH + wallStatus + MAP_FILE_NAME + "_DBA.png", null, null);
 
         System.out.println("Exporting map with areas and centroids.");
-        maps[0].computeCentroidMap().outputImage(DBA_STAR_DB_PATH + wallStatus + MAP_FILE_NAME + "_DBA_Centroid.png", null, null);
+        map.computeCentroidMap().outputImage(DBA_STAR_DB_PATH + wallStatus + MAP_FILE_NAME + "_DBA_Centroid.png", null, null);
 
-        SearchProblem tmpProb = new MapSearchProblem(maps[0]);
+        SearchProblem tmpProb = new MapSearchProblem(map);
         GameDB gameDB = new GameDB(tmpProb);
 
         currentTime = System.currentTimeMillis();
@@ -124,8 +123,8 @@ public class EvaluateDynamicScenario {
         database.init();
 
         database.exportDB(fileName);
-        maps[0].computeComplexity(rec);
-        dbStats[0].addRecord(rec);
+        map.computeComplexity(rec);
+        dbStats.addRecord(rec);
         database.setProblem(problem);
         System.out.println("Verifying database.");
         database.verify(pathCompressAlgDba);
