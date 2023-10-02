@@ -279,12 +279,13 @@ public class GameMap {
     public GameMap(String fileName) {    // Loads a map in Vadim's format into data structure
         load(fileName);
         generator = new Random();
+        generator.setSeed(56256902);
     }
 
     public void load(String fileName) {
         try (Scanner sc = new Scanner(new File(fileName))) {
 
-            String st = sc.nextLine();    // Drop first line which is formatted
+            String st = sc.nextLine();     // Drop first line which is formatted
             if (!st.contains("type")) {    // Map is in binary format
                 sc.close();
                 this.loadMap(fileName);
@@ -324,7 +325,7 @@ public class GameMap {
     public void loadMap(String fileName) {
         try (Scanner sc = new Scanner(new File(fileName))) {
 
-            String st = sc.nextLine();            // Number of rows. e.g. height 139
+            String st = sc.nextLine();      // Number of rows. e.g. height 139
             rows = Integer.parseInt(st.substring(7).trim());
             st = sc.nextLine();            // Number of cols. e.g. width 148
             cols = Integer.parseInt(st.substring(6).trim());
@@ -432,7 +433,6 @@ public class GameMap {
     public boolean isOpenInRange(int r, int c, int maxR, int maxC, int gridSize) {
         return (c >= maxC - gridSize && r >= maxR - gridSize && r < maxR && c < maxC && squares[r][c] == EMPTY_CHAR);
     }
-
 
     public boolean isInRange(int r, int c, int maxR, int maxC, int gridSize) {
         return (c >= maxC - gridSize && r >= maxR - gridSize && r < maxR && c < maxC);
