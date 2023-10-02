@@ -10,3 +10,6 @@ In order to run the project, add the following folders to your in root directory
   - databases/DBA
 - images
 - results
+- dynamic
+  - databases/DBA
+  - results

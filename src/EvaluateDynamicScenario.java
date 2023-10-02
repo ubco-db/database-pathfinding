@@ -9,11 +9,14 @@ import search.MapSearchProblem;
 import search.SearchProblem;
 import search.SearchState;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
 public class EvaluateDynamicScenario {
     final static String DB_PATH = "dynamic/databases/";
     final static String DBA_STAR_DB_PATH = DB_PATH + "DBA/";
+    final static String BINARY_OUTPUT_PATH = "dynamic/results/";
 
     final static String MAP_FILE_PATH = "maps/dMap/";
     final static String MAP_FILE_NAME = "012.map";
@@ -127,6 +130,15 @@ public class EvaluateDynamicScenario {
         System.out.println("Database verification complete.");
         System.out.println("Databases loaded.");
 
-        // add DB stats?
+        // Output binary results
+        try { // Output database generation statistics if any
+            String binaryOutputName = BINARY_OUTPUT_PATH + MAP_FILE_NAME + "_DBA-STAR_G.txt";
+            PrintWriter outFile = new PrintWriter(binaryOutputName);
+            dbStats.outputNames(outFile);
+            dbStats.outputData(outFile);
+            outFile.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
