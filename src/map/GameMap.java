@@ -16,6 +16,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -1884,6 +1885,7 @@ public class GameMap {
     // Compute centroids of all groups
     public void computeCentroids() {
         long currentTime = System.currentTimeMillis();
+        StringBuilder buf = new StringBuilder();
 
         for (Entry<Integer, GroupRecord> integerGroupRecordEntry : groups.entrySet()) {    // Find centroid for each record
             GroupRecord rec = integerGroupRecordEntry.getValue();
@@ -1913,10 +1915,24 @@ public class GameMap {
                 row = minRow;
                 col = minCol;
             }
-            rec.groupRepId = this.getId(row, col);
+            rec.setGroupRepId(this.getId(row, col));
+
+            buf.append(rec.getGroupRepId()).append(", ");
         }
         long endTime = System.currentTimeMillis();
         System.out.println("Time to compute centroids: " + (endTime - currentTime));
+
+        buf.append(System.lineSeparator()).append(System.lineSeparator());
+
+        try {
+            File file = new File("dynamic/databases/DBA/012.map_DBA-STAR_Reps.txt"); // TODO: Change for different maps
+            FileWriter fr = new FileWriter(file, true);
+            fr.write(String.valueOf(buf));
+            fr.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public RegionSearchProblem getAbstractProblem() {
