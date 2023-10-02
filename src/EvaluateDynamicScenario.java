@@ -6,10 +6,8 @@ import dynamic.Walls;
 import map.GameMap;
 import search.GenHillClimbing;
 import search.MapSearchProblem;
-import search.SearchAbstractAlgorithm;
 import search.SearchProblem;
 import search.SearchState;
-import search.StatsRecord;
 
 import java.util.ArrayList;
 
@@ -28,23 +26,34 @@ public class EvaluateDynamicScenario {
 
     public static void main(String[] args) {
         ArrayList<SearchState> wallLocation = new ArrayList<>();
-        wallLocation.add(new SearchState(7003));
-        wallLocation.add(new SearchState(7151));
-        wallLocation.add(new SearchState(7299));
-        wallLocation.add(new SearchState(7447));
-        wallLocation.add(new SearchState(7595));
-        wallLocation.add(new SearchState(7743));
+        // wall at edge of region
+//        wallLocation.add(new SearchState(7003));
+//        wallLocation.add(new SearchState(7151));
+//        wallLocation.add(new SearchState(7299));
+//        wallLocation.add(new SearchState(7447));
+//        wallLocation.add(new SearchState(7595));
+//        wallLocation.add(new SearchState(7743));
+
+        // wall through region rep
+        wallLocation.add(new SearchState(12664));
+        wallLocation.add(new SearchState(12665));
+        wallLocation.add(new SearchState(12666));
+        wallLocation.add(new SearchState(12667));
+        wallLocation.add(new SearchState(12668));
+        wallLocation.add(new SearchState(12669));
+        wallLocation.add(new SearchState(12963));
+        wallLocation.add(new SearchState(12815));
 
         // build DBAStar Database
         GameMap map = new GameMap(PATH_TO_MAP);
-        computeDBAStarDatabase(map, "BW");
+        computeDBAStarDatabase(map, "BW"); // BW = before wall
 
         // add wall
         Walls.addWall(PATH_TO_MAP, wallLocation, map);
         map = new GameMap(PATH_TO_MAP);
 
         // recompute database
-        computeDBAStarDatabase(map, "AW");
+        computeDBAStarDatabase(map, "AW"); // AW = after wall
 
         // remove wall
         Walls.removeWall(PATH_TO_MAP, wallLocation, map);
@@ -53,37 +62,25 @@ public class EvaluateDynamicScenario {
     }
 
     private static void computeDBAStarDatabase(GameMap map, String wallStatus) {
-        SearchProblem problem = null;
+        long currentTime;
 
-        StatsRecord stats = new StatsRecord();
-        DBStatsRecord rec;
-        int dbaStarRecords = 0;
-
-        SubgoalDynamicDB2 database = new SubgoalDynamicDB2();
-        DBStats dbStats = null;
-
-        long currentTime = System.currentTimeMillis();
-
-        problem = new MapSearchProblem(map);
-
-        SearchAbstractAlgorithm alg = new GenHillClimbing(problem, CUTOFF);
+        SearchProblem problem = new MapSearchProblem(map);
         GenHillClimbing pathCompressAlgDba = new GenHillClimbing(problem, 10000);
 
         // Load abstract map and database
         System.out.println("Loading database.");
-        String fileName;
 
-        database = new SubgoalDynamicDB2();   // DP matrix in adjacency list representation (computed at run-time)
+        SubgoalDynamicDB2 database = new SubgoalDynamicDB2();   // DP matrix in adjacency list representation (computed at run-time)
 
-        fileName = DBA_STAR_DB_PATH + wallStatus + MAP_FILE_NAME + "_DBA-STAR_G" + GRID_SIZE + "_N" + NUM_NEIGHBOUR_LEVELS + "_C" + CUTOFF + ".dat";
+        String fileName = DBA_STAR_DB_PATH + wallStatus + MAP_FILE_NAME + "_DBA-STAR_G" + GRID_SIZE + "_N" + NUM_NEIGHBOUR_LEVELS + "_C" + CUTOFF + ".dat";
 
         System.out.println("Loading map and performing abstraction...");
 
         // GreedyHC map abstraction
-        dbStats = new DBStats();
+        DBStats dbStats = new DBStats();
         DBStats.init(dbStats);
 
-        rec = new DBStatsRecord(dbStats.getSize());
+        DBStatsRecord rec = new DBStatsRecord(dbStats.getSize());
         rec.addStat(0, "dbaStar (" + NUM_NEIGHBOUR_LEVELS + ")");
         rec.addStat(1, GRID_SIZE);
         rec.addStat(3, CUTOFF);
@@ -110,7 +107,6 @@ public class EvaluateDynamicScenario {
         GameDB gameDB = new GameDB(tmpProb);
 
         currentTime = System.currentTimeMillis();
-        // ((SubgoalDBExact) database).computeIndex(tmpProb, rec);
         database.computeIndex(tmpProb, rec);
         rec.addStat(23, System.currentTimeMillis() - currentTime);
 
@@ -130,6 +126,7 @@ public class EvaluateDynamicScenario {
         database.verify(pathCompressAlgDba);
         System.out.println("Database verification complete.");
         System.out.println("Databases loaded.");
-        dbaStarRecords = database.getSize();
+
+        // add DB stats?
     }
 }
