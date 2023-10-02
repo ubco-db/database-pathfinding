@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public class EvaluateDynamicScenario {
     final static String DB_PATH = "dynamic/databases/";
-    final static String DBA_STAR_DB_PATH = DB_PATH + "complete_separation/";
+    final static String DBA_STAR_DB_PATH = DB_PATH + "separation/";
 
     final static String MAP_FILE_PATH = "maps/dMap/";
     final static String MAP_FILE_NAME = "012.map";
@@ -33,19 +33,6 @@ public class EvaluateDynamicScenario {
         wallLocation.add(new SearchState(7447));
         wallLocation.add(new SearchState(7595));
         wallLocation.add(new SearchState(7743));
-
-        // second wall at edge of region to achieve complete separation
-        wallLocation.add(new SearchState(9075));
-        wallLocation.add(new SearchState(9223));
-        wallLocation.add(new SearchState(9371));
-        wallLocation.add(new SearchState(9519));
-        wallLocation.add(new SearchState(9667));
-        wallLocation.add(new SearchState(9815));
-        wallLocation.add(new SearchState(9963));
-        wallLocation.add(new SearchState(10111));
-        wallLocation.add(new SearchState(10259));
-        wallLocation.add(new SearchState(10259));
-        wallLocation.add(new SearchState(10407));
 
         // build DBAStar Database
         GameMap map = new GameMap(PATH_TO_MAP);
