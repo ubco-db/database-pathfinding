@@ -9,14 +9,11 @@ import search.MapSearchProblem;
 import search.SearchProblem;
 import search.SearchState;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 
 public class EvaluateDynamicScenario {
     final static String DB_PATH = "dynamic/databases/";
-    final static String DBA_STAR_DB_PATH = DB_PATH + "DBA/";
-    final static String BINARY_OUTPUT_PATH = "dynamic/results/";
+    final static String DBA_STAR_DB_PATH = DB_PATH + "complete_separation/";
 
     final static String MAP_FILE_PATH = "maps/dMap/";
     final static String MAP_FILE_NAME = "012.map";
@@ -30,22 +27,25 @@ public class EvaluateDynamicScenario {
     public static void main(String[] args) {
         ArrayList<SearchState> wallLocation = new ArrayList<>();
         // wall at edge of region
-//        wallLocation.add(new SearchState(7003));
-//        wallLocation.add(new SearchState(7151));
-//        wallLocation.add(new SearchState(7299));
-//        wallLocation.add(new SearchState(7447));
-//        wallLocation.add(new SearchState(7595));
-//        wallLocation.add(new SearchState(7743));
+        wallLocation.add(new SearchState(7003));
+        wallLocation.add(new SearchState(7151));
+        wallLocation.add(new SearchState(7299));
+        wallLocation.add(new SearchState(7447));
+        wallLocation.add(new SearchState(7595));
+        wallLocation.add(new SearchState(7743));
 
-        // wall through region rep
-        wallLocation.add(new SearchState(12664));
-        wallLocation.add(new SearchState(12665));
-        wallLocation.add(new SearchState(12666));
-        wallLocation.add(new SearchState(12667));
-        wallLocation.add(new SearchState(12668));
-        wallLocation.add(new SearchState(12669));
-        wallLocation.add(new SearchState(12963));
-        wallLocation.add(new SearchState(12815));
+        // second wall at edge of region to achieve complete separation
+        wallLocation.add(new SearchState(9075));
+        wallLocation.add(new SearchState(9223));
+        wallLocation.add(new SearchState(9371));
+        wallLocation.add(new SearchState(9519));
+        wallLocation.add(new SearchState(9667));
+        wallLocation.add(new SearchState(9815));
+        wallLocation.add(new SearchState(9963));
+        wallLocation.add(new SearchState(10111));
+        wallLocation.add(new SearchState(10259));
+        wallLocation.add(new SearchState(10259));
+        wallLocation.add(new SearchState(10407));
 
         // build DBAStar Database
         GameMap map = new GameMap(PATH_TO_MAP);
@@ -73,7 +73,7 @@ public class EvaluateDynamicScenario {
         // Load abstract map and database
         System.out.println("Loading database.");
 
-        SubgoalDynamicDB2 database = new SubgoalDynamicDB2();   // DP matrix in adjacency list representation (computed at run-time)
+        SubgoalDynamicDB2 database = new SubgoalDynamicDB2(); // DP matrix in adjacency list representation (computed at run-time)
 
         String fileName = DBA_STAR_DB_PATH + wallStatus + MAP_FILE_NAME + "_DBA-STAR_G" + GRID_SIZE + "_N" + NUM_NEIGHBOUR_LEVELS + "_C" + CUTOFF + ".dat";
 
@@ -129,16 +129,5 @@ public class EvaluateDynamicScenario {
         database.verify(pathCompressAlgDba);
         System.out.println("Database verification complete.");
         System.out.println("Databases loaded.");
-
-        // Output binary results
-        try { // Output database generation statistics if any
-            String binaryOutputName = BINARY_OUTPUT_PATH + MAP_FILE_NAME + "_DBA-STAR_G.txt";
-            PrintWriter outFile = new PrintWriter(binaryOutputName);
-            dbStats.outputNames(outFile);
-            dbStats.outputData(outFile);
-            outFile.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }
