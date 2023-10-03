@@ -9,6 +9,7 @@ public class SimpleDiff {
         StringsComparator comparator = new StringsComparator("Its all Binary.", "Its all fun.");
         // Initialize custom visitor and visit char by char // TODO: potentially change to token by token
         MyCommandsVisitor myCommandsVisitor = new MyCommandsVisitor();
+        comparator.getScript().visit(myCommandsVisitor);
         System.out.println("FINAL DIFF = " + myCommandsVisitor.left + " | " + myCommandsVisitor.right);
     }
 }
