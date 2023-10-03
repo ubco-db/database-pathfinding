@@ -9,11 +9,15 @@ import search.MapSearchProblem;
 import search.SearchProblem;
 import search.SearchState;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class EvaluateDynamicScenario {
     final static String DB_PATH = "dynamic/databases/";
-    final static String DBA_STAR_DB_PATH = DB_PATH + "separation/";
+    final static String DBA_STAR_DB_PATH = DB_PATH + "DBA/";
 
     final static String MAP_FILE_PATH = "maps/dMap/";
     final static String MAP_FILE_NAME = "012.map";
@@ -49,6 +53,11 @@ public class EvaluateDynamicScenario {
         Walls.removeWall(PATH_TO_MAP, wallLocation, map);
 
         // compare databases
+        try {
+            compareDatabases();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static void computeDBAStarDatabase(GameMap map, String wallStatus) {
@@ -62,7 +71,7 @@ public class EvaluateDynamicScenario {
 
         SubgoalDynamicDB2 database = new SubgoalDynamicDB2(); // DP matrix in adjacency list representation (computed at run-time)
 
-        String fileName = DBA_STAR_DB_PATH + wallStatus + MAP_FILE_NAME + "_DBA-STAR_G" + GRID_SIZE + "_N" + NUM_NEIGHBOUR_LEVELS + "_C" + CUTOFF + ".dat";
+        String fileName = getDBName(wallStatus);
 
         System.out.println("Loading map and performing abstraction...");
 
@@ -88,10 +97,10 @@ public class EvaluateDynamicScenario {
         dbStats.addRecord(rec);
 
         System.out.println("Exporting map with areas.");
-        map.outputImage(DBA_STAR_DB_PATH + wallStatus + MAP_FILE_NAME + "_DBA.png", null, null);
+        map.outputImage(getImageName(wallStatus, false), null, null);
 
         System.out.println("Exporting map with areas and centroids.");
-        map.computeCentroidMap().outputImage(DBA_STAR_DB_PATH + wallStatus + MAP_FILE_NAME + "_DBA_Centroid.png", null, null);
+        map.computeCentroidMap().outputImage(getImageName(wallStatus, true), null, null);
 
         SearchProblem tmpProb = new MapSearchProblem(map);
         GameDB gameDB = new GameDB(tmpProb);
@@ -117,4 +126,50 @@ public class EvaluateDynamicScenario {
         System.out.println("Database verification complete.");
         System.out.println("Databases loaded.");
     }
+
+    private static void compareDatabases() throws IOException {
+        BufferedReader b1 = new BufferedReader(new FileReader(getDBName("BW")));
+        BufferedReader b2 = new BufferedReader(new FileReader(getDBName("AW")));
+        String currentLine;
+
+        List<String> tokensBeforeWall = new ArrayList<>();
+        List<String> tokensAfterWall = new ArrayList<>();
+
+        while ((currentLine = b1.readLine()) != null) {
+            tokensBeforeWall.addAll(List.of(currentLine.split(" ")));
+        }
+        while ((currentLine = b2.readLine()) != null) {
+            tokensAfterWall.addAll(List.of(currentLine.split(" ")));
+        }
+
+        System.out.println();
+
+        List<String> tmpList = new ArrayList<>(tokensBeforeWall);
+        tmpList.removeAll(tokensAfterWall);
+        int s1 = tmpList.size();
+
+        for (String word : tmpList) System.out.print(word + " ");
+
+        System.out.println();
+
+        tmpList = tokensAfterWall;
+        tmpList.removeAll(tokensBeforeWall);
+        int s2 = tmpList.size();
+        for (String word : tmpList) System.out.print(word + " ");
+
+        System.out.println();
+        System.out.println(s1 + s2);
+    }
+
+    /* Helper methods */
+
+    private static String getDBName(String wallStatus) {
+        return DBA_STAR_DB_PATH + wallStatus + MAP_FILE_NAME + "_DBA-STAR_G" + GRID_SIZE + "_N" + NUM_NEIGHBOUR_LEVELS + "_C" + CUTOFF + ".dat";
+    }
+
+    private static String getImageName(String wallStatus, boolean hasCentroids) {
+        String lastToken = hasCentroids ? "_DBA_Centroid.png" : "_DBA.png";
+        return DBA_STAR_DB_PATH + wallStatus + MAP_FILE_NAME + lastToken;
+    }
+
 }
