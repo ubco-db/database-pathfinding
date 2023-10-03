@@ -8,6 +8,9 @@ import org.apache.commons.text.diff.StringsComparator;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * Adapted from <a href="https://itsallbinary.com/compare-files-side-by-side-and-hightlight-diff-using-java-apache-commons-text-diff-myers-algorithm/">Compare files side by side and highlight diff using Java</a>
+ */
 public class DBDiff {
 
     public static void getDBDiff(String path) throws IOException {
