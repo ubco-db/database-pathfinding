@@ -8,12 +8,10 @@ import search.GenHillClimbing;
 import search.MapSearchProblem;
 import search.SearchProblem;
 import search.SearchState;
+import util.DBDiff;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 public class EvaluateDynamicScenario {
     final static String DB_PATH = "dynamic/databases/";
@@ -54,7 +52,7 @@ public class EvaluateDynamicScenario {
 
         // compare databases
         try {
-            compareDatabases();
+            DBDiff.getDBDiff(DBA_STAR_DB_PATH);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -125,40 +123,6 @@ public class EvaluateDynamicScenario {
         database.verify(pathCompressAlgDba);
         System.out.println("Database verification complete.");
         System.out.println("Databases loaded.");
-    }
-
-    private static void compareDatabases() throws IOException {
-        BufferedReader b1 = new BufferedReader(new FileReader(getDBName("BW")));
-        BufferedReader b2 = new BufferedReader(new FileReader(getDBName("AW")));
-        String currentLine;
-
-        List<String> tokensBeforeWall = new ArrayList<>();
-        List<String> tokensAfterWall = new ArrayList<>();
-
-        while ((currentLine = b1.readLine()) != null) {
-            tokensBeforeWall.addAll(List.of(currentLine.split(" ")));
-        }
-        while ((currentLine = b2.readLine()) != null) {
-            tokensAfterWall.addAll(List.of(currentLine.split(" ")));
-        }
-
-        System.out.println();
-
-        List<String> tmpList = new ArrayList<>(tokensBeforeWall);
-        tmpList.removeAll(tokensAfterWall);
-        int s1 = tmpList.size();
-
-        for (String word : tmpList) System.out.print(word + " ");
-
-        System.out.println();
-
-        tmpList = tokensAfterWall;
-        tmpList.removeAll(tokensBeforeWall);
-        int s2 = tmpList.size();
-        for (String word : tmpList) System.out.print(word + " ");
-
-        System.out.println();
-        System.out.println(s1 + s2);
     }
 
     /* Helper methods */

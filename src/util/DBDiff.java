@@ -1,4 +1,4 @@
-package fileComp;
+package util;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.LineIterator;
@@ -8,14 +8,15 @@ import org.apache.commons.text.diff.StringsComparator;
 import java.io.File;
 import java.io.IOException;
 
-public class FileDiff {
-    public static void main(String[] args) throws IOException {
+public class DBDiff {
+
+    public static void getDBDiff(String path) throws IOException {
         // Read both files with iterator
-        LineIterator file1 = FileUtils.lineIterator(new File("dynamic/databases/DBA/BW012.map_DBA-STAR_G16_N1_C250.dat"),"utf-8");
-        LineIterator file2 = FileUtils.lineIterator(new File("dynamic/databases/DBA/AW012.map_DBA-STAR_G16_N1_C250.dat"), "utf-8");
+        LineIterator file1 = FileUtils.lineIterator(new File(path + "BW012.map_DBA-STAR_G16_N1_C250.dat"),"utf-8");
+        LineIterator file2 = FileUtils.lineIterator(new File(path + "AW012.map_DBA-STAR_G16_N1_C250.dat"), "utf-8");
 
         // Initialize visitor
-        FileCommandsVisitor fileCommandsVisitor = new FileCommandsVisitor();
+        FileCommandsVisitor fileCommandsVisitor = new FileCommandsVisitor(path);
 
         // Read line by line for line by line comparison
         while (file1.hasNext() || file2.hasNext()) {
@@ -48,6 +49,8 @@ public class FileDiff {
                 rightComparator.getScript().visit(fileCommandsVisitor);
             }
         }
+        file1.close();
+        file2.close();
         fileCommandsVisitor.generateHTML();
     }
 }
@@ -63,6 +66,12 @@ class FileCommandsVisitor implements CommandVisitor<Character> {
 
     private String left = "";
     private String right = "";
+
+    private final String path;
+
+    public FileCommandsVisitor(String path) {
+        this.path = path;
+    }
 
     public void visitDeleteCommand(Character c) {
         // Use <br/> for new lines
@@ -87,11 +96,11 @@ class FileCommandsVisitor implements CommandVisitor<Character> {
 
     public void generateHTML() throws IOException {
         // Get template & replace placeholders with actual comparison
-        String template = FileUtils.readFileToString(new File("src/fileComp/difftemplate.html"), "utf-8");
+        String template = FileUtils.readFileToString(new File("resources/difftemplate.html"), "utf-8");
         String out1 = template.replace("${left}", left);
         String output = out1.replace("${right}", right);
         // Write file to disk
-        FileUtils.write(new File("src/fileComp/finaldiff.html"), output, "utf-8");
-        System.out.println("HTML diff generated");
+        FileUtils.write(new File( path + "finaldiff.html"), output, "utf-8");
+        System.out.println("HTML diff generated.");
     }
 }
