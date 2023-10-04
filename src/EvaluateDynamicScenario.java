@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 public class EvaluateDynamicScenario {
     final static String DB_PATH = "dynamic/databases/";
-    final static String DBA_STAR_DB_PATH = DB_PATH + "DBA/";
+    final static String DBA_STAR_DB_PATH = DB_PATH + "singular_wall/";
 
     final static String MAP_FILE_PATH = "maps/dMap/";
     final static String MAP_FILE_NAME = "012.map";
@@ -28,13 +28,8 @@ public class EvaluateDynamicScenario {
 
     public static void main(String[] args) {
         ArrayList<SearchState> wallLocation = new ArrayList<>();
-        // wall at edge of region
-        wallLocation.add(new SearchState(7003));
-        wallLocation.add(new SearchState(7151));
-        wallLocation.add(new SearchState(7299));
-        wallLocation.add(new SearchState(7447));
-        wallLocation.add(new SearchState(7595));
-        wallLocation.add(new SearchState(7743));
+        // wall on region rep
+        wallLocation.add(new SearchState(13558));
 
         // build DBAStar Database
         GameMap map = new GameMap(PATH_TO_MAP);
@@ -52,7 +47,9 @@ public class EvaluateDynamicScenario {
 
         // compare databases
         try {
-            DBDiff.getDBDiff(DBA_STAR_DB_PATH);
+            String nameFile1 = "BW012.map_DBA-STAR_G16_N1_C250.dati2";
+            String nameFile2 = "AW012.map_DBA-STAR_G16_N1_C250.dati2";
+            DBDiff.getDBDiff(DBA_STAR_DB_PATH, nameFile1, nameFile2);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
