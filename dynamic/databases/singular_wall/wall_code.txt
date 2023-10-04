@@ -1,0 +1,3 @@
+        ArrayList<SearchState> wallLocation = new ArrayList<>();
+        // wall on region rep
+        wallLocation.add(new SearchState(13558));
