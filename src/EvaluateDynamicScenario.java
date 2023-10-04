@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 public class EvaluateDynamicScenario {
     final static String DB_PATH = "dynamic/databases/";
-    final static String DBA_STAR_DB_PATH = DB_PATH + "singular_wall/";
+    final static String DBA_STAR_DB_PATH = DB_PATH + "wall_on_rep/";
 
     final static String MAP_FILE_PATH = "maps/dMap/";
     final static String MAP_FILE_NAME = "012.map";
@@ -29,8 +29,8 @@ public class EvaluateDynamicScenario {
     public static void main(String[] args) {
         ArrayList<SearchState> wallLocation = new ArrayList<>();
 
-        // singular wall
-        wallLocation.add(new SearchState(13558));
+        // wall on region rep
+        wallLocation.add(new SearchState(12963));
 
         // build DBAStar Database
         GameMap map = new GameMap(PATH_TO_MAP);
