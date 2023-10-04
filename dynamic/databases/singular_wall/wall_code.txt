@@ -1,3 +1,4 @@
-        ArrayList<SearchState> wallLocation = new ArrayList<>();
-        // wall on region rep
-        wallLocation.add(new SearchState(13558));
+ArrayList<SearchState> wallLocation = new ArrayList<>();
+
+// singular wall
+wallLocation.add(new SearchState(13558));

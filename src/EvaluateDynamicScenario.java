@@ -28,7 +28,8 @@ public class EvaluateDynamicScenario {
 
     public static void main(String[] args) {
         ArrayList<SearchState> wallLocation = new ArrayList<>();
-        // wall on region rep
+
+        // singular wall
         wallLocation.add(new SearchState(13558));
 
         // build DBAStar Database
