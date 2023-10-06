@@ -16,6 +16,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -279,12 +280,13 @@ public class GameMap {
     public GameMap(String fileName) {    // Loads a map in Vadim's format into data structure
         load(fileName);
         generator = new Random();
+        generator.setSeed(56256902);
     }
 
     public void load(String fileName) {
         try (Scanner sc = new Scanner(new File(fileName))) {
 
-            String st = sc.nextLine();    // Drop first line which is formatted
+            String st = sc.nextLine();     // Drop first line which is formatted
             if (!st.contains("type")) {    // Map is in binary format
                 sc.close();
                 this.loadMap(fileName);
@@ -324,7 +326,7 @@ public class GameMap {
     public void loadMap(String fileName) {
         try (Scanner sc = new Scanner(new File(fileName))) {
 
-            String st = sc.nextLine();            // Number of rows. e.g. height 139
+            String st = sc.nextLine();      // Number of rows. e.g. height 139
             rows = Integer.parseInt(st.substring(7).trim());
             st = sc.nextLine();            // Number of cols. e.g. width 148
             cols = Integer.parseInt(st.substring(6).trim());
@@ -432,7 +434,6 @@ public class GameMap {
     public boolean isOpenInRange(int r, int c, int maxR, int maxC, int gridSize) {
         return (c >= maxC - gridSize && r >= maxR - gridSize && r < maxR && c < maxC && squares[r][c] == EMPTY_CHAR);
     }
-
 
     public boolean isInRange(int r, int c, int maxR, int maxC, int gridSize) {
         return (c >= maxC - gridSize && r >= maxR - gridSize && r < maxR && c < maxC);
@@ -1884,6 +1885,7 @@ public class GameMap {
     // Compute centroids of all groups
     public void computeCentroids() {
         long currentTime = System.currentTimeMillis();
+        StringBuilder buf = new StringBuilder();
 
         for (Entry<Integer, GroupRecord> integerGroupRecordEntry : groups.entrySet()) {    // Find centroid for each record
             GroupRecord rec = integerGroupRecordEntry.getValue();
@@ -1913,10 +1915,24 @@ public class GameMap {
                 row = minRow;
                 col = minCol;
             }
-            rec.groupRepId = this.getId(row, col);
+            rec.setGroupRepId(this.getId(row, col));
+
+            buf.append(rec.getGroupRepId()).append(", ");
         }
         long endTime = System.currentTimeMillis();
         System.out.println("Time to compute centroids: " + (endTime - currentTime));
+
+        buf.append(System.lineSeparator()).append(System.lineSeparator());
+
+        try {
+            File file = new File("dynamic/databases/DBA/012.map_DBA-STAR_Reps.txt"); // TODO: Change for different maps
+            FileWriter fr = new FileWriter(file, true);
+            fr.write(String.valueOf(buf));
+            fr.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public RegionSearchProblem getAbstractProblem() {
