@@ -13,13 +13,13 @@ import java.io.IOException;
  */
 public class DBDiff {
 
-    public static void getDBDiff(String path, String nameFile1, String nameFile2) throws IOException {
+    public static void getDBDiff(String path, String nameFile1, String nameFile2, String ext) throws IOException {
         // Read both files with iterator
-        LineIterator file1 = FileUtils.lineIterator(new File(path + nameFile1),"utf-8");
-        LineIterator file2 = FileUtils.lineIterator(new File(path + nameFile2), "utf-8");
+        LineIterator file1 = FileUtils.lineIterator(new File(path + nameFile1 + ext),"utf-8");
+        LineIterator file2 = FileUtils.lineIterator(new File(path + nameFile2 + ext), "utf-8");
 
         // Initialize visitor
-        FileCommandsVisitor fileCommandsVisitor = new FileCommandsVisitor(path, nameFile1, nameFile2);
+        FileCommandsVisitor fileCommandsVisitor = new FileCommandsVisitor(path, nameFile1, nameFile2, ext);
 
         // Read line by line for line by line comparison
         while (file1.hasNext() || file2.hasNext()) {
@@ -78,17 +78,20 @@ class FileCommandsVisitor implements CommandVisitor<Character> {
     private final String nameFile1;
     private final String nameFile2;
 
-    public FileCommandsVisitor(String path, String nameFile1, String nameFile2) {
+    private final String ext;
+
+    public FileCommandsVisitor(String path, String nameFile1, String nameFile2, String ext) {
         this.path = path;
         this.nameFile1 = nameFile1;
         this.nameFile2 = nameFile2;
+        this.ext = ext;
     }
 
     public void visitDeleteCommand(Character c) {
         // Use <br/> for new lines
         String toAppend = "\n".equals("" + c) ? "<br/>" : "" + c;
         // Character is present in left file, but not right. Show with red highlight on left.
-        left = left + DELETION.replace("${text}", "" + toAppend);
+        left = left + DELETION.replace("${text}", toAppend);
         deleteCounter++;
     }
 
@@ -96,7 +99,7 @@ class FileCommandsVisitor implements CommandVisitor<Character> {
         // Use <br/> for new lines
         String toAppend = "\n".equals("" + c) ? "<br/>" : "" + c;
         // Character is present in right file, but not left. Show with green highlight on right.
-        right = right + INSERTION.replace("${text}", "" + toAppend);
+        right = right + INSERTION.replace("${text}", toAppend);
         insertCounter++;
     }
 
@@ -112,11 +115,11 @@ class FileCommandsVisitor implements CommandVisitor<Character> {
         // Get template & replace placeholders with actual comparison
         String template = FileUtils.readFileToString(new File("resources/difftemplate.html"), "utf-8");
         String output = template.replace("${left}", left).replace("${right}", right);
-        output = output.replace("${file1}", path + nameFile1);
-        output = output.replace("${file2}", path + nameFile2);
+        output = output.replace("${file1}", path + nameFile1 + ext);
+        output = output.replace("${file2}", path + nameFile2 + ext);
 
         // Write file to disk
-        FileUtils.write(new File( path + "finaldiff.html"), output, "utf-8");
+        FileUtils.write(new File( path + ext + "_DBdiff.html"), output, "utf-8");
         System.out.println("HTML diff generated.");
 //        System.out.println(keepCounter + " characters stayed the same, " + (insertCounter + deleteCounter) + " characters changed");
 //

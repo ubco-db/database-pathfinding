@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 public class EvaluateDynamicScenario {
     final static String DB_PATH = "dynamic/databases/";
-    final static String DBA_STAR_DB_PATH = DB_PATH + "four_walls/";
+    final static String DBA_STAR_DB_PATH = DB_PATH + "DBA/";
 
     final static String MAP_FILE_PATH = "maps/dMap/";
     final static String MAP_FILE_NAME = "012.map";
@@ -51,9 +51,14 @@ public class EvaluateDynamicScenario {
 
         // compare databases
         try {
-            String nameFile1 = "BW012.map_DBA-STAR_G16_N1_C250.dati2";
-            String nameFile2 = "AW012.map_DBA-STAR_G16_N1_C250.dati2";
-            DBDiff.getDBDiff(DBA_STAR_DB_PATH, nameFile1, nameFile2);
+            String f1Name = "BW012.map_DBA-STAR_G16_N1_C250.";
+            String f2Name = "AW012.map_DBA-STAR_G16_N1_C250.";
+            String ext = "dati2";
+            DBDiff.getDBDiff(DBA_STAR_DB_PATH, f1Name, f2Name, ext);
+            f1Name = "BW012.map_DBA-STAR_G16_N1_C250.";
+            f2Name = "AW012.map_DBA-STAR_G16_N1_C250.";
+            ext = "dat";
+            DBDiff.getDBDiff(DBA_STAR_DB_PATH, f1Name, f2Name, ext);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
