@@ -24,17 +24,17 @@ public class VisualizeDBChanges {
         long startTime = System.currentTimeMillis();
 
         DBAStar dbaStar;
+        GameMap map = new GameMap(PATH_TO_MAP);
 
+        // setting up walls
         ArrayList<SearchState> wallLocation = new ArrayList<>();
         int wallId = 15048;
         wallLocation.add(new SearchState(wallId));
 
-        GameMap map = new GameMap(PATH_TO_MAP);
-
         // fix start
         int startId = 13411;
-        ArrayList<Integer> goalIds = new ArrayList<>();
 
+        ArrayList<Integer> goalIds = new ArrayList<>();
         // iterate over all goals (open spots no wall)
         for (int i = 16; i < map.rows; i++) {
             for (int j = 0; j < map.cols; j++) {
@@ -47,9 +47,10 @@ public class VisualizeDBChanges {
         // remove startId from list of goals
         goalIds.remove((Integer) startId);
 
-        // print number of goals (6175)
+        // print number of goals (6175 on 012.map)
         System.out.println("Number of goals: " + goalIds.size());
 
+        // compute DBAStar database before adding wall
         dbaStar = computeDBAStar(map, "BW");
 
         // compute paths to all goals, store in HashMap of arrays (goal state as key)
@@ -63,11 +64,13 @@ public class VisualizeDBChanges {
         // add wall
         Walls.addWall(PATH_TO_MAP, wallLocation, map);
 
+        // re-load map
         map = new GameMap(PATH_TO_MAP);
 
         // remove all wallIds from list of goals
         goalIds.removeAll(wallLocation.stream().map(SearchState::getId).toList());
 
+        // recompute DBAStar database after adding wall
         dbaStar = computeDBAStar(map, "AW");
 
         // iterate over all goals (open spots no wall, remove the spot where a wall was added)
