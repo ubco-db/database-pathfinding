@@ -11,7 +11,7 @@ import java.util.HashMap;
 
 public class VisualizeDBChanges {
     final static String DB_PATH = "dynamic/databases/";
-    final static String DBA_STAR_DB_PATH = DB_PATH + "DBA/";
+    final static String DBA_STAR_DB_PATH = DB_PATH + "visualizing/";
     final static String MAP_FILE_PATH = "maps/dMap/";
     final static String MAP_FILE_NAME = "012.map";
     final static String PATH_TO_MAP = MAP_FILE_PATH + MAP_FILE_NAME;
@@ -22,9 +22,16 @@ public class VisualizeDBChanges {
 
     public static void main(String[] args) {
         long startTime = System.currentTimeMillis();
+
+        DBAStar dbaStar;
+
+        ArrayList<SearchState> wallLocation = new ArrayList<>();
+        int wallId = 15048;
+        wallLocation.add(new SearchState(wallId));
+
         GameMap map = new GameMap(PATH_TO_MAP);
 
-        // fix start, colour it (yellow)
+        // fix start
         int startId = 13411;
         ArrayList<Integer> goalIds = new ArrayList<>();
 
@@ -43,38 +50,49 @@ public class VisualizeDBChanges {
         // print number of goals (6175)
         System.out.println("Number of goals: " + goalIds.size());
 
+        dbaStar = computeDBAStar(map, "BW");
+
         // compute paths to all goals, store in HashMap of arrays (goal state as key)
-        HashMap<Integer,ArrayList<SearchState>> paths = new HashMap<>();
-        for (int goalId: goalIds) {
-            System.out.println("Goal Id:" + goalId); // 11922 throws an index out of bounds
-            paths.put(goalId, getDBAStarPath(map, startId, goalId));
+        HashMap<Integer, ArrayList<SearchState>> paths = new HashMap<>();
+        for (int goalId : goalIds) {
+            // System.out.println("Goal Id:" + goalId); // 11922 throws an index out of bounds, 11922 is at index 3076
+            // it's because currentId == startGroupId for some reason
+            paths.put(goalId, getDBAStarPath(startId, goalId, dbaStar));
         }
 
         // add wall
-        ArrayList<SearchState> wallLocation = new ArrayList<>();
         Walls.addWall(PATH_TO_MAP, wallLocation, map);
-        int wallId = 13558;
-        wallLocation.add(new SearchState(wallId));
+
         map = new GameMap(PATH_TO_MAP);
 
-        // remove wallId from list of goals
-        goalIds.remove((Integer) wallId);
+        // remove all wallIds from list of goals
+        goalIds.removeAll(wallLocation.stream().map(SearchState::getId).toList());
+
+        dbaStar = computeDBAStar(map, "AW");
 
         // iterate over all goals (open spots no wall, remove the spot where a wall was added)
-        // compare each path with stored path to same location, if identical, do nothing, if not, colour it (purple)
+        // compare each path with stored path to same location, if identical, do nothing, if not, mark it
         ArrayList<SearchState> newPath;
         ArrayList<SearchState> oldPath;
-        for (int goalId: goalIds) {
-            newPath = getDBAStarPath(map, startId, goalId);
+        ArrayList<Integer> goalsWithChangedPath = new ArrayList<>();
+        for (int goalId : goalIds) {
+            newPath = getDBAStarPath(startId, goalId, dbaStar);
             oldPath = paths.get(goalId);
             // compare each path with stored path to the same location
-            boolean pathEqual = isPathEqual(newPath, oldPath);
+            if (!isPathEqual(newPath, oldPath)) goalsWithChangedPath.add(goalId);
         }
 
         // remove wall
         Walls.removeWall(PATH_TO_MAP, wallLocation, map);
         long timeTaken = System.currentTimeMillis() - startTime;
         System.out.println("This run took: " + timeTaken);
+
+        // output result as image: colour start yellow, colour every goal with a changed path purple, rest of map white
+
+        // for now: print goals with changed path
+        for (int goalId : goalsWithChangedPath) {
+            System.out.println(goalId);
+        }
     }
 
     private static boolean isPathEqual(ArrayList<SearchState> newPath, ArrayList<SearchState> oldPath) {
@@ -88,13 +106,13 @@ public class VisualizeDBChanges {
         return true;
     }
 
-    private static String getImageName(String wallStatus) {
-        return DBA_STAR_DB_PATH + wallStatus + MAP_FILE_NAME;
+    private static String getImageName(String wallStatus, boolean hasCentroids) {
+        String lastToken = hasCentroids ? "_DBA_Centroid.png" : "_DBA.png";
+        return DBA_STAR_DB_PATH + wallStatus + MAP_FILE_NAME + lastToken;
     }
 
-    private static ArrayList<SearchState> getDBAStarPath(GameMap map, int startId, int goalId) {
+    private static DBAStar computeDBAStar(GameMap map, String wallStatus) {
         long currentTime;
-        StatsRecord stats = new StatsRecord();
 
         SearchProblem problem = new MapSearchProblem(map);
         GenHillClimbing pathCompressAlgDba = new GenHillClimbing(problem, 10000);
@@ -122,6 +140,12 @@ public class VisualizeDBChanges {
         rec.addStat(7, map.states);
         dbStats.addRecord(rec);
 
+        System.out.println("Exporting map with areas.");
+        map.outputImage(getImageName(wallStatus, false), null, null);
+
+        System.out.println("Exporting map with areas and centroids.");
+        map.computeCentroidMap().outputImage(getImageName(wallStatus, true), null, null);
+
         SearchProblem tmpProb = new MapSearchProblem(map);
         GameDB gameDB = new GameDB(tmpProb);
 
@@ -138,10 +162,14 @@ public class VisualizeDBChanges {
         database.setProblem(problem);
         database.verify(pathCompressAlgDba);
 
+        return new DBAStar(problem, map, database);
+    }
+
+    private static ArrayList<SearchState> getDBAStarPath(int startId, int goalId, DBAStar dbaStar) {
+        StatsRecord stats = new StatsRecord();
         SearchState start = new SearchState(startId);
         SearchState goal = new SearchState(goalId);
 
-        DBAStar dbaStar = new DBAStar(problem, map, database);
         // ArrayList<SearchState> subgoals = dbaStar.getSubgoals();
         return dbaStar.computePath(start, goal, stats);
     }
