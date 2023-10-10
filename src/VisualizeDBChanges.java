@@ -28,8 +28,12 @@ public class VisualizeDBChanges {
 
         // setting up walls
         ArrayList<SearchState> wallLocation = new ArrayList<>();
-        int wallId = 15048;
-        wallLocation.add(new SearchState(wallId));
+        wallLocation.add(new SearchState(7003));
+        wallLocation.add(new SearchState(7151));
+        wallLocation.add(new SearchState(7299));
+        wallLocation.add(new SearchState(7447));
+        wallLocation.add(new SearchState(7595));
+        wallLocation.add(new SearchState(7743));
 
         // fix start
         int startId = 13411;
@@ -77,12 +81,12 @@ public class VisualizeDBChanges {
         // compare each path with stored path to same location, if identical, do nothing, if not, mark it
         ArrayList<SearchState> newPath;
         ArrayList<SearchState> oldPath;
-        ArrayList<Integer> goalsWithChangedPath = new ArrayList<>();
+        ArrayList<SearchState> goalsWithChangedPath = new ArrayList<>();
         for (int goalId : goalIds) {
             newPath = getDBAStarPath(startId, goalId, dbaStar);
             oldPath = paths.get(goalId);
             // compare each path with stored path to the same location
-            if (!isPathEqual(newPath, oldPath)) goalsWithChangedPath.add(goalId);
+            if (!isPathEqual(newPath, oldPath)) goalsWithChangedPath.add(new SearchState(goalId));
         }
 
         // remove wall
@@ -91,10 +95,11 @@ public class VisualizeDBChanges {
         System.out.println("This run took: " + timeTaken);
 
         // output result as image: colour start yellow, colour every goal with a changed path purple, rest of map white
+        map.showChanges(DBA_STAR_DB_PATH + "AW012.map_DBA_ChangedGoals.png", goalsWithChangedPath);
 
         // for now: print goals with changed path
-        for (int goalId : goalsWithChangedPath) {
-            System.out.println(goalId);
+        for (SearchState searchState : goalsWithChangedPath) {
+            System.out.println(searchState.getId());
         }
     }
 
