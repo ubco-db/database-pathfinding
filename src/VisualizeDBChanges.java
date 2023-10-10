@@ -55,6 +55,7 @@ public class VisualizeDBChanges {
         System.out.println("Number of goals: " + goalIds.size());
 
         // compute DBAStar database before adding wall
+        System.out.println();
         dbaStar = computeDBAStar(map, "BW");
 
         // compute paths to all goals, store in HashMap of arrays (goal state as key)
@@ -75,6 +76,7 @@ public class VisualizeDBChanges {
         goalIds.removeAll(wallLocation.stream().map(SearchState::getId).toList());
 
         // recompute DBAStar database after adding wall
+        System.out.println();
         dbaStar = computeDBAStar(map, "AW");
 
         // iterate over all goals (open spots no wall, remove the spot where a wall was added)
@@ -92,31 +94,19 @@ public class VisualizeDBChanges {
         // remove wall
         Walls.removeWall(PATH_TO_MAP, wallLocation, map);
         long timeTaken = System.currentTimeMillis() - startTime;
+        System.out.println();
         System.out.println("This run took: " + timeTaken);
 
         // output result as image: colour start yellow, colour every goal with a changed path purple, rest of map white
         map.showChanges(DBA_STAR_DB_PATH + "AW012.map_DBA_ChangedGoals.png", goalsWithChangedPath);
 
+        System.out.println();
+        System.out.println("Goals with changed path: ");
+
         // for now: print goals with changed path
         for (SearchState searchState : goalsWithChangedPath) {
             System.out.println(searchState.getId());
         }
-    }
-
-    private static boolean isPathEqual(ArrayList<SearchState> newPath, ArrayList<SearchState> oldPath) {
-        // if path length differs, they are not equal
-        if (newPath.size() != oldPath.size()) return false;
-
-        for (int i = 0; i < newPath.size(); i++) {
-            // comparing SearchStates (have an equals-method)
-            if (!newPath.get(i).equals(oldPath.get(i))) return false;
-        }
-        return true;
-    }
-
-    private static String getImageName(String wallStatus, boolean hasCentroids) {
-        String lastToken = hasCentroids ? "_DBA_Centroid.png" : "_DBA.png";
-        return DBA_STAR_DB_PATH + wallStatus + MAP_FILE_NAME + lastToken;
     }
 
     private static DBAStar computeDBAStar(GameMap map, String wallStatus) {
@@ -125,7 +115,14 @@ public class VisualizeDBChanges {
         SearchProblem problem = new MapSearchProblem(map);
         GenHillClimbing pathCompressAlgDba = new GenHillClimbing(problem, 10000);
 
+        // Load abstract map and database
+        System.out.println("Loading database.");
+
         SubgoalDynamicDB2 database = new SubgoalDynamicDB2(); // DP matrix in adjacency list representation (computed at run-time)
+
+        String fileName = getDBName(wallStatus);
+
+        System.out.println("Loading map and performing abstraction...");
 
         // GreedyHC map abstraction
         DBStats dbStats = new DBStats();
@@ -161,14 +158,22 @@ public class VisualizeDBChanges {
         database.computeIndex(tmpProb, rec);
         rec.addStat(23, System.currentTimeMillis() - currentTime);
 
+        System.out.println("Generating gameDB.");
+        currentTime = System.currentTimeMillis();
+
         database = gameDB.computeDynamicDB(database, pathCompressAlgDba, rec, NUM_NEIGHBOUR_LEVELS);
+        System.out.println("Time to compute DBAStar gameDB: " + (System.currentTimeMillis() - currentTime));
 
         database.init();
 
+        database.exportDB(fileName);
         map.computeComplexity(rec);
         dbStats.addRecord(rec);
         database.setProblem(problem);
+        System.out.println("Verifying database.");
         database.verify(pathCompressAlgDba);
+        System.out.println("Database verification complete.");
+        System.out.println("Databases loaded.");
 
         return new DBAStar(problem, map, database);
     }
@@ -180,5 +185,27 @@ public class VisualizeDBChanges {
 
         // ArrayList<SearchState> subgoals = dbaStar.getSubgoals();
         return dbaStar.computePath(start, goal, stats);
+    }
+
+    /* Helper methods */
+
+    private static boolean isPathEqual(ArrayList<SearchState> newPath, ArrayList<SearchState> oldPath) {
+        // if path length differs, they are not equal
+        if (newPath.size() != oldPath.size()) return false;
+
+        for (int i = 0; i < newPath.size(); i++) {
+            // comparing SearchStates (have an equals-method)
+            if (!newPath.get(i).equals(oldPath.get(i))) return false;
+        }
+        return true;
+    }
+
+    private static String getImageName(String wallStatus, boolean hasCentroids) {
+        String lastToken = hasCentroids ? "_DBA_Centroid.png" : "_DBA.png";
+        return DBA_STAR_DB_PATH + wallStatus + MAP_FILE_NAME + lastToken;
+    }
+
+    private static String getDBName(String wallStatus) {
+        return DBA_STAR_DB_PATH + wallStatus + MAP_FILE_NAME + "_DBA-STAR_G" + GRID_SIZE + "_N" + NUM_NEIGHBOUR_LEVELS + "_C" + CUTOFF + ".dat";
     }
 }
