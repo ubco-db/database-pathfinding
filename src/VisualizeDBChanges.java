@@ -83,6 +83,7 @@ public class VisualizeDBChanges {
         // compare each path with stored path to same location, if identical, do nothing, if not, mark it
         ArrayList<SearchState> newPath;
         ArrayList<SearchState> oldPath;
+        // should I add the wall segments to this list? They are changed bc unreachable now
         ArrayList<SearchState> goalsWithChangedPath = new ArrayList<>();
         for (int goalId : goalIds) {
             newPath = getDBAStarPath(startId, goalId, dbaStar);
@@ -107,6 +108,9 @@ public class VisualizeDBChanges {
         for (SearchState searchState : goalsWithChangedPath) {
             System.out.println(searchState.getId());
         }
+
+        System.out.println();
+        System.out.printf("Percentage of goals changed: %.2f%n", (((double) goalsWithChangedPath.size()) / goalIds.size()) * 100);
     }
 
     private static DBAStar computeDBAStar(GameMap map, String wallStatus) {
