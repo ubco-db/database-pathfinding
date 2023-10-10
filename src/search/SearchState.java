@@ -59,4 +59,8 @@ public class SearchState implements Comparable<SearchState> {
     public void setCost(int cost) {
         this.cost = cost;
     }
+
+    public int getId() {
+        return id;
+    }
 }
