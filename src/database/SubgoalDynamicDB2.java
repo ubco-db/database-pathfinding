@@ -50,12 +50,17 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
         ArrayList<SubgoalDBRecord> result = new ArrayList<>(1);
 
         // Need to calculate record as will not be stored
-        int pathSize;
+        int pathSize = 0;
         int[] path = new int[2000], tmp = new int[2000];
         int[] subgoals;
 
-        // This code builds only the path required on demand (may incur more time as have to continually merge paths but may save time by avoiding storing/copying lists to do construction)
-        pathSize = GameDB.mergePaths4(startGroupId, goalGroupId, paths, neighbor, lowestCost, neighborId, path);
+        // FIXME: passing startId and goalId that are the same breaks this (happens if start and goal are in same region)
+        if (startGroupId == goalGroupId) {
+            // System.out.println(globalGoal.getId());
+        } else {
+            // This code builds only the path required on demand (may incur more time as have to continually merge paths but may save time by avoiding storing/copying lists to do construction)
+            pathSize = GameDB.mergePaths4(startGroupId, goalGroupId, paths, neighbor, lowestCost, neighborId, path);
+        }
 
         if (pathSize == 0) return null;            // No path between two states
         int startId = path[0];
@@ -161,7 +166,7 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
      *
      * @param fileName
      */
-    private void saveDB(String fileName) {    // Save dynamic programming table and records
+    private void saveDB(String fileName) {    // Save dynamic programming table and records (.dat file)
         // Format: numGroups
         //		lowestCost matrix (numGroups x numGroups)
         //		neighbor matrix (numGroups x numGroups)
