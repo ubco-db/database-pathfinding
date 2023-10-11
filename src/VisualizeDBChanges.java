@@ -29,12 +29,7 @@ public class VisualizeDBChanges {
 
         // setting up walls
         ArrayList<SearchState> wallLocation = new ArrayList<>();
-        wallLocation.add(new SearchState(7003));
-        wallLocation.add(new SearchState(7151));
-        wallLocation.add(new SearchState(7299));
-        wallLocation.add(new SearchState(7447));
-        wallLocation.add(new SearchState(7595));
-        wallLocation.add(new SearchState(7743));
+        wallLocation.add(new SearchState(15196));
 
         // fix start
         int startId = 13411;
