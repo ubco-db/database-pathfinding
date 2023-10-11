@@ -1714,15 +1714,16 @@ public class GameMap {
         }
     }
 
-    public void showChanges(String fileName, ArrayList<SearchState> path) {
-        if (path != null) {    // Make a mask for the map for the path
+    public void showChanges(String fileName, ArrayList<SearchState> changedGoals, SearchState start) {
+        if (changedGoals != null && start != null) {    // Make a mask for the map for the path
             SparseMask currentMask = new SparseMask();
             Color color, pathColor = Color.RED;
             HashMap<String, String> used = new HashMap<>();
 
-            for (SearchState current : path) {
-                int row = getRow(current.id);
-                int col = getCol(current.id);
+            // colour changed goals in red
+            for (SearchState current : changedGoals) {
+                int row = getRow(current.getId());
+                int col = getCol(current.getId());
 
                 ChangeRecord rec;
                 color = pathColor;
@@ -1731,6 +1732,12 @@ public class GameMap {
                 currentMask.add(rec);
                 used.put(rec.toString(), null);
             }
+
+            // colour start in green
+            color = Color.GREEN;
+            ChangeRecord rec = new ChangeRecord(getRow(start.getId()), getCol(start.getId()), color, 1);
+            currentMask.add(rec);
+
             addMask(currentMask);
             this.currentMask = this.masks.size() - 1;
         }

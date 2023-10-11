@@ -98,8 +98,8 @@ public class VisualizeDBChanges {
         System.out.println();
         System.out.println("This run took: " + timeTaken);
 
-        // output result as image: colour start yellow, colour every goal with a changed path purple, rest of map white
-        map.showChanges(DBA_STAR_DB_PATH + "AW012.map_DBA_ChangedGoals.png", goalsWithChangedPath);
+        // output result as image: colour start green, colour every goal with a changed path red, rest of map white
+        map.showChanges(DBA_STAR_DB_PATH + "AW012.map_DBA_ChangedGoals.png", goalsWithChangedPath, new SearchState(startId));
 
         System.out.println();
         System.out.println("Goals with changed path: ");
