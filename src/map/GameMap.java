@@ -172,17 +172,17 @@ public class GameMap {
 //        // return Math.abs(diffRow) *10 + Math.abs(diffCol)*10;
 //        return Math.abs(diffRow) + Math.abs(diffCol);
 
-		// Note: This version uses diagonals
-		int startRow = startId/ncols;
-		int goalRow = goalId/ncols;
-		int diffRow = startRow - goalRow;
+        // Note: This version uses diagonals
+        int startRow = startId / ncols;
+        int goalRow = goalId / ncols;
+        int diffRow = startRow - goalRow;
 
-		int bit31 = diffRow >> 31;				// Compute its absolute value
-		diffRow = (diffRow ^ bit31) - bit31;
+        int bit31 = diffRow >> 31;                // Compute its absolute value
+        diffRow = (diffRow ^ bit31) - bit31;
 
-		int diffCol = ((startId - startRow*ncols) - (goalId - goalRow*ncols));
-		bit31 = diffCol >> 31;				    // Compute its absolute value
-		diffCol = (diffCol ^ bit31) - bit31;
+        int diffCol = ((startId - startRow * ncols) - (goalId - goalRow * ncols));
+        bit31 = diffCol >> 31;                    // Compute its absolute value
+        diffCol = (diffCol ^ bit31) - bit31;
 
         return Math.min(diffRow, diffCol) * 14 + ((diffRow + diffCol) - 2 * Math.min(diffRow, diffCol)) * 10;
 
@@ -769,24 +769,24 @@ public class GameMap {
      */
     public ArrayList<SearchState> getNeighbors(int r, int c) {
         // 8-way pathfinding
-    	result.clear();
-    	if (isValid(r - 1, c - 1) && !isWall(r - 1, c - 1)) // Top left
-			result.add(getState(this.getId(r-1,c-1)));
-    	if (isValid(r - 1, c) && !isWall(r - 1, c))	// Above
-			result.add(getState(this.getId(r-1,c)));
-    	if (isValid(r - 1, c+1) && !isWall(r - 1, c + 1)) // Top right
-			result.add(getState(this.getId(r-1,c+1)));
-    	if (isValid(r + 1, c - 1) && !isWall(r + 1, c - 1)) // Bottom left
-			result.add(getState(this.getId(r+1,c-1)));
-    	if (isValid(r + 1, c) && !isWall(r + 1, c))// Bottom
-			result.add(getState(this.getId(r+1,c)));
-		if (isValid(r + 1, c + 1) && !isWall(r + 1, c + 1)) // Bottom right
-			result.add(getState(this.getId(r+1,c+1)));
-		if (isValid(r, c - 1) && !isWall(r, c - 1)) // Left
-			result.add(getState(this.getId(r,c-1)));
-		if (isValid(r, c + 1) && !isWall(r, c + 1)) // Right
-			result.add(getState(this.getId(r,c+1)));
-		return result;
+        result.clear();
+        if (isValid(r - 1, c - 1) && !isWall(r - 1, c - 1)) // Top left
+            result.add(getState(this.getId(r - 1, c - 1)));
+        if (isValid(r - 1, c) && !isWall(r - 1, c))    // Above
+            result.add(getState(this.getId(r - 1, c)));
+        if (isValid(r - 1, c + 1) && !isWall(r - 1, c + 1)) // Top right
+            result.add(getState(this.getId(r - 1, c + 1)));
+        if (isValid(r + 1, c - 1) && !isWall(r + 1, c - 1)) // Bottom left
+            result.add(getState(this.getId(r + 1, c - 1)));
+        if (isValid(r + 1, c) && !isWall(r + 1, c))// Bottom
+            result.add(getState(this.getId(r + 1, c)));
+        if (isValid(r + 1, c + 1) && !isWall(r + 1, c + 1)) // Bottom right
+            result.add(getState(this.getId(r + 1, c + 1)));
+        if (isValid(r, c - 1) && !isWall(r, c - 1)) // Left
+            result.add(getState(this.getId(r, c - 1)));
+        if (isValid(r, c + 1) && !isWall(r, c + 1)) // Right
+            result.add(getState(this.getId(r, c + 1)));
+        return result;
         // 4-way pathfinding
 //        result.clear();
 //        if (isValid(r - 1, c) && !isWall(r - 1, c))    // Above
@@ -1714,6 +1714,59 @@ public class GameMap {
         }
     }
 
+    public void showChanges(String fileName, ArrayList<SearchState> changedGoals, SearchState start, ArrayList<SearchState> weirdGoals) {
+        if (changedGoals != null && start != null) {    // Make a mask for the map for the path
+            Color color;
+            SparseMask currentMask = new SparseMask();
+            HashMap<String, String> used = new HashMap<>();
+
+            // colour changed goals in red
+            for (SearchState current : changedGoals) {
+                int row = getRow(current.getId());
+                int col = getCol(current.getId());
+
+                ChangeRecord rec;
+                color = Color.RED;
+                rec = new ChangeRecord(row, col, color, 1);
+                if (used.containsKey(rec.toString())) continue;
+                currentMask.add(rec);
+                used.put(rec.toString(), null);
+            }
+
+            // colour weird goals in blue
+            for (SearchState current : weirdGoals) {
+                int row = getRow(current.getId());
+                int col = getCol(current.getId());
+
+                ChangeRecord rec;
+                color = Color.BLUE;
+                rec = new ChangeRecord(row, col, color, 1);
+                if (used.containsKey(rec.toString())) continue;
+                currentMask.add(rec);
+                used.put(rec.toString(), null);
+            }
+
+            // colour start in green
+            color = Color.GREEN;
+            ChangeRecord rec = new ChangeRecord(getRow(start.getId()), getCol(start.getId()), color, 1);
+            currentMask.add(rec);
+
+            addMask(currentMask);
+            this.currentMask = this.masks.size() - 1;
+        }
+        // Create an image to save
+        RenderedImage rendImage = createImage();
+
+        // Write generated image to a file
+        try {
+            // Save as PNG
+            File file = new File(fileName);
+            ImageIO.write(rendImage, "png", file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public RenderedImage createImage() {
 
         BufferedImage bufferedImage = new BufferedImage(this.cols * cellHeight, this.rows * cellHeight, BufferedImage.TYPE_INT_RGB);
@@ -1885,7 +1938,7 @@ public class GameMap {
     // Compute centroids of all groups
     public void computeCentroids() {
         long currentTime = System.currentTimeMillis();
-        StringBuilder buf = new StringBuilder();
+        // StringBuilder buf = new StringBuilder();
 
         for (Entry<Integer, GroupRecord> integerGroupRecordEntry : groups.entrySet()) {    // Find centroid for each record
             GroupRecord rec = integerGroupRecordEntry.getValue();
@@ -1917,21 +1970,21 @@ public class GameMap {
             }
             rec.setGroupRepId(this.getId(row, col));
 
-            buf.append(rec.getGroupRepId()).append(", ");
+            // buf.append(rec.getGroupRepId()).append(", ");
         }
         long endTime = System.currentTimeMillis();
-        System.out.println("Time to compute centroids: " + (endTime - currentTime));
+        // System.out.println("Time to compute centroids: " + (endTime - currentTime));
 
-        buf.append(System.lineSeparator()).append(System.lineSeparator());
-
-        try {
-            File file = new File("dynamic/databases/DBA/012.map_DBA-STAR_Reps.txt"); // TODO: Change for different maps
-            FileWriter fr = new FileWriter(file, true);
-            fr.write(String.valueOf(buf));
-            fr.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        buf.append(System.lineSeparator()).append(System.lineSeparator());
+//
+//        try {
+//            File file = new File("dynamic/databases/DBA/012.map_DBA-STAR_Reps.txt"); // TODO: Change for different maps
+//            FileWriter fr = new FileWriter(file, true);
+//            fr.write(String.valueOf(buf));
+//            fr.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
     }
 
