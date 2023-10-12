@@ -12,7 +12,7 @@ import java.util.HashMap;
 
 public class VisualizeDBChanges {
     final static String DB_PATH = "dynamic/databases/";
-    final static String DBA_STAR_DB_PATH = DB_PATH + "visualizing/";
+    final static String DBA_STAR_DB_PATH = DB_PATH + "adding_walls/";
     final static String MAP_FILE_PATH = "maps/dMap/";
     final static String MAP_FILE_NAME = "012.map";
     final static String PATH_TO_MAP = MAP_FILE_PATH + MAP_FILE_NAME;
@@ -26,10 +26,6 @@ public class VisualizeDBChanges {
 
         DBAStar dbaStar;
         GameMap map = new GameMap(PATH_TO_MAP);
-
-        // setting up walls
-        ArrayList<SearchState> wallLocation = new ArrayList<>();
-        wallLocation.add(new SearchState(8195));
 
         // fix start
         int startId = 13411;
@@ -62,53 +58,48 @@ public class VisualizeDBChanges {
             paths.put(goalId, getDBAStarPath(startId, goalId, dbaStar));
         }
 
-        // add wall
-        Walls.addWall(PATH_TO_MAP, wallLocation, map);
+        /* start loop */
 
-        // re-load map
-        map = new GameMap(PATH_TO_MAP);
+        ArrayList<SearchState> weirdGoals = getWeirdGoals(); // currently fixed to start
 
-        // remove all wallIds from list of goals
-        goalIds.removeAll(wallLocation.stream().map(SearchState::getId).toList());
+        for (int wallId : goalIds) {
+            // setting up walls
+            ArrayList<SearchState> wallLocation = new ArrayList<>();
+            SearchState wall = new SearchState(wallId);
+            wallLocation.add(wall); // adding wall for each open state
+            Walls.addWall(PATH_TO_MAP, wallLocation, map);
 
-        // recompute DBAStar database after adding wall
-        System.out.println();
-        dbaStar = computeDBAStar(map, "AW");
+            map = new GameMap(PATH_TO_MAP); // recomputing map
+            System.out.println();
+            dbaStar = computeDBAStar(map, "AW");
 
-        // iterate over all goals (open spots no wall, remove the spot where a wall was added)
-        // compare each path with stored path to same location, if identical, do nothing, if not, mark it
-        ArrayList<SearchState> newPath;
-        ArrayList<SearchState> oldPath;
-        // should I add the wall segments to this list? They are changed bc unreachable now
-        ArrayList<SearchState> goalsWithChangedPath = new ArrayList<>();
-        for (int goalId : goalIds) {
-            newPath = getDBAStarPath(startId, goalId, dbaStar);
-            oldPath = paths.get(goalId);
-            // compare each path with stored path to the same location
-            if (!isPathEqual(newPath, oldPath)) goalsWithChangedPath.add(new SearchState(goalId));
+            // iterate over all goals (open spots no wall, ignore the spot where a wall was added)
+            // compare each path with stored path to same location, if identical, do nothing, if not, mark it
+            ArrayList<SearchState> newPath;
+            ArrayList<SearchState> oldPath;
+            // should I add the wall segments to this list? They are changed bc unreachable now
+            ArrayList<SearchState> goalsWithChangedPath = new ArrayList<>();
+            for (int goalId : goalIds) {
+                if (goalId != wallId) {
+                    newPath = getDBAStarPath(startId, goalId, dbaStar);
+                    oldPath = paths.get(goalId);
+                    // compare each path with stored path to the same location
+                    if (!isPathEqual(newPath, oldPath)) goalsWithChangedPath.add(new SearchState(goalId));
+                }
+            }
+
+            // output result as image: colour start green, colour every goal with a changed path red, rest of map white
+            map.showChanges(DBA_STAR_DB_PATH + wallId + "_AW012.map_DBA_ChangedGoals.png", goalsWithChangedPath, new SearchState(startId), weirdGoals);
+
+            System.out.println();
+            System.out.printf("Wall at: %d. Percentage of goals changed: %.2f%n", wallId, (((double) goalsWithChangedPath.size()) / goalIds.size()) * 100);
         }
 
-        // remove wall
-        Walls.removeWall(PATH_TO_MAP, wallLocation, map);
+        /* end loop */
+
         long timeTaken = System.currentTimeMillis() - startTime;
         System.out.println();
         System.out.println("This run took: " + timeTaken);
-
-        ArrayList<SearchState> weirdGoals = getWeirdGoals();
-
-        // output result as image: colour start green, colour every goal with a changed path red, rest of map white
-        map.showChanges(DBA_STAR_DB_PATH + "AW012.map_DBA_ChangedGoals.png", goalsWithChangedPath, new SearchState(startId), weirdGoals);
-
-        System.out.println();
-        System.out.println("Goals with changed path: ");
-
-        // for now: print goals with changed path
-        for (SearchState searchState : goalsWithChangedPath) {
-            System.out.println(searchState.getId());
-        }
-
-        System.out.println();
-        System.out.printf("Percentage of goals changed: %.2f%n", (((double) goalsWithChangedPath.size()) / goalIds.size()) * 100);
     }
 
     private static DBAStar computeDBAStar(GameMap map, String wallStatus) {
@@ -193,6 +184,7 @@ public class VisualizeDBChanges {
 
     private static boolean isPathEqual(ArrayList<SearchState> newPath, ArrayList<SearchState> oldPath) {
         // if path length differs, they are not equal
+        if (newPath == null) return false; // QUESTION: can oldPath ever be null?
         if (newPath.size() != oldPath.size()) return false;
 
         for (int i = 0; i < newPath.size(); i++) {
@@ -214,35 +206,10 @@ public class VisualizeDBChanges {
     // TODO: find fix for these goals
     private static ArrayList<SearchState> getWeirdGoals() {
         // goals where startGroupId == goalGroupId in findNearest() in SubgoalDynamicDB2
-        ArrayList<Integer> weirdGoalIds = new ArrayList<>(Arrays.asList(
-                11922, 11923, 11924, 11925, 11926, 11927, 11928, 11929, 11930, 11931,
-                11932, 11933, 11934, 11935, 12071, 12072, 12073, 12074, 12075, 12078,
-                12079, 12080, 12081, 12082, 12083, 12219, 12220, 12221, 12222, 12223,
-                12226, 12227, 12228, 12229, 12230, 12231, 12364, 12365, 12368, 12369,
-                12370, 12371, 12372, 12373, 12374, 12375, 12376, 12377, 12378, 12379,
-                12512, 12513, 12516, 12517, 12518, 12519, 12520, 12521, 12522, 12523,
-                12524, 12525, 12526, 12527, 12660, 12661, 12662, 12664, 12665, 12666,
-                12667, 12668, 12669, 12670, 12671, 12672, 12673, 12674, 12675, 12808,
-                12809, 12810, 12811, 12812, 12813, 12814, 12815, 12816, 12817, 12818,
-                12819, 12820, 12821, 12822, 12823, 12956, 12957, 12958, 12959, 12960,
-                12961, 12962, 12963, 12964, 12965, 12966, 12967, 12968, 12969, 12970,
-                12971, 13104, 13105, 13106, 13107, 13108, 13109, 13110, 13111, 13112,
-                13113, 13114, 13115, 13116, 13117, 13118, 13119, 13252, 13253, 13254,
-                13255, 13256, 13257, 13258, 13259, 13260, 13261, 13262, 13263, 13264,
-                13265, 13266, 13267, 13400, 13401, 13402, 13403, 13404, 13405, 13406,
-                13407, 13408, 13409, 13410, 13412, 13413, 13414, 13415, 13548, 13549,
-                13550, 13551, 13552, 13553, 13554, 13555, 13556, 13557, 13558, 13559,
-                13560, 13561, 13562, 13563, 13696, 13697, 13698, 13699, 13700, 13701,
-                13702, 13703, 13704, 13705, 13706, 13707, 13708, 13709, 13710, 13711,
-                13844, 13845, 13846, 13847, 13848, 13849, 13850, 13851, 13852, 13853,
-                13854, 13855, 13856, 13857, 13858, 13859, 13992, 13993, 13994, 13995,
-                13996, 13997, 13998, 13999, 14000, 14001, 14002, 14003, 14004, 14005,
-                14006, 14007, 14140, 14141, 14142, 14143, 14144, 14145, 14146, 14147,
-                14148, 14149, 14150, 14151, 14152, 14153, 14154, 14155
-        ));
+        ArrayList<Integer> weirdGoalIds = new ArrayList<>(Arrays.asList(11922, 11923, 11924, 11925, 11926, 11927, 11928, 11929, 11930, 11931, 11932, 11933, 11934, 11935, 12071, 12072, 12073, 12074, 12075, 12078, 12079, 12080, 12081, 12082, 12083, 12219, 12220, 12221, 12222, 12223, 12226, 12227, 12228, 12229, 12230, 12231, 12364, 12365, 12368, 12369, 12370, 12371, 12372, 12373, 12374, 12375, 12376, 12377, 12378, 12379, 12512, 12513, 12516, 12517, 12518, 12519, 12520, 12521, 12522, 12523, 12524, 12525, 12526, 12527, 12660, 12661, 12662, 12664, 12665, 12666, 12667, 12668, 12669, 12670, 12671, 12672, 12673, 12674, 12675, 12808, 12809, 12810, 12811, 12812, 12813, 12814, 12815, 12816, 12817, 12818, 12819, 12820, 12821, 12822, 12823, 12956, 12957, 12958, 12959, 12960, 12961, 12962, 12963, 12964, 12965, 12966, 12967, 12968, 12969, 12970, 12971, 13104, 13105, 13106, 13107, 13108, 13109, 13110, 13111, 13112, 13113, 13114, 13115, 13116, 13117, 13118, 13119, 13252, 13253, 13254, 13255, 13256, 13257, 13258, 13259, 13260, 13261, 13262, 13263, 13264, 13265, 13266, 13267, 13400, 13401, 13402, 13403, 13404, 13405, 13406, 13407, 13408, 13409, 13410, 13412, 13413, 13414, 13415, 13548, 13549, 13550, 13551, 13552, 13553, 13554, 13555, 13556, 13557, 13558, 13559, 13560, 13561, 13562, 13563, 13696, 13697, 13698, 13699, 13700, 13701, 13702, 13703, 13704, 13705, 13706, 13707, 13708, 13709, 13710, 13711, 13844, 13845, 13846, 13847, 13848, 13849, 13850, 13851, 13852, 13853, 13854, 13855, 13856, 13857, 13858, 13859, 13992, 13993, 13994, 13995, 13996, 13997, 13998, 13999, 14000, 14001, 14002, 14003, 14004, 14005, 14006, 14007, 14140, 14141, 14142, 14143, 14144, 14145, 14146, 14147, 14148, 14149, 14150, 14151, 14152, 14153, 14154, 14155));
 
         ArrayList<SearchState> weirdGoals = new ArrayList<>();
-        for (Integer weirdGoalId: weirdGoalIds) {
+        for (Integer weirdGoalId : weirdGoalIds) {
             weirdGoals.add(new SearchState(weirdGoalId));
         }
 
