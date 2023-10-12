@@ -73,6 +73,8 @@ public class VisualizeDBChanges {
             System.out.println();
             dbaStar = computeDBAStar(map, "AW");
 
+            Walls.removeWall(PATH_TO_MAP, wallLocation, map);
+
             // iterate over all goals (open spots no wall, ignore the spot where a wall was added)
             // compare each path with stored path to same location, if identical, do nothing, if not, mark it
             ArrayList<SearchState> newPath;
