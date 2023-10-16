@@ -6,9 +6,10 @@ import dynamic.Walls;
 import map.GameMap;
 import search.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.*;
 
 public class VisualizeDBChanges {
     final static String DB_PATH = "dynamic/databases/";
@@ -62,6 +63,8 @@ public class VisualizeDBChanges {
 
         ArrayList<SearchState> weirdGoals = getWeirdGoals(); // currently fixed to start
 
+        Map<Double, String> percentageChangedByWall = new TreeMap<>();
+
         for (int wallId : goalIds) {
             // setting up walls
             ArrayList<SearchState> wallLocation = new ArrayList<>();
@@ -93,15 +96,30 @@ public class VisualizeDBChanges {
             // output result as image: colour start green, colour every goal with a changed path red, rest of map white
             map.showChanges(DBA_STAR_DB_PATH + wallId + "_AW012.map_DBA_ChangedGoals.png", goalsWithChangedPath, new SearchState(startId), weirdGoals);
 
-            System.out.println();
-            System.out.printf("Wall at: %d. Percentage of goals changed: %.2f%n", wallId, (((double) goalsWithChangedPath.size()) / goalIds.size()) * 100);
+            double percentageChanged = (((double) goalsWithChangedPath.size()) / goalIds.size()) * 100;
+            String value = String.format("Wall at: %d. Percentage of goals changed: %.2f%n", wallId, percentageChanged);
+            percentageChangedByWall.put(percentageChanged, value);
+        }
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(DBA_STAR_DB_PATH + "percentageChangedByWall.txt"))) {
+            for (Map.Entry<Double, String> entry : percentageChangedByWall.entrySet()) {
+                writer.write(entry.getKey() + ":\t" + entry.getValue() + "\n");
+            }
+            System.out.println("Values written to the file 'percentageChangedByWall.txt' in order of keys.");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         /* end loop */
 
         long timeTaken = System.currentTimeMillis() - startTime;
+
+        long totalSeconds = timeTaken / 1000;
+        long minutes = totalSeconds / 60;
+        long seconds = totalSeconds % 60;
+
         System.out.println();
-        System.out.println("This run took: " + timeTaken);
+        System.out.println("This run took: " + minutes + " minutes, " + seconds + " seconds");
     }
 
     private static DBAStar computeDBAStar(GameMap map, String wallStatus) {
