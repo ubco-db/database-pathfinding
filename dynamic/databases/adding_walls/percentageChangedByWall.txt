@@ -1,716 +1,358 @@
-0.0:	Wall at: 20519. Percentage of goals changed: 0,00
-
-0.016194331983805668:	Wall at: 20371. Percentage of goals changed: 0,02
-
-0.032388663967611336:	Wall at: 20223. Percentage of goals changed: 0,03
-
-0.048582995951417005:	Wall at: 20075. Percentage of goals changed: 0,05
-
-0.06477732793522267:	Wall at: 19927. Percentage of goals changed: 0,06
-
-0.08097165991902834:	Wall at: 19779. Percentage of goals changed: 0,08
-
-0.09716599190283401:	Wall at: 19772. Percentage of goals changed: 0,10
-
-0.11336032388663966:	Wall at: 19624. Percentage of goals changed: 0,11
-
-0.12955465587044535:	Wall at: 19335. Percentage of goals changed: 0,13
-
-0.14574898785425103:	Wall at: 19920. Percentage of goals changed: 0,15
-
-0.16194331983805668:	Wall at: 19039. Percentage of goals changed: 0,16
-
-0.17813765182186234:	Wall at: 18890. Percentage of goals changed: 0,18
-
-0.19433198380566802:	Wall at: 19771. Percentage of goals changed: 0,19
-
-0.21052631578947367:	Wall at: 19623. Percentage of goals changed: 0,21
-
-0.22672064777327933:	Wall at: 18438. Percentage of goals changed: 0,23
-
-0.24291497975708504:	Wall at: 18290. Percentage of goals changed: 0,24
-
-0.2591093117408907:	Wall at: 19331. Percentage of goals changed: 0,26
-
-0.27530364372469635:	Wall at: 19035. Percentage of goals changed: 0,28
-
-0.29149797570850206:	Wall at: 18587. Percentage of goals changed: 0,29
-
-0.3076923076923077:	Wall at: 19338. Percentage of goals changed: 0,31
-
-0.32388663967611336:	Wall at: 19611. Percentage of goals changed: 0,32
-
-0.340080971659919:	Wall at: 19475. Percentage of goals changed: 0,34
-
-0.3562753036437247:	Wall at: 19031. Percentage of goals changed: 0,36
-
-0.3724696356275303:	Wall at: 17114. Percentage of goals changed: 0,37
-
-0.38866396761133604:	Wall at: 17241. Percentage of goals changed: 0,39
-
-0.4048582995951417:	Wall at: 16827. Percentage of goals changed: 0,40
-
-0.42105263157894735:	Wall at: 19184. Percentage of goals changed: 0,42
-
-0.437246963562753:	Wall at: 15917. Percentage of goals changed: 0,44
-
-0.45344129554655865:	Wall at: 11573. Percentage of goals changed: 0,45
-
-0.4696356275303644:	Wall at: 15360. Percentage of goals changed: 0,47
-
-0.4858299595141701:	Wall at: 19326. Percentage of goals changed: 0,49
-
-0.5020242914979757:	Wall at: 10616. Percentage of goals changed: 0,50
-
-0.5182186234817814:	Wall at: 13894. Percentage of goals changed: 0,52
-
-0.534412955465587:	Wall at: 19464. Percentage of goals changed: 0,53
-
-0.5506072874493927:	Wall at: 19189. Percentage of goals changed: 0,55
-
-0.5668016194331984:	Wall at: 15362. Percentage of goals changed: 0,57
-
-0.5829959514170041:	Wall at: 10594. Percentage of goals changed: 0,58
-
-0.5991902834008097:	Wall at: 11069. Percentage of goals changed: 0,60
-
-0.6153846153846154:	Wall at: 15476. Percentage of goals changed: 0,62
-
-0.631578947368421:	Wall at: 14888. Percentage of goals changed: 0,63
-
-0.6477732793522267:	Wall at: 17558. Percentage of goals changed: 0,65
-
-0.6639676113360323:	Wall at: 15331. Percentage of goals changed: 0,66
-
-0.680161943319838:	Wall at: 13745. Percentage of goals changed: 0,68
-
-0.6963562753036437:	Wall at: 13127. Percentage of goals changed: 0,70
-
-0.7125506072874493:	Wall at: 17829. Percentage of goals changed: 0,71
-
-0.728744939271255:	Wall at: 17535. Percentage of goals changed: 0,73
-
-0.7449392712550607:	Wall at: 17719. Percentage of goals changed: 0,74
-
-0.7611336032388664:	Wall at: 19317. Percentage of goals changed: 0,76
-
-0.7773279352226721:	Wall at: 7152. Percentage of goals changed: 0,78
-
-0.7935222672064778:	Wall at: 7002. Percentage of goals changed: 0,79
-
-0.8097165991902834:	Wall at: 14848. Percentage of goals changed: 0,81
-
-0.8259109311740891:	Wall at: 15329. Percentage of goals changed: 0,83
-
-0.8421052631578947:	Wall at: 19040. Percentage of goals changed: 0,84
-
-0.8582995951417004:	Wall at: 15035. Percentage of goals changed: 0,86
-
-0.874493927125506:	Wall at: 17570. Percentage of goals changed: 0,87
-
-0.8906882591093117:	Wall at: 8673. Percentage of goals changed: 0,89
-
-0.9068825910931173:	Wall at: 11425. Percentage of goals changed: 0,91
-
-0.9230769230769231:	Wall at: 9662. Percentage of goals changed: 0,92
-
-0.9392712550607288:	Wall at: 17222. Percentage of goals changed: 0,94
-
-0.9554655870445344:	Wall at: 16486. Percentage of goals changed: 0,96
-
-0.9716599190283401:	Wall at: 16339. Percentage of goals changed: 0,97
-
-0.9878542510121457:	Wall at: 13359. Percentage of goals changed: 0,99
-
-1.0040485829959513:	Wall at: 19170. Percentage of goals changed: 1,00
-
-1.0202429149797572:	Wall at: 9277. Percentage of goals changed: 1,02
-
-1.0364372469635628:	Wall at: 11478. Percentage of goals changed: 1,04
-
-1.0526315789473684:	Wall at: 14783. Percentage of goals changed: 1,05
-
-1.0850202429149798:	Wall at: 14762. Percentage of goals changed: 1,09
-
-1.1012145748987854:	Wall at: 14761. Percentage of goals changed: 1,10
-
-1.117408906882591:	Wall at: 14760. Percentage of goals changed: 1,12
-
-1.1336032388663968:	Wall at: 16192. Percentage of goals changed: 1,13
-
-1.1497975708502024:	Wall at: 12537. Percentage of goals changed: 1,15
-
-1.1659919028340082:	Wall at: 18891. Percentage of goals changed: 1,17
-
-1.1821862348178138:	Wall at: 9119. Percentage of goals changed: 1,18
-
-1.1983805668016194:	Wall at: 14554. Percentage of goals changed: 1,20
-
-1.214574898785425:	Wall at: 9424. Percentage of goals changed: 1,21
-
-1.2307692307692308:	Wall at: 19023. Percentage of goals changed: 1,23
-
-1.2793522267206476:	Wall at: 13212. Percentage of goals changed: 1,28
-
-1.2955465587044535:	Wall at: 18742. Percentage of goals changed: 1,30
-
-1.311740890688259:	Wall at: 16540. Percentage of goals changed: 1,31
-
-1.3279352226720647:	Wall at: 13880. Percentage of goals changed: 1,33
-
-1.360323886639676:	Wall at: 12684. Percentage of goals changed: 1,36
-
-1.376518218623482:	Wall at: 10691. Percentage of goals changed: 1,38
-
-1.3927125506072875:	Wall at: 9845. Percentage of goals changed: 1,39
-
-1.408906882591093:	Wall at: 18593. Percentage of goals changed: 1,41
-
-1.4251012145748987:	Wall at: 7881. Percentage of goals changed: 1,43
-
-1.4412955465587045:	Wall at: 9571. Percentage of goals changed: 1,44
-
-1.45748987854251:	Wall at: 18876. Percentage of goals changed: 1,46
-
-1.4736842105263157:	Wall at: 15152. Percentage of goals changed: 1,47
-
-1.4898785425101213:	Wall at: 13089. Percentage of goals changed: 1,49
-
-1.5060728744939271:	Wall at: 18444. Percentage of goals changed: 1,51
-
-1.5222672064777327:	Wall at: 15944. Percentage of goals changed: 1,52
-
-1.5384615384615385:	Wall at: 17997. Percentage of goals changed: 1,54
-
-1.5546558704453441:	Wall at: 17849. Percentage of goals changed: 1,55
-
-1.57085020242915:	Wall at: 18295. Percentage of goals changed: 1,57
-
-1.5870445344129556:	Wall at: 17553. Percentage of goals changed: 1,59
-
-1.6032388663967612:	Wall at: 18146. Percentage of goals changed: 1,60
-
-1.6194331983805668:	Wall at: 14260. Percentage of goals changed: 1,62
-
-1.6356275303643724:	Wall at: 10545. Percentage of goals changed: 1,64
-
-1.6518218623481782:	Wall at: 10546. Percentage of goals changed: 1,65
-
-1.6680161943319838:	Wall at: 10250. Percentage of goals changed: 1,67
-
-1.6842105263157894:	Wall at: 15794. Percentage of goals changed: 1,68
-
-1.7004048582995952:	Wall at: 10104. Percentage of goals changed: 1,70
-
-1.7165991902834008:	Wall at: 18729. Percentage of goals changed: 1,72
-
-1.7327935222672064:	Wall at: 12918. Percentage of goals changed: 1,73
-
-1.748987854251012:	Wall at: 14174. Percentage of goals changed: 1,75
-
-1.7651821862348176:	Wall at: 10978. Percentage of goals changed: 1,77
-
-1.7813765182186234:	Wall at: 6438. Percentage of goals changed: 1,78
-
-1.797570850202429:	Wall at: 14614. Percentage of goals changed: 1,80
-
-1.8137651821862346:	Wall at: 14613. Percentage of goals changed: 1,81
-
-1.8299595141700404:	Wall at: 16045. Percentage of goals changed: 1,83
-
-1.8461538461538463:	Wall at: 14612. Percentage of goals changed: 1,85
-
-1.8785425101214577:	Wall at: 12814. Percentage of goals changed: 1,88
-
-1.8947368421052633:	Wall at: 15645. Percentage of goals changed: 1,89
-
-1.9109311740890689:	Wall at: 8525. Percentage of goals changed: 1,91
-
-1.9433198380566803:	Wall at: 12771. Percentage of goals changed: 1,94
-
-1.959514170040486:	Wall at: 15604. Percentage of goals changed: 1,96
-
-1.9919028340080973:	Wall at: 18582. Percentage of goals changed: 1,99
-
-2.0080971659919027:	Wall at: 13966. Percentage of goals changed: 2,01
-
-2.0242914979757085:	Wall at: 14186. Percentage of goals changed: 2,02
-
-2.0404858299595143:	Wall at: 14185. Percentage of goals changed: 2,04
-
-2.0566801619433197:	Wall at: 14906. Percentage of goals changed: 2,06
-
-2.0728744939271255:	Wall at: 14183. Percentage of goals changed: 2,07
-
-2.0890688259109313:	Wall at: 13295. Percentage of goals changed: 2,09
-
-2.1052631578947367:	Wall at: 15457. Percentage of goals changed: 2,11
-
-2.1214574898785425:	Wall at: 13002. Percentage of goals changed: 2,12
-
-2.137651821862348:	Wall at: 15496. Percentage of goals changed: 2,14
-
-2.1538461538461537:	Wall at: 13296. Percentage of goals changed: 2,15
-
-2.1700404858299596:	Wall at: 13884. Percentage of goals changed: 2,17
-
-2.186234817813765:	Wall at: 13819. Percentage of goals changed: 2,19
-
-2.2024291497975708:	Wall at: 17682. Percentage of goals changed: 2,20
-
-2.2186234817813766:	Wall at: 13523. Percentage of goals changed: 2,22
-
-2.234817813765182:	Wall at: 15053. Percentage of goals changed: 2,23
-
-2.251012145748988:	Wall at: 12235. Percentage of goals changed: 2,25
-
-2.2834008097165994:	Wall at: 18435. Percentage of goals changed: 2,28
-
-2.299595141700405:	Wall at: 15310. Percentage of goals changed: 2,30
-
-2.3157894736842106:	Wall at: 12851. Percentage of goals changed: 2,32
-
-2.348178137651822:	Wall at: 15163. Percentage of goals changed: 2,35
-
-2.3805668016194335:	Wall at: 17386. Percentage of goals changed: 2,38
-
-2.396761133603239:	Wall at: 16503. Percentage of goals changed: 2,40
-
-2.4129554655870447:	Wall at: 15016. Percentage of goals changed: 2,41
-
-2.42914979757085:	Wall at: 13376. Percentage of goals changed: 2,43
-
-2.4615384615384617:	Wall at: 12477. Percentage of goals changed: 2,46
-
-2.493927125506073:	Wall at: 17420. Percentage of goals changed: 2,49
-
-2.5101214574898787:	Wall at: 16530. Percentage of goals changed: 2,51
-
-2.526315789473684:	Wall at: 16382. Percentage of goals changed: 2,53
-
-2.54251012145749:	Wall at: 16234. Percentage of goals changed: 2,54
-
-2.5587044534412953:	Wall at: 16086. Percentage of goals changed: 2,56
-
-2.574898785425101:	Wall at: 15938. Percentage of goals changed: 2,57
-
-2.591093117408907:	Wall at: 18288. Percentage of goals changed: 2,59
-
-2.6072874493927123:	Wall at: 19178. Percentage of goals changed: 2,61
-
-2.639676113360324:	Wall at: 12330. Percentage of goals changed: 2,64
-
-2.688259109311741:	Wall at: 13082. Percentage of goals changed: 2,69
-
-2.7044534412955468:	Wall at: 16061. Percentage of goals changed: 2,70
-
-2.720647773279352:	Wall at: 15620. Percentage of goals changed: 2,72
-
-2.736842105263158:	Wall at: 10747. Percentage of goals changed: 2,74
-
-2.753036437246964:	Wall at: 11191. Percentage of goals changed: 2,75
-
-2.769230769230769:	Wall at: 14878. Percentage of goals changed: 2,77
-
-2.785425101214575:	Wall at: 11204. Percentage of goals changed: 2,79
-
-2.801619433198381:	Wall at: 5826. Percentage of goals changed: 2,80
-
-2.817813765182186:	Wall at: 14729. Percentage of goals changed: 2,82
-
-2.834008097165992:	Wall at: 6122. Percentage of goals changed: 2,83
-
-2.8502024291497974:	Wall at: 11057. Percentage of goals changed: 2,85
-
-2.866396761133603:	Wall at: 6418. Percentage of goals changed: 2,87
-
-2.882591093117409:	Wall at: 6566. Percentage of goals changed: 2,88
-
-2.8987854251012144:	Wall at: 18141. Percentage of goals changed: 2,90
-
-2.91497975708502:	Wall at: 7747. Percentage of goals changed: 2,91
-
-2.931174089068826:	Wall at: 11339. Percentage of goals changed: 2,93
-
-2.9473684210526314:	Wall at: 10894. Percentage of goals changed: 2,95
-
-2.9635627530364372:	Wall at: 13264. Percentage of goals changed: 2,96
-
-2.9797570850202426:	Wall at: 7454. Percentage of goals changed: 2,98
-
-2.9959514170040484:	Wall at: 14759. Percentage of goals changed: 3,00
-
-3.0121457489878543:	Wall at: 15473. Percentage of goals changed: 3,01
-
-3.0283400809716596:	Wall at: 10534. Percentage of goals changed: 3,03
-
-3.0445344129554655:	Wall at: 8030. Percentage of goals changed: 3,04
-
-3.0607287449392713:	Wall at: 10531. Percentage of goals changed: 3,06
-
-3.076923076923077:	Wall at: 8032. Percentage of goals changed: 3,08
-
-3.093117408906883:	Wall at: 10539. Percentage of goals changed: 3,09
-
-3.1093117408906883:	Wall at: 11008. Percentage of goals changed: 3,11
-
-3.125506072874494:	Wall at: 8035. Percentage of goals changed: 3,13
-
-3.1417004048583:	Wall at: 8036. Percentage of goals changed: 3,14
-
-3.1578947368421053:	Wall at: 14869. Percentage of goals changed: 3,16
-
-3.174089068825911:	Wall at: 10544. Percentage of goals changed: 3,17
-
-3.1902834008097165:	Wall at: 8043. Percentage of goals changed: 3,19
-
-3.2064777327935223:	Wall at: 8044. Percentage of goals changed: 3,21
-
-3.222672064777328:	Wall at: 17994. Percentage of goals changed: 3,22
-
-3.2712550607287447:	Wall at: 10535. Percentage of goals changed: 3,27
-
-3.2874493927125505:	Wall at: 10547. Percentage of goals changed: 3,29
-
-3.3036437246963564:	Wall at: 10538. Percentage of goals changed: 3,30
-
-3.3522267206477734:	Wall at: 7026. Percentage of goals changed: 3,35
-
-3.4331983805668016:	Wall at: 12969. Percentage of goals changed: 3,43
-
-3.465587044534413:	Wall at: 15182. Percentage of goals changed: 3,47
-
-3.4817813765182186:	Wall at: 13998. Percentage of goals changed: 3,48
-
-3.497975708502024:	Wall at: 14146. Percentage of goals changed: 3,50
-
-3.51417004048583:	Wall at: 12941. Percentage of goals changed: 3,51
-
-3.530364372469635:	Wall at: 12942. Percentage of goals changed: 3,53
-
-3.546558704453441:	Wall at: 12943. Percentage of goals changed: 3,55
-
-3.562753036437247:	Wall at: 12944. Percentage of goals changed: 3,56
-
-3.578947368421052:	Wall at: 12945. Percentage of goals changed: 3,58
-
-3.643724696356275:	Wall at: 17847. Percentage of goals changed: 3,64
-
-3.7085020242914983:	Wall at: 7896. Percentage of goals changed: 3,71
-
-3.7894736842105265:	Wall at: 10400. Percentage of goals changed: 3,79
-
-3.8218623481781377:	Wall at: 7173. Percentage of goals changed: 3,82
-
-3.8542510121457494:	Wall at: 7890. Percentage of goals changed: 3,85
-
-3.902834008097166:	Wall at: 17700. Percentage of goals changed: 3,90
-
-3.919028340080972:	Wall at: 17552. Percentage of goals changed: 3,92
-
-4.080971659919029:	Wall at: 10253. Percentage of goals changed: 4,08
-
-4.161943319838056:	Wall at: 12978. Percentage of goals changed: 4,16
-
-4.178137651821863:	Wall at: 12971. Percentage of goals changed: 4,18
-
-4.2105263157894735:	Wall at: 7743. Percentage of goals changed: 4,21
-
-4.2591093117408905:	Wall at: 9699. Percentage of goals changed: 4,26
-
-4.291497975708502:	Wall at: 11498. Percentage of goals changed: 4,29
-
-4.388663967611336:	Wall at: 8046. Percentage of goals changed: 4,39
-
-4.4534412955465585:	Wall at: 10146. Percentage of goals changed: 4,45
-
-4.485829959514169:	Wall at: 10540. Percentage of goals changed: 4,49
-
-4.502024291497976:	Wall at: 10541. Percentage of goals changed: 4,50
-
-4.518218623481782:	Wall at: 10542. Percentage of goals changed: 4,52
-
-4.534412955465587:	Wall at: 7615. Percentage of goals changed: 4,53
-
-4.923076923076923:	Wall at: 10684. Percentage of goals changed: 4,92
-
-5.004048582995951:	Wall at: 15212. Percentage of goals changed: 5,00
-
-5.036437246963563:	Wall at: 15206. Percentage of goals changed: 5,04
-
-5.052631578947368:	Wall at: 15205. Percentage of goals changed: 5,05
-
-5.068825910931174:	Wall at: 15204. Percentage of goals changed: 5,07
-
-5.08502024291498:	Wall at: 15203. Percentage of goals changed: 5,09
-
-5.101214574898785:	Wall at: 15202. Percentage of goals changed: 5,10
-
-5.1174089068825905:	Wall at: 15201. Percentage of goals changed: 5,12
-
-5.392712550607288:	Wall at: 16524. Percentage of goals changed: 5,39
-
-5.489878542510121:	Wall at: 7020. Percentage of goals changed: 5,49
-
-5.522267206477733:	Wall at: 7909. Percentage of goals changed: 5,52
-
-5.538461538461538:	Wall at: 17405. Percentage of goals changed: 5,54
-
-5.554655870445345:	Wall at: 14580. Percentage of goals changed: 5,55
-
-5.57085020242915:	Wall at: 7167. Percentage of goals changed: 5,57
-
-5.619433198380567:	Wall at: 16671. Percentage of goals changed: 5,62
-
-5.862348178137652:	Wall at: 17258. Percentage of goals changed: 5,86
-
-5.8785425101214575:	Wall at: 14139. Percentage of goals changed: 5,88
-
-5.9271255060728745:	Wall at: 8056. Percentage of goals changed: 5,93
-
-5.94331983805668:	Wall at: 10106. Percentage of goals changed: 5,94
-
-5.9757085020242915:	Wall at: 7893. Percentage of goals changed: 5,98
-
-6.0728744939271255:	Wall at: 14779. Percentage of goals changed: 6,07
-
-6.1214574898785425:	Wall at: 8203. Percentage of goals changed: 6,12
-
-6.17004048582996:	Wall at: 13845. Percentage of goals changed: 6,17
-
-6.234817813765183:	Wall at: 17111. Percentage of goals changed: 6,23
-
-6.267206477732794:	Wall at: 8350. Percentage of goals changed: 6,27
-
-6.2834008097166:	Wall at: 9959. Percentage of goals changed: 6,28
-
-6.396761133603239:	Wall at: 12970. Percentage of goals changed: 6,40
-
-6.6396761133603235:	Wall at: 16964. Percentage of goals changed: 6,64
-
-6.7854251012145745:	Wall at: 15213. Percentage of goals changed: 6,79
-
-6.817813765182186:	Wall at: 10593. Percentage of goals changed: 6,82
-
-7.044534412955465:	Wall at: 9665. Percentage of goals changed: 7,04
-
-7.06072874493927:	Wall at: 16817. Percentage of goals changed: 7,06
-
-7.3036437246963555:	Wall at: 8045. Percentage of goals changed: 7,30
-
-7.400809716599191:	Wall at: 9518. Percentage of goals changed: 7,40
-
-7.433198380566802:	Wall at: 10742. Percentage of goals changed: 7,43
-
-7.481781376518219:	Wall at: 15200. Percentage of goals changed: 7,48
-
-7.514170040485831:	Wall at: 16670. Percentage of goals changed: 7,51
-
-7.530364372469636:	Wall at: 9371. Percentage of goals changed: 7,53
-
-7.676113360323887:	Wall at: 10891. Percentage of goals changed: 7,68
-
-7.854251012145749:	Wall at: 14766. Percentage of goals changed: 7,85
-
-7.951417004048583:	Wall at: 16523. Percentage of goals changed: 7,95
-
-7.967611336032389:	Wall at: 16376. Percentage of goals changed: 7,97
-
-8.03238866396761:	Wall at: 16229. Percentage of goals changed: 8,03
-
-8.129554655870445:	Wall at: 16082. Percentage of goals changed: 8,13
-
-8.259109311740891:	Wall at: 15935. Percentage of goals changed: 8,26
-
-8.34008097165992:	Wall at: 11188. Percentage of goals changed: 8,34
-
-8.421052631578947:	Wall at: 15788. Percentage of goals changed: 8,42
-
-8.615384615384615:	Wall at: 15641. Percentage of goals changed: 8,62
-
-8.663967611336032:	Wall at: 11337. Percentage of goals changed: 8,66
-
-8.809716599190283:	Wall at: 8194. Percentage of goals changed: 8,81
-
-9.020242914979757:	Wall at: 14751. Percentage of goals changed: 9,02
-
-9.117408906882591:	Wall at: 14006. Percentage of goals changed: 9,12
-
-10.331983805668015:	Wall at: 10861. Percentage of goals changed: 10,33
-
-10.348178137651821:	Wall at: 11009. Percentage of goals changed: 10,35
-
-10.914979757085021:	Wall at: 11157. Percentage of goals changed: 10,91
-
-11.222672064777328:	Wall at: 11306. Percentage of goals changed: 11,22
-
-11.352226720647774:	Wall at: 15494. Percentage of goals changed: 11,35
-
-11.595141700404858:	Wall at: 11455. Percentage of goals changed: 11,60
-
-11.740890688259109:	Wall at: 13110. Percentage of goals changed: 11,74
-
-12.03238866396761:	Wall at: 11604. Percentage of goals changed: 12,03
-
-12.178137651821862:	Wall at: 11782. Percentage of goals changed: 12,18
-
-12.194331983805668:	Wall at: 13114. Percentage of goals changed: 12,19
-
-13.684210526315791:	Wall at: 14304. Percentage of goals changed: 13,68
-
-13.700404858299594:	Wall at: 14155. Percentage of goals changed: 13,70
-
-14.283400809716598:	Wall at: 12522. Percentage of goals changed: 14,28
-
-14.348178137651821:	Wall at: 14305. Percentage of goals changed: 14,35
-
-14.364372469635628:	Wall at: 14454. Percentage of goals changed: 14,36
-
-14.380566801619432:	Wall at: 14603. Percentage of goals changed: 14,38
-
-14.412955465587043:	Wall at: 14901. Percentage of goals changed: 14,41
-
-14.429149797570851:	Wall at: 15050. Percentage of goals changed: 14,43
-
-15.465587044534413:	Wall at: 14752. Percentage of goals changed: 15,47
-
-15.627530364372468:	Wall at: 12966. Percentage of goals changed: 15,63
-
-15.96761133603239:	Wall at: 16539. Percentage of goals changed: 15,97
-
-17.036437246963562:	Wall at: 14763. Percentage of goals changed: 17,04
-
-17.279352226720647:	Wall at: 16391. Percentage of goals changed: 17,28
-
-17.360323886639677:	Wall at: 15199. Percentage of goals changed: 17,36
-
-19.1417004048583:	Wall at: 8343. Percentage of goals changed: 19,14
-
-20.987854251012145:	Wall at: 15207. Percentage of goals changed: 20,99
-
-21.052631578947366:	Wall at: 10421. Percentage of goals changed: 21,05
-
-21.068825910931174:	Wall at: 10569. Percentage of goals changed: 21,07
-
-21.101214574898787:	Wall at: 10865. Percentage of goals changed: 21,10
-
-21.11740890688259:	Wall at: 11013. Percentage of goals changed: 21,12
-
-21.133603238866396:	Wall at: 11161. Percentage of goals changed: 21,13
-
-21.1497975708502:	Wall at: 11309. Percentage of goals changed: 21,15
-
-21.16599190283401:	Wall at: 11457. Percentage of goals changed: 21,17
-
-21.182186234817813:	Wall at: 11605. Percentage of goals changed: 21,18
-
-21.45748987854251:	Wall at: 10717. Percentage of goals changed: 21,46
-
-28.55060728744939:	Wall at: 9681. Percentage of goals changed: 28,55
-
-28.566801619433196:	Wall at: 9829. Percentage of goals changed: 28,57
-
-28.582995951417008:	Wall at: 9977. Percentage of goals changed: 28,58
-
-28.59919028340081:	Wall at: 10125. Percentage of goals changed: 28,60
-
-28.615384615384613:	Wall at: 10273. Percentage of goals changed: 28,62
-
-29.00404858299595:	Wall at: 9387. Percentage of goals changed: 29,00
-
-29.020242914979754:	Wall at: 9533. Percentage of goals changed: 29,02
-
-29.392712550607285:	Wall at: 9554. Percentage of goals changed: 29,39
-
-29.40890688259109:	Wall at: 10133. Percentage of goals changed: 29,41
-
-29.4251012145749:	Wall at: 10011. Percentage of goals changed: 29,43
-
-29.441295546558706:	Wall at: 9998. Percentage of goals changed: 29,44
-
-29.45748987854251:	Wall at: 10010. Percentage of goals changed: 29,46
-
-29.47368421052631:	Wall at: 9863. Percentage of goals changed: 29,47
-
-29.506072874493928:	Wall at: 9855. Percentage of goals changed: 29,51
-
-29.522267206477732:	Wall at: 10003. Percentage of goals changed: 29,52
-
-29.53846153846154:	Wall at: 10004. Percentage of goals changed: 29,54
-
-29.554655870445345:	Wall at: 10005. Percentage of goals changed: 29,55
-
-29.57085020242915:	Wall at: 10006. Percentage of goals changed: 29,57
-
-29.700404858299596:	Wall at: 9561. Percentage of goals changed: 29,70
-
-29.7165991902834:	Wall at: 9857. Percentage of goals changed: 29,72
-
-29.82995951417004:	Wall at: 9708. Percentage of goals changed: 29,83
-
-29.910931174089068:	Wall at: 10002. Percentage of goals changed: 29,91
-
-29.9919028340081:	Wall at: 9854. Percentage of goals changed: 29,99
-
-30.574898785425102:	Wall at: 9707. Percentage of goals changed: 30,57
-
-30.60728744939271:	Wall at: 13113. Percentage of goals changed: 30,61
-
-31.465587044534416:	Wall at: 9555. Percentage of goals changed: 31,47
-
-31.497975708502025:	Wall at: 9702. Percentage of goals changed: 31,50
-
-31.51417004048583:	Wall at: 9850. Percentage of goals changed: 31,51
-
-31.546558704453442:	Wall at: 9999. Percentage of goals changed: 31,55
-
-31.562753036437247:	Wall at: 10001. Percentage of goals changed: 31,56
-
-31.854251012145752:	Wall at: 11904. Percentage of goals changed: 31,85
-
-31.870445344129557:	Wall at: 12052. Percentage of goals changed: 31,87
-
-32.03238866396761:	Wall at: 11755. Percentage of goals changed: 32,03
-
-33.441295546558706:	Wall at: 11753. Percentage of goals changed: 33,44
-
-33.70040485829959:	Wall at: 9848. Percentage of goals changed: 33,70
-
-33.76518218623482:	Wall at: 11902. Percentage of goals changed: 33,77
-
-34.05668016194332:	Wall at: 12051. Percentage of goals changed: 34,06
-
-34.558704453441294:	Wall at: 12200. Percentage of goals changed: 34,56
-
-34.5910931174089:	Wall at: 12349. Percentage of goals changed: 34,59
-
-34.63967611336032:	Wall at: 12498. Percentage of goals changed: 34,64
-
-34.70445344129555:	Wall at: 12647. Percentage of goals changed: 34,70
-
-34.78542510121457:	Wall at: 12796. Percentage of goals changed: 34,79
-
-34.80161943319838:	Wall at: 12797. Percentage of goals changed: 34,80
-
-36.016194331983804:	Wall at: 13260. Percentage of goals changed: 36,02
-
-38.089068825910935:	Wall at: 13251. Percentage of goals changed: 38,09
-
-38.10526315789474:	Wall at: 13256. Percentage of goals changed: 38,11
-
-38.412955465587046:	Wall at: 12946. Percentage of goals changed: 38,41
-
-38.526315789473685:	Wall at: 13095. Percentage of goals changed: 38,53
-
-39.497975708502025:	Wall at: 13258. Percentage of goals changed: 39,50
-
-40.097165991902834:	Wall at: 13244. Percentage of goals changed: 40,10
-
-44.2753036437247:	Wall at: 13257. Percentage of goals changed: 44,28
-
-45.1336032388664:	Wall at: 13261. Percentage of goals changed: 45,13
-
-71.48178137651821:	Wall at: 12963. Percentage of goals changed: 71,48
-
-78.8178137651822:	Wall at: 13262. Percentage of goals changed: 78,82
-
+Wall at: 13262. Percentage of goals changed: 78,82
+Wall at: 12963. Percentage of goals changed: 71,48
+Wall at: 13261. Percentage of goals changed: 45,13
+Wall at: 13257. Percentage of goals changed: 44,28
+Wall at: 13244. Percentage of goals changed: 40,10
+Wall at: 13258. Percentage of goals changed: 39,50
+Wall at: 13095. Percentage of goals changed: 38,53
+Wall at: 12946. Percentage of goals changed: 38,41
+Wall at: 13256. Percentage of goals changed: 38,11
+Wall at: 13251. Percentage of goals changed: 38,09
+Wall at: 13260. Percentage of goals changed: 36,02
+Wall at: 12797. Percentage of goals changed: 34,80
+Wall at: 12796. Percentage of goals changed: 34,79
+Wall at: 12647. Percentage of goals changed: 34,70
+Wall at: 12498. Percentage of goals changed: 34,64
+Wall at: 12349. Percentage of goals changed: 34,59
+Wall at: 12200. Percentage of goals changed: 34,56
+Wall at: 12051. Percentage of goals changed: 34,06
+Wall at: 11902. Percentage of goals changed: 33,77
+Wall at: 9848. Percentage of goals changed: 33,70
+Wall at: 11753. Percentage of goals changed: 33,44
+Wall at: 11755. Percentage of goals changed: 32,03
+Wall at: 12052. Percentage of goals changed: 31,87
+Wall at: 11904. Percentage of goals changed: 31,85
+Wall at: 10001. Percentage of goals changed: 31,56
+Wall at: 9999. Percentage of goals changed: 31,55
+Wall at: 9850. Percentage of goals changed: 31,51
+Wall at: 9702. Percentage of goals changed: 31,50
+Wall at: 9555. Percentage of goals changed: 31,47
+Wall at: 13113. Percentage of goals changed: 30,61
+Wall at: 9707. Percentage of goals changed: 30,57
+Wall at: 9854. Percentage of goals changed: 29,99
+Wall at: 10002. Percentage of goals changed: 29,91
+Wall at: 9708. Percentage of goals changed: 29,83
+Wall at: 9857. Percentage of goals changed: 29,72
+Wall at: 9561. Percentage of goals changed: 29,70
+Wall at: 10006. Percentage of goals changed: 29,57
+Wall at: 10005. Percentage of goals changed: 29,55
+Wall at: 10004. Percentage of goals changed: 29,54
+Wall at: 10003. Percentage of goals changed: 29,52
+Wall at: 9855. Percentage of goals changed: 29,51
+Wall at: 9863. Percentage of goals changed: 29,47
+Wall at: 10010. Percentage of goals changed: 29,46
+Wall at: 9998. Percentage of goals changed: 29,44
+Wall at: 10011. Percentage of goals changed: 29,43
+Wall at: 10133. Percentage of goals changed: 29,41
+Wall at: 9554. Percentage of goals changed: 29,39
+Wall at: 9533. Percentage of goals changed: 29,02
+Wall at: 9387. Percentage of goals changed: 29,00
+Wall at: 10273. Percentage of goals changed: 28,62
+Wall at: 10125. Percentage of goals changed: 28,60
+Wall at: 9977. Percentage of goals changed: 28,58
+Wall at: 9829. Percentage of goals changed: 28,57
+Wall at: 9681. Percentage of goals changed: 28,55
+Wall at: 10717. Percentage of goals changed: 21,46
+Wall at: 11605. Percentage of goals changed: 21,18
+Wall at: 11457. Percentage of goals changed: 21,17
+Wall at: 11309. Percentage of goals changed: 21,15
+Wall at: 11161. Percentage of goals changed: 21,13
+Wall at: 11013. Percentage of goals changed: 21,12
+Wall at: 10865. Percentage of goals changed: 21,10
+Wall at: 10569. Percentage of goals changed: 21,07
+Wall at: 10421. Percentage of goals changed: 21,05
+Wall at: 15207. Percentage of goals changed: 20,99
+Wall at: 8343. Percentage of goals changed: 19,14
+Wall at: 15199. Percentage of goals changed: 17,36
+Wall at: 16391. Percentage of goals changed: 17,28
+Wall at: 14763. Percentage of goals changed: 17,04
+Wall at: 16539. Percentage of goals changed: 15,97
+Wall at: 12966. Percentage of goals changed: 15,63
+Wall at: 14752. Percentage of goals changed: 15,47
+Wall at: 15050. Percentage of goals changed: 14,43
+Wall at: 14901. Percentage of goals changed: 14,41
+Wall at: 14603. Percentage of goals changed: 14,38
+Wall at: 14454. Percentage of goals changed: 14,36
+Wall at: 14305. Percentage of goals changed: 14,35
+Wall at: 12522. Percentage of goals changed: 14,28
+Wall at: 14155. Percentage of goals changed: 13,70
+Wall at: 14304. Percentage of goals changed: 13,68
+Wall at: 13114. Percentage of goals changed: 12,19
+Wall at: 11782. Percentage of goals changed: 12,18
+Wall at: 11604. Percentage of goals changed: 12,03
+Wall at: 13110. Percentage of goals changed: 11,74
+Wall at: 11455. Percentage of goals changed: 11,60
+Wall at: 15494. Percentage of goals changed: 11,35
+Wall at: 11306. Percentage of goals changed: 11,22
+Wall at: 11157. Percentage of goals changed: 10,91
+Wall at: 11009. Percentage of goals changed: 10,35
+Wall at: 10861. Percentage of goals changed: 10,33
+Wall at: 14006. Percentage of goals changed: 9,12
+Wall at: 14751. Percentage of goals changed: 9,02
+Wall at: 8194. Percentage of goals changed: 8,81
+Wall at: 11337. Percentage of goals changed: 8,66
+Wall at: 15641. Percentage of goals changed: 8,62
+Wall at: 15788. Percentage of goals changed: 8,42
+Wall at: 11188. Percentage of goals changed: 8,34
+Wall at: 15935. Percentage of goals changed: 8,26
+Wall at: 16082. Percentage of goals changed: 8,13
+Wall at: 16229. Percentage of goals changed: 8,03
+Wall at: 16376. Percentage of goals changed: 7,97
+Wall at: 16523. Percentage of goals changed: 7,95
+Wall at: 14766. Percentage of goals changed: 7,85
+Wall at: 10891. Percentage of goals changed: 7,68
+Wall at: 9371. Percentage of goals changed: 7,53
+Wall at: 16670. Percentage of goals changed: 7,51
+Wall at: 15200. Percentage of goals changed: 7,48
+Wall at: 10742. Percentage of goals changed: 7,43
+Wall at: 9518. Percentage of goals changed: 7,40
+Wall at: 8045. Percentage of goals changed: 7,30
+Wall at: 16817. Percentage of goals changed: 7,06
+Wall at: 9665. Percentage of goals changed: 7,04
+Wall at: 10593. Percentage of goals changed: 6,82
+Wall at: 15213. Percentage of goals changed: 6,79
+Wall at: 16964. Percentage of goals changed: 6,64
+Wall at: 12970. Percentage of goals changed: 6,40
+Wall at: 9959. Percentage of goals changed: 6,28
+Wall at: 8350. Percentage of goals changed: 6,27
+Wall at: 17111. Percentage of goals changed: 6,23
+Wall at: 13845. Percentage of goals changed: 6,17
+Wall at: 8203. Percentage of goals changed: 6,12
+Wall at: 14779. Percentage of goals changed: 6,07
+Wall at: 7893. Percentage of goals changed: 5,98
+Wall at: 10106. Percentage of goals changed: 5,94
+Wall at: 8056. Percentage of goals changed: 5,93
+Wall at: 14139. Percentage of goals changed: 5,88
+Wall at: 17258. Percentage of goals changed: 5,86
+Wall at: 16671. Percentage of goals changed: 5,62
+Wall at: 7167. Percentage of goals changed: 5,57
+Wall at: 14580. Percentage of goals changed: 5,55
+Wall at: 17405. Percentage of goals changed: 5,54
+Wall at: 7909. Percentage of goals changed: 5,52
+Wall at: 7020. Percentage of goals changed: 5,49
+Wall at: 16524. Percentage of goals changed: 5,39
+Wall at: 15201. Percentage of goals changed: 5,12
+Wall at: 15202. Percentage of goals changed: 5,10
+Wall at: 15203. Percentage of goals changed: 5,09
+Wall at: 15204. Percentage of goals changed: 5,07
+Wall at: 15205. Percentage of goals changed: 5,05
+Wall at: 15206. Percentage of goals changed: 5,04
+Wall at: 15212. Percentage of goals changed: 5,00
+Wall at: 10684. Percentage of goals changed: 4,92
+Wall at: 7615. Percentage of goals changed: 4,53
+Wall at: 10542. Percentage of goals changed: 4,52
+Wall at: 10541. Percentage of goals changed: 4,50
+Wall at: 10540. Percentage of goals changed: 4,49
+Wall at: 10146. Percentage of goals changed: 4,45
+Wall at: 8046. Percentage of goals changed: 4,39
+Wall at: 11498. Percentage of goals changed: 4,29
+Wall at: 9699. Percentage of goals changed: 4,26
+Wall at: 7743. Percentage of goals changed: 4,21
+Wall at: 12971. Percentage of goals changed: 4,18
+Wall at: 12978. Percentage of goals changed: 4,16
+Wall at: 10253. Percentage of goals changed: 4,08
+Wall at: 17552. Percentage of goals changed: 3,92
+Wall at: 17700. Percentage of goals changed: 3,90
+Wall at: 7890. Percentage of goals changed: 3,85
+Wall at: 7173. Percentage of goals changed: 3,82
+Wall at: 10400. Percentage of goals changed: 3,79
+Wall at: 7896. Percentage of goals changed: 3,71
+Wall at: 17847. Percentage of goals changed: 3,64
+Wall at: 12945. Percentage of goals changed: 3,58
+Wall at: 12944. Percentage of goals changed: 3,56
+Wall at: 12943. Percentage of goals changed: 3,55
+Wall at: 12942. Percentage of goals changed: 3,53
+Wall at: 12941. Percentage of goals changed: 3,51
+Wall at: 14146. Percentage of goals changed: 3,50
+Wall at: 13998. Percentage of goals changed: 3,48
+Wall at: 15182. Percentage of goals changed: 3,47
+Wall at: 12969. Percentage of goals changed: 3,43
+Wall at: 7026. Percentage of goals changed: 3,35
+Wall at: 10538. Percentage of goals changed: 3,30
+Wall at: 10547. Percentage of goals changed: 3,29
+Wall at: 10535. Percentage of goals changed: 3,27
+Wall at: 17994. Percentage of goals changed: 3,22
+Wall at: 8044. Percentage of goals changed: 3,21
+Wall at: 8043. Percentage of goals changed: 3,19
+Wall at: 10544. Percentage of goals changed: 3,17
+Wall at: 14869. Percentage of goals changed: 3,16
+Wall at: 8036. Percentage of goals changed: 3,14
+Wall at: 8035. Percentage of goals changed: 3,13
+Wall at: 11008. Percentage of goals changed: 3,11
+Wall at: 10539. Percentage of goals changed: 3,09
+Wall at: 8032. Percentage of goals changed: 3,08
+Wall at: 10531. Percentage of goals changed: 3,06
+Wall at: 8030. Percentage of goals changed: 3,04
+Wall at: 10534. Percentage of goals changed: 3,03
+Wall at: 15473. Percentage of goals changed: 3,01
+Wall at: 14759. Percentage of goals changed: 3,00
+Wall at: 7454. Percentage of goals changed: 2,98
+Wall at: 13264. Percentage of goals changed: 2,96
+Wall at: 10894. Percentage of goals changed: 2,95
+Wall at: 11339. Percentage of goals changed: 2,93
+Wall at: 7747. Percentage of goals changed: 2,91
+Wall at: 18141. Percentage of goals changed: 2,90
+Wall at: 6566. Percentage of goals changed: 2,88
+Wall at: 6418. Percentage of goals changed: 2,87
+Wall at: 11057. Percentage of goals changed: 2,85
+Wall at: 6122. Percentage of goals changed: 2,83
+Wall at: 14729. Percentage of goals changed: 2,82
+Wall at: 5826. Percentage of goals changed: 2,80
+Wall at: 11204. Percentage of goals changed: 2,79
+Wall at: 14878. Percentage of goals changed: 2,77
+Wall at: 11191. Percentage of goals changed: 2,75
+Wall at: 10747. Percentage of goals changed: 2,74
+Wall at: 15620. Percentage of goals changed: 2,72
+Wall at: 16061. Percentage of goals changed: 2,70
+Wall at: 13082. Percentage of goals changed: 2,69
+Wall at: 12330. Percentage of goals changed: 2,64
+Wall at: 19178. Percentage of goals changed: 2,61
+Wall at: 18288. Percentage of goals changed: 2,59
+Wall at: 15938. Percentage of goals changed: 2,57
+Wall at: 16086. Percentage of goals changed: 2,56
+Wall at: 16234. Percentage of goals changed: 2,54
+Wall at: 16382. Percentage of goals changed: 2,53
+Wall at: 16530. Percentage of goals changed: 2,51
+Wall at: 17420. Percentage of goals changed: 2,49
+Wall at: 12477. Percentage of goals changed: 2,46
+Wall at: 13376. Percentage of goals changed: 2,43
+Wall at: 15016. Percentage of goals changed: 2,41
+Wall at: 16503. Percentage of goals changed: 2,40
+Wall at: 17386. Percentage of goals changed: 2,38
+Wall at: 15163. Percentage of goals changed: 2,35
+Wall at: 12851. Percentage of goals changed: 2,32
+Wall at: 15310. Percentage of goals changed: 2,30
+Wall at: 18435. Percentage of goals changed: 2,28
+Wall at: 12235. Percentage of goals changed: 2,25
+Wall at: 15053. Percentage of goals changed: 2,23
+Wall at: 13523. Percentage of goals changed: 2,22
+Wall at: 17682. Percentage of goals changed: 2,20
+Wall at: 13819. Percentage of goals changed: 2,19
+Wall at: 13884. Percentage of goals changed: 2,17
+Wall at: 13296. Percentage of goals changed: 2,15
+Wall at: 15496. Percentage of goals changed: 2,14
+Wall at: 13002. Percentage of goals changed: 2,12
+Wall at: 15457. Percentage of goals changed: 2,11
+Wall at: 13295. Percentage of goals changed: 2,09
+Wall at: 14183. Percentage of goals changed: 2,07
+Wall at: 14906. Percentage of goals changed: 2,06
+Wall at: 14185. Percentage of goals changed: 2,04
+Wall at: 14186. Percentage of goals changed: 2,02
+Wall at: 13966. Percentage of goals changed: 2,01
+Wall at: 18582. Percentage of goals changed: 1,99
+Wall at: 15604. Percentage of goals changed: 1,96
+Wall at: 12771. Percentage of goals changed: 1,94
+Wall at: 8525. Percentage of goals changed: 1,91
+Wall at: 15645. Percentage of goals changed: 1,89
+Wall at: 12814. Percentage of goals changed: 1,88
+Wall at: 14612. Percentage of goals changed: 1,85
+Wall at: 16045. Percentage of goals changed: 1,83
+Wall at: 14613. Percentage of goals changed: 1,81
+Wall at: 14614. Percentage of goals changed: 1,80
+Wall at: 6438. Percentage of goals changed: 1,78
+Wall at: 10978. Percentage of goals changed: 1,77
+Wall at: 14174. Percentage of goals changed: 1,75
+Wall at: 12918. Percentage of goals changed: 1,73
+Wall at: 18729. Percentage of goals changed: 1,72
+Wall at: 10104. Percentage of goals changed: 1,70
+Wall at: 15794. Percentage of goals changed: 1,68
+Wall at: 10250. Percentage of goals changed: 1,67
+Wall at: 10546. Percentage of goals changed: 1,65
+Wall at: 10545. Percentage of goals changed: 1,64
+Wall at: 14260. Percentage of goals changed: 1,62
+Wall at: 18146. Percentage of goals changed: 1,60
+Wall at: 17553. Percentage of goals changed: 1,59
+Wall at: 18295. Percentage of goals changed: 1,57
+Wall at: 17849. Percentage of goals changed: 1,55
+Wall at: 17997. Percentage of goals changed: 1,54
+Wall at: 15944. Percentage of goals changed: 1,52
+Wall at: 18444. Percentage of goals changed: 1,51
+Wall at: 13089. Percentage of goals changed: 1,49
+Wall at: 15152. Percentage of goals changed: 1,47
+Wall at: 18876. Percentage of goals changed: 1,46
+Wall at: 9571. Percentage of goals changed: 1,44
+Wall at: 7881. Percentage of goals changed: 1,43
+Wall at: 18593. Percentage of goals changed: 1,41
+Wall at: 9845. Percentage of goals changed: 1,39
+Wall at: 10691. Percentage of goals changed: 1,38
+Wall at: 12684. Percentage of goals changed: 1,36
+Wall at: 13880. Percentage of goals changed: 1,33
+Wall at: 16540. Percentage of goals changed: 1,31
+Wall at: 18742. Percentage of goals changed: 1,30
+Wall at: 13212. Percentage of goals changed: 1,28
+Wall at: 19023. Percentage of goals changed: 1,23
+Wall at: 9424. Percentage of goals changed: 1,21
+Wall at: 14554. Percentage of goals changed: 1,20
+Wall at: 9119. Percentage of goals changed: 1,18
+Wall at: 18891. Percentage of goals changed: 1,17
+Wall at: 12537. Percentage of goals changed: 1,15
+Wall at: 16192. Percentage of goals changed: 1,13
+Wall at: 14760. Percentage of goals changed: 1,12
+Wall at: 14761. Percentage of goals changed: 1,10
+Wall at: 14762. Percentage of goals changed: 1,09
+Wall at: 14783. Percentage of goals changed: 1,05
+Wall at: 11478. Percentage of goals changed: 1,04
+Wall at: 9277. Percentage of goals changed: 1,02
+Wall at: 19170. Percentage of goals changed: 1,00
+Wall at: 13359. Percentage of goals changed: 0,99
+Wall at: 16339. Percentage of goals changed: 0,97
+Wall at: 16486. Percentage of goals changed: 0,96
+Wall at: 17222. Percentage of goals changed: 0,94
+Wall at: 9662. Percentage of goals changed: 0,92
+Wall at: 11425. Percentage of goals changed: 0,91
+Wall at: 8673. Percentage of goals changed: 0,89
+Wall at: 17570. Percentage of goals changed: 0,87
+Wall at: 15035. Percentage of goals changed: 0,86
+Wall at: 19040. Percentage of goals changed: 0,84
+Wall at: 15329. Percentage of goals changed: 0,83
+Wall at: 14848. Percentage of goals changed: 0,81
+Wall at: 7002. Percentage of goals changed: 0,79
+Wall at: 7152. Percentage of goals changed: 0,78
+Wall at: 19317. Percentage of goals changed: 0,76
+Wall at: 17719. Percentage of goals changed: 0,74
+Wall at: 17535. Percentage of goals changed: 0,73
+Wall at: 17829. Percentage of goals changed: 0,71
+Wall at: 13127. Percentage of goals changed: 0,70
+Wall at: 13745. Percentage of goals changed: 0,68
+Wall at: 15331. Percentage of goals changed: 0,66
+Wall at: 17558. Percentage of goals changed: 0,65
+Wall at: 14888. Percentage of goals changed: 0,63
+Wall at: 15476. Percentage of goals changed: 0,62
+Wall at: 11069. Percentage of goals changed: 0,60
+Wall at: 10594. Percentage of goals changed: 0,58
+Wall at: 15362. Percentage of goals changed: 0,57
+Wall at: 19189. Percentage of goals changed: 0,55
+Wall at: 19464. Percentage of goals changed: 0,53
+Wall at: 13894. Percentage of goals changed: 0,52
+Wall at: 10616. Percentage of goals changed: 0,50
+Wall at: 19326. Percentage of goals changed: 0,49
+Wall at: 15360. Percentage of goals changed: 0,47
+Wall at: 11573. Percentage of goals changed: 0,45
+Wall at: 15917. Percentage of goals changed: 0,44
+Wall at: 19184. Percentage of goals changed: 0,42
+Wall at: 16827. Percentage of goals changed: 0,40
+Wall at: 17241. Percentage of goals changed: 0,39
+Wall at: 17114. Percentage of goals changed: 0,37
+Wall at: 19031. Percentage of goals changed: 0,36
+Wall at: 19475. Percentage of goals changed: 0,34
+Wall at: 19611. Percentage of goals changed: 0,32
+Wall at: 19338. Percentage of goals changed: 0,31
+Wall at: 18587. Percentage of goals changed: 0,29
+Wall at: 19035. Percentage of goals changed: 0,28
+Wall at: 19331. Percentage of goals changed: 0,26
+Wall at: 18290. Percentage of goals changed: 0,24
+Wall at: 18438. Percentage of goals changed: 0,23
+Wall at: 19623. Percentage of goals changed: 0,21
+Wall at: 19771. Percentage of goals changed: 0,19
+Wall at: 18890. Percentage of goals changed: 0,18
+Wall at: 19039. Percentage of goals changed: 0,16
+Wall at: 19920. Percentage of goals changed: 0,15
+Wall at: 19335. Percentage of goals changed: 0,13
+Wall at: 19624. Percentage of goals changed: 0,11
+Wall at: 19772. Percentage of goals changed: 0,10
+Wall at: 19779. Percentage of goals changed: 0,08
+Wall at: 19927. Percentage of goals changed: 0,06
+Wall at: 20075. Percentage of goals changed: 0,05
+Wall at: 20223. Percentage of goals changed: 0,03
+Wall at: 20371. Percentage of goals changed: 0,02
+Wall at: 20519. Percentage of goals changed: 0,00
