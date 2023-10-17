@@ -1,4 +1,4 @@
-package util;
+package comparison;
 
 import search.SearchState;
 

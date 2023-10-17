@@ -8,7 +8,7 @@ import search.GenHillClimbing;
 import search.MapSearchProblem;
 import search.SearchProblem;
 import search.SearchState;
-import util.DBDiff;
+import comparison.DBDiff;
 
 import java.io.IOException;
 import java.util.ArrayList;

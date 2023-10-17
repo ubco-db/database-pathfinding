@@ -5,14 +5,25 @@ import database.SubgoalDynamicDB2;
 import dynamic.Walls;
 import map.GameMap;
 import search.*;
-import util.ChangedPath;
-import util.Entry;
+import comparison.ChangedPath;
+import comparison.Entry;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
+
+/**
+ * In this program, walls are added to each open spot on a map. The impact of those walls is calculated and output to
+ * percentageChangedByWall.txt. Additionally, the impact is visualized in impactfulWallsHeatMap.png. In this file, the
+ * open spots where adding a wall would make the biggest difference are coloured using a pink gradient (darker pink for
+ * higher impact). Impact is calculated as follows: number of open spots to which the path has changed through the
+ * addition of the wall divided by the total number of open spots.
+ * Furthermore, images of all added walls are stored in the changed_goals folder. The added walls are coloured blue, the
+ * (fixed) start of the path is coloured green, and goals to which the path has changed are coloured using a pink
+ * gradient (darker pink for higher impact). Impact is calculated using a Jaccard similarity coefficient.
+ */
 public class VisualizeDBChanges {
     final static String DB_PATH = "dynamic/databases/";
     final static String DBA_STAR_DB_PATH = DB_PATH + "adding_walls/";
@@ -105,8 +116,9 @@ public class VisualizeDBChanges {
             map.showChanges(IMAGE_FOLDER_PATH + wallId + "_AW012.map_DBA_ChangedGoals.png", changedPaths, new SearchState(startId), new SearchState(wallId), weirdGoals);
 
             // compute percentage changed as: (# goals changed by addition of specific wall) / (total # of open spaces on the wall)
+            // TODO: account for amount of change, not just number of changes?
             double percentageChanged = (((double) changedPaths.size()) / goalIds.size()) * 100;
-            entries.add(new Entry(percentageChanged, wallId));
+            entries.add(new Entry(percentageChanged, wallId, changedPaths));
         }
 
         // sort entries by percentageChanged in descending order
@@ -120,6 +132,9 @@ public class VisualizeDBChanges {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(DBA_STAR_DB_PATH + "percentageChangedByWall.txt"))) {
             for (Entry entry : entries) {
                 writer.write(entry.getOutput());
+                // need to output changedPaths grouped by pathDiff, considering 4 groups
+                // 0-25% change, 25-50% change, 50-75% change, 75-100% change
+                writer.write(System.lineSeparator());
 
                 wallImpactMap.put(new SearchState(entry.getWallId()), entry.getPercentageChanged());
                 percentSum += entry.getPercentageChanged();

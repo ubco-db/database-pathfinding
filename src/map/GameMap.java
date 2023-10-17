@@ -2,7 +2,7 @@ package map;
 
 import database.DBStatsRecord;
 import search.*;
-import util.ChangedPath;
+import comparison.ChangedPath;
 import util.CircularQueue;
 import util.ExpandArray;
 import util.HeuristicFunction;
