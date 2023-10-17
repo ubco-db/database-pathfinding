@@ -1,11 +1,7 @@
 package map;
 
 import database.DBStatsRecord;
-import search.RegionSearchProblem;
-import search.SavedSearch;
-import search.SearchAbstractAlgorithm;
-import search.SearchState;
-import search.StatsRecord;
+import search.*;
 import util.CircularQueue;
 import util.ExpandArray;
 import util.HeuristicFunction;
@@ -16,21 +12,11 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Map.Entry;
+import java.util.*;
 import java.util.Queue;
-import java.util.Random;
-import java.util.Scanner;
-import java.util.Set;
-import java.util.Stack;
+import java.util.Map.Entry;
 
 
 /**
@@ -1745,6 +1731,60 @@ public class GameMap {
                 currentMask.add(rec);
                 used.put(rec.toString(), null);
             }
+
+            // colour start in green
+            color = Color.GREEN;
+            ChangeRecord rec = new ChangeRecord(getRow(start.getId()), getCol(start.getId()), color, 1);
+            currentMask.add(rec);
+
+            addMask(currentMask);
+            this.currentMask = this.masks.size() - 1;
+        }
+        // Create an image to save
+        RenderedImage rendImage = createImage();
+
+        // Write generated image to a file
+        try {
+            // Save as PNG
+            File file = new File(fileName);
+            ImageIO.write(rendImage, "png", file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void showHeatMap(String fileName, HashMap<SearchState, Double> wallImpactMap, SearchState start) {
+        if (wallImpactMap != null && start != null) {    // Make a mask for the map for the path
+            Color color;
+            SparseMask currentMask = new SparseMask();
+            HashMap<String, String> used = new HashMap<>();
+
+            // colour changed goals in red
+            for (SearchState current : wallImpactMap.keySet()) {
+                int row = getRow(current.getId());
+                int col = getCol(current.getId());
+
+                ChangeRecord rec;
+                System.out.println(wallImpactMap.get(current));
+                color = new Color(255, 255 - (int) (255 * wallImpactMap.get(current) / 100), 255);
+                rec = new ChangeRecord(row, col, color, 1);
+                if (used.containsKey(rec.toString())) continue;
+                currentMask.add(rec);
+                used.put(rec.toString(), null);
+            }
+
+//            // colour weird goals in blue
+//            for (SearchState current : weirdGoals) {
+//                int row = getRow(current.getId());
+//                int col = getCol(current.getId());
+//
+//                ChangeRecord rec;
+//                color = Color.BLUE;
+//                rec = new ChangeRecord(row, col, color, 1);
+//                if (used.containsKey(rec.toString())) continue;
+//                currentMask.add(rec);
+//                used.put(rec.toString(), null);
+//            }
 
             // colour start in green
             color = Color.GREEN;

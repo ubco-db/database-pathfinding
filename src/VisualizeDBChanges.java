@@ -110,9 +110,13 @@ public class VisualizeDBChanges {
         int numEntries = 0;
         double percentSum = 0;
 
+        HashMap<SearchState, Double> wallImpactMap = new HashMap<>();
+
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(DBA_STAR_DB_PATH + "percentageChangedByWall.txt"))) {
-            for (Entry entry: entries) {
+            for (Entry entry : entries) {
                 writer.write(entry.getOutput());
+
+                wallImpactMap.put(new SearchState(entry.getWallId()), entry.getPercentageChanged());
                 percentSum += entry.getPercentageChanged();
                 numEntries++;
             }
@@ -122,6 +126,8 @@ public class VisualizeDBChanges {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        map.showHeatMap(DBA_STAR_DB_PATH + "impactfulWallsHeatMap.png", wallImpactMap, new SearchState(startId));
 
         /* end loop */
 
@@ -171,11 +177,11 @@ public class VisualizeDBChanges {
         rec.addStat(7, map.states);
         dbStats.addRecord(rec);
 
-        System.out.println("Exporting map with areas.");
-        map.outputImage(getImageName(wallStatus, false), null, null);
+        // System.out.println("Exporting map with areas.");
+        // map.outputImage(getImageName(wallStatus, false), null, null);
 
-        System.out.println("Exporting map with areas and centroids.");
-        map.computeCentroidMap().outputImage(getImageName(wallStatus, true), null, null);
+        // System.out.println("Exporting map with areas and centroids.");
+        // map.computeCentroidMap().outputImage(getImageName(wallStatus, true), null, null);
 
         SearchProblem tmpProb = new MapSearchProblem(map);
         GameDB gameDB = new GameDB(tmpProb);
@@ -192,7 +198,7 @@ public class VisualizeDBChanges {
 
         database.init();
 
-        database.exportDB(fileName);
+        // database.exportDB(fileName);
         map.computeComplexity(rec);
         dbStats.addRecord(rec);
         database.setProblem(problem);
