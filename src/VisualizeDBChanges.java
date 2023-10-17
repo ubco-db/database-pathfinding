@@ -5,6 +5,7 @@ import database.SubgoalDynamicDB2;
 import dynamic.Walls;
 import map.GameMap;
 import search.*;
+import util.Entry;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -65,7 +66,7 @@ public class VisualizeDBChanges {
 
         ArrayList<SearchState> weirdGoals = getWeirdGoals(); // currently fixed to start
 
-        Map<Double, String> percentageChangedByWall = new TreeMap<>();
+        ArrayList<Entry> entries = new ArrayList<>();
 
         for (int wallId : goalIds) {
             // setting up walls
@@ -98,15 +99,25 @@ public class VisualizeDBChanges {
             // output result as image: colour start green, colour every goal with a changed path red, rest of map white
             map.showChanges(IMAGE_FOLDER_PATH + wallId + "_AW012.map_DBA_ChangedGoals.png", goalsWithChangedPath, new SearchState(startId), weirdGoals);
 
+            // compute percentage changed as: (# goals changed by addition of specific wall) / (total # of open spaces on the wall)
             double percentageChanged = (((double) goalsWithChangedPath.size()) / goalIds.size()) * 100;
-            String value = String.format("Wall at: %d. Percentage of goals changed: %.2f%n", wallId, percentageChanged);
-            percentageChangedByWall.put(percentageChanged, value);
+            entries.add(new Entry(percentageChanged, wallId));
         }
 
+        // sort entries by percentageChanged in descending order
+        Collections.sort(entries);
+
+        int numEntries = 0;
+        double percentSum = 0;
+
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(DBA_STAR_DB_PATH + "percentageChangedByWall.txt"))) {
-            for (Map.Entry<Double, String> entry : percentageChangedByWall.entrySet()) {
-                writer.write(entry.getKey() + ":\t" + entry.getValue() + "\n");
+            for (Entry entry: entries) {
+                writer.write(entry.getOutput());
+                percentSum += entry.getPercentageChanged();
+                numEntries++;
             }
+            double averagePercentageChanged = Math.round(percentSum / numEntries * 100.0) / 100.0;
+            writer.write(String.format("Average percentage of goals changed by adding wall: " + averagePercentageChanged));
             System.out.println("Values written to the file 'percentageChangedByWall.txt' in order of keys.");
         } catch (IOException e) {
             e.printStackTrace();
