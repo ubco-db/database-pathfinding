@@ -2,6 +2,7 @@ package map;
 
 import database.DBStatsRecord;
 import search.*;
+import util.ChangedPath;
 import util.CircularQueue;
 import util.ExpandArray;
 import util.HeuristicFunction;
@@ -1700,19 +1701,19 @@ public class GameMap {
         }
     }
 
-    public void showChanges(String fileName, ArrayList<SearchState> changedGoals, SearchState start, ArrayList<SearchState> weirdGoals) {
-        if (changedGoals != null && start != null) {    // Make a mask for the map for the path
+    public void showChanges(String fileName, ArrayList<ChangedPath> changedPaths, SearchState start, SearchState wall, ArrayList<SearchState> weirdGoals) {
+        if (changedPaths != null && start != null) {    // Make a mask for the map for the path
             Color color;
             SparseMask currentMask = new SparseMask();
             HashMap<String, String> used = new HashMap<>();
 
             // colour changed goals in red
-            for (SearchState current : changedGoals) {
-                int row = getRow(current.getId());
-                int col = getCol(current.getId());
+            for (ChangedPath current : changedPaths) {
+                int row = getRow(current.getGoal().getId());
+                int col = getCol(current.getGoal().getId());
 
                 ChangeRecord rec;
-                color = Color.RED;
+                color = new Color(255, 255 - (int) (255 * current.getPercentageOfPathToGoalChanged() / 100), 255);
                 rec = new ChangeRecord(row, col, color, 1);
                 if (used.containsKey(rec.toString())) continue;
                 currentMask.add(rec);
@@ -1725,7 +1726,7 @@ public class GameMap {
                 int col = getCol(current.getId());
 
                 ChangeRecord rec;
-                color = Color.BLUE;
+                color = Color.GRAY;
                 rec = new ChangeRecord(row, col, color, 1);
                 if (used.containsKey(rec.toString())) continue;
                 currentMask.add(rec);
@@ -1735,6 +1736,11 @@ public class GameMap {
             // colour start in green
             color = Color.GREEN;
             ChangeRecord rec = new ChangeRecord(getRow(start.getId()), getCol(start.getId()), color, 1);
+            currentMask.add(rec);
+
+            // colour added wall in blue
+            color = Color.BLUE;
+            rec = new ChangeRecord(getRow(wall.getId()), getCol(wall.getId()), color, 1);
             currentMask.add(rec);
 
             addMask(currentMask);
@@ -1765,7 +1771,6 @@ public class GameMap {
                 int col = getCol(current.getId());
 
                 ChangeRecord rec;
-                System.out.println(wallImpactMap.get(current));
                 color = new Color(255, 255 - (int) (255 * wallImpactMap.get(current) / 100), 255);
                 rec = new ChangeRecord(row, col, color, 1);
                 if (used.containsKey(rec.toString())) continue;
@@ -1773,13 +1778,13 @@ public class GameMap {
                 used.put(rec.toString(), null);
             }
 
-//            // colour weird goals in blue
+//            // colour weird goals in gray
 //            for (SearchState current : weirdGoals) {
 //                int row = getRow(current.getId());
 //                int col = getCol(current.getId());
 //
 //                ChangeRecord rec;
-//                color = Color.BLUE;
+//                color = Color.GRAY;
 //                rec = new ChangeRecord(row, col, color, 1);
 //                if (used.containsKey(rec.toString())) continue;
 //                currentMask.add(rec);

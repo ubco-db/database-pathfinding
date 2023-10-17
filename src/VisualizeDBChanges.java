@@ -5,6 +5,7 @@ import database.SubgoalDynamicDB2;
 import dynamic.Walls;
 import map.GameMap;
 import search.*;
+import util.ChangedPath;
 import util.Entry;
 
 import java.io.BufferedWriter;
@@ -85,22 +86,26 @@ public class VisualizeDBChanges {
             // compare each path with stored path to same location, if identical, do nothing, if not, mark it
             ArrayList<SearchState> newPath;
             ArrayList<SearchState> oldPath;
+
             // should I add the wall segments to this list? They are changed bc unreachable now
-            ArrayList<SearchState> goalsWithChangedPath = new ArrayList<>();
+            ArrayList<ChangedPath> changedPaths = new ArrayList<>();
+
+            // Ok, for percentage changed per path, I need to add that to the goalsWithChangedPaths list, as a pathDiff
             for (int goalId : goalIds) {
                 if (goalId != wallId) {
                     newPath = getDBAStarPath(startId, goalId, dbaStar);
                     oldPath = paths.get(goalId);
                     // compare each path with stored path to the same location
-                    if (!isPathEqual(newPath, oldPath)) goalsWithChangedPath.add(new SearchState(goalId));
+                    if (!isPathEqual(newPath, oldPath))
+                        changedPaths.add(new ChangedPath(new SearchState(goalId), getPathDiff(newPath, oldPath)));
                 }
             }
 
             // output result as image: colour start green, colour every goal with a changed path red, rest of map white
-            map.showChanges(IMAGE_FOLDER_PATH + wallId + "_AW012.map_DBA_ChangedGoals.png", goalsWithChangedPath, new SearchState(startId), weirdGoals);
+            map.showChanges(IMAGE_FOLDER_PATH + wallId + "_AW012.map_DBA_ChangedGoals.png", changedPaths, new SearchState(startId), new SearchState(wallId), weirdGoals);
 
             // compute percentage changed as: (# goals changed by addition of specific wall) / (total # of open spaces on the wall)
-            double percentageChanged = (((double) goalsWithChangedPath.size()) / goalIds.size()) * 100;
+            double percentageChanged = (((double) changedPaths.size()) / goalIds.size()) * 100;
             entries.add(new Entry(percentageChanged, wallId));
         }
 
@@ -231,6 +236,31 @@ public class VisualizeDBChanges {
             if (!newPath.get(i).equals(oldPath.get(i))) return false;
         }
         return true;
+    }
+
+    private static double getPathDiff(ArrayList<SearchState> newPath, ArrayList<SearchState> oldPath) {
+        // Convert ArrayLists to sets
+        Set<Integer> set1 = new HashSet<>();
+        for (SearchState s : newPath) {
+            set1.add(s.getId());
+        }
+
+        Set<Integer> set2 = new HashSet<>();
+        for (SearchState s : oldPath) {
+            set2.add(s.getId());
+        }
+
+        // Calculate intersection and union
+        Set<Integer> intersection = new HashSet<>(set1);
+        intersection.retainAll(set2);
+        Set<Integer> union = new HashSet<>(set1);
+        union.addAll(set2);
+
+        // Calculate Jaccard similarity coefficient
+        double jaccardSimilarity = (double) intersection.size() / union.size();
+
+        // Return the percentage difference
+        return (1 - jaccardSimilarity) * 100;
     }
 
     private static String getImageName(String wallStatus, boolean hasCentroids) {
