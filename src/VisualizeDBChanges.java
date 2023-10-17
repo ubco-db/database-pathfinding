@@ -15,6 +15,8 @@ public class VisualizeDBChanges {
     final static String DB_PATH = "dynamic/databases/";
     final static String DBA_STAR_DB_PATH = DB_PATH + "adding_walls/";
     final static String MAP_FILE_PATH = "maps/dMap/";
+
+    final static String IMAGE_FOLDER_PATH = DBA_STAR_DB_PATH + "changed_goals/";
     final static String MAP_FILE_NAME = "012.map";
     final static String PATH_TO_MAP = MAP_FILE_PATH + MAP_FILE_NAME;
 
@@ -94,7 +96,7 @@ public class VisualizeDBChanges {
             }
 
             // output result as image: colour start green, colour every goal with a changed path red, rest of map white
-            map.showChanges(DBA_STAR_DB_PATH + wallId + "_AW012.map_DBA_ChangedGoals.png", goalsWithChangedPath, new SearchState(startId), weirdGoals);
+            map.showChanges(IMAGE_FOLDER_PATH + wallId + "_AW012.map_DBA_ChangedGoals.png", goalsWithChangedPath, new SearchState(startId), weirdGoals);
 
             double percentageChanged = (((double) goalsWithChangedPath.size()) / goalIds.size()) * 100;
             String value = String.format("Wall at: %d. Percentage of goals changed: %.2f%n", wallId, percentageChanged);
