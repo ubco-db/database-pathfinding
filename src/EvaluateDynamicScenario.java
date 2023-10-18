@@ -4,10 +4,7 @@ import database.GameDB;
 import database.SubgoalDynamicDB2;
 import dynamic.Walls;
 import map.GameMap;
-import search.GenHillClimbing;
-import search.MapSearchProblem;
-import search.SearchProblem;
-import search.SearchState;
+import search.*;
 import comparison.DBDiff;
 
 import java.io.IOException;
@@ -30,10 +27,7 @@ public class EvaluateDynamicScenario {
         ArrayList<SearchState> wallLocation = new ArrayList<>();
 
         // group of walls in where four regions meet
-        wallLocation.add(new SearchState(14304));
-        wallLocation.add(new SearchState(14303));
-        wallLocation.add(new SearchState(14155));
-        wallLocation.add(new SearchState(14156));
+        wallLocation.add(new SearchState(6157));
 
         // build DBAStar Database
         GameMap map = new GameMap(PATH_TO_MAP);
@@ -129,6 +123,10 @@ public class EvaluateDynamicScenario {
         database.verify(pathCompressAlgDba);
         System.out.println("Database verification complete.");
         System.out.println("Databases loaded.");
+
+        DBAStar dbaStar = new DBAStar(problem, map, database);
+        ArrayList<SearchState> path = dbaStar.computePath(new SearchState(13411), new SearchState(6009), new StatsRecord());
+        map.computeCentroidMap().outputImage(DBA_STAR_DB_PATH + wallStatus + MAP_FILE_NAME + "_path.png", path, null);
     }
 
     /* Helper methods */
