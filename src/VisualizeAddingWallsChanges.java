@@ -24,7 +24,7 @@ import java.util.*;
  * (fixed) start of the path is coloured green, and goals to which the path has changed are coloured using a pink
  * gradient (darker pink for higher impact). Impact is calculated using a Jaccard similarity coefficient.
  */
-public class VisualizeDBChanges {
+public class VisualizeAddingWallsChanges {
     final static String DB_PATH = "dynamic/databases/";
     final static String DBA_STAR_DB_PATH = DB_PATH + "adding_walls/";
     final static String MAP_FILE_PATH = "maps/dMap/";
@@ -69,8 +69,6 @@ public class VisualizeDBChanges {
         // compute paths to all goals, store in HashMap of arrays (goal state as key)
         HashMap<Integer, ArrayList<SearchState>> paths = new HashMap<>();
         for (int goalId : goalIds) {
-            // System.out.println("Goal Id:" + goalId); // 11922 throws an index out of bounds, 11922 is at index 3076
-            // it's because currentId == startGroupId for some reason
             paths.put(goalId, getDBAStarPath(startId, goalId, dbaStar));
         }
 
