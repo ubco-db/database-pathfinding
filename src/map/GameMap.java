@@ -1701,7 +1701,7 @@ public class GameMap {
         }
     }
 
-    public void showChanges(String fileName, ArrayList<ChangedPath> changedPaths, SearchState start, SearchState wall, ArrayList<SearchState> weirdGoals) {
+    public void showChanges(String fileName, ArrayList<ChangedPath> changedPaths, SearchState start, SearchState wall) {
         if (changedPaths != null && start != null) {    // Make a mask for the map for the path
             Color color;
             SparseMask currentMask = new SparseMask();
@@ -1714,19 +1714,6 @@ public class GameMap {
 
                 ChangeRecord rec;
                 color = new Color(255, 255 - (int) (255 * current.getPercentageOfPathToGoalChanged() / 100), 255);
-                rec = new ChangeRecord(row, col, color, 1);
-                if (used.containsKey(rec.toString())) continue;
-                currentMask.add(rec);
-                used.put(rec.toString(), null);
-            }
-
-            // colour weird goals in blue
-            for (SearchState current : weirdGoals) {
-                int row = getRow(current.getId());
-                int col = getCol(current.getId());
-
-                ChangeRecord rec;
-                color = Color.GRAY;
                 rec = new ChangeRecord(row, col, color, 1);
                 if (used.containsKey(rec.toString())) continue;
                 currentMask.add(rec);
@@ -1777,19 +1764,6 @@ public class GameMap {
                 currentMask.add(rec);
                 used.put(rec.toString(), null);
             }
-
-//            // colour weird goals in gray
-//            for (SearchState current : weirdGoals) {
-//                int row = getRow(current.getId());
-//                int col = getCol(current.getId());
-//
-//                ChangeRecord rec;
-//                color = Color.GRAY;
-//                rec = new ChangeRecord(row, col, color, 1);
-//                if (used.containsKey(rec.toString())) continue;
-//                currentMask.add(rec);
-//                used.put(rec.toString(), null);
-//            }
 
             // colour start in green
             color = Color.GREEN;
