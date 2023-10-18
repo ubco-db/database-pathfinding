@@ -126,13 +126,12 @@ public class EvaluateDynamicScenario {
 
         DBAStar dbaStar = new DBAStar(problem, map, database);
         int startId = 13411;
-        int goalId = 11935;
+        int goalId = 6009;
         ArrayList<SearchState> path = dbaStar.computePath(new SearchState(startId), new SearchState(goalId), new StatsRecord());
         if (path == null || path.isEmpty()) {
             System.out.printf("No path was found between %d and %d!%n", startId, goalId);
-        } else {
-            map.computeCentroidMap().outputImage(DBA_STAR_DB_PATH + wallStatus + MAP_FILE_NAME + "_path.png", path, null);
         }
+        map.computeCentroidMap().outputImage(DBA_STAR_DB_PATH + wallStatus + MAP_FILE_NAME + "_path.png", path, null);
     }
 
     /* Helper methods */
