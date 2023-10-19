@@ -10,7 +10,7 @@ import scenario.Scenario;
 import scenario.StatsCompare;
 import search.AStar;
 import search.AStarHeuristic;
-import search.GenHillClimbing;
+import search.HillClimbing;
 import search.DBAStar;
 import search.MapSearchProblem;
 import search.SearchAbstractAlgorithm;
@@ -301,7 +301,7 @@ public class EvaluateScenario {
                 // catch (Exception e) {}
 
                 SearchAbstractAlgorithm alg;
-                GenHillClimbing pathCompressAlg;
+                HillClimbing pathCompressAlg;
                 SubgoalSearch subgoalSearch;
 
                 long currentTime = System.currentTimeMillis();
@@ -339,8 +339,8 @@ public class EvaluateScenario {
                         }
                         break;
                     case 1: // HCDPS - Hill-climbing dynamic programming search with  no-precomputed database (just dynamic programming table and path fragments that are built up on the fly)
-                        alg = new GenHillClimbing(problem, cutoff);
-                        pathCompressAlg = new GenHillClimbing(problem, 10000);
+                        alg = new HillClimbing(problem, cutoff);
+                        pathCompressAlg = new HillClimbing(problem, 10000);
                         // Allow unlimited hill-climbing when compressing records in the database (between record subgoals)
 
                         if (mapSwitch) { // Load abstract map and database
@@ -423,8 +423,8 @@ public class EvaluateScenario {
                         break;
                     case 2: // Cover2 (based on HCDPS regioning)
 
-                        alg = new GenHillClimbing(problem, cutoff);
-                        pathCompressAlg = new GenHillClimbing(problem, 10000);
+                        alg = new HillClimbing(problem, cutoff);
+                        pathCompressAlg = new HillClimbing(problem, 10000);
                         if (mapSwitch) { // Load abstract map and database
                             String mapfname = coverDatabasePath + mapFileName + "_L" + numNeighborLevels + "_C" + cutoff + "_map.txt";
                             String dbfname = coverDatabasePath + mapFileName + "_L" + numNeighborLevels + "_C" + cutoff + "_R" + maxRecords + "_db.txt";
@@ -501,8 +501,8 @@ public class EvaluateScenario {
                         else stats.setSubgoals(subgoals[j].size());
                         break;
                     case 3: // DBA*
-                        alg = new GenHillClimbing(problem, cutoff);
-                        GenHillClimbing pathCompressAlgDba = new GenHillClimbing(problem, 10000);
+                        alg = new HillClimbing(problem, cutoff);
+                        HillClimbing pathCompressAlgDba = new HillClimbing(problem, 10000);
 
                         if (mapSwitch) { // Load abstract map and database
                             System.out.println("Loading database.");

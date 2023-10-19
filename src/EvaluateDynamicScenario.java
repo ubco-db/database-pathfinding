@@ -61,7 +61,7 @@ public class EvaluateDynamicScenario {
         long currentTime;
 
         SearchProblem problem = new MapSearchProblem(map);
-        GenHillClimbing pathCompressAlgDba = new GenHillClimbing(problem, 10000);
+        HillClimbing pathCompressAlgDba = new HillClimbing(problem, 10000);
 
         // Load abstract map and database
         System.out.println("Loading database.");

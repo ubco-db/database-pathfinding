@@ -30,7 +30,7 @@ public class DBAStar implements SearchAlgorithm {
         int currentIndex;
         int[] subgoalList;
         int cutoff = 10000;
-        GenHillClimbing subgoalSearchAlg = new GenHillClimbing(problem, cutoff);
+        HillClimbing subgoalSearchAlg = new HillClimbing(problem, cutoff);
         AStar astar = new AStar(problem);
         subgoals.clear();
 
@@ -161,7 +161,6 @@ public class DBAStar implements SearchAlgorithm {
                 } else currentGoal = goal; // Go towards global goal
             }
 
-
             endTime = System.nanoTime();
             stats.updateMaxTime(endTime - startTime);
 
@@ -183,7 +182,5 @@ public class DBAStar implements SearchAlgorithm {
 
     public ArrayList<SearchState> getSubgoals() {
         return subgoals;
-        // return null;
     }
-
 }

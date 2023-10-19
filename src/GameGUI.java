@@ -11,7 +11,7 @@ import map.GameMap;
 import map.SparseMask;
 import search.AStar;
 import search.AStarHeuristic;
-import search.GenHillClimbing;
+import search.HillClimbing;
 import search.MapSearchProblem;
 import search.SearchState;
 import search.SearchUtil;
@@ -273,7 +273,7 @@ public class GameGUI extends JFrame {
                 if (s.contains("RANDOM")) { // Random database
                     int size = Integer.parseInt(s.substring(9));
                     subgoalDB = new SubgoalDB();
-                    subgoalDB = database.computeRandomDB(size, new GenHillClimbing(problem, 25), dbstat, subgoalDB);
+                    subgoalDB = database.computeRandomDB(size, new HillClimbing(problem, 25), dbstat, subgoalDB);
                 }
 //			    else if(s.equals("ABSTRACT"))
 //			    {
@@ -281,7 +281,7 @@ public class GameGUI extends JFrame {
 //			    	subgoalDB = (SubgoalDB) database.computeAbstractDB(dbstat, (SubgoalDBDLRTA) subgoalDB);
 //			    }
                 else {    // HC Regions
-                    subgoalDB = database.computeDBDP2(subgoalDB, new GenHillClimbing(problem, 25), dbstat, 2);
+                    subgoalDB = database.computeDBDP2(subgoalDB, new HillClimbing(problem, 25), dbstat, 2);
                 }
                 JFileChooser jfile = new JFileChooser(currentPath);
                 jfile.setDialogTitle("Save subgoal database file");
@@ -391,7 +391,7 @@ public class GameGUI extends JFrame {
             // Computer greedy abstraction
             DBStatsRecord dbstat = new DBStatsRecord();
             MapSearchProblem problem = new MapSearchProblem(map);
-            GameMap greedyMap = map.reachableAbstract(new GenHillClimbing(problem, CUTOFF * 2), dbstat);
+            GameMap greedyMap = map.reachableAbstract(new HillClimbing(problem, CUTOFF * 2), dbstat);
             // GameMap greedyMap = map.reachableAbstract(new GenHillClimbing(map, cutoff*2), dbstat);
             st = "Greedy abstraction.  States: " + greedyMap.states;
             maps.add(greedyMap);
@@ -468,7 +468,7 @@ public class GameGUI extends JFrame {
                         if (searchMethod.equals("Query subgoals")) {    // Show closest 10 subgoals in database
                             records = subgoalDB.findNearest(problem, new SearchState(map.getId(map.startPoint.x, map.startPoint.y)), new SearchState(map.getId(map.goalPoint.x, map.goalPoint.y)), 10);
                         } else {    // Show up to 10 closes hill-climbable reachable subgoals in the database
-                            records = subgoalDB.findNearest(problem, new SearchState(map.getId(map.startPoint.x, map.startPoint.y)), new SearchState(map.getId(map.goalPoint.x, map.goalPoint.y)), new GenHillClimbing(problem, CUTOFF), 10, stats, null);
+                            records = subgoalDB.findNearest(problem, new SearchState(map.getId(map.startPoint.x, map.startPoint.y)), new SearchState(map.getId(map.goalPoint.x, map.goalPoint.y)), new HillClimbing(problem, CUTOFF), 10, stats, null);
                         }
                         // Create the masks to show these choices
                         // Just modify existing mask
@@ -523,7 +523,7 @@ public class GameGUI extends JFrame {
                                 break;
                             }
                             case "Hill-climbing":
-                                GenHillClimbing hc = new GenHillClimbing(problem, 10000);
+                                HillClimbing hc = new HillClimbing(problem, 10000);
                                 path = hc.computePath(new SearchState(map.getId(map.startPoint.x, map.startPoint.y)), new SearchState(map.getId(map.goalPoint.x, map.goalPoint.y)), stats);
                                 break;
                             default:

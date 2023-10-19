@@ -10,7 +10,7 @@ import java.util.ArrayList;
  * Include start and end in the path.
  * Cutoff is maximum # of moves that can make and be HC reachable
  */
-public class GenHillClimbing implements SearchAbstractAlgorithm {
+public class HillClimbing implements SearchAbstractAlgorithm {
     private final SearchProblem problem;
     private final int cutoff;
     private final ExpandArray path = new ExpandArray(100);
@@ -21,13 +21,13 @@ public class GenHillClimbing implements SearchAbstractAlgorithm {
 
     private final HeuristicFunction heuristic;
 
-    public GenHillClimbing(SearchProblem problem, int cutoff, boolean tieBreak, HeuristicFunction heuristic) {
+    public HillClimbing(SearchProblem problem, int cutoff, boolean tieBreak, HeuristicFunction heuristic) {
         this.problem = problem;
         this.cutoff = cutoff;
         this.heuristic = heuristic;
     }
 
-    public GenHillClimbing(SearchProblem problem, int cutoff, boolean tieBreak) {    // standard de facto standard heuristic
+    public HillClimbing(SearchProblem problem, int cutoff, boolean tieBreak) {    // standard de facto standard heuristic
         this(problem, cutoff, tieBreak, new HeuristicFunction() {
             public int apply(int startId, int goalId, int ncols) {
                 int startRow = startId / ncols;
@@ -49,7 +49,7 @@ public class GenHillClimbing implements SearchAbstractAlgorithm {
         });
     }
 
-    public GenHillClimbing(SearchProblem problem, int cutoff) {
+    public HillClimbing(SearchProblem problem, int cutoff) {
         this(problem, cutoff, false);
     }
 
