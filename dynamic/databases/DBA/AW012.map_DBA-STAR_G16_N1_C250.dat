@@ -781,7 +781,7 @@ numNeighbors:
 neighborIds: 
 64	66	68	53	38	39	56	41	
 lowestCosts: 
-232	154	230	158	190	140	150	270	
+232	154	224	158	190	140	150	270	
 neighbors: 
 64	66	68	53	38	39	56	41	
 paths: 
@@ -965,7 +965,7 @@ numNeighbors:
 neighborIds: 
 78	80	66	67	69	55	56	77	
 lowestCosts: 
-152	184	174	118	144	230	164	236	
+152	184	174	118	144	224	164	236	
 neighbors: 
 78	80	66	67	69	55	56	77	
 paths: 
