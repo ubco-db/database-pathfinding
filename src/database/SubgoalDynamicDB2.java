@@ -12,11 +12,7 @@ import search.StatsRecord;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Scanner;
+import java.util.*;
 
 
 /**
@@ -54,13 +50,21 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
         int[] path = new int[2000], tmp = new int[2000];
         int[] subgoals;
 
-        // FIXME: passing startId and goalId that are the same breaks this (happens if start and goal are in same region)
+        // Passing startId and goalId that are the same breaks this (happens if start and goal are in same region)
+        // If start and goal are in same region, running A* to find path instead of DBA*
         if (startGroupId == goalGroupId) {
-            // System.out.println(globalGoal.getId());
+            AStar aStar = new AStar(problem);
+            ArrayList<SearchState> aStarPath = aStar.computePath(start, goal, stats);
+            pathSize = aStarPath.size();
+            for (int i = 0; i < pathSize; i++) {
+                path[i] = aStarPath.get(i).getId();
+            }
         } else {
             // This code builds only the path required on demand (may incur more time as have to continually merge paths but may save time by avoiding storing/copying lists to do construction)
             pathSize = GameDB.mergePaths4(startGroupId, goalGroupId, paths, neighbor, lowestCost, neighborId, path);
         }
+
+        // System.out.println(Arrays.toString(path));
 
         if (pathSize == 0) return null;            // No path between two states
         int startId = path[0];

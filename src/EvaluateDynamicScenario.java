@@ -4,11 +4,8 @@ import database.GameDB;
 import database.SubgoalDynamicDB2;
 import dynamic.Walls;
 import map.GameMap;
-import search.GenHillClimbing;
-import search.MapSearchProblem;
-import search.SearchProblem;
-import search.SearchState;
-import util.DBDiff;
+import search.*;
+import comparison.DBDiff;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,11 +26,7 @@ public class EvaluateDynamicScenario {
     public static void main(String[] args) {
         ArrayList<SearchState> wallLocation = new ArrayList<>();
 
-        // group of walls in where four regions meet
-        wallLocation.add(new SearchState(14304));
-        wallLocation.add(new SearchState(14303));
-        wallLocation.add(new SearchState(14155));
-        wallLocation.add(new SearchState(14156));
+        wallLocation.add(new SearchState(12963));
 
         // build DBAStar Database
         GameMap map = new GameMap(PATH_TO_MAP);
@@ -129,6 +122,15 @@ public class EvaluateDynamicScenario {
         database.verify(pathCompressAlgDba);
         System.out.println("Database verification complete.");
         System.out.println("Databases loaded.");
+
+        DBAStar dbaStar = new DBAStar(problem, map, database);
+        int startId = 13411;
+        int goalId = 7451;
+        ArrayList<SearchState> path = dbaStar.computePath(new SearchState(startId), new SearchState(goalId), new StatsRecord());
+        if (path == null || path.isEmpty()) {
+            System.out.printf("No path was found between %d and %d!%n", startId, goalId);
+        }
+        map.computeCentroidMap().outputImage(DBA_STAR_DB_PATH + wallStatus + MAP_FILE_NAME + "_path.png", path, null);
     }
 
     /* Helper methods */

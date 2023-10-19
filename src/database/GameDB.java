@@ -953,6 +953,9 @@ public class GameDB {
             nextId = distance[i];
             nextLoc = findInArray(neighborId[lastId], nextId);
             // Copy (but do not include duplicate start node - start from 1 instead of 0).
+            if (nextLoc < 0) { // if nextLoc < 0, path cannot be found
+                return 0;
+            }
             if (paths[lastId][nextLoc].length >= 1)
                 System.arraycopy(paths[lastId][nextLoc], 1, path, pathLen - 1 + 1, paths[lastId][nextLoc].length - 1);
             pathLen += paths[lastId][nextLoc].length - 1;
