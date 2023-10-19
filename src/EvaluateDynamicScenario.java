@@ -26,7 +26,7 @@ public class EvaluateDynamicScenario {
     public static void main(String[] args) {
         ArrayList<SearchState> wallLocation = new ArrayList<>();
 
-        wallLocation.add(new SearchState(12963));
+        wallLocation.add(new SearchState(13410));
 
         // build DBAStar Database
         GameMap map = new GameMap(PATH_TO_MAP);
