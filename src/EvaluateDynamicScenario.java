@@ -26,8 +26,7 @@ public class EvaluateDynamicScenario {
     public static void main(String[] args) {
         ArrayList<SearchState> wallLocation = new ArrayList<>();
 
-        // group of walls in where four regions meet
-        wallLocation.add(new SearchState(6157));
+        wallLocation.add(new SearchState(12963));
 
         // build DBAStar Database
         GameMap map = new GameMap(PATH_TO_MAP);
@@ -126,7 +125,7 @@ public class EvaluateDynamicScenario {
 
         DBAStar dbaStar = new DBAStar(problem, map, database);
         int startId = 13411;
-        int goalId = 6009;
+        int goalId = 7451;
         ArrayList<SearchState> path = dbaStar.computePath(new SearchState(startId), new SearchState(goalId), new StatsRecord());
         if (path == null || path.isEmpty()) {
             System.out.printf("No path was found between %d and %d!%n", startId, goalId);
