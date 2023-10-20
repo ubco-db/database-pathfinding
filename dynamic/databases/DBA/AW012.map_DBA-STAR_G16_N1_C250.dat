@@ -1,4 +1,4 @@
-85
+86
 numGroup: 0
 numNeighbors: 
 3
@@ -58,11 +58,11 @@ numGroup: 4
 numNeighbors: 
 3
 neighborIds: 
-6	19	16	
+6	20	17	
 lowestCosts: 
 60	128	120	
 neighbors: 
-6	19	16	
+6	20	17	
 paths: 
 2		6543	6549
 2		6543	8030
@@ -84,37 +84,37 @@ numGroup: 6
 numNeighbors: 
 3
 neighborIds: 
-19	16	4	
+4	20	17	
 lowestCosts: 
-104	150	60	
+60	104	150	
 neighbors: 
-19	16	4	
+4	20	17	
 paths: 
+2		6549	6543
 2		6549	8030
 2		6549	8018
-2		6549	6543
 numGroup: 7
 numNeighbors: 
 3
 neighborIds: 
-19	8	21	
+22	20	8	
 lowestCosts: 
-108	118	118	
+122	108	118	
 neighbors: 
-19	8	21	
+22	20	8	
 paths: 
+2		7002	8195
 2		7002	8030
 2		7002	5826
-2		7002	8047
 numGroup: 8
 numNeighbors: 
 9
 neighborIds: 
-0	1	2	3	19	5	21	7	11	
+0	1	2	3	20	5	22	7	11	
 lowestCosts: 
-122	184	122	202	226	106	154	118	198	
+122	184	122	202	226	106	164	118	198	
 neighbors: 
-0	1	2	3	19	5	21	7	11	
+0	1	2	3	20	5	22	7	11	
 paths: 
 2		5826	4486
 3		5826	3754	3460
@@ -122,46 +122,46 @@ paths:
 2		5826	3917
 2		5826	8030
 2		5826	5225
-2		5826	8047
+2		5826	8195
 2		5826	7002
 2		5826	5695
 numGroup: 9
 numNeighbors: 
 1
 neighborIds: 
-21	
+22	
 lowestCosts: 
-90	
+100	
 neighbors: 
-21	
+22	
 paths: 
-2		7016	8047
+2		7016	8195
 numGroup: 10
 numNeighbors: 
 3
 neighborIds: 
-22	11	21	
+22	23	11	
 lowestCosts: 
-38	122	108	
+112	38	122	
 neighbors: 
-22	11	21	
+22	23	11	
 paths: 
+2		7019	8195
 2		7019	7465
 2		7019	5695
-2		7019	8047
 numGroup: 11
 numNeighbors: 
 7
 neighborIds: 
-2	3	21	22	8	10	13	
+2	3	22	23	8	10	13	
 lowestCosts: 
-108	128	230	144	198	122	112	
+108	128	234	144	198	122	112	
 neighbors: 
-2	3	21	22	8	10	13	
+2	3	22	23	8	10	13	
 paths: 
 2		5695	4651
 2		5695	3917
-2		5695	8047
+2		5695	8195
 2		5695	7465
 3		5695	5246	5826
 2		5695	7019
@@ -170,11 +170,11 @@ numGroup: 12
 numNeighbors: 
 3
 neighborIds: 
-14	23	24	
+14	24	25	
 lowestCosts: 
 78	138	24	
 neighbors: 
-14	23	24	
+14	24	25	
 paths: 
 2		6887	6598
 2		6887	8508
@@ -195,204 +195,214 @@ numGroup: 14
 numNeighbors: 
 5
 neighborIds: 
-23	24	25	27	12	
+24	25	26	12	28	
 lowestCosts: 
-192	76	94	202	78	
+192	76	94	78	202	
 neighbors: 
-23	24	25	27	12	
+24	25	26	12	28	
 paths: 
 2		6598	8508
 2		6598	7184
 2		6598	7931
-2		6598	8537
 2		6598	6887
+2		6598	8537
 numGroup: 15
 numNeighbors: 
-3
+0
 neighborIds: 
-30	28	17	
+
 lowestCosts: 
-122	20	10	
+
 neighbors: 
-30	28	17	
+
 paths: 
-2		9191	10531
-2		9191	9487
-2		9191	9192
 numGroup: 16
 numNeighbors: 
 3
 neighborIds: 
-6	19	4	
+18	31	29	
 lowestCosts: 
-150	128	120	
+10	122	20	
 neighbors: 
-6	19	4	
+18	31	29	
 paths: 
-2		8018	6549
-2		8018	8030
-2		8018	6543
+2		9191	9192
+2		9191	10531
+2		9191	9487
 numGroup: 17
 numNeighbors: 
 3
 neighborIds: 
-30	15	28	
+6	4	20	
 lowestCosts: 
-118	10	24	
+150	120	128	
 neighbors: 
-30	15	28	
+6	4	20	
 paths: 
-2		9192	10531
-2		9192	9191
-2		9192	9487
+2		8018	6549
+2		8018	6543
+2		8018	8030
 numGroup: 18
 numNeighbors: 
 3
 neighborIds: 
-30	31	19	
+31	16	29	
+lowestCosts: 
+118	10	24	
+neighbors: 
+31	16	29	
+paths: 
+2		9192	10531
+2		9192	9191
+2		9192	9487
+numGroup: 19
+numNeighbors: 
+3
+neighborIds: 
+31	32	20	
 lowestCosts: 
 172	104	108	
 neighbors: 
-30	31	19	
+31	32	20	
 paths: 
 3		9207	10537	10531
 2		9207	10103
 2		9207	8030
-numGroup: 19
+numGroup: 20
 numNeighbors: 
 9
 neighborIds: 
-30	31	16	18	4	21	6	7	8	
+31	32	17	19	4	6	22	7	8	
 lowestCosts: 
-280	144	128	108	128	186	104	108	226	
+280	144	128	108	128	104	190	108	226	
 neighbors: 
-30	31	16	18	4	21	6	7	8	
+31	32	17	19	4	6	22	7	8	
 paths: 
 3		8030	10537	10531
 2		8030	10103
 2		8030	8018
 2		8030	9207
 2		8030	6543
-2		8030	8047
 2		8030	6549
+2		8030	8195
 2		8030	7002
 2		8030	5826
-numGroup: 20
+numGroup: 21
 numNeighbors: 
 3
 neighborIds: 
-34	31	21	
+22	35	32	
 lowestCosts: 
-42	94	122	
+118	42	94	
 neighbors: 
-34	31	21	
+22	35	32	
 paths: 
+2		9222	8195
 2		9222	9669
 2		9222	10103
-2		9222	8047
-numGroup: 21
+numGroup: 22
 numNeighbors: 
 13
 neighborIds: 
-19	20	22	23	31	34	35	36	7	8	9	10	11	
+20	21	23	24	32	35	36	37	7	8	9	10	11	
 lowestCosts: 
-186	122	116	206	216	134	230	196	118	154	90	108	230	
+190	118	120	202	212	124	220	192	122	164	100	112	234	
 neighbors: 
-19	20	22	23	31	34	35	36	7	8	9	10	11	
+20	21	23	24	32	35	36	37	7	8	9	10	11	
 paths: 
-2		8047	8030
-2		8047	9222
-2		8047	7465
-2		8047	8508
-2		8047	10103
-2		8047	9669
-3		8047	9680	10861
-2		8047	10133
-2		8047	7002
-2		8047	5826
-2		8047	7016
-2		8047	7019
-3		8047	5990	5695
-numGroup: 22
+2		8195	8030
+2		8195	9222
+2		8195	7465
+2		8195	8508
+2		8195	10103
+2		8195	9669
+3		8195	9827	10861
+2		8195	10133
+2		8195	7002
+2		8195	5826
+2		8195	7016
+2		8195	7019
+2		8195	5695
+numGroup: 23
 numNeighbors: 
 3
 neighborIds: 
-10	11	21	
+22	10	11	
 lowestCosts: 
-38	144	116	
+120	38	144	
 neighbors: 
-10	11	21	
+22	10	11	
 paths: 
+2		7465	8195
 2		7465	7019
 2		7465	5695
-2		7465	8047
-numGroup: 23
+numGroup: 24
 numNeighbors: 
 8
 neighborIds: 
-14	35	36	21	38	24	25	12	
+14	36	37	22	39	25	26	12	
 lowestCosts: 
-192	220	122	206	212	122	190	138	
+192	220	122	202	212	122	190	138	
 neighbors: 
-14	35	36	21	38	24	25	12	
+14	36	37	22	39	25	26	12	
 paths: 
 2		8508	6598
 2		8508	10861
 2		8508	10133
-3		8508	8796	8047
+3		8508	8796	8195
 2		8508	10448
 2		8508	7184
 3		8508	8807	7931
 2		8508	6887
-numGroup: 24
+numGroup: 25
 numNeighbors: 
 3
 neighborIds: 
-14	23	12	
+14	24	12	
 lowestCosts: 
 76	122	24	
 neighbors: 
-14	23	12	
+14	24	12	
 paths: 
 2		7184	6598
 2		7184	8508
 2		7184	6887
-numGroup: 25
+numGroup: 26
 numNeighbors: 
 5
 neighborIds: 
-14	38	23	27	36	
+14	39	24	28	37	
 lowestCosts: 
 94	256	190	156	254	
 neighbors: 
-14	38	23	27	36	
+14	39	24	28	37	
 paths: 
 2		7931	6598
 6		7931	8080	8081	8230	10446	10448
 2		7931	8508
 2		7931	8537
 2		7931	10133
-numGroup: 26
+numGroup: 27
 numNeighbors: 
 2
 neighborIds: 
-38	27	
+39	28	
 lowestCosts: 
 116	102	
 neighbors: 
-38	27	
+39	28	
 paths: 
 2		8972	10448
 2		8972	8537
-numGroup: 27
+numGroup: 28
 numNeighbors: 
 6
 neighborIds: 
-14	40	25	41	26	43	
+14	41	26	42	27	44	
 lowestCosts: 
 202	96	156	156	102	220	
 neighbors: 
-14	40	25	41	26	43	
+14	41	26	42	27	44	
 paths: 
 2		8537	6598
 2		8537	9717
@@ -400,40 +410,41 @@ paths:
 2		8537	10613
 2		8537	8972
 2		8537	10920
-numGroup: 28
+numGroup: 29
 numNeighbors: 
 3
 neighborIds: 
-30	15	17	
+18	31	16	
 lowestCosts: 
-108	20	24	
+24	108	20	
 neighbors: 
-30	15	17	
+18	31	16	
 paths: 
+2		9487	9192
 2		9487	10531
 2		9487	9191
-2		9487	9192
-numGroup: 29
+numGroup: 30
 numNeighbors: 
 1
 neighborIds: 
-30	
+31	
 lowestCosts: 
 142	
 neighbors: 
-30	
+31	
 paths: 
 3		10520	10382	10531
-numGroup: 30
+numGroup: 31
 numNeighbors: 
 10
 neighborIds: 
-46	15	31	32	48	17	18	19	28	29	
+30	47	16	32	33	49	18	19	20	29	
 lowestCosts: 
-134	122	180	124	126	118	172	280	108	142	
+142	134	122	180	124	126	118	172	280	108	
 neighbors: 
-46	15	31	32	48	17	18	19	28	29	
+30	47	16	32	33	49	18	19	20	29	
 paths: 
+2		10531	10520
 2		10531	12161
 2		10531	9191
 2		10531	10103
@@ -443,118 +454,117 @@ paths:
 3		10531	10391	9207
 3		10531	9362	8030
 2		10531	9487
-2		10531	10520
-numGroup: 31
+numGroup: 32
 numNeighbors: 
 6
 neighborIds: 
-30	18	34	19	20	21	
+22	31	19	35	20	21	
 lowestCosts: 
-180	104	112	144	94	216	
+212	180	104	112	144	94	
 neighbors: 
-30	18	34	19	20	21	
+22	31	19	35	20	21	
 paths: 
+2		10103	8195
 2		10103	10531
 2		10103	9207
 2		10103	9669
 2		10103	8030
 2		10103	9222
-2		10103	8047
-numGroup: 32
-numNeighbors: 
-3
-neighborIds: 
-30	46	48	
-lowestCosts: 
-124	100	34	
-neighbors: 
-30	46	48	
-paths: 
-2		11429	10531
-2		11429	12161
-2		11429	11872
 numGroup: 33
 numNeighbors: 
 3
 neighborIds: 
-50	35	49	
+31	47	49	
 lowestCosts: 
-28	124	128	
+124	100	34	
 neighbors: 
-50	35	49	
+31	47	49	
 paths: 
-2		11739	12037
-2		11739	10861
-2		11739	13212
+2		11429	10531
+2		11429	12161
+2		11429	11872
 numGroup: 34
 numNeighbors: 
 3
 neighborIds: 
-31	20	21	
+50	51	36	
 lowestCosts: 
-112	42	134	
+128	28	124	
 neighbors: 
-31	20	21	
+50	51	36	
 paths: 
+2		11739	13212
+2		11739	12037
+2		11739	10861
+numGroup: 35
+numNeighbors: 
+3
+neighborIds: 
+22	32	21	
+lowestCosts: 
+124	112	42	
+neighbors: 
+22	32	21	
+paths: 
+2		9669	8195
 2		9669	10103
 2		9669	9222
-2		9669	8047
-numGroup: 35
+numGroup: 36
 numNeighbors: 
 8
 neighborIds: 
-33	49	50	51	36	21	53	23	
+34	50	51	52	37	22	54	24	
 lowestCosts: 
-124	234	112	164	140	230	226	220	
+124	234	112	164	140	220	226	220	
 neighbors: 
-33	49	50	51	36	21	53	23	
+34	50	51	52	37	22	54	24	
 paths: 
 2		10861	11739
 2		10861	13212
 2		10861	12037
 2		10861	12935
 2		10861	10133
-3		10861	9237	8047
+3		10861	9237	8195
 2		10861	13244
 2		10861	8508
-numGroup: 36
+numGroup: 37
 numNeighbors: 
 7
 neighborIds: 
-35	51	21	53	38	23	25	
+36	52	22	54	39	24	26	
 lowestCosts: 
-140	230	196	268	222	122	254	
+140	230	192	268	222	122	254	
 neighbors: 
-35	51	21	53	38	23	25	
+36	52	22	54	39	24	26	
 paths: 
 2		10133	10861
 2		10133	12935
-2		10133	8047
+2		10133	8195
 2		10133	13244
 2		10133	10448
 2		10133	8508
 2		10133	7931
-numGroup: 37
+numGroup: 38
 numNeighbors: 
 2
 neighborIds: 
-54	39	
+55	40	
 lowestCosts: 
 50	70	
 neighbors: 
-54	39	
+55	40	
 paths: 
 2		11175	11915
 2		11175	11182
-numGroup: 38
+numGroup: 39
 numNeighbors: 
 8
 neighborIds: 
-36	23	55	40	56	25	41	26	
+37	24	56	41	57	26	42	27	
 lowestCosts: 
 222	212	190	110	226	256	260	116	
 neighbors: 
-36	23	55	40	56	25	41	26	
+37	24	56	41	57	26	42	27	
 paths: 
 2		10448	10133
 2		10448	8508
@@ -564,145 +574,145 @@ paths:
 4		10448	10148	9408	7931
 4		10448	11342	11057	10613
 2		10448	8972
-numGroup: 39
-numNeighbors: 
-2
-neighborIds: 
-55	37	
-lowestCosts: 
-140	70	
-neighbors: 
-55	37	
-paths: 
-2		11182	12963
-2		11182	11175
 numGroup: 40
 numNeighbors: 
 2
 neighborIds: 
-38	27	
+38	56	
+lowestCosts: 
+70	140	
+neighbors: 
+38	56	
+paths: 
+2		11182	11175
+2		11182	12963
+numGroup: 41
+numNeighbors: 
+2
+neighborIds: 
+39	28	
 lowestCosts: 
 110	96	
 neighbors: 
-38	27	
+39	28	
 paths: 
 2		9717	10448
 2		9717	8537
-numGroup: 41
+numGroup: 42
 numNeighbors: 
 5
 neighborIds: 
-38	55	56	27	43	
+39	56	57	28	44	
 lowestCosts: 
 260	270	196	156	126	
 neighbors: 
-38	55	56	27	43	
+39	56	57	28	44	
 paths: 
 4		10613	11351	10744	10448
 3		10613	12968	12963
 2		10613	12978
 2		10613	8537
 2		10613	10920
-numGroup: 42
+numGroup: 43
 numNeighbors: 
 3
 neighborIds: 
-43	56	57	
+58	44	57	
 lowestCosts: 
-80	122	56	
+56	80	122	
 neighbors: 
-43	56	57	
+58	44	57	
 paths: 
+2		11654	12250
 2		11654	10920
 2		11654	12978
-2		11654	12250
-numGroup: 43
+numGroup: 44
 numNeighbors: 
 5
 neighborIds: 
-56	41	57	42	27	
+57	42	58	43	28	
 lowestCosts: 
 196	126	98	80	220	
 neighbors: 
-56	41	57	42	27	
+57	42	58	43	28	
 paths: 
 2		10920	12978
 2		10920	10613
 2		10920	12250
 2		10920	11654
 2		10920	8537
-numGroup: 44
-numNeighbors: 
-3
-neighborIds: 
-58	59	45	
-lowestCosts: 
-130	120	24	
-neighbors: 
-58	59	45	
-paths: 
-2		11819	13442
-2		11819	13304
-2		11819	11673
 numGroup: 45
 numNeighbors: 
 3
 neighborIds: 
-58	59	44	
+46	59	60	
 lowestCosts: 
-148	122	24	
+24	130	120	
 neighbors: 
-58	59	44	
+46	59	60	
 paths: 
-2		11673	13442
-2		11673	13304
-2		11673	11819
+2		11819	11673
+2		11819	13442
+2		11819	13304
 numGroup: 46
 numNeighbors: 
 3
 neighborIds: 
-30	32	48	
+59	60	45	
+lowestCosts: 
+148	122	24	
+neighbors: 
+59	60	45	
+paths: 
+2		11673	13442
+2		11673	13304
+2		11673	11819
+numGroup: 47
+numNeighbors: 
+3
+neighborIds: 
+31	33	49	
 lowestCosts: 
 134	100	78	
 neighbors: 
-30	32	48	
+31	33	49	
 paths: 
 2		12161	10531
 2		12161	11429
 2		12161	11872
-numGroup: 47
+numGroup: 48
 numNeighbors: 
 1
 neighborIds: 
-49	
+50	
 lowestCosts: 
 106	
 neighbors: 
-49	
+50	
 paths: 
 2		13795	13212
-numGroup: 48
+numGroup: 49
 numNeighbors: 
 3
 neighborIds: 
-46	30	32	
+47	31	33	
 lowestCosts: 
 78	126	34	
 neighbors: 
-46	30	32	
+47	31	33	
 paths: 
 2		11872	12161
 2		11872	10531
 2		11872	11429
-numGroup: 49
+numGroup: 50
 numNeighbors: 
 6
 neighborIds: 
-47	33	50	35	52	60	
+48	34	51	36	53	61	
 lowestCosts: 
 106	128	122	234	84	82	
 neighbors: 
-47	33	50	35	52	60	
+48	34	51	36	53	61	
 paths: 
 2		13212	13795
 2		13212	11739
@@ -710,53 +720,53 @@ paths:
 2		13212	10861
 2		13212	13368
 2		13212	14245
-numGroup: 50
+numGroup: 51
 numNeighbors: 
 3
 neighborIds: 
-35	49	33	
+50	34	36	
 lowestCosts: 
-112	122	28	
+122	28	112	
 neighbors: 
-35	49	33	
+50	34	36	
 paths: 
-2		12037	10861
 2		12037	13212
 2		12037	11739
-numGroup: 51
+2		12037	10861
+numGroup: 52
 numNeighbors: 
 4
 neighborIds: 
-62	35	36	53	
+54	63	36	37	
 lowestCosts: 
-158	164	230	138	
+138	158	164	230	
 neighbors: 
-62	35	36	53	
+54	63	36	37	
 paths: 
+2		12935	13244
 2		12935	14852
 2		12935	10861
 2		12935	10133
-2		12935	13244
-numGroup: 52
+numGroup: 53
 numNeighbors: 
 1
 neighborIds: 
-49	
+50	
 lowestCosts: 
 84	
 neighbors: 
-49	
+50	
 paths: 
 2		13368	13212
-numGroup: 53
+numGroup: 54
 numNeighbors: 
 6
 neighborIds: 
-55	64	66	51	35	36	
+56	65	67	52	36	37	
 lowestCosts: 
 158	122	192	138	226	268	
 neighbors: 
-55	64	66	51	35	36	
+56	65	67	52	36	37	
 paths: 
 2		13244	12963
 2		13244	14869
@@ -764,26 +774,26 @@ paths:
 2		13244	12935
 2		13244	10861
 3		13244	11316	10133
-numGroup: 54
+numGroup: 55
 numNeighbors: 
 1
 neighborIds: 
-37	
+38	
 lowestCosts: 
 50	
 neighbors: 
-37	
+38	
 paths: 
 2		11915	11175
-numGroup: 55
+numGroup: 56
 numNeighbors: 
 8
 neighborIds: 
-64	66	68	53	38	39	56	41	
+65	67	69	54	39	40	57	42	
 lowestCosts: 
 232	154	224	158	190	140	150	270	
 neighbors: 
-64	66	68	53	38	39	56	41	
+65	67	69	54	39	40	57	42	
 paths: 
 2		12963	14869
 2		12963	15182
@@ -793,15 +803,15 @@ paths:
 2		12963	11182
 2		12963	12978
 3		12963	10910	10613
-numGroup: 56
+numGroup: 57
 numNeighbors: 
 8
 neighborIds: 
-66	68	38	55	41	57	42	43	
+67	69	39	56	42	58	43	44	
 lowestCosts: 
 220	164	226	150	196	140	122	196	
 neighbors: 
-66	68	38	55	41	57	42	43	
+67	69	39	56	42	58	43	44	
 paths: 
 2		12978	15182
 2		12978	15347
@@ -811,132 +821,132 @@ paths:
 2		12978	12250
 2		12978	11654
 2		12978	10920
-numGroup: 57
+numGroup: 58
 numNeighbors: 
 3
 neighborIds: 
-42	43	56	
+43	44	57	
 lowestCosts: 
 56	98	140	
 neighbors: 
-42	43	56	
+43	44	57	
 paths: 
 2		12250	11654
 2		12250	10920
 2		12250	12978
-numGroup: 58
-numNeighbors: 
-4
-neighborIds: 
-59	44	69	45	
-lowestCosts: 
-104	130	164	148	
-neighbors: 
-59	44	69	45	
-paths: 
-2		13442	13304
-2		13442	11819
-2		13442	15213
-2		13442	11673
 numGroup: 59
 numNeighbors: 
 4
 neighborIds: 
-70	58	44	45	
+46	70	60	45	
 lowestCosts: 
-104	104	120	122	
+148	164	104	130	
 neighbors: 
-70	58	44	45	
+46	70	60	45	
 paths: 
+2		13442	11673
+2		13442	15213
+2		13442	13304
+2		13442	11819
+numGroup: 60
+numNeighbors: 
+4
+neighborIds: 
+46	71	59	45	
+lowestCosts: 
+122	104	104	120	
+neighbors: 
+46	71	59	45	
+paths: 
+2		13304	11673
 2		13304	14783
 2		13304	13442
 2		13304	11819
-2		13304	11673
-numGroup: 60
-numNeighbors: 
-1
-neighborIds: 
-49	
-lowestCosts: 
-82	
-neighbors: 
-49	
-paths: 
-2		14245	13212
 numGroup: 61
 numNeighbors: 
 1
 neighborIds: 
-62	
+50	
 lowestCosts: 
 82	
 neighbors: 
-62	
+50	
+paths: 
+2		14245	13212
+numGroup: 62
+numNeighbors: 
+1
+neighborIds: 
+63	
+lowestCosts: 
+82	
+neighbors: 
+63	
 paths: 
 2		15289	14852
-numGroup: 62
+numGroup: 63
 numNeighbors: 
 2
 neighborIds: 
-51	61	
+62	52	
 lowestCosts: 
-158	82	
+82	158	
 neighbors: 
-51	61	
+62	52	
 paths: 
-2		14852	12935
 2		14852	15289
-numGroup: 63
+2		14852	12935
+numGroup: 64
 numNeighbors: 
 3
 neighborIds: 
-71	64	73	
+74	72	65	
 lowestCosts: 
-72	132	66	
+66	72	132	
 neighbors: 
-71	64	73	
+74	72	65	
 paths: 
+2		16043	16640
 2		16043	16928
 2		16043	14869
-2		16043	16640
-numGroup: 64
+numGroup: 65
 numNeighbors: 
 6
 neighborIds: 
-63	55	71	73	66	53	
+54	64	56	72	74	67	
 lowestCosts: 
-132	232	192	140	210	122	
+122	132	232	192	140	210	
 neighbors: 
-63	55	71	73	66	53	
+54	64	56	72	74	67	
 paths: 
+2		14869	13244
 2		14869	16043
 2		14869	12963
 2		14869	16928
 2		14869	16640
 2		14869	15182
-2		14869	13244
-numGroup: 65
+numGroup: 66
 numNeighbors: 
 3
 neighborIds: 
-66	74	76	
+67	75	77	
 lowestCosts: 
 118	128	56	
 neighbors: 
-66	74	76	
+67	75	77	
 paths: 
 2		16209	15182
 2		16209	17682
 2		16209	16805
-numGroup: 66
+numGroup: 67
 numNeighbors: 
 8
 neighborIds: 
-64	65	68	53	55	56	74	76	
+65	66	69	54	56	57	75	77	
 lowestCosts: 
 210	118	174	192	154	220	234	130	
 neighbors: 
-64	65	68	53	55	56	74	76	
+65	66	69	54	56	57	75	77	
 paths: 
 2		15182	14869
 2		15182	16209
@@ -946,29 +956,30 @@ paths:
 2		15182	12978
 2		15182	17682
 2		15182	16805
-numGroup: 67
+numGroup: 68
 numNeighbors: 
 3
 neighborIds: 
-78	68	77	
+78	79	69	
 lowestCosts: 
-128	118	130	
+130	128	118	
 neighbors: 
-78	68	77	
+78	79	69	
 paths: 
+2		16374	17997
 2		16374	17420
 2		16374	15347
-2		16374	17997
-numGroup: 68
+numGroup: 69
 numNeighbors: 
 8
 neighborIds: 
-78	80	66	67	69	55	56	77	
+78	79	81	67	68	70	56	57	
 lowestCosts: 
-152	184	174	118	144	224	164	236	
+236	152	184	174	118	144	224	164	
 neighbors: 
-78	80	66	67	69	55	56	77	
+78	79	81	67	68	70	56	57	
 paths: 
+2		15347	17997
 3		15347	16974	17420
 2		15347	17283
 2		15347	15182
@@ -976,121 +987,120 @@ paths:
 2		15347	15213
 2		15347	12963
 2		15347	12978
-2		15347	17997
-numGroup: 69
+numGroup: 70
 numNeighbors: 
 5
 neighborIds: 
-78	70	80	58	68	
+79	71	81	59	69	
 lowestCosts: 
 248	236	148	164	144	
 neighbors: 
-78	70	80	58	68	
+79	71	81	59	69	
 paths: 
 4		15213	16237	17123	17420
 3		15213	14619	14783
 2		15213	17283
 2		15213	13442
 2		15213	15347
-numGroup: 70
+numGroup: 71
 numNeighbors: 
 2
 neighborIds: 
-59	69	
+70	60	
 lowestCosts: 
-104	236	
+236	104	
 neighbors: 
-59	69	
+70	60	
 paths: 
-2		14783	13304
 3		14783	14472	15213
-numGroup: 71
+2		14783	13304
+numGroup: 72
 numNeighbors: 
 3
 neighborIds: 
-63	64	73	
+74	64	65	
 lowestCosts: 
-72	192	88	
+88	72	192	
 neighbors: 
-63	64	73	
+74	64	65	
 paths: 
+2		16928	16640
 2		16928	16043
 2		16928	14869
-2		16928	16640
-numGroup: 72
+numGroup: 73
 numNeighbors: 
 1
 neighborIds: 
-74	
+75	
 lowestCosts: 
 96	
 neighbors: 
-74	
+75	
 paths: 
 2		18266	17682
-numGroup: 73
+numGroup: 74
 numNeighbors: 
 3
 neighborIds: 
-63	71	64	
+64	72	65	
 lowestCosts: 
 66	88	140	
 neighbors: 
-63	71	64	
+64	72	65	
 paths: 
 2		16640	16043
 2		16640	16928
 2		16640	14869
-numGroup: 74
+numGroup: 75
 numNeighbors: 
 5
 neighborIds: 
-72	65	81	66	76	
+73	66	82	67	77	
 lowestCosts: 
 96	128	102	234	142	
 neighbors: 
-72	65	81	66	76	
+73	66	82	67	77	
 paths: 
 2		17682	18266
 2		17682	16209
 2		17682	19011
 2		17682	15182
 2		17682	16805
-numGroup: 75
-numNeighbors: 
-3
-neighborIds: 
-82	83	77	
-lowestCosts: 
-72	118	130	
-neighbors: 
-82	83	77	
-paths: 
-2		18726	19611
-2		18726	19771
-2		18726	17997
 numGroup: 76
 numNeighbors: 
 3
 neighborIds: 
-66	74	65	
+78	83	84	
 lowestCosts: 
-130	142	56	
+130	72	118	
 neighbors: 
-66	74	65	
+78	83	84	
 paths: 
+2		18726	17997
+2		18726	19611
+2		18726	19771
+numGroup: 77
+numNeighbors: 
+3
+neighborIds: 
+66	67	75	
+lowestCosts: 
+56	130	142	
+neighbors: 
+66	67	75	
+paths: 
+2		16805	16209
 2		16805	15182
 2		16805	17682
-2		16805	16209
-numGroup: 77
+numGroup: 78
 numNeighbors: 
 8
 neighborIds: 
-78	79	82	67	83	68	84	75	
+79	80	83	68	84	69	85	76	
 lowestCosts: 
 174	102	184	130	136	236	136	130	
 neighbors: 
-78	79	82	67	83	68	84	75	
+79	80	83	68	84	69	85	76	
 paths: 
 2		17997	17420
 2		17997	18450
@@ -1100,96 +1110,96 @@ paths:
 2		17997	15347
 2		17997	19486
 2		17997	18726
-numGroup: 78
+numGroup: 79
 numNeighbors: 
 5
 neighborIds: 
-80	67	68	69	77	
+78	70	81	68	69	
 lowestCosts: 
-130	128	152	248	174	
+174	248	130	128	152	
 neighbors: 
-80	67	68	69	77	
+78	70	81	68	69	
 paths: 
+2		17420	17997
+3		17420	15208	15213
 2		17420	17283
 2		17420	16374
 2		17420	15347
-3		17420	15208	15213
-2		17420	17997
-numGroup: 79
-numNeighbors: 
-3
-neighborIds: 
-83	84	77	
-lowestCosts: 
-146	70	102	
-neighbors: 
-83	84	77	
-paths: 
-2		18450	19771
-2		18450	19486
-2		18450	17997
 numGroup: 80
 numNeighbors: 
 3
 neighborIds: 
-78	68	69	
+78	84	85	
 lowestCosts: 
-130	184	148	
+102	146	70	
 neighbors: 
-78	68	69	
+78	84	85	
 paths: 
-3		17283	17719	17420
-2		17283	15347
-2		17283	15213
+2		18450	17997
+2		18450	19771
+2		18450	19486
 numGroup: 81
-numNeighbors: 
-1
-neighborIds: 
-74	
-lowestCosts: 
-102	
-neighbors: 
-74	
-paths: 
-2		19011	17682
-numGroup: 82
 numNeighbors: 
 3
 neighborIds: 
-83	75	77	
+70	79	69	
 lowestCosts: 
-124	72	184	
+148	130	184	
 neighbors: 
-83	75	77	
+70	79	69	
 paths: 
+2		17283	15213
+3		17283	17719	17420
+2		17283	15347
+numGroup: 82
+numNeighbors: 
+1
+neighborIds: 
+75	
+lowestCosts: 
+102	
+neighbors: 
+75	
+paths: 
+2		19011	17682
+numGroup: 83
+numNeighbors: 
+3
+neighborIds: 
+78	84	76	
+lowestCosts: 
+184	124	72	
+neighbors: 
+78	84	76	
+paths: 
+2		19611	17997
 2		19611	19771
 2		19611	18726
-2		19611	17997
-numGroup: 83
+numGroup: 84
 numNeighbors: 
 5
 neighborIds: 
-79	82	75	84	77	
+78	80	83	76	85	
 lowestCosts: 
-146	124	118	118	136	
+136	146	124	118	118	
 neighbors: 
-79	82	75	84	77	
+78	80	83	76	85	
 paths: 
+2		19771	17997
 2		19771	18450
 2		19771	19611
 2		19771	18726
 2		19771	19486
-2		19771	17997
-numGroup: 84
+numGroup: 85
 numNeighbors: 
 3
 neighborIds: 
-79	83	77	
+78	80	84	
 lowestCosts: 
-70	118	136	
+136	70	118	
 neighbors: 
-79	83	77	
+78	80	84	
 paths: 
+2		19486	17997
 2		19486	18450
 2		19486	19771
-2		19486	17997
