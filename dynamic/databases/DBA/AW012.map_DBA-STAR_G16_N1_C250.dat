@@ -1,121 +1,67 @@
-86
-numGroup: 0
-numNeighbors: 
+85
 3
-neighborIds: 
 8	1	5	
-lowestCosts: 
 122	128	54	
-neighbors: 
 8	1	5	
-paths: 
 2		4486	5826
 2		4486	3460
 2		4486	5225
-numGroup: 1
-numNeighbors: 
 4
-neighborIds: 
 0	8	3	5	
-lowestCosts: 
 128	184	158	164	
-neighbors: 
 0	8	3	5	
-paths: 
 2		3460	4486
 2		3460	5826
 2		3460	3917
 2		3460	5225
-numGroup: 2
-numNeighbors: 
 3
-neighborIds: 
 3	11	8	
-lowestCosts: 
 80	108	122	
-neighbors: 
 3	11	8	
-paths: 
 2		4651	3917
 2		4651	5695
 2		4651	5826
-numGroup: 3
-numNeighbors: 
 5
-neighborIds: 
 8	1	2	11	13	
-lowestCosts: 
 202	158	80	128	156	
-neighbors: 
 8	1	2	11	13	
-paths: 
 2		3917	5826
 3		3917	3313	3460
 2		3917	4651
 2		3917	5695
 2		3917	5261
-numGroup: 4
-numNeighbors: 
 3
-neighborIds: 
-6	20	17	
-lowestCosts: 
+6	19	16	
 60	128	120	
-neighbors: 
-6	20	17	
-paths: 
+6	19	16	
 2		6543	6549
 2		6543	8030
 2		6543	8018
-numGroup: 5
-numNeighbors: 
 3
-neighborIds: 
 0	8	1	
-lowestCosts: 
 54	106	164	
-neighbors: 
 0	8	1	
-paths: 
 2		5225	4486
 2		5225	5826
 2		5225	3460
-numGroup: 6
-numNeighbors: 
 3
-neighborIds: 
-4	20	17	
-lowestCosts: 
-60	104	150	
-neighbors: 
-4	20	17	
-paths: 
-2		6549	6543
+19	16	4	
+104	150	60	
+19	16	4	
 2		6549	8030
 2		6549	8018
-numGroup: 7
-numNeighbors: 
+2		6549	6543
 3
-neighborIds: 
-22	20	8	
-lowestCosts: 
-122	108	118	
-neighbors: 
-22	20	8	
-paths: 
-2		7002	8195
+19	8	21	
+108	118	122	
+19	8	21	
 2		7002	8030
 2		7002	5826
-numGroup: 8
-numNeighbors: 
+2		7002	8195
 9
-neighborIds: 
-0	1	2	3	20	5	22	7	11	
-lowestCosts: 
+0	1	2	3	19	5	21	7	11	
 122	184	122	202	226	106	164	118	198	
-neighbors: 
-0	1	2	3	20	5	22	7	11	
-paths: 
+0	1	2	3	19	5	21	7	11	
 2		5826	4486
 3		5826	3754	3460
 2		5826	4651
@@ -125,40 +71,22 @@ paths:
 2		5826	8195
 2		5826	7002
 2		5826	5695
-numGroup: 9
-numNeighbors: 
 1
-neighborIds: 
-22	
-lowestCosts: 
+21	
 100	
-neighbors: 
-22	
-paths: 
+21	
 2		7016	8195
-numGroup: 10
-numNeighbors: 
 3
-neighborIds: 
-22	23	11	
-lowestCosts: 
-112	38	122	
-neighbors: 
-22	23	11	
-paths: 
-2		7019	8195
+22	11	21	
+38	122	112	
+22	11	21	
 2		7019	7465
 2		7019	5695
-numGroup: 11
-numNeighbors: 
+2		7019	8195
 7
-neighborIds: 
-2	3	22	23	8	10	13	
-lowestCosts: 
+2	3	21	22	8	10	13	
 108	128	234	144	198	122	112	
-neighbors: 
-2	3	22	23	8	10	13	
-paths: 
+2	3	21	22	8	10	13	
 2		5695	4651
 2		5695	3917
 2		5695	8195
@@ -166,150 +94,80 @@ paths:
 3		5695	5246	5826
 2		5695	7019
 2		5695	5261
-numGroup: 12
-numNeighbors: 
 3
-neighborIds: 
-14	24	25	
-lowestCosts: 
+14	23	24	
 78	138	24	
-neighbors: 
-14	24	25	
-paths: 
+14	23	24	
 2		6887	6598
 2		6887	8508
 2		6887	7184
-numGroup: 13
-numNeighbors: 
 2
-neighborIds: 
 3	11	
-lowestCosts: 
 156	112	
-neighbors: 
 3	11	
-paths: 
 2		5261	3917
 2		5261	5695
-numGroup: 14
-numNeighbors: 
 5
-neighborIds: 
-24	25	26	12	28	
-lowestCosts: 
-192	76	94	78	202	
-neighbors: 
-24	25	26	12	28	
-paths: 
+23	24	25	27	12	
+192	76	94	202	78	
+23	24	25	27	12	
 2		6598	8508
 2		6598	7184
 2		6598	7931
-2		6598	6887
 2		6598	8537
-numGroup: 15
-numNeighbors: 
-0
-neighborIds: 
-
-lowestCosts: 
-
-neighbors: 
-
-paths: 
-numGroup: 16
-numNeighbors: 
+2		6598	6887
 3
-neighborIds: 
-18	31	29	
-lowestCosts: 
-10	122	20	
-neighbors: 
-18	31	29	
-paths: 
-2		9191	9192
+30	28	17	
+122	20	10	
+30	28	17	
 2		9191	10531
 2		9191	9487
-numGroup: 17
-numNeighbors: 
+2		9191	9192
 3
-neighborIds: 
-6	4	20	
-lowestCosts: 
-150	120	128	
-neighbors: 
-6	4	20	
-paths: 
+6	19	4	
+150	128	120	
+6	19	4	
 2		8018	6549
-2		8018	6543
 2		8018	8030
-numGroup: 18
-numNeighbors: 
+2		8018	6543
 3
-neighborIds: 
-31	16	29	
-lowestCosts: 
+30	15	28	
 118	10	24	
-neighbors: 
-31	16	29	
-paths: 
+30	15	28	
 2		9192	10531
 2		9192	9191
 2		9192	9487
-numGroup: 19
-numNeighbors: 
 3
-neighborIds: 
-31	32	20	
-lowestCosts: 
+30	31	19	
 172	104	108	
-neighbors: 
-31	32	20	
-paths: 
+30	31	19	
 3		9207	10537	10531
 2		9207	10103
 2		9207	8030
-numGroup: 20
-numNeighbors: 
 9
-neighborIds: 
-31	32	17	19	4	6	22	7	8	
-lowestCosts: 
-280	144	128	108	128	104	190	108	226	
-neighbors: 
-31	32	17	19	4	6	22	7	8	
-paths: 
+30	31	16	18	4	21	6	7	8	
+280	144	128	108	128	190	104	108	226	
+30	31	16	18	4	21	6	7	8	
 3		8030	10537	10531
 2		8030	10103
 2		8030	8018
 2		8030	9207
 2		8030	6543
-2		8030	6549
 2		8030	8195
+2		8030	6549
 2		8030	7002
 2		8030	5826
-numGroup: 21
-numNeighbors: 
 3
-neighborIds: 
-22	35	32	
-lowestCosts: 
-118	42	94	
-neighbors: 
-22	35	32	
-paths: 
-2		9222	8195
+34	31	21	
+42	94	118	
+34	31	21	
 2		9222	9669
 2		9222	10103
-numGroup: 22
-numNeighbors: 
+2		9222	8195
 13
-neighborIds: 
-20	21	23	24	32	35	36	37	7	8	9	10	11	
-lowestCosts: 
+19	20	22	23	31	34	35	36	7	8	9	10	11	
 190	118	120	202	212	124	220	192	122	164	100	112	234	
-neighbors: 
-20	21	23	24	32	35	36	37	7	8	9	10	11	
-paths: 
+19	20	22	23	31	34	35	36	7	8	9	10	11	
 2		8195	8030
 2		8195	9222
 2		8195	7465
@@ -323,29 +181,17 @@ paths:
 2		8195	7016
 2		8195	7019
 2		8195	5695
-numGroup: 23
-numNeighbors: 
 3
-neighborIds: 
-22	10	11	
-lowestCosts: 
-120	38	144	
-neighbors: 
-22	10	11	
-paths: 
-2		7465	8195
+10	11	21	
+38	144	120	
+10	11	21	
 2		7465	7019
 2		7465	5695
-numGroup: 24
-numNeighbors: 
+2		7465	8195
 8
-neighborIds: 
-14	36	37	22	39	25	26	12	
-lowestCosts: 
+14	35	36	21	38	24	25	12	
 192	220	122	202	212	122	190	138	
-neighbors: 
-14	36	37	22	39	25	26	12	
-paths: 
+14	35	36	21	38	24	25	12	
 2		8508	6598
 2		8508	10861
 2		8508	10133
@@ -354,97 +200,54 @@ paths:
 2		8508	7184
 3		8508	8807	7931
 2		8508	6887
-numGroup: 25
-numNeighbors: 
 3
-neighborIds: 
-14	24	12	
-lowestCosts: 
+14	23	12	
 76	122	24	
-neighbors: 
-14	24	12	
-paths: 
+14	23	12	
 2		7184	6598
 2		7184	8508
 2		7184	6887
-numGroup: 26
-numNeighbors: 
 5
-neighborIds: 
-14	39	24	28	37	
-lowestCosts: 
+14	38	23	27	36	
 94	256	190	156	254	
-neighbors: 
-14	39	24	28	37	
-paths: 
+14	38	23	27	36	
 2		7931	6598
 6		7931	8080	8081	8230	10446	10448
 2		7931	8508
 2		7931	8537
 2		7931	10133
-numGroup: 27
-numNeighbors: 
 2
-neighborIds: 
-39	28	
-lowestCosts: 
+38	27	
 116	102	
-neighbors: 
-39	28	
-paths: 
+38	27	
 2		8972	10448
 2		8972	8537
-numGroup: 28
-numNeighbors: 
 6
-neighborIds: 
-14	41	26	42	27	44	
-lowestCosts: 
+14	40	25	41	26	43	
 202	96	156	156	102	220	
-neighbors: 
-14	41	26	42	27	44	
-paths: 
+14	40	25	41	26	43	
 2		8537	6598
 2		8537	9717
 2		8537	7931
 2		8537	10613
 2		8537	8972
 2		8537	10920
-numGroup: 29
-numNeighbors: 
 3
-neighborIds: 
-18	31	16	
-lowestCosts: 
-24	108	20	
-neighbors: 
-18	31	16	
-paths: 
-2		9487	9192
+30	15	17	
+108	20	24	
+30	15	17	
 2		9487	10531
 2		9487	9191
-numGroup: 30
-numNeighbors: 
+2		9487	9192
 1
-neighborIds: 
-31	
-lowestCosts: 
+30	
 142	
-neighbors: 
-31	
-paths: 
+30	
 3		10520	10382	10531
-numGroup: 31
-numNeighbors: 
 10
-neighborIds: 
-30	47	16	32	33	49	18	19	20	29	
-lowestCosts: 
-142	134	122	180	124	126	118	172	280	108	
-neighbors: 
-30	47	16	32	33	49	18	19	20	29	
-paths: 
-2		10531	10520
+46	15	31	32	48	17	18	19	28	29	
+134	122	180	124	126	118	172	280	108	142	
+46	15	31	32	48	17	18	19	28	29	
 2		10531	12161
 2		10531	9191
 2		10531	10103
@@ -454,71 +257,42 @@ paths:
 3		10531	10391	9207
 3		10531	9362	8030
 2		10531	9487
-numGroup: 32
-numNeighbors: 
+2		10531	10520
 6
-neighborIds: 
-22	31	19	35	20	21	
-lowestCosts: 
-212	180	104	112	144	94	
-neighbors: 
-22	31	19	35	20	21	
-paths: 
-2		10103	8195
+30	18	34	19	20	21	
+180	104	112	144	94	212	
+30	18	34	19	20	21	
 2		10103	10531
 2		10103	9207
 2		10103	9669
 2		10103	8030
 2		10103	9222
-numGroup: 33
-numNeighbors: 
+2		10103	8195
 3
-neighborIds: 
-31	47	49	
-lowestCosts: 
+30	46	48	
 124	100	34	
-neighbors: 
-31	47	49	
-paths: 
+30	46	48	
 2		11429	10531
 2		11429	12161
 2		11429	11872
-numGroup: 34
-numNeighbors: 
 3
-neighborIds: 
-50	51	36	
-lowestCosts: 
-128	28	124	
-neighbors: 
-50	51	36	
-paths: 
-2		11739	13212
+50	35	49	
+28	124	128	
+50	35	49	
 2		11739	12037
 2		11739	10861
-numGroup: 35
-numNeighbors: 
+2		11739	13212
 3
-neighborIds: 
-22	32	21	
-lowestCosts: 
-124	112	42	
-neighbors: 
-22	32	21	
-paths: 
-2		9669	8195
+31	20	21	
+112	42	124	
+31	20	21	
 2		9669	10103
 2		9669	9222
-numGroup: 36
-numNeighbors: 
+2		9669	8195
 8
-neighborIds: 
-34	50	51	52	37	22	54	24	
-lowestCosts: 
+33	49	50	51	36	21	53	23	
 124	234	112	164	140	220	226	220	
-neighbors: 
-34	50	51	52	37	22	54	24	
-paths: 
+33	49	50	51	36	21	53	23	
 2		10861	11739
 2		10861	13212
 2		10861	12037
@@ -527,16 +301,10 @@ paths:
 3		10861	9237	8195
 2		10861	13244
 2		10861	8508
-numGroup: 37
-numNeighbors: 
 7
-neighborIds: 
-36	52	22	54	39	24	26	
-lowestCosts: 
+35	51	21	53	38	23	25	
 140	230	192	268	222	122	254	
-neighbors: 
-36	52	22	54	39	24	26	
-paths: 
+35	51	21	53	38	23	25	
 2		10133	10861
 2		10133	12935
 2		10133	8195
@@ -544,28 +312,16 @@ paths:
 2		10133	10448
 2		10133	8508
 2		10133	7931
-numGroup: 38
-numNeighbors: 
 2
-neighborIds: 
-55	40	
-lowestCosts: 
+54	39	
 50	70	
-neighbors: 
-55	40	
-paths: 
+54	39	
 2		11175	11915
 2		11175	11182
-numGroup: 39
-numNeighbors: 
 8
-neighborIds: 
-37	24	56	41	57	26	42	27	
-lowestCosts: 
+36	23	55	40	56	25	41	26	
 222	212	190	110	226	256	260	116	
-neighbors: 
-37	24	56	41	57	26	42	27	
-paths: 
+36	23	55	40	56	25	41	26	
 2		10448	10133
 2		10448	8508
 2		10448	12963
@@ -574,227 +330,125 @@ paths:
 4		10448	10148	9408	7931
 4		10448	11342	11057	10613
 2		10448	8972
-numGroup: 40
-numNeighbors: 
 2
-neighborIds: 
-38	56	
-lowestCosts: 
-70	140	
-neighbors: 
-38	56	
-paths: 
-2		11182	11175
+55	37	
+140	70	
+55	37	
 2		11182	12963
-numGroup: 41
-numNeighbors: 
+2		11182	11175
 2
-neighborIds: 
-39	28	
-lowestCosts: 
+38	27	
 110	96	
-neighbors: 
-39	28	
-paths: 
+38	27	
 2		9717	10448
 2		9717	8537
-numGroup: 42
-numNeighbors: 
 5
-neighborIds: 
-39	56	57	28	44	
-lowestCosts: 
+38	55	56	27	43	
 260	270	196	156	126	
-neighbors: 
-39	56	57	28	44	
-paths: 
+38	55	56	27	43	
 4		10613	11351	10744	10448
 3		10613	12968	12963
 2		10613	12978
 2		10613	8537
 2		10613	10920
-numGroup: 43
-numNeighbors: 
 3
-neighborIds: 
-58	44	57	
-lowestCosts: 
-56	80	122	
-neighbors: 
-58	44	57	
-paths: 
-2		11654	12250
+43	56	57	
+80	122	56	
+43	56	57	
 2		11654	10920
 2		11654	12978
-numGroup: 44
-numNeighbors: 
+2		11654	12250
 5
-neighborIds: 
-57	42	58	43	28	
-lowestCosts: 
+56	41	57	42	27	
 196	126	98	80	220	
-neighbors: 
-57	42	58	43	28	
-paths: 
+56	41	57	42	27	
 2		10920	12978
 2		10920	10613
 2		10920	12250
 2		10920	11654
 2		10920	8537
-numGroup: 45
-numNeighbors: 
 3
-neighborIds: 
-46	59	60	
-lowestCosts: 
-24	130	120	
-neighbors: 
-46	59	60	
-paths: 
-2		11819	11673
+58	59	45	
+130	120	24	
+58	59	45	
 2		11819	13442
 2		11819	13304
-numGroup: 46
-numNeighbors: 
+2		11819	11673
 3
-neighborIds: 
-59	60	45	
-lowestCosts: 
+58	59	44	
 148	122	24	
-neighbors: 
-59	60	45	
-paths: 
+58	59	44	
 2		11673	13442
 2		11673	13304
 2		11673	11819
-numGroup: 47
-numNeighbors: 
 3
-neighborIds: 
-31	33	49	
-lowestCosts: 
+30	32	48	
 134	100	78	
-neighbors: 
-31	33	49	
-paths: 
+30	32	48	
 2		12161	10531
 2		12161	11429
 2		12161	11872
-numGroup: 48
-numNeighbors: 
 1
-neighborIds: 
-50	
-lowestCosts: 
+49	
 106	
-neighbors: 
-50	
-paths: 
+49	
 2		13795	13212
-numGroup: 49
-numNeighbors: 
 3
-neighborIds: 
-47	31	33	
-lowestCosts: 
+46	30	32	
 78	126	34	
-neighbors: 
-47	31	33	
-paths: 
+46	30	32	
 2		11872	12161
 2		11872	10531
 2		11872	11429
-numGroup: 50
-numNeighbors: 
 6
-neighborIds: 
-48	34	51	36	53	61	
-lowestCosts: 
+47	33	50	35	52	60	
 106	128	122	234	84	82	
-neighbors: 
-48	34	51	36	53	61	
-paths: 
+47	33	50	35	52	60	
 2		13212	13795
 2		13212	11739
 2		13212	12037
 2		13212	10861
 2		13212	13368
 2		13212	14245
-numGroup: 51
-numNeighbors: 
 3
-neighborIds: 
-50	34	36	
-lowestCosts: 
-122	28	112	
-neighbors: 
-50	34	36	
-paths: 
+35	49	33	
+112	122	28	
+35	49	33	
+2		12037	10861
 2		12037	13212
 2		12037	11739
-2		12037	10861
-numGroup: 52
-numNeighbors: 
 4
-neighborIds: 
-54	63	36	37	
-lowestCosts: 
-138	158	164	230	
-neighbors: 
-54	63	36	37	
-paths: 
-2		12935	13244
+62	35	36	53	
+158	164	230	138	
+62	35	36	53	
 2		12935	14852
 2		12935	10861
 2		12935	10133
-numGroup: 53
-numNeighbors: 
+2		12935	13244
 1
-neighborIds: 
-50	
-lowestCosts: 
+49	
 84	
-neighbors: 
-50	
-paths: 
+49	
 2		13368	13212
-numGroup: 54
-numNeighbors: 
 6
-neighborIds: 
-56	65	67	52	36	37	
-lowestCosts: 
+55	64	66	51	35	36	
 158	122	192	138	226	268	
-neighbors: 
-56	65	67	52	36	37	
-paths: 
+55	64	66	51	35	36	
 2		13244	12963
 2		13244	14869
 2		13244	15182
 2		13244	12935
 2		13244	10861
 3		13244	11316	10133
-numGroup: 55
-numNeighbors: 
 1
-neighborIds: 
-38	
-lowestCosts: 
+37	
 50	
-neighbors: 
-38	
-paths: 
+37	
 2		11915	11175
-numGroup: 56
-numNeighbors: 
 8
-neighborIds: 
-65	67	69	54	39	40	57	42	
-lowestCosts: 
+64	66	68	53	38	39	56	41	
 232	154	224	158	190	140	150	270	
-neighbors: 
-65	67	69	54	39	40	57	42	
-paths: 
+64	66	68	53	38	39	56	41	
 2		12963	14869
 2		12963	15182
 2		12963	15347
@@ -803,16 +457,10 @@ paths:
 2		12963	11182
 2		12963	12978
 3		12963	10910	10613
-numGroup: 57
-numNeighbors: 
 8
-neighborIds: 
-67	69	39	56	42	58	43	44	
-lowestCosts: 
+66	68	38	55	41	57	42	43	
 220	164	226	150	196	140	122	196	
-neighbors: 
-67	69	39	56	42	58	43	44	
-paths: 
+66	68	38	55	41	57	42	43	
 2		12978	15182
 2		12978	15347
 2		12978	10448
@@ -821,133 +469,73 @@ paths:
 2		12978	12250
 2		12978	11654
 2		12978	10920
-numGroup: 58
-numNeighbors: 
 3
-neighborIds: 
-43	44	57	
-lowestCosts: 
+42	43	56	
 56	98	140	
-neighbors: 
-43	44	57	
-paths: 
+42	43	56	
 2		12250	11654
 2		12250	10920
 2		12250	12978
-numGroup: 59
-numNeighbors: 
 4
-neighborIds: 
-46	70	60	45	
-lowestCosts: 
-148	164	104	130	
-neighbors: 
-46	70	60	45	
-paths: 
-2		13442	11673
-2		13442	15213
+59	44	69	45	
+104	130	178	148	
+59	44	69	45	
 2		13442	13304
 2		13442	11819
-numGroup: 60
-numNeighbors: 
+3		13442	15213	15362
+2		13442	11673
 4
-neighborIds: 
-46	71	59	45	
-lowestCosts: 
-122	104	104	120	
-neighbors: 
-46	71	59	45	
-paths: 
-2		13304	11673
+70	58	44	45	
+104	104	120	122	
+70	58	44	45	
 2		13304	14783
 2		13304	13442
 2		13304	11819
-numGroup: 61
-numNeighbors: 
+2		13304	11673
 1
-neighborIds: 
-50	
-lowestCosts: 
+49	
 82	
-neighbors: 
-50	
-paths: 
+49	
 2		14245	13212
-numGroup: 62
-numNeighbors: 
 1
-neighborIds: 
-63	
-lowestCosts: 
+62	
 82	
-neighbors: 
-63	
-paths: 
+62	
 2		15289	14852
-numGroup: 63
-numNeighbors: 
 2
-neighborIds: 
-62	52	
-lowestCosts: 
-82	158	
-neighbors: 
-62	52	
-paths: 
-2		14852	15289
+51	61	
+158	82	
+51	61	
 2		14852	12935
-numGroup: 64
-numNeighbors: 
+2		14852	15289
 3
-neighborIds: 
-74	72	65	
-lowestCosts: 
-66	72	132	
-neighbors: 
-74	72	65	
-paths: 
-2		16043	16640
+71	64	73	
+72	132	66	
+71	64	73	
 2		16043	16928
 2		16043	14869
-numGroup: 65
-numNeighbors: 
+2		16043	16640
 6
-neighborIds: 
-54	64	56	72	74	67	
-lowestCosts: 
-122	132	232	192	140	210	
-neighbors: 
-54	64	56	72	74	67	
-paths: 
-2		14869	13244
+63	55	71	73	66	53	
+132	232	192	140	210	122	
+63	55	71	73	66	53	
 2		14869	16043
 2		14869	12963
 2		14869	16928
 2		14869	16640
 2		14869	15182
-numGroup: 66
-numNeighbors: 
+2		14869	13244
 3
-neighborIds: 
-67	75	77	
-lowestCosts: 
+66	74	76	
 118	128	56	
-neighbors: 
-67	75	77	
-paths: 
+66	74	76	
 2		16209	15182
 2		16209	17682
 2		16209	16805
-numGroup: 67
-numNeighbors: 
 8
-neighborIds: 
-65	66	69	54	56	57	75	77	
-lowestCosts: 
+64	65	68	53	55	56	74	76	
 210	118	174	192	154	220	234	130	
-neighbors: 
-65	66	69	54	56	57	75	77	
-paths: 
+64	65	68	53	55	56	74	76	
 2		15182	14869
 2		15182	16209
 2		15182	15347
@@ -956,152 +544,86 @@ paths:
 2		15182	12978
 2		15182	17682
 2		15182	16805
-numGroup: 68
-numNeighbors: 
 3
-neighborIds: 
-78	79	69	
-lowestCosts: 
-130	128	118	
-neighbors: 
-78	79	69	
-paths: 
-2		16374	17997
+78	68	77	
+128	118	130	
+78	68	77	
 2		16374	17420
 2		16374	15347
-numGroup: 69
-numNeighbors: 
+2		16374	17997
 8
-neighborIds: 
-78	79	81	67	68	70	56	57	
-lowestCosts: 
-236	152	184	174	118	144	224	164	
-neighbors: 
-78	79	81	67	68	70	56	57	
-paths: 
-2		15347	17997
+78	80	66	67	69	55	56	77	
+152	184	174	118	150	224	164	236	
+78	80	66	67	69	55	56	77	
 3		15347	16974	17420
 2		15347	17283
 2		15347	15182
 2		15347	16374
-2		15347	15213
+2		15347	15362
 2		15347	12963
 2		15347	12978
-numGroup: 70
-numNeighbors: 
+2		15347	17997
 5
-neighborIds: 
-79	71	81	59	69	
-lowestCosts: 
-248	236	148	164	144	
-neighbors: 
-79	71	81	59	69	
-paths: 
-4		15213	16237	17123	17420
-3		15213	14619	14783
-2		15213	17283
-2		15213	13442
-2		15213	15347
-numGroup: 71
-numNeighbors: 
+78	70	80	58	68	
+242	250	142	178	150	
+78	70	80	58	68	
+3		15362	17570	17420
+3		15362	14325	14783
+2		15362	17283
+2		15362	13442
+2		15362	15347
 2
-neighborIds: 
-70	60	
-lowestCosts: 
-236	104	
-neighbors: 
-70	60	
-paths: 
-3		14783	14472	15213
+59	69	
+104	250	
+59	69	
 2		14783	13304
-numGroup: 72
-numNeighbors: 
+3		14783	14619	15362
 3
-neighborIds: 
-74	64	65	
-lowestCosts: 
-88	72	192	
-neighbors: 
-74	64	65	
-paths: 
-2		16928	16640
+63	64	73	
+72	192	88	
+63	64	73	
 2		16928	16043
 2		16928	14869
-numGroup: 73
-numNeighbors: 
+2		16928	16640
 1
-neighborIds: 
-75	
-lowestCosts: 
+74	
 96	
-neighbors: 
-75	
-paths: 
+74	
 2		18266	17682
-numGroup: 74
-numNeighbors: 
 3
-neighborIds: 
-64	72	65	
-lowestCosts: 
+63	71	64	
 66	88	140	
-neighbors: 
-64	72	65	
-paths: 
+63	71	64	
 2		16640	16043
 2		16640	16928
 2		16640	14869
-numGroup: 75
-numNeighbors: 
 5
-neighborIds: 
-73	66	82	67	77	
-lowestCosts: 
+72	65	81	66	76	
 96	128	102	234	142	
-neighbors: 
-73	66	82	67	77	
-paths: 
+72	65	81	66	76	
 2		17682	18266
 2		17682	16209
 2		17682	19011
 2		17682	15182
 2		17682	16805
-numGroup: 76
-numNeighbors: 
 3
-neighborIds: 
-78	83	84	
-lowestCosts: 
-130	72	118	
-neighbors: 
-78	83	84	
-paths: 
-2		18726	17997
+82	83	77	
+72	118	130	
+82	83	77	
 2		18726	19611
 2		18726	19771
-numGroup: 77
-numNeighbors: 
+2		18726	17997
 3
-neighborIds: 
-66	67	75	
-lowestCosts: 
-56	130	142	
-neighbors: 
-66	67	75	
-paths: 
-2		16805	16209
+66	74	65	
+130	142	56	
+66	74	65	
 2		16805	15182
 2		16805	17682
-numGroup: 78
-numNeighbors: 
+2		16805	16209
 8
-neighborIds: 
-79	80	83	68	84	69	85	76	
-lowestCosts: 
+78	79	82	67	83	68	84	75	
 174	102	184	130	136	236	136	130	
-neighbors: 
-79	80	83	68	84	69	85	76	
-paths: 
+78	79	82	67	83	68	84	75	
 2		17997	17420
 2		17997	18450
 2		17997	19611
@@ -1110,96 +632,54 @@ paths:
 2		17997	15347
 2		17997	19486
 2		17997	18726
-numGroup: 79
-numNeighbors: 
 5
-neighborIds: 
-78	70	81	68	69	
-lowestCosts: 
-174	248	130	128	152	
-neighbors: 
-78	70	81	68	69	
-paths: 
-2		17420	17997
-3		17420	15208	15213
+80	67	68	69	77	
+130	128	152	242	174	
+80	67	68	69	77	
 2		17420	17283
 2		17420	16374
 2		17420	15347
-numGroup: 80
-numNeighbors: 
+3		17420	16102	15362
+2		17420	17997
 3
-neighborIds: 
-78	84	85	
-lowestCosts: 
-102	146	70	
-neighbors: 
-78	84	85	
-paths: 
-2		18450	17997
+83	84	77	
+146	70	102	
+83	84	77	
 2		18450	19771
 2		18450	19486
-numGroup: 81
-numNeighbors: 
+2		18450	17997
 3
-neighborIds: 
-70	79	69	
-lowestCosts: 
-148	130	184	
-neighbors: 
-70	79	69	
-paths: 
-2		17283	15213
+78	68	69	
+130	184	142	
+78	68	69	
 3		17283	17719	17420
 2		17283	15347
-numGroup: 82
-numNeighbors: 
+2		17283	15362
 1
-neighborIds: 
-75	
-lowestCosts: 
+74	
 102	
-neighbors: 
-75	
-paths: 
+74	
 2		19011	17682
-numGroup: 83
-numNeighbors: 
 3
-neighborIds: 
-78	84	76	
-lowestCosts: 
-184	124	72	
-neighbors: 
-78	84	76	
-paths: 
-2		19611	17997
+83	75	77	
+124	72	184	
+83	75	77	
 2		19611	19771
 2		19611	18726
-numGroup: 84
-numNeighbors: 
+2		19611	17997
 5
-neighborIds: 
-78	80	83	76	85	
-lowestCosts: 
-136	146	124	118	118	
-neighbors: 
-78	80	83	76	85	
-paths: 
-2		19771	17997
+79	82	75	84	77	
+146	124	118	118	136	
+79	82	75	84	77	
 2		19771	18450
 2		19771	19611
 2		19771	18726
 2		19771	19486
-numGroup: 85
-numNeighbors: 
+2		19771	17997
 3
-neighborIds: 
-78	80	84	
-lowestCosts: 
-136	70	118	
-neighbors: 
-78	80	84	
-paths: 
-2		19486	17997
+79	83	77	
+70	118	136	
+79	83	77	
 2		19486	18450
 2		19486	19771
+2		19486	17997

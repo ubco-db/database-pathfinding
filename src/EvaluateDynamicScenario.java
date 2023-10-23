@@ -26,7 +26,7 @@ public class EvaluateDynamicScenario {
     public static void main(String[] args) {
         ArrayList<SearchState> wallLocation = new ArrayList<>();
 
-        wallLocation.add(new SearchState(6157));
+        wallLocation.add(new SearchState(14777));
 
         // build DBAStar Database
         GameMap map = new GameMap(PATH_TO_MAP);
@@ -127,7 +127,7 @@ public class EvaluateDynamicScenario {
         AStar aStar = new AStar(problem);
 
         int startId = 13411;
-        int goalId = 6009;
+        int goalId = 13901;
 
         StatsRecord dbaStats = new StatsRecord();
         ArrayList<SearchState> path = dbaStar.computePath(new SearchState(startId), new SearchState(goalId), dbaStats);
