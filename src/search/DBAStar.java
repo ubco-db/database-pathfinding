@@ -183,4 +183,8 @@ public class DBAStar implements SearchAlgorithm {
     public ArrayList<SearchState> getSubgoals() {
         return subgoals;
     }
+
+    public GameMap getDBAStarMap() {
+        return map;
+    }
 }

@@ -2,12 +2,7 @@ package database;
 
 import map.GameMap;
 import map.GroupRecord;
-import search.AStar;
-import search.SearchAlgorithm;
-import search.SearchProblem;
-import search.SearchState;
-import search.SearchUtil;
-import search.StatsRecord;
+import search.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;

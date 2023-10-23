@@ -66,6 +66,8 @@ public class VisualizeAddingWallsChanges {
         System.out.println();
         dbaStar = computeDBAStar(map, "BW");
 
+        ArrayList<Integer> regionRepsBW = dbaStar.getDBAStarMap().getRegionReps();
+
         // compute paths to all goals, store in HashMap of arrays (goal state as key)
         HashMap<Integer, ArrayList<SearchState>> paths = new HashMap<>();
         for (int goalId : goalIds) {
@@ -76,6 +78,7 @@ public class VisualizeAddingWallsChanges {
 
         ArrayList<Entry> entries = new ArrayList<>();
         ArrayList<String> nonExistentPaths = new ArrayList<>();
+        ArrayList<SearchState> wallsThatChangeRegioning = new ArrayList<>();
 
         for (int wallId : goalIds) {
             // setting up walls
@@ -87,6 +90,13 @@ public class VisualizeAddingWallsChanges {
             map = new GameMap(PATH_TO_MAP); // recomputing map
             System.out.println();
             dbaStar = computeDBAStar(map, "AW");
+
+            ArrayList<Integer> regionRepsAW = dbaStar.getDBAStarMap().getRegionReps();
+
+            // find differences in region rep lists
+            if (!isRegionRepListEqual(regionRepsAW, regionRepsBW)) {
+                wallsThatChangeRegioning.add(new SearchState(wallId));
+            }
 
             Walls.removeWall(PATH_TO_MAP, wallLocation, map);
 
@@ -119,6 +129,8 @@ public class VisualizeAddingWallsChanges {
             double percentageChanged = (((double) changedPaths.size()) / goalIds.size()) * 100;
             entries.add(new Entry(percentageChanged, wallId, changedPaths));
         }
+
+        /* end loop */
 
         // sort entries by percentageChanged in descending order
         Collections.sort(entries);
@@ -156,9 +168,9 @@ public class VisualizeAddingWallsChanges {
             e.printStackTrace();
         }
 
-        map.showHeatMap(DBA_STAR_DB_PATH + "impactfulWallsHeatMap.png", wallImpactMap, new SearchState(startId));
+        map.showWallsThatChangeRegioning(DBA_STAR_DB_PATH + "wallsThatChangeRegioning.png", wallsThatChangeRegioning, new SearchState(startId));
 
-        /* end loop */
+        map.showHeatMap(DBA_STAR_DB_PATH + "impactfulWallsHeatMap.png", wallImpactMap, new SearchState(startId));
 
         long timeTaken = System.currentTimeMillis() - startTime;
 
@@ -199,6 +211,7 @@ public class VisualizeAddingWallsChanges {
 
         currentTime = System.currentTimeMillis();
         map = map.sectorAbstract2(GRID_SIZE);
+
         long resultTime = System.currentTimeMillis() - currentTime;
         rec.addStat(12, resultTime);
         rec.addStat(10, resultTime);
@@ -250,9 +263,22 @@ public class VisualizeAddingWallsChanges {
 
     /* Helper methods */
 
+    // TODO: refactor so that isRegionRepListEqual is same method as isPathEqual
+    private static boolean isRegionRepListEqual(ArrayList<Integer> regionRepsAW, ArrayList<Integer> regionRepsBW) {
+        if (regionRepsBW.size() != regionRepsAW.size()) return false;
+
+        for (int i = 0; i < regionRepsBW.size(); i++) {
+            if (!regionRepsBW.get(i).equals(regionRepsAW.get(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private static boolean isPathEqual(ArrayList<SearchState> newPath, ArrayList<SearchState> oldPath) {
         // if path length differs, they are not equal
-        if (newPath == null) return false; // QUESTION: can oldPath ever be null? No, because safe explorability is assumed
+        if (newPath == null)
+            return false; // QUESTION: can oldPath ever be null? No, because safe explorability is assumed
         if (newPath.size() != oldPath.size()) return false;
 
         for (int i = 0; i < newPath.size(); i++) {

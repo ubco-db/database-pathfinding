@@ -59,6 +59,12 @@ public class GameMap {
     private int[] numRegions;                         // Number of regions in each sector (only used for sector abstraction)
     private RegionSearchProblem abstractProblem;      // Only used for PRA*
 
+    public ArrayList<Integer> regionReps;
+
+    public ArrayList<Integer> getRegionReps() {
+        return regionReps;
+    }
+
     public GameMap() {
     }
 
@@ -1202,7 +1208,7 @@ public class GameMap {
                         }
                     }
                 }
-                totalRegions += numRegionsInSector; //increment regeion count
+                totalRegions += numRegionsInSector; //increment region count
                 //???
                 baseMap.numRegions[i * (int) Math.ceil(cols * 1.0 / gridSize) + j] = numRegionsInSector;
             }
@@ -1786,6 +1792,46 @@ public class GameMap {
         }
     }
 
+    public void showWallsThatChangeRegioning(String fileName, ArrayList<SearchState> wallsThatChangeRegioning, SearchState start) {
+        if (wallsThatChangeRegioning != null && start != null) {    // Make a mask for the map for the path
+            Color color;
+            SparseMask currentMask = new SparseMask();
+            HashMap<String, String> used = new HashMap<>();
+
+            // colour changed goals in red
+            for (SearchState current : wallsThatChangeRegioning) {
+                int row = getRow(current.getId());
+                int col = getCol(current.getId());
+
+                ChangeRecord rec;
+                color = Color.RED;
+                rec = new ChangeRecord(row, col, color, 1);
+                if (used.containsKey(rec.toString())) continue;
+                currentMask.add(rec);
+                used.put(rec.toString(), null);
+            }
+
+            // colour start in green
+            color = Color.GREEN;
+            ChangeRecord rec = new ChangeRecord(getRow(start.getId()), getCol(start.getId()), color, 1);
+            currentMask.add(rec);
+
+            addMask(currentMask);
+            this.currentMask = this.masks.size() - 1;
+        }
+        // Create an image to save
+        RenderedImage rendImage = createImage();
+
+        // Write generated image to a file
+        try {
+            // Save as PNG
+            File file = new File(fileName);
+            ImageIO.write(rendImage, "png", file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public RenderedImage createImage() {
 
         BufferedImage bufferedImage = new BufferedImage(this.cols * cellHeight, this.rows * cellHeight, BufferedImage.TYPE_INT_RGB);
@@ -1956,6 +2002,7 @@ public class GameMap {
 
     // Compute centroids of all groups
     public void computeCentroids() {
+        regionReps = new ArrayList<>();
         long currentTime = System.currentTimeMillis();
         // StringBuilder buf = new StringBuilder();
 
@@ -1988,6 +2035,7 @@ public class GameMap {
                 col = minCol;
             }
             rec.setGroupRepId(this.getId(row, col));
+            regionReps.add(this.getId(row, col));
 
             // buf.append(rec.getGroupRepId()).append(", ");
         }
