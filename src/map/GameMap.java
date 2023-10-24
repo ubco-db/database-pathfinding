@@ -1849,19 +1849,6 @@ public class GameMap {
                 used.put(rec.toString(), null);
             }
 
-            // colour walls that change .dat in blue
-            for (SearchState current : wallsThatChangeDat) {
-                int row = getRow(current.getId());
-                int col = getCol(current.getId());
-
-                ChangeRecord rec;
-                color = Color.BLUE;
-                rec = new ChangeRecord(row, col, color, 1);
-                if (used.containsKey(rec.toString())) continue;
-                currentMask.add(rec);
-                used.put(rec.toString(), null);
-            }
-
             // colour walls that change .dati2 in cyan
             for (SearchState current : wallsThatChangeDati2) {
                 int row = getRow(current.getId());
@@ -1869,6 +1856,19 @@ public class GameMap {
 
                 ChangeRecord rec;
                 color = Color.CYAN;
+                rec = new ChangeRecord(row, col, color, 1);
+                if (used.containsKey(rec.toString())) continue;
+                currentMask.add(rec);
+                used.put(rec.toString(), null);
+            }
+
+            // colour walls that change .dat in blue
+            for (SearchState current : wallsThatChangeDat) {
+                int row = getRow(current.getId());
+                int col = getCol(current.getId());
+
+                ChangeRecord rec;
+                color = Color.BLUE;
                 rec = new ChangeRecord(row, col, color, 1);
                 if (used.containsKey(rec.toString())) continue;
                 currentMask.add(rec);
