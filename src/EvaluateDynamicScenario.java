@@ -26,7 +26,8 @@ public class EvaluateDynamicScenario {
     public static void main(String[] args) {
         ArrayList<SearchState> wallLocation = new ArrayList<>();
 
-        wallLocation.add(new SearchState(10025));
+        int wallLoc = 3167;
+        wallLocation.add(new SearchState(wallLoc));
 
         // build DBAStar Database
         GameMap map = new GameMap(PATH_TO_MAP);
@@ -47,11 +48,11 @@ public class EvaluateDynamicScenario {
             String f1Name = "BW012.map_DBA-STAR_G16_N1_C250.";
             String f2Name = "AW012.map_DBA-STAR_G16_N1_C250.";
             String ext = "dati2";
-            DBDiff.getDBDiff(DBA_STAR_DB_PATH, f1Name, f2Name, ext);
+            DBDiff.getDBDiff(DBA_STAR_DB_PATH, wallLoc, f1Name, f2Name, ext);
             f1Name = "BW012.map_DBA-STAR_G16_N1_C250.";
             f2Name = "AW012.map_DBA-STAR_G16_N1_C250.";
             ext = "dat";
-            DBDiff.getDBDiff(DBA_STAR_DB_PATH, f1Name, f2Name, ext);
+            DBDiff.getDBDiff(DBA_STAR_DB_PATH, wallLoc, f1Name, f2Name, ext);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

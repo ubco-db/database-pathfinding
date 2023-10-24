@@ -1513,8 +1513,6 @@ public class GameMap {
         }
 
         abstractProblem = new RegionSearchProblem(numRegions, edges, null, this, gridSize);
-
-        return;
     }
 
 
@@ -1805,6 +1803,72 @@ public class GameMap {
 
                 ChangeRecord rec;
                 color = Color.RED;
+                rec = new ChangeRecord(row, col, color, 1);
+                if (used.containsKey(rec.toString())) continue;
+                currentMask.add(rec);
+                used.put(rec.toString(), null);
+            }
+
+            // colour start in green
+            color = Color.GREEN;
+            ChangeRecord rec = new ChangeRecord(getRow(start.getId()), getCol(start.getId()), color, 1);
+            currentMask.add(rec);
+
+            addMask(currentMask);
+            this.currentMask = this.masks.size() - 1;
+        }
+        // Create an image to save
+        RenderedImage rendImage = createImage();
+
+        // Write generated image to a file
+        try {
+            // Save as PNG
+            File file = new File(fileName);
+            ImageIO.write(rendImage, "png", file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void showWallsThatChangeDatabase(String fileName, ArrayList<SearchState> wallsThatChangeRegioning, ArrayList<SearchState> wallsThatChangeDat, ArrayList<SearchState> wallsThatChangeDati2, SearchState start) {
+        if (wallsThatChangeRegioning != null && wallsThatChangeDat != null && wallsThatChangeDati2 != null && start != null) {    // Make a mask for the map for the path
+            Color color;
+            SparseMask currentMask = new SparseMask();
+            HashMap<String, String> used = new HashMap<>();
+
+            // colour walls that change regioning in red
+            for (SearchState current : wallsThatChangeRegioning) {
+                int row = getRow(current.getId());
+                int col = getCol(current.getId());
+
+                ChangeRecord rec;
+                color = Color.RED;
+                rec = new ChangeRecord(row, col, color, 1);
+                if (used.containsKey(rec.toString())) continue;
+                currentMask.add(rec);
+                used.put(rec.toString(), null);
+            }
+
+            // colour walls that change .dat in blue
+            for (SearchState current : wallsThatChangeDat) {
+                int row = getRow(current.getId());
+                int col = getCol(current.getId());
+
+                ChangeRecord rec;
+                color = Color.BLUE;
+                rec = new ChangeRecord(row, col, color, 1);
+                if (used.containsKey(rec.toString())) continue;
+                currentMask.add(rec);
+                used.put(rec.toString(), null);
+            }
+
+            // colour walls that change .dati2 in cyan
+            for (SearchState current : wallsThatChangeDati2) {
+                int row = getRow(current.getId());
+                int col = getCol(current.getId());
+
+                ChangeRecord rec;
+                color = Color.CYAN;
                 rec = new ChangeRecord(row, col, color, 1);
                 if (used.containsKey(rec.toString())) continue;
                 currentMask.add(rec);

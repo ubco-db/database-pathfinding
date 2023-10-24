@@ -1,3 +1,6 @@
+import comparison.ChangedPath;
+import comparison.DBDiff;
+import comparison.Entry;
 import database.DBStats;
 import database.DBStatsRecord;
 import database.GameDB;
@@ -5,8 +8,6 @@ import database.SubgoalDynamicDB2;
 import dynamic.Walls;
 import map.GameMap;
 import search.*;
-import comparison.ChangedPath;
-import comparison.Entry;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -64,7 +65,7 @@ public class VisualizeAddingWallsChanges {
 
         // compute DBAStar database before adding wall
         System.out.println();
-        dbaStar = computeDBAStar(map, "BW");
+        dbaStar = computeDBAStar(map, 0, "BW");
 
         ArrayList<Integer> regionRepsBW = dbaStar.getDBAStarMap().getRegionReps();
 
@@ -89,7 +90,7 @@ public class VisualizeAddingWallsChanges {
 
             map = new GameMap(PATH_TO_MAP); // recomputing map
             System.out.println();
-            dbaStar = computeDBAStar(map, "AW");
+            dbaStar = computeDBAStar(map, wallId, "AW");
 
             ArrayList<Integer> regionRepsAW = dbaStar.getDBAStarMap().getRegionReps();
 
@@ -168,8 +169,20 @@ public class VisualizeAddingWallsChanges {
             e.printStackTrace();
         }
 
+        // Write out ids of walls that change the regioning (move region reps)
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(DBA_STAR_DB_PATH + "wallsThatChangeRegioning.txt"))) {
+            for (SearchState searchState : wallsThatChangeRegioning) {
+                writer.write(searchState.getId() + "\n");
+            }
+            System.out.println("Walls that change regioning written to 'wallsThatChangeRegioning.txt'.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Draw walls whose addition changes the regioning (move region reps)
         map.showWallsThatChangeRegioning(DBA_STAR_DB_PATH + "wallsThatChangeRegioning.png", wallsThatChangeRegioning, new SearchState(startId));
 
+        // Draw walls, colour them based on how much impact on paths they have
         map.showHeatMap(DBA_STAR_DB_PATH + "impactfulWallsHeatMap.png", wallImpactMap, new SearchState(startId));
 
         long timeTaken = System.currentTimeMillis() - startTime;
@@ -182,7 +195,7 @@ public class VisualizeAddingWallsChanges {
         System.out.println("This run took: " + minutes + " minutes, " + seconds + " seconds");
     }
 
-    private static DBAStar computeDBAStar(GameMap map, String wallStatus) {
+    private static DBAStar computeDBAStar(GameMap map, int wallLoc, String wallStatus) {
         long currentTime;
 
         SearchProblem problem = new MapSearchProblem(map);
@@ -240,7 +253,7 @@ public class VisualizeAddingWallsChanges {
 
         database.init();
 
-        // database.exportDB(fileName);
+        database.exportDB(fileName);
         map.computeComplexity(rec);
         dbStats.addRecord(rec);
         database.setProblem(problem);
@@ -248,6 +261,20 @@ public class VisualizeAddingWallsChanges {
         database.verify(pathCompressAlgDba);
         System.out.println("Database verification complete.");
         System.out.println("Databases loaded.");
+
+        // compare databases
+        try {
+            String f1Name = "BW012.map_DBA-STAR_G16_N1_C250.";
+            String f2Name = "AW012.map_DBA-STAR_G16_N1_C250.";
+            String ext = "dati2";
+            DBDiff.getDBDiff(DBA_STAR_DB_PATH, wallLoc, f1Name, f2Name, ext);
+            f1Name = "BW012.map_DBA-STAR_G16_N1_C250.";
+            f2Name = "AW012.map_DBA-STAR_G16_N1_C250.";
+            ext = "dat";
+            DBDiff.getDBDiff(DBA_STAR_DB_PATH, wallLoc, f1Name, f2Name, ext);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         return new DBAStar(problem, map, database);
     }

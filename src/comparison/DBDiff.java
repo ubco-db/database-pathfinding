@@ -6,6 +6,7 @@ import org.apache.commons.text.diff.CommandVisitor;
 import org.apache.commons.text.diff.StringsComparator;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 
 /**
@@ -13,9 +14,9 @@ import java.io.IOException;
  */
 public class DBDiff {
 
-    public static void getDBDiff(String path, String nameFile1, String nameFile2, String ext) throws IOException {
+    public static void getDBDiff(String path, int wallLocation, String nameFile1, String nameFile2, String ext) throws IOException {
         // Read both files with iterator
-        LineIterator file1 = FileUtils.lineIterator(new File(path + nameFile1 + ext),"utf-8");
+        LineIterator file1 = FileUtils.lineIterator(new File(path + nameFile1 + ext), "utf-8");
         LineIterator file2 = FileUtils.lineIterator(new File(path + nameFile2 + ext), "utf-8");
 
         // Initialize visitor
@@ -28,7 +29,7 @@ public class DBDiff {
              * strings. Also append newline char at end so next line comparison moves to
              * next line.
              */
-            String left = (file1.hasNext() ? file1.nextLine():  "") + "\n";
+            String left = (file1.hasNext() ? file1.nextLine() : "") + "\n";
             String right = (file2.hasNext() ? file2.nextLine() : "") + "\n";
 
             // Prepare diff comparator with lines from both files
@@ -54,7 +55,18 @@ public class DBDiff {
         }
         file1.close();
         file2.close();
-        fileCommandsVisitor.generateHTML();
+        // fileCommandsVisitor.generateHTML();
+
+        if (fileCommandsVisitor.isFileChanged()) {
+            try {
+                File file = new File(path + ext + "_differingFiles.txt");
+                FileWriter fr = new FileWriter(file, true);
+                fr.write(wallLocation + "\n");
+                fr.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
 
@@ -71,8 +83,8 @@ class FileCommandsVisitor implements CommandVisitor<Character> {
     private String right = "";
 
     long keepCounter = 0;
-    long insertCounter = 0;
-    long deleteCounter = 0;
+    public long insertCounter = 0;
+    public long deleteCounter = 0;
 
     private final String path;
     private final String nameFile1;
@@ -111,6 +123,10 @@ class FileCommandsVisitor implements CommandVisitor<Character> {
         keepCounter++;
     }
 
+    public boolean isFileChanged() {
+        return (insertCounter != 0 || deleteCounter != 0);
+    }
+
     public void generateHTML() throws IOException {
         // Get template & replace placeholders with actual comparison
         String template = FileUtils.readFileToString(new File("resources/difftemplate.html"), "utf-8");
@@ -119,7 +135,7 @@ class FileCommandsVisitor implements CommandVisitor<Character> {
         output = output.replace("${file2}", path + nameFile2 + ext);
 
         // Write file to disk
-        FileUtils.write(new File( path + ext + "_DBdiff.html"), output, "utf-8");
+        FileUtils.write(new File(path + ext + "_DBdiff.html"), output, "utf-8");
         System.out.println("HTML diff generated.");
 //        System.out.println(keepCounter + " characters stayed the same, " + (insertCounter + deleteCounter) + " characters changed");
 //
