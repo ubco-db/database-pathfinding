@@ -1830,6 +1830,62 @@ public class GameMap {
         }
     }
 
+    public void wallsHeatMap(String fileName, HashMap<SearchState, Double> wallsThatChangeDat, HashMap<SearchState, Double> wallsThatChangeDati2, SearchState start) {
+        if (wallsThatChangeDat != null && wallsThatChangeDati2 != null && start != null) {    // Make a mask for the map for the path
+            Color color;
+            SparseMask currentMask = new SparseMask();
+            HashMap<String, String> used = new HashMap<>();
+
+            double maxDat = wallsThatChangeDat.values().stream().max(Double::compare).get();
+            System.out.println("Max dat: " + maxDat);
+            double maxDati2 = wallsThatChangeDati2.values().stream().max(Double::compare).get();
+            System.out.println("Max dati2: " + maxDati2);
+
+            for (SearchState current : wallsThatChangeDat.keySet()) {
+                int row = getRow(current.getId());
+                int col = getCol(current.getId());
+
+                ChangeRecord rec;
+                color = new Color(255, 255 - (int) (255 * Math.log(wallsThatChangeDat.get(current)) / Math.log(maxDat)), 255);
+                rec = new ChangeRecord(row, col, color, 1);
+                if (used.containsKey(rec.toString())) continue;
+                currentMask.add(rec);
+                used.put(rec.toString(), null);
+            }
+
+            for (SearchState current : wallsThatChangeDati2.keySet()) {
+                int row = getRow(current.getId());
+                int col = getCol(current.getId());
+
+                ChangeRecord rec;
+                color = new Color(255, 255, 255 - (int) (255 * Math.log(wallsThatChangeDati2.get(current)) / Math.log(maxDati2)));
+                rec = new ChangeRecord(row, col, color, 1);
+                if (used.containsKey(rec.toString())) continue;
+                currentMask.add(rec);
+                used.put(rec.toString(), null);
+            }
+
+            // colour start in green
+            color = Color.GREEN;
+            ChangeRecord rec = new ChangeRecord(getRow(start.getId()), getCol(start.getId()), color, 1);
+            currentMask.add(rec);
+
+            addMask(currentMask);
+            this.currentMask = this.masks.size() - 1;
+        }
+        // Create an image to save
+        RenderedImage rendImage = createImage();
+
+        // Write generated image to a file
+        try {
+            // Save as PNG
+            File file = new File(fileName);
+            ImageIO.write(rendImage, "png", file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void showWallsThatChangeDatabase(String fileName, ArrayList<SearchState> wallsThatChangeRegioning, ArrayList<SearchState> wallsThatChangeDat, ArrayList<SearchState> wallsThatChangeDati2, SearchState start) {
         if (wallsThatChangeRegioning != null && wallsThatChangeDat != null && wallsThatChangeDati2 != null && start != null) {    // Make a mask for the map for the path
             Color color;

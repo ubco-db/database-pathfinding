@@ -1,9 +1,9 @@
 import map.GameMap;
 import search.SearchState;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class DrawWallsThatChangeDB {
@@ -17,11 +17,11 @@ public class DrawWallsThatChangeDB {
         int startId = 13411;
 
         ArrayList<SearchState> wallsThatChangeRegioning = readFromFile("wallsThatChangeRegioning.txt");
-        ArrayList<SearchState> wallsThatChangeDat = readFromFile("dat_differingFiles.txt");
-        ArrayList<SearchState> wallsThatChangeDati2 = readFromFile("dati2_differingFiles.txt");
+        HashMap<SearchState, Double> wallsThatChangeDat = readDataFromFile("dat_differingFiles.txt");
+        HashMap<SearchState, Double> wallsThatChangeDati2 = readDataFromFile("dati2_differingFiles.txt");
 
         GameMap map = new GameMap(PATH_TO_MAP);
-        map.showWallsThatChangeDatabase("dynamic/databases/adding_walls/wallsThatChangeDB.png", wallsThatChangeRegioning, wallsThatChangeDat, wallsThatChangeDati2, new SearchState(startId));
+        map.wallsHeatMap("dynamic/databases/adding_walls/heatMapWallsThatChangeDB.png", wallsThatChangeDat, wallsThatChangeDati2, new SearchState(startId));
     }
 
     public static ArrayList<SearchState> readFromFile(String filename) {
@@ -48,4 +48,31 @@ public class DrawWallsThatChangeDB {
         }
         return searchStates;
     }
+
+    public static HashMap<SearchState, Double> readDataFromFile(String fileName) {
+        HashMap<SearchState, Double> dataMap = new HashMap<>();
+
+        try (BufferedReader br = new BufferedReader(new FileReader("dynamic/databases/adding_walls/" + fileName))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split("\t");
+                if (parts.length == 2) {
+                    try {
+                        int key = Integer.parseInt(parts[0]);
+                        double value = Double.parseDouble(parts[1]);
+                        dataMap.put(new SearchState(key), value);
+                    } catch (NumberFormatException e) {
+                        System.err.println("Error parsing integers on this line: " + line);
+                    }
+                } else {
+                    System.err.println("Skipping line with improper format: " + line);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return dataMap;
+    }
+
 }

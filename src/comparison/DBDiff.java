@@ -61,7 +61,7 @@ public class DBDiff {
             try {
                 File file = new File(path + ext + "_differingFiles.txt");
                 FileWriter fr = new FileWriter(file, true);
-                fr.write(wallLocation + "\n");
+                fr.write(wallLocation + "\t" + fileCommandsVisitor.numberFileChanges() + "\n");
                 fr.close();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -83,8 +83,8 @@ class FileCommandsVisitor implements CommandVisitor<Character> {
     private String right = "";
 
     long keepCounter = 0;
-    public long insertCounter = 0;
-    public long deleteCounter = 0;
+    long insertCounter = 0;
+    long deleteCounter = 0;
 
     private final String path;
     private final String nameFile1;
@@ -125,6 +125,10 @@ class FileCommandsVisitor implements CommandVisitor<Character> {
 
     public boolean isFileChanged() {
         return (insertCounter != 0 || deleteCounter != 0);
+    }
+
+    public double numberFileChanges() {
+        return insertCounter + deleteCounter;
     }
 
     public void generateHTML() throws IOException {
