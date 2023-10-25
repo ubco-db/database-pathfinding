@@ -1853,17 +1853,17 @@ public class GameMap {
                 used.put(rec.toString(), null);
             }
 
-            for (SearchState current : wallsThatChangeDati2.keySet()) {
-                int row = getRow(current.getId());
-                int col = getCol(current.getId());
-
-                ChangeRecord rec;
-                color = new Color(255, 255, 255 - (int) (255 * Math.log(wallsThatChangeDati2.get(current)) / Math.log(maxDati2)));
-                rec = new ChangeRecord(row, col, color, 1);
-                if (used.containsKey(rec.toString())) continue;
-                currentMask.add(rec);
-                used.put(rec.toString(), null);
-            }
+//            for (SearchState current : wallsThatChangeDati2.keySet()) {
+//                int row = getRow(current.getId());
+//                int col = getCol(current.getId());
+//
+//                ChangeRecord rec;
+//                color = new Color(255, 255 - (int) (255 * Math.log(wallsThatChangeDati2.get(current)) / Math.log(maxDati2)), 255);
+//                rec = new ChangeRecord(row, col, color, 1);
+//                if (used.containsKey(rec.toString())) continue;
+//                currentMask.add(rec);
+//                used.put(rec.toString(), null);
+//            }
 
             // colour start in green
             color = Color.GREEN;
