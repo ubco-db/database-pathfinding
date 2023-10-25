@@ -26,7 +26,7 @@ public class EvaluateDynamicScenario {
     public static void main(String[] args) {
         ArrayList<SearchState> wallLocation = new ArrayList<>();
 
-        int wallLoc = 14287;
+        int wallLoc = 4651;
         wallLocation.add(new SearchState(wallLoc));
 
         // build DBAStar Database
