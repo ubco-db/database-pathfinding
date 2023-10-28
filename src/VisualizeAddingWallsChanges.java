@@ -1,3 +1,6 @@
+import comparison.ChangedPath;
+import comparison.DBDiff;
+import comparison.Entry;
 import database.DBStats;
 import database.DBStatsRecord;
 import database.GameDB;
@@ -5,8 +8,6 @@ import database.SubgoalDynamicDB2;
 import dynamic.Walls;
 import map.GameMap;
 import search.*;
-import comparison.ChangedPath;
-import comparison.Entry;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -64,7 +65,9 @@ public class VisualizeAddingWallsChanges {
 
         // compute DBAStar database before adding wall
         System.out.println();
-        dbaStar = computeDBAStar(map, "BW");
+        dbaStar = computeDBAStar(map, 0, "BW");
+
+        ArrayList<Integer> regionRepsBW = dbaStar.getDBAStarMap().getRegionReps();
 
         // compute paths to all goals, store in HashMap of arrays (goal state as key)
         HashMap<Integer, ArrayList<SearchState>> paths = new HashMap<>();
@@ -76,6 +79,7 @@ public class VisualizeAddingWallsChanges {
 
         ArrayList<Entry> entries = new ArrayList<>();
         ArrayList<String> nonExistentPaths = new ArrayList<>();
+        ArrayList<SearchState> wallsThatChangeRegioning = new ArrayList<>();
 
         for (int wallId : goalIds) {
             // setting up walls
@@ -86,7 +90,14 @@ public class VisualizeAddingWallsChanges {
 
             map = new GameMap(PATH_TO_MAP); // recomputing map
             System.out.println();
-            dbaStar = computeDBAStar(map, "AW");
+            dbaStar = computeDBAStar(map, wallId, "AW");
+
+            ArrayList<Integer> regionRepsAW = dbaStar.getDBAStarMap().getRegionReps();
+
+            // find differences in region rep lists
+            if (!isRegionRepListEqual(regionRepsAW, regionRepsBW)) {
+                wallsThatChangeRegioning.add(new SearchState(wallId));
+            }
 
             Walls.removeWall(PATH_TO_MAP, wallLocation, map);
 
@@ -119,6 +130,8 @@ public class VisualizeAddingWallsChanges {
             double percentageChanged = (((double) changedPaths.size()) / goalIds.size()) * 100;
             entries.add(new Entry(percentageChanged, wallId, changedPaths));
         }
+
+        /* end loop */
 
         // sort entries by percentageChanged in descending order
         Collections.sort(entries);
@@ -156,9 +169,21 @@ public class VisualizeAddingWallsChanges {
             e.printStackTrace();
         }
 
-        map.showHeatMap(DBA_STAR_DB_PATH + "impactfulWallsHeatMap.png", wallImpactMap, new SearchState(startId));
+        // Write out ids of walls that change the regioning (move region reps)
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(DBA_STAR_DB_PATH + "wallsThatChangeRegioning.txt"))) {
+            for (SearchState searchState : wallsThatChangeRegioning) {
+                writer.write(searchState.getId() + "\n");
+            }
+            System.out.println("Walls that change regioning written to 'wallsThatChangeRegioning.txt'.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        /* end loop */
+        // Draw walls whose addition changes the regioning (move region reps)
+        map.showWallsThatChangeRegioning(DBA_STAR_DB_PATH + "wallsThatChangeRegioning.png", wallsThatChangeRegioning, new SearchState(startId));
+
+        // Draw walls, colour them based on how much impact on paths they have
+        map.showHeatMap(DBA_STAR_DB_PATH + "impactfulWallsHeatMap.png", wallImpactMap, new SearchState(startId));
 
         long timeTaken = System.currentTimeMillis() - startTime;
 
@@ -170,11 +195,11 @@ public class VisualizeAddingWallsChanges {
         System.out.println("This run took: " + minutes + " minutes, " + seconds + " seconds");
     }
 
-    private static DBAStar computeDBAStar(GameMap map, String wallStatus) {
+    private static DBAStar computeDBAStar(GameMap map, int wallLoc, String wallStatus) {
         long currentTime;
 
         SearchProblem problem = new MapSearchProblem(map);
-        GenHillClimbing pathCompressAlgDba = new GenHillClimbing(problem, 10000);
+        HillClimbing pathCompressAlgDba = new HillClimbing(problem, 10000);
 
         // Load abstract map and database
         System.out.println("Loading database.");
@@ -199,6 +224,7 @@ public class VisualizeAddingWallsChanges {
 
         currentTime = System.currentTimeMillis();
         map = map.sectorAbstract2(GRID_SIZE);
+
         long resultTime = System.currentTimeMillis() - currentTime;
         rec.addStat(12, resultTime);
         rec.addStat(10, resultTime);
@@ -227,7 +253,7 @@ public class VisualizeAddingWallsChanges {
 
         database.init();
 
-        // database.exportDB(fileName);
+        database.exportDB(fileName);
         map.computeComplexity(rec);
         dbStats.addRecord(rec);
         database.setProblem(problem);
@@ -235,6 +261,20 @@ public class VisualizeAddingWallsChanges {
         database.verify(pathCompressAlgDba);
         System.out.println("Database verification complete.");
         System.out.println("Databases loaded.");
+
+        // compare databases
+        try {
+            String f1Name = "BW012.map_DBA-STAR_G16_N1_C250.";
+            String f2Name = "AW012.map_DBA-STAR_G16_N1_C250.";
+            String ext = "dati2";
+            DBDiff.getDBDiff(DBA_STAR_DB_PATH, wallLoc, f1Name, f2Name, ext);
+            f1Name = "BW012.map_DBA-STAR_G16_N1_C250.";
+            f2Name = "AW012.map_DBA-STAR_G16_N1_C250.";
+            ext = "dat";
+            DBDiff.getDBDiff(DBA_STAR_DB_PATH, wallLoc, f1Name, f2Name, ext);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         return new DBAStar(problem, map, database);
     }
@@ -250,9 +290,22 @@ public class VisualizeAddingWallsChanges {
 
     /* Helper methods */
 
+    // TODO: refactor so that isRegionRepListEqual is same method as isPathEqual
+    private static boolean isRegionRepListEqual(ArrayList<Integer> regionRepsAW, ArrayList<Integer> regionRepsBW) {
+        if (regionRepsBW.size() != regionRepsAW.size()) return false;
+
+        for (int i = 0; i < regionRepsBW.size(); i++) {
+            if (!regionRepsBW.get(i).equals(regionRepsAW.get(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private static boolean isPathEqual(ArrayList<SearchState> newPath, ArrayList<SearchState> oldPath) {
         // if path length differs, they are not equal
-        if (newPath == null) return false; // QUESTION: can oldPath ever be null? No, because safe explorability is assumed
+        if (newPath == null)
+            return false; // QUESTION: can oldPath ever be null? No, because safe explorability is assumed
         if (newPath.size() != oldPath.size()) return false;
 
         for (int i = 0; i < newPath.size(); i++) {

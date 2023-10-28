@@ -2,12 +2,7 @@ package database;
 
 import map.GameMap;
 import map.GroupRecord;
-import search.AStar;
-import search.SearchAlgorithm;
-import search.SearchProblem;
-import search.SearchState;
-import search.SearchUtil;
-import search.StatsRecord;
+import search.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -46,18 +41,18 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
         ArrayList<SubgoalDBRecord> result = new ArrayList<>(1);
 
         // Need to calculate record as will not be stored
-        int pathSize = 0;
+        int pathSize;
         int[] path = new int[2000], tmp = new int[2000];
         int[] subgoals;
 
         // Passing startId and goalId that are the same breaks this (happens if start and goal are in same region)
         // If start and goal are in same region, running A* to find path instead of DBA*
         if (startGroupId == goalGroupId) {
-            AStar aStar = new AStar(problem);
-            ArrayList<SearchState> aStarPath = aStar.computePath(start, goal, stats);
-            pathSize = aStarPath.size();
+            HillClimbing hc = new HillClimbing(problem, 250);
+            ArrayList<SearchState> startRegionPath = hc.computePath(start, goal, stats);
+            pathSize = startRegionPath.size();
             for (int i = 0; i < pathSize; i++) {
-                path[i] = aStarPath.get(i).getId();
+                path[i] = startRegionPath.get(i).getId();
             }
         } else {
             // This code builds only the path required on demand (may incur more time as have to continually merge paths but may save time by avoiding storing/copying lists to do construction)

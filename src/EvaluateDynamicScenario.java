@@ -26,7 +26,8 @@ public class EvaluateDynamicScenario {
     public static void main(String[] args) {
         ArrayList<SearchState> wallLocation = new ArrayList<>();
 
-        wallLocation.add(new SearchState(12963));
+        int wallLoc = 4651;
+        wallLocation.add(new SearchState(wallLoc));
 
         // build DBAStar Database
         GameMap map = new GameMap(PATH_TO_MAP);
@@ -47,11 +48,11 @@ public class EvaluateDynamicScenario {
             String f1Name = "BW012.map_DBA-STAR_G16_N1_C250.";
             String f2Name = "AW012.map_DBA-STAR_G16_N1_C250.";
             String ext = "dati2";
-            DBDiff.getDBDiff(DBA_STAR_DB_PATH, f1Name, f2Name, ext);
+            DBDiff.getDBDiff(DBA_STAR_DB_PATH, wallLoc, f1Name, f2Name, ext);
             f1Name = "BW012.map_DBA-STAR_G16_N1_C250.";
             f2Name = "AW012.map_DBA-STAR_G16_N1_C250.";
             ext = "dat";
-            DBDiff.getDBDiff(DBA_STAR_DB_PATH, f1Name, f2Name, ext);
+            DBDiff.getDBDiff(DBA_STAR_DB_PATH, wallLoc, f1Name, f2Name, ext);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -61,7 +62,7 @@ public class EvaluateDynamicScenario {
         long currentTime;
 
         SearchProblem problem = new MapSearchProblem(map);
-        GenHillClimbing pathCompressAlgDba = new GenHillClimbing(problem, 10000);
+        HillClimbing pathCompressAlgDba = new HillClimbing(problem, 10000);
 
         // Load abstract map and database
         System.out.println("Loading database.");
@@ -124,13 +125,25 @@ public class EvaluateDynamicScenario {
         System.out.println("Databases loaded.");
 
         DBAStar dbaStar = new DBAStar(problem, map, database);
+        AStar aStar = new AStar(problem);
+
         int startId = 13411;
-        int goalId = 7451;
-        ArrayList<SearchState> path = dbaStar.computePath(new SearchState(startId), new SearchState(goalId), new StatsRecord());
+        int goalId = 13901;
+
+        StatsRecord dbaStats = new StatsRecord();
+        ArrayList<SearchState> path = dbaStar.computePath(new SearchState(startId), new SearchState(goalId), dbaStats);
+
+        StatsRecord aStarStats = new StatsRecord();
+        ArrayList<SearchState> optimalPath = aStar.computePath(new SearchState(startId), new SearchState(goalId), aStarStats);
+
+        System.out.println("AStar path cost: " + aStarStats.getPathCost() + " DBAStar path cost: " + dbaStats.getPathCost());
+        System.out.println("Suboptimality: " + ((((double) dbaStats.getPathCost()) / aStarStats.getPathCost()) - 1) * 100.0);
+
         if (path == null || path.isEmpty()) {
             System.out.printf("No path was found between %d and %d!%n", startId, goalId);
         }
         map.computeCentroidMap().outputImage(DBA_STAR_DB_PATH + wallStatus + MAP_FILE_NAME + "_path.png", path, null);
+        map.computeCentroidMap().outputImage(DBA_STAR_DB_PATH + wallStatus + MAP_FILE_NAME + "_optimal_path.png", optimalPath, null);
     }
 
     /* Helper methods */
