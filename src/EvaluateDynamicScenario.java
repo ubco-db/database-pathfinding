@@ -7,9 +7,13 @@ import dynamic.Walls;
 import map.GameMap;
 import map.GroupRecord;
 import search.*;
+import util.ExpandArray;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class EvaluateDynamicScenario {
     final static String DB_PATH = "dynamic/databases/";
@@ -49,15 +53,13 @@ public class EvaluateDynamicScenario {
         // Use the map returned after the database is fully computed
         GameMap map = dbaStarBW.getMap();
 
-        // Get the sector id of the wall
-        int row = map.getRow(wallLoc);
-        int col = map.getCol(wallLoc);
+        // Get the region rep of the region the wall was added in
+        int regionRepId = dbaStarBW.getAbstractProblem().findRegionRep(wall).getId();
 
-        // the region id for wall at 14299 should be 116, with group rep id 15182
-        // TODO: why is this not working? This code matches findRegion2 in RegionSearchProblem, which performs optimization at start and end of path
-        // How can I find the sector number?
-        int numSectorsPerRow = (int) Math.ceil(map.cols * 1.0 / GRID_SIZE);
-        int regionId = row / GRID_SIZE * numSectorsPerRow + col / GRID_SIZE;
+        // region rep id for 14299 should be 15821, region id should be 116
+        System.out.println(regionRepId);
+
+        int regionId = 116;
 
         // Get the neighbour regions by the region id
         GroupRecord groupRecord = map.getGroups().get(regionId);

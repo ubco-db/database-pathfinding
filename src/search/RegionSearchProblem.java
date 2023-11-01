@@ -119,7 +119,7 @@ public class RegionSearchProblem extends SearchProblem {
             // representative
             Region reg = sec.regions.get(0);
             regionState.id = reg.regionRepId;
-            regionState.stateData = new Integer(reg.regionId);
+            regionState.stateData = reg.regionId;
             return regionState;
         } else { // Have to search for which region representative this node is
             // in (BFS)
@@ -127,7 +127,7 @@ public class RegionSearchProblem extends SearchProblem {
             for (int j = 0; j < sec.numRegions; j++) {
                 if (s.id == sec.regions.get(j).regionRepId) {
                     regionState.id = sec.regions.get(j).regionRepId;
-                    regionState.stateData = new Integer(sec.regions.get(j).regionId);
+                    regionState.stateData = sec.regions.get(j).regionId;
                     return regionState;
                 }
             }
@@ -196,7 +196,7 @@ public class RegionSearchProblem extends SearchProblem {
                         for (int j = 0; j < sec.numRegions; j++) {
                             if (nid == sec.regions.get(j).regionRepId) {
                                 regionState.id = sec.regions.get(j).regionRepId;
-                                regionState.stateData = new Integer(sec.regions.get(j).regionId);
+                                regionState.stateData = sec.regions.get(j).regionId;
                                 if (startEnd == 0) {
                                     while (newNode.prev != null) {
                                         pathStart.add(0, new SearchState(newNode.id));
@@ -253,7 +253,7 @@ public class RegionSearchProblem extends SearchProblem {
             int toRegionId = reg.edges[i];
             Region toRegion = regions.get(toRegionId);
             SearchState s = new SearchState(toRegion.regionRepId);
-            s.stateData = new Integer(toRegionId);
+            s.stateData = toRegionId;
             res.add(s);
         }
         return res;
@@ -327,6 +327,102 @@ public class RegionSearchProblem extends SearchProblem {
             if (searchState.id == toStateId)
                 return true;
         return false;
+    }
+
+    public SearchState findRegionRep(SearchState s) {
+        int row = map.getRow(s.id);
+        int col = map.getCol(s.id);
+        int numSectorsPerRow = (int) Math.ceil(map.cols * 1.0 / gridSize);
+        int sectorId = row / gridSize * numSectorsPerRow + col / gridSize;
+
+        Sector sec = sectors.get(sectorId);
+
+        SearchState regionState = new SearchState();
+
+        if (sec.numRegions == 1) { // Only one region in sector - return its
+            // representative
+            Region reg = sec.regions.get(0);
+            regionState.id = reg.regionRepId;
+            regionState.stateData = reg.regionId;
+            return regionState;
+        } else { // Have to search for which region representative this node is in (BFS)
+            // Check if state itself is a region representative
+            for (int j = 0; j < sec.numRegions; j++) {
+                if (s.id == sec.regions.get(j).regionRepId) {
+                    regionState.id = sec.regions.get(j).regionRepId;
+                    regionState.stateData = sec.regions.get(j).regionId;
+                    return regionState;
+                }
+            }
+
+            // Not a direct match so do a BFS from state to find state representative
+            Queue<Integer> stateIds = new LinkedList<>();
+            ExpandArray neighbors = new ExpandArray(10);
+
+            int maxr, maxc;
+            int sectorRow = sectorId / numSectorsPerRow;
+            int sectorCol = sectorId % numSectorsPerRow;
+            maxr = sectorRow * gridSize + gridSize;
+            if (maxr > map.rows) maxr = map.rows;
+            maxc = sectorCol * gridSize + gridSize;
+            if (maxc > map.cols) maxc = map.cols;
+
+            stateIds.add(s.id);
+            HashSet<Integer> visited = new HashSet<>();
+            visited.add(s.id);
+            // String gd = "";
+            ArrayList<Node> tree = null;
+            Node curr = null;
+            while (!stateIds.isEmpty()) {
+                int id = stateIds.remove();
+                if (curr == null) {
+                    tree = new ArrayList<Node>();
+                    curr = new Node(id, null);
+                    tree.add(0, curr);
+                } else {
+                    int i = 0;
+                    while (tree.get(i).id != id) {
+                        i++;
+                    }
+                    curr = tree.get(i);
+                }
+
+                row = map.getRow(id);
+                col = map.getCol(id);
+
+                // Generate neighbors and add to list if in region
+                map.getNeighbors(row, col, neighbors);
+
+                for (int n = 0; n < neighbors.num(); n++) {
+                    int nid = neighbors.get(n);
+                    int nr = map.getRow(nid);
+                    int nc = map.getCol(nid);
+                    Node newNode;
+                    if (map.isInRange(nr, nc, maxr, maxc, gridSize)) {
+                        if (!visited.contains(nid)) {
+                            newNode = new Node(nid, curr);
+                            tree.add(0, newNode);
+                            /*
+                             * System.out.println(gd + "Node:(" +
+                             * map.getRow(nid) + ", " + map.getCol(nid) + ")");
+                             */
+                            stateIds.add(nid);
+                            visited.add(nid);
+                        }
+
+                        // See if match a region id
+                        for (int j = 0; j < sec.numRegions; j++) {
+                            if (nid == sec.regions.get(j).regionRepId) {
+                                regionState.id = sec.regions.get(j).regionRepId;
+                                regionState.stateData = sec.regions.get(j).regionId;
+                                return regionState;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     @Override
