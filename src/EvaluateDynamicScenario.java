@@ -27,7 +27,8 @@ public class EvaluateDynamicScenario {
     public static void main(String[] args) {
         // add wall(s)
         ArrayList<SearchState> wallLocation = new ArrayList<>();
-        int wallLoc = 14299;
+        // 8942
+        int wallLoc = 12969; // adding this wall changes the shortest path between 12963 and 12978
         SearchState wall = new SearchState(wallLoc);
         wallLocation.add(wall);
 
@@ -47,14 +48,12 @@ public class EvaluateDynamicScenario {
         // Use the map returned after the database is fully computed
         GameMap map = dbaStarBW.getMap();
 
-        // region rep id for 14299 should be 15182, region id should be 116
-
         // Get the id of the region rep of the region the wall was added in
         int regionRepId = dbaStarBW.getAbstractProblem().findRegionRep(wall).getId();
         System.out.println("regionRepId: " + regionRepId);
 
         // Get the id of the region the wall was added in using its regionRepId
-        HashMap<Integer, GroupRecord> groups = new MapSearchProblem(map).getGroups();
+        HashMap<Integer, GroupRecord> groups = new MapSearchProblem(map).getGroups(); // stores number of states per region as well, may be useful later
         Iterator<Map.Entry<Integer, GroupRecord>> it = groups.entrySet().iterator();
         Map.Entry<Integer, GroupRecord> elem;
         HashMap<Integer, Integer> regionRepIdToRegionId = new HashMap<>();
@@ -67,12 +66,34 @@ public class EvaluateDynamicScenario {
 
         // Get the neighbour regions using the region id
         GroupRecord groupRecord = map.getGroups().get(regionId);
-        HashSet<Integer> neighborIds = groupRecord.getNeighborIds();
+        HashSet<Integer> neighborIdsSet = groupRecord.getNeighborIds();
+        ArrayList<Integer> neighborIds = new ArrayList<>(neighborIdsSet);
 
+        // TODO: Update regions for neighborIds in the database
+
+        HashSet<Integer> neighborRegionRepIds = new HashSet<>();
+        int neighborRegionRegionRep;
+        System.out.println("neighborRegionRepIds:");
+        for (int neighborId : neighborIds) {
+            neighborRegionRegionRep = groups.get(neighborId).getGroupRepId();
+            neighborRegionRepIds.add(neighborRegionRegionRep);
+            System.out.println(neighborRegionRegionRep);
+        }
+
+        System.out.println("neighborIds:");
         neighborIds.forEach(System.out::println);
+        System.out.println("groupRepId:");
         System.out.println(groupRecord.getGroupRepId());
 
         System.out.println();
+
+        // What about the database needs to be updated after adding a wall?
+        // numGroups (if adding wall eliminates region or adds new region)
+        // neighborId (if adding wall changes neighbourhood by eliminating or adding new region)
+        // lowestCost (for regions neighbouring the one where the wall was added)
+        // paths
+        // db
+        // has its own problem and map, would those need changes?
 
         // What about the map needs to be updated after adding a wall?
         // squares array
