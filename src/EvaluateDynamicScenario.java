@@ -1,8 +1,5 @@
 import comparison.DBDiff;
-import database.DBStats;
-import database.DBStatsRecord;
-import database.GameDB;
-import database.SubgoalDynamicDB2;
+import database.*;
 import dynamic.Walls;
 import map.GameMap;
 import map.GroupRecord;
@@ -64,13 +61,11 @@ public class EvaluateDynamicScenario {
         int regionId = regionRepIdToRegionId.get(regionRepId);
         System.out.println("regionId: " + regionId);
 
-        // Get the neighbour regions using the region id
+        // Get the neighbour ids regions using the region id
         GroupRecord groupRecord = map.getGroups().get(regionId);
-        HashSet<Integer> neighborIdsSet = groupRecord.getNeighborIds();
-        ArrayList<Integer> neighborIds = new ArrayList<>(neighborIdsSet);
+        ArrayList<Integer> neighborIds = new ArrayList<>(groupRecord.getNeighborIds());
 
-        // TODO: Update regions for neighborIds in the database
-
+        // Get region reps of neighbor regions
         HashSet<Integer> neighborRegionRepIds = new HashSet<>();
         int neighborRegionRegionRep;
         System.out.println("neighborRegionRepIds:");
@@ -80,36 +75,21 @@ public class EvaluateDynamicScenario {
             System.out.println(neighborRegionRegionRep);
         }
 
-        System.out.println("neighborIds:");
-        neighborIds.forEach(System.out::println);
-        System.out.println("groupRepId:");
-        System.out.println(groupRecord.getGroupRepId());
+        // TODO: Update regions for neighborIds in the database
+        SubgoalDynamicDB2 dbBW = (SubgoalDynamicDB2) dbaStarBW.getDatabase();
+
+        // 55 and 56 need to be updated (how does the indexing in this array work?)
+        int[][] lowestCostBW = dbBW.getLowestCost();
+
+        // need to look at lowest costs for neighbours and recompute those (how to recompute?)
+
 
         System.out.println();
 
-        // What about the database needs to be updated after adding a wall?
-        // numGroups (if adding wall eliminates region or adds new region)
-        // neighborId (if adding wall changes neighbourhood by eliminating or adding new region)
-        // lowestCost (for regions neighbouring the one where the wall was added)
-        // paths
-        // db
-        // has its own problem and map, would those need changes?
-
-        // What about the map needs to be updated after adding a wall?
-        // squares array
-        // potentially #states
-        // potentially #groups
-        // groupsArray
-        // numRegions
-        // abstractProblem?
-        // regionReps?
-
-        // add wall (can do this programmatically in squares array?)
         Walls.addWall(PATH_TO_MAP, wallLocation, startingMap);
         startingMap = new GameMap(PATH_TO_MAP);
 
-        // recompute database
-        // TODO: don't fully recompute
+        // recompute database TODO: don't fully recompute
         // try to only recompute immediate changes, then recompute entire database to see if I matched it
 
         DBAStar dbaStarAW = computeDBAStarDatabase(startingMap, "AW"); // AW = after wall
