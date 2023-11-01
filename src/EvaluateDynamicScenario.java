@@ -7,10 +7,12 @@ import dynamic.Walls;
 import map.GameMap;
 import map.GroupRecord;
 import search.*;
-import util.ExpandArray;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class EvaluateDynamicScenario {
     final static String DB_PATH = "dynamic/databases/";
@@ -41,33 +43,30 @@ public class EvaluateDynamicScenario {
         DBAStar dbaStarBW = computeDBAStarDatabase(startingMap, "BW"); // BW = before wall
         getDBAStarPath(startId, goalId, "BW", dbaStarBW);
 
-        System.out.println("HERE");
+        System.out.println();
+        System.out.println();
+        System.out.println();
 
         // Use the map returned after the database is fully computed
         GameMap map = dbaStarBW.getMap();
-        SearchProblem problem = dbaStarBW.getProblem();
 
-        // Get the region rep of the region the wall was added in
+        // Get the id of the region rep of the region the wall was added in
         int regionRepId = dbaStarBW.getAbstractProblem().findRegionRep(wall).getId();
 
-        // region rep id for 14299 should be 15821, region id should be 116
-        System.out.println(regionRepId);
+        // region rep id for 14299 should be 15182, region id should be 116
+        System.out.println("regionRepId: " + regionRepId);
 
-        // TODO: get from region rep id to region id
         HashMap<Integer, GroupRecord> groups = new MapSearchProblem(map).getGroups();
         Iterator<Map.Entry<Integer, GroupRecord>> it = groups.entrySet().iterator();
-        Map.Entry<Integer, GroupRecord> group;
+        Map.Entry<Integer, GroupRecord> elem;
         HashMap<Integer, Integer> regionRepIdToRegionId = new HashMap<>();
         while (it.hasNext()) {
-            group = it.next();
-            // TODO: This is a hack and assume all group numbers start counting from whatever the START_NUM is (currently 50).
-            regionRepIdToRegionId.put(group.getValue().groupRepId, group.getKey() - GameMap.START_NUM);
+            elem = it.next();
+            regionRepIdToRegionId.put(elem.getValue().groupRepId, elem.getKey());
         }
 
-        // this is 66
-        regionRepIdToRegionId.get(regionRepId);
-
-        int regionId = 116;
+        int regionId = regionRepIdToRegionId.get(regionRepId);
+        System.out.println("regionId: " + regionId);
 
         // Get the neighbour regions by the region id
         GroupRecord groupRecord = map.getGroups().get(regionId);
@@ -75,12 +74,7 @@ public class EvaluateDynamicScenario {
         groupRecord.getNeighborIds().forEach(System.out::println);
         System.out.println(groupRecord.getGroupRepId());
 
-//        System.out.println(dbaStarBW.getMap().getAbstractProblem().getNeighbors(wall));
-//        dbaStarBW.getAbstractProblem().getNeighbors(wall);
-//        for (SearchState neighbor : dbaStarBW.getAbstractProblem().getNeighbors(wall)) {
-//            System.out.println(neighbor.getId());
-//        }
-//        dbaStarBW.getProblem().getNeighbors(wall).forEach(neighbor -> System.out.println(neighbor.getId()));
+        System.out.println();
 
         // add wall
         Walls.addWall(PATH_TO_MAP, wallLocation, startingMap);
