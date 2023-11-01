@@ -10,10 +10,7 @@ import search.*;
 import util.ExpandArray;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
 
 public class EvaluateDynamicScenario {
     final static String DB_PATH = "dynamic/databases/";
@@ -44,20 +41,31 @@ public class EvaluateDynamicScenario {
         DBAStar dbaStarBW = computeDBAStarDatabase(startingMap, "BW"); // BW = before wall
         getDBAStarPath(startId, goalId, "BW", dbaStarBW);
 
-        // add wall
-        Walls.addWall(PATH_TO_MAP, wallLocation, startingMap);
-        startingMap = new GameMap(PATH_TO_MAP);
-
         System.out.println("HERE");
 
         // Use the map returned after the database is fully computed
         GameMap map = dbaStarBW.getMap();
+        SearchProblem problem = dbaStarBW.getProblem();
 
         // Get the region rep of the region the wall was added in
         int regionRepId = dbaStarBW.getAbstractProblem().findRegionRep(wall).getId();
 
         // region rep id for 14299 should be 15821, region id should be 116
         System.out.println(regionRepId);
+
+        // TODO: get from region rep id to region id
+        HashMap<Integer, GroupRecord> groups = new MapSearchProblem(map).getGroups();
+        Iterator<Map.Entry<Integer, GroupRecord>> it = groups.entrySet().iterator();
+        Map.Entry<Integer, GroupRecord> group;
+        HashMap<Integer, Integer> regionRepIdToRegionId = new HashMap<>();
+        while (it.hasNext()) {
+            group = it.next();
+            // TODO: This is a hack and assume all group numbers start counting from whatever the START_NUM is (currently 50).
+            regionRepIdToRegionId.put(group.getValue().groupRepId, group.getKey() - GameMap.START_NUM);
+        }
+
+        // this is 66
+        regionRepIdToRegionId.get(regionRepId);
 
         int regionId = 116;
 
@@ -73,6 +81,10 @@ public class EvaluateDynamicScenario {
 //            System.out.println(neighbor.getId());
 //        }
 //        dbaStarBW.getProblem().getNeighbors(wall).forEach(neighbor -> System.out.println(neighbor.getId()));
+
+        // add wall
+        Walls.addWall(PATH_TO_MAP, wallLocation, startingMap);
+        startingMap = new GameMap(PATH_TO_MAP);
 
         // recompute database
         // TODO: don't fully recompute
