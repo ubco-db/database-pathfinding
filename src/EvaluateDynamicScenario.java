@@ -9,10 +9,7 @@ import map.GroupRecord;
 import search.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 public class EvaluateDynamicScenario {
     final static String DB_PATH = "dynamic/databases/";
@@ -50,12 +47,13 @@ public class EvaluateDynamicScenario {
         // Use the map returned after the database is fully computed
         GameMap map = dbaStarBW.getMap();
 
+        // region rep id for 14299 should be 15182, region id should be 116
+
         // Get the id of the region rep of the region the wall was added in
         int regionRepId = dbaStarBW.getAbstractProblem().findRegionRep(wall).getId();
-
-        // region rep id for 14299 should be 15182, region id should be 116
         System.out.println("regionRepId: " + regionRepId);
 
+        // Get the id of the region the wall was added in using its regionRepId
         HashMap<Integer, GroupRecord> groups = new MapSearchProblem(map).getGroups();
         Iterator<Map.Entry<Integer, GroupRecord>> it = groups.entrySet().iterator();
         Map.Entry<Integer, GroupRecord> elem;
@@ -64,19 +62,28 @@ public class EvaluateDynamicScenario {
             elem = it.next();
             regionRepIdToRegionId.put(elem.getValue().groupRepId, elem.getKey());
         }
-
         int regionId = regionRepIdToRegionId.get(regionRepId);
         System.out.println("regionId: " + regionId);
 
-        // Get the neighbour regions by the region id
+        // Get the neighbour regions using the region id
         GroupRecord groupRecord = map.getGroups().get(regionId);
+        HashSet<Integer> neighborIds = groupRecord.getNeighborIds();
 
-        groupRecord.getNeighborIds().forEach(System.out::println);
+        neighborIds.forEach(System.out::println);
         System.out.println(groupRecord.getGroupRepId());
 
         System.out.println();
 
-        // add wall
+        // What about the map needs to be updated after adding a wall?
+        // squares array
+        // potentially #states
+        // potentially #groups
+        // groupsArray
+        // numRegions
+        // abstractProblem?
+        // regionReps?
+
+        // add wall (can do this programmatically in squares array?)
         Walls.addWall(PATH_TO_MAP, wallLocation, startingMap);
         startingMap = new GameMap(PATH_TO_MAP);
 
