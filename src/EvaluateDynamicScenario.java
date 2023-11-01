@@ -9,6 +9,7 @@ import comparison.DBDiff;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class EvaluateDynamicScenario {
     final static String DB_PATH = "dynamic/databases/";
@@ -24,24 +25,57 @@ public class EvaluateDynamicScenario {
 
 
     public static void main(String[] args) {
+        // add wall(s)
         ArrayList<SearchState> wallLocation = new ArrayList<>();
+        int wallLoc = 14299;
+        SearchState wall = new SearchState(wallLoc);
+        wallLocation.add(wall);
 
-        int wallLoc = 4651;
-        wallLocation.add(new SearchState(wallLoc));
+        // set start and goal
+        int startId = 13411;
+        int goalId = 13901;
 
         // build DBAStar Database
-        GameMap map = new GameMap(PATH_TO_MAP);
-        computeDBAStarDatabase(map, "BW"); // BW = before wall
+        GameMap startingMap = new GameMap(PATH_TO_MAP);
+        DBAStar dbaStarBW = computeDBAStarDatabase(startingMap, "BW"); // BW = before wall
+        getDBAStarPath(startId, goalId, "BW", dbaStarBW);
 
         // add wall
-        Walls.addWall(PATH_TO_MAP, wallLocation, map);
-        map = new GameMap(PATH_TO_MAP);
+        Walls.addWall(PATH_TO_MAP, wallLocation, startingMap);
+        startingMap = new GameMap(PATH_TO_MAP);
+
+        System.out.println("HERE");
+
+        // Use the map returned after the database is fully computed
+        GameMap map = dbaStarBW.getMap();
+
+        // Get the sector id of the wall
+        int row = map.getRow(wallLoc);
+        int col = map.getCol(wallLoc);
+        int numSectorsPerRow = (int) Math.ceil(map.cols * 1.0 / GRID_SIZE);
+        int regionId = row / GRID_SIZE * numSectorsPerRow + col / GRID_SIZE;
+
+        // Get the neighbour regions by the region id
+        HashSet<Integer> neighbourIds = map.getGroups().get(regionId).getNeighborIds();
+
+        neighbourIds.forEach(System.out::println);
+
+//        System.out.println(dbaStarBW.getMap().getAbstractProblem().getNeighbors(wall));
+//        dbaStarBW.getAbstractProblem().getNeighbors(wall);
+//        for (SearchState neighbor : dbaStarBW.getAbstractProblem().getNeighbors(wall)) {
+//            System.out.println(neighbor.getId());
+//        }
+//        dbaStarBW.getProblem().getNeighbors(wall).forEach(neighbor -> System.out.println(neighbor.getId()));
 
         // recompute database
-        computeDBAStarDatabase(map, "AW"); // AW = after wall
+        // TODO: don't fully recompute
+        // try to only recompute immediate changes, then recompute entire database to see if I matched it
+
+        DBAStar dbaStarAW = computeDBAStarDatabase(startingMap, "AW"); // AW = after wall
+        getDBAStarPath(startId, goalId, "AW", dbaStarAW);
 
         // remove wall
-        Walls.removeWall(PATH_TO_MAP, wallLocation, map);
+        Walls.removeWall(PATH_TO_MAP, wallLocation, startingMap);
 
         // compare databases
         try {
@@ -58,7 +92,7 @@ public class EvaluateDynamicScenario {
         }
     }
 
-    private static void computeDBAStarDatabase(GameMap map, String wallStatus) {
+    private static DBAStar computeDBAStarDatabase(GameMap map, String wallStatus) {
         long currentTime;
 
         SearchProblem problem = new MapSearchProblem(map);
@@ -86,8 +120,11 @@ public class EvaluateDynamicScenario {
         rec.addStat(6, map.cols);
 
         currentTime = System.currentTimeMillis();
+
         map = map.sectorAbstract2(GRID_SIZE);
+
         long resultTime = System.currentTimeMillis() - currentTime;
+
         rec.addStat(12, resultTime);
         rec.addStat(10, resultTime);
         rec.addStat(11, map.states);
@@ -96,21 +133,24 @@ public class EvaluateDynamicScenario {
 
         System.out.println("Exporting map with areas.");
         map.outputImage(getImageName(wallStatus, false), null, null);
-
         System.out.println("Exporting map with areas and centroids.");
         map.computeCentroidMap().outputImage(getImageName(wallStatus, true), null, null);
 
+        // QUESTION: Why are we passing this tmpProb?
         SearchProblem tmpProb = new MapSearchProblem(map);
         GameDB gameDB = new GameDB(tmpProb);
 
         currentTime = System.currentTimeMillis();
+
         database.computeIndex(tmpProb, rec);
+
         rec.addStat(23, System.currentTimeMillis() - currentTime);
 
         System.out.println("Generating gameDB.");
         currentTime = System.currentTimeMillis();
 
         database = gameDB.computeDynamicDB(database, pathCompressAlgDba, rec, NUM_NEIGHBOUR_LEVELS);
+
         System.out.println("Time to compute DBAStar gameDB: " + (System.currentTimeMillis() - currentTime));
 
         database.init();
@@ -124,11 +164,15 @@ public class EvaluateDynamicScenario {
         System.out.println("Database verification complete.");
         System.out.println("Databases loaded.");
 
-        DBAStar dbaStar = new DBAStar(problem, map, database);
-        AStar aStar = new AStar(problem);
+        // return database here to access and modify
+        return new DBAStar(problem, map, database);
+    }
 
-        int startId = 13411;
-        int goalId = 13901;
+    private static void getDBAStarPath(int startId, int goalId, String wallStatus, DBAStar dbaStar) {
+        SearchProblem problem = dbaStar.getProblem();
+        GameMap map = dbaStar.getMap();
+
+        AStar aStar = new AStar(problem);
 
         StatsRecord dbaStats = new StatsRecord();
         ArrayList<SearchState> path = dbaStar.computePath(new SearchState(startId), new SearchState(goalId), dbaStats);
@@ -156,5 +200,4 @@ public class EvaluateDynamicScenario {
         String lastToken = hasCentroids ? "_DBA_Centroid.png" : "_DBA.png";
         return DBA_STAR_DB_PATH + wallStatus + MAP_FILE_NAME + lastToken;
     }
-
 }
