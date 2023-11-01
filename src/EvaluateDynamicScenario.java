@@ -1,15 +1,15 @@
+import comparison.DBDiff;
 import database.DBStats;
 import database.DBStatsRecord;
 import database.GameDB;
 import database.SubgoalDynamicDB2;
 import dynamic.Walls;
 import map.GameMap;
+import map.GroupRecord;
 import search.*;
-import comparison.DBDiff;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 
 public class EvaluateDynamicScenario {
     final static String DB_PATH = "dynamic/databases/";
@@ -52,13 +52,18 @@ public class EvaluateDynamicScenario {
         // Get the sector id of the wall
         int row = map.getRow(wallLoc);
         int col = map.getCol(wallLoc);
+
+        // the region id for wall at 14299 should be 116, with group rep id 15182
+        // TODO: why is this not working? This code matches findRegion2 in RegionSearchProblem, which performs optimization at start and end of path
+        // How can I find the sector number?
         int numSectorsPerRow = (int) Math.ceil(map.cols * 1.0 / GRID_SIZE);
         int regionId = row / GRID_SIZE * numSectorsPerRow + col / GRID_SIZE;
 
         // Get the neighbour regions by the region id
-        HashSet<Integer> neighbourIds = map.getGroups().get(regionId).getNeighborIds();
+        GroupRecord groupRecord = map.getGroups().get(regionId);
 
-        neighbourIds.forEach(System.out::println);
+        groupRecord.getNeighborIds().forEach(System.out::println);
+        System.out.println(groupRecord.getGroupRepId());
 
 //        System.out.println(dbaStarBW.getMap().getAbstractProblem().getNeighbors(wall));
 //        dbaStarBW.getAbstractProblem().getNeighbors(wall);
