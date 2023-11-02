@@ -36,7 +36,7 @@ public class EvaluateDynamicScenario {
         // build DBAStar Database
         GameMap startingMap = new GameMap(PATH_TO_MAP);
         DBAStar dbaStarBW = computeDBAStarDatabase(startingMap, "BW"); // BW = before wall
-        getDBAStarPath(startId, goalId, "BW", dbaStarBW);
+        // getDBAStarPath(startId, goalId, "BW", dbaStarBW);
 
         System.out.println();
         System.out.println();
@@ -44,6 +44,7 @@ public class EvaluateDynamicScenario {
 
         // Use the map returned after the database is fully computed
         GameMap map = dbaStarBW.getMap();
+        SearchProblem problem = dbaStarBW.getProblem();
 
         // Get the id of the region rep of the region the wall was added in
         int regionRepId = dbaStarBW.getAbstractProblem().findRegionRep(wall).getId();
@@ -78,11 +79,22 @@ public class EvaluateDynamicScenario {
         // TODO: Update regions for neighborIds in the database
         SubgoalDynamicDB2 dbBW = (SubgoalDynamicDB2) dbaStarBW.getDatabase();
 
-        // 55 and 56 need to be updated (how does the indexing in this array work?)
-        int[][] lowestCostBW = dbBW.getLowestCost();
+        /*
+        SearchProblem problem, HashMap<Integer, GroupRecord> groups, SearchAlgorithm searchAlg,
+                                    int[][] lowestCost, int[][][] paths, int[][] neighbor, int numGroups, int numLevels,
+                                    boolean asSubgoals, DBStatsRecord dbStats
+         */
+        HillClimbing pathCompressAlgDba = new HillClimbing(problem, 10000);
+        // TODO: likely don't wanna pass groups, too much info, should I pass the problem I got back?
+        // TODO: use neighbour finding method?
 
-        // need to look at lowest costs for neighbours and recompute those (how to recompute?)
+        HashMap<Integer, GroupRecord> groupsToRecompute = new HashMap<>();
+        for (int neighborId : neighborIds) {
+            groupsToRecompute.put(neighborId, groups.get(neighborId));
+        }
 
+        dbBW.recomputeBasePaths2(problem, groupsToRecompute, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(),
+                dbBW.getNeighbor(), neighborIds.size(), NUM_NEIGHBOUR_LEVELS, true);
 
         System.out.println();
 
@@ -93,7 +105,7 @@ public class EvaluateDynamicScenario {
         // try to only recompute immediate changes, then recompute entire database to see if I matched it
 
         DBAStar dbaStarAW = computeDBAStarDatabase(startingMap, "AW"); // AW = after wall
-        getDBAStarPath(startId, goalId, "AW", dbaStarAW);
+        // getDBAStarPath(startId, goalId, "AW", dbaStarAW);
 
         // remove wall
         Walls.removeWall(PATH_TO_MAP, wallLocation, startingMap);

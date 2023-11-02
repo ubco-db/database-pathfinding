@@ -299,4 +299,92 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
         dbStats.addStat(8, numBase);        // # of records (only corresponds to base paths)
         return baseTime;
     }
+
+    public int[][] getLowestCost() {
+        return lowestCost;
+    }
+
+    public int[][][] getPaths() {
+        return paths;
+    }
+
+    public int[][] getNeighbor() {
+        return neighbor;
+    }
+
+    /**
+     * Recomputes the dynamic programming table and base paths.
+     * DP table is stored as an adjacency list representation
+     *
+     * @param problem
+     * @param groups
+     * @param searchAlg
+     * @param numLevels
+     */
+    public void recomputeBasePaths2(SearchProblem problem, HashMap<Integer, GroupRecord> groups, SearchAlgorithm searchAlg,
+                                    int[][] lowestCost, int[][][] paths, int[][] neighbor, int numGroups, int numLevels,
+                                    boolean asSubgoals) {
+        int goalGroupLoc, startGroupLoc;
+        GroupRecord startGroup, goalGroup;
+        HashSet<Integer> neighbors;
+        AStar astar = new AStar(problem);
+        ArrayList<SearchState> path;
+        StatsRecord stats = new StatsRecord();
+        int numBase = 0;
+
+        System.out.println("Number of groups to recompute: " + numGroups);
+        long currentTime = System.currentTimeMillis();
+
+        int[] tmp = new int[5000];
+        System.out.println("Creating base paths to neighbors.");
+        int numStates = 0;
+        for (int i = 0; i < numGroups; i++) {
+            startGroup = groups.get(i + GameMap.START_NUM); // will need to redo
+            startGroupLoc = i;
+
+            neighbors = GameDB.getNeighbors(groups, startGroup, numLevels);
+            int numNeighbors = neighbors.size();
+            lowestCost[startGroupLoc] = new int[numNeighbors];
+            neighbor[startGroupLoc] = new int[numNeighbors];
+            neighborId[startGroupLoc] = new int[numNeighbors];
+            paths[startGroupLoc] = new int[numNeighbors][];
+
+            Iterator<Integer> it = neighbors.iterator();
+            // Generate for each neighbor group
+            int count = 0;
+            while (it.hasNext()) {
+                // Compute the shortest path between center representative of both groups
+                int goalGroupId = it.next();
+                goalGroup = groups.get(goalGroupId);
+
+                path = astar.computePath(new SearchState(startGroup.groupRepId), new SearchState(goalGroup.groupRepId), stats);
+                numBase++;
+
+                goalGroupLoc = goalGroupId - GameMap.START_NUM;
+
+                // Save information
+                SearchUtil.computePathCost(path, stats, problem);
+                int pathCost = stats.getPathCost();
+                neighborId[startGroupLoc][count] = goalGroupLoc;
+                lowestCost[startGroupLoc][count] = pathCost;
+                neighbor[startGroupLoc][count] = goalGroupLoc;
+                if (asSubgoals) {
+                    paths[startGroupLoc][count] = SubgoalDB.convertPathToIds(path);
+                    paths[startGroupLoc][count] = SearchUtil.compressPath(paths[startGroupLoc][count], searchAlg, tmp, path.size());
+                    numStates += paths[startGroupLoc][count].length;
+                } else {
+                    paths[startGroupLoc][count] = SubgoalDB.convertPathToIds(path);
+                    numStates += path.size();
+                }
+                count++;
+            }
+        }
+
+        long endTime = System.currentTimeMillis();
+        long baseTime = endTime - currentTime;
+        System.out.println("Time to re-compute base paths: " + (baseTime));
+        System.out.println("Base neighbors generated paths: " + numBase + " Number of states: " + numStates);
+//        dbStats.addStat(9, numStates);        // Set number of subgoals.  Will be changed by a version that pre-computes all paths but will not be changed for the dynamic version.
+//        dbStats.addStat(8, numBase);          // # of records (only corresponds to base paths)
+    }
 }
