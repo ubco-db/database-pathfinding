@@ -321,9 +321,9 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
      * @param searchAlg
      * @param numLevels
      */
-    public void recomputeBasePaths2(SearchProblem problem, HashMap<Integer, GroupRecord> groups, SearchAlgorithm searchAlg,
-                                    int[][] lowestCost, int[][][] paths, int[][] neighbor, int numGroups, int numLevels,
-                                    boolean asSubgoals) {
+    public void recomputeBasePaths2(SearchProblem problem, HashMap<Integer, GroupRecord> groups,
+                                    ArrayList<Integer> neighbourIndices, SearchAlgorithm searchAlg, int[][] lowestCost,
+                                    int[][][] paths, int[][] neighbor, int numGroups, int numLevels, boolean asSubgoals) {
         int goalGroupLoc, startGroupLoc;
         GroupRecord startGroup, goalGroup;
         HashSet<Integer> neighbors;
@@ -338,8 +338,9 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
         int[] tmp = new int[5000];
         System.out.println("Creating base paths to neighbors.");
         int numStates = 0;
+        // Need to find a better way to iterate here
         for (int i = 0; i < numGroups; i++) {
-            startGroup = groups.get(i + GameMap.START_NUM); // will need to redo
+            startGroup = groups.get(neighbourIndices.get(i)); // will need to redo
             startGroupLoc = i;
 
             neighbors = GameDB.getNeighbors(groups, startGroup, numLevels);
@@ -354,6 +355,7 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
             int count = 0;
             while (it.hasNext()) {
                 // Compute the shortest path between center representative of both groups
+                // TODO: How to find goalGroupIds?
                 int goalGroupId = it.next();
                 goalGroup = groups.get(goalGroupId);
 

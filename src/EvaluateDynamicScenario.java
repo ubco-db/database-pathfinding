@@ -89,11 +89,13 @@ public class EvaluateDynamicScenario {
         // TODO: use neighbour finding method?
 
         HashMap<Integer, GroupRecord> groupsToRecompute = new HashMap<>();
+        ArrayList<Integer> neighbourIndices = new ArrayList<>();
         for (int neighborId : neighborIds) {
             groupsToRecompute.put(neighborId, groups.get(neighborId));
+            neighbourIndices.add(neighborId);
         }
 
-        dbBW.recomputeBasePaths2(problem, groupsToRecompute, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(),
+        dbBW.recomputeBasePaths2(problem, groupsToRecompute, neighbourIndices, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(),
                 dbBW.getNeighbor(), neighborIds.size(), NUM_NEIGHBOUR_LEVELS, true);
 
         System.out.println();
