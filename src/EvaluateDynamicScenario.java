@@ -69,21 +69,11 @@ public class EvaluateDynamicScenario {
         GroupRecord groupRecord = map.getGroups().get(regionId);
         ArrayList<Integer> neighborIds = new ArrayList<>(groupRecord.getNeighborIds());
 
-        // Get region reps of neighbor regions
-        HashSet<Integer> neighborRegionRepIds = new HashSet<>();
-        int neighborRegionRegionRep;
-        System.out.println("neighborRegionRepIds:");
-        for (int neighborId : neighborIds) {
-            neighborRegionRegionRep = groups.get(neighborId).getGroupRepId();
-            neighborRegionRepIds.add(neighborRegionRegionRep);
-            System.out.println(neighborRegionRegionRep);
-        }
-
+        // Get database and initialize pathCompressAlgDba
         SubgoalDynamicDB2 dbBW = (SubgoalDynamicDB2) dbaStarBW.getDatabase();
         HillClimbing pathCompressAlgDba = new HillClimbing(problem, 10000);
 
         // Update regions for neighborIds in the database
-        // TODO: Does not seem like this changes anything
         dbBW.recomputeBasePaths2(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(),
                 dbBW.getNeighbor(), neighborIds.size(), NUM_NEIGHBOUR_LEVELS, true);
 

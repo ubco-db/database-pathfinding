@@ -187,4 +187,20 @@ public class DBAStar implements SearchAlgorithm {
     public GameMap getDBAStarMap() {
         return map;
     }
+
+    public SubgoalDB getDatabase() {
+        return database;
+    }
+
+    public SearchProblem getProblem() {
+        return problem;
+    }
+
+    public GameMap getMap() {
+        return map;
+    }
+
+    public RegionSearchProblem getAbstractProblem() {
+        return abstractProblem;
+    }
 }
