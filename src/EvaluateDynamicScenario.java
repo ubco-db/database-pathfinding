@@ -24,8 +24,7 @@ public class EvaluateDynamicScenario {
     public static void main(String[] args) {
         // add wall(s)
         ArrayList<SearchState> wallLocation = new ArrayList<>();
-        // 8942
-        int wallLoc = 12969; // adding this wall changes the shortest path between 12963 and 12978
+        int wallLoc = 8942;
         SearchState wall = new SearchState(wallLoc);
         wallLocation.add(wall);
 
@@ -47,7 +46,7 @@ public class EvaluateDynamicScenario {
         SearchProblem problem = dbaStarBW.getProblem();
 
         // add wall
-        Walls.addWall(PATH_TO_MAP, wallLocation, map);
+        map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = '*';
 
         // Get the id of the region rep of the region the wall was added in
         int regionRepId = dbaStarBW.getAbstractProblem().findRegionRep(wall).getId();
@@ -87,8 +86,22 @@ public class EvaluateDynamicScenario {
         // recompute database
         // try to only recompute immediate changes, then recompute entire database to see if I matched it
 
+        Walls.addWall(PATH_TO_MAP, wallLocation, startingMap);
+        startingMap = new GameMap(PATH_TO_MAP);
+
         DBAStar dbaStarAW = computeDBAStarDatabase(startingMap, "AW"); // AW = after wall
         // getDBAStarPath(startId, goalId, "AW", dbaStarAW);
+
+        // Why is there such a huge difference between the two squares arrays?
+        int[][] difference = findDifference(map.squares, startingMap.squares);
+
+        // Print the difference
+        for (int[] ints : difference) {
+            for (int j = 0; j < difference[0].length; j++) {
+                System.out.print(ints[j] + " ");
+            }
+            System.out.println();
+        }
 
         // remove wall
         Walls.removeWall(PATH_TO_MAP, wallLocation, startingMap);
@@ -215,5 +228,24 @@ public class EvaluateDynamicScenario {
     private static String getImageName(String wallStatus, boolean hasCentroids) {
         String lastToken = hasCentroids ? "_DBA_Centroid.png" : "_DBA.png";
         return DBA_STAR_DB_PATH + wallStatus + MAP_FILE_NAME + lastToken;
+    }
+
+    public static int[][] findDifference(int[][] array1, int[][] array2) {
+        if (array1.length != array2.length || array1[0].length != array2[0].length) {
+            // Handle arrays of different dimensions, return null or throw an exception.
+            return null;
+        }
+
+        int rows = array1.length;
+        int cols = array1[0].length;
+        int[][] difference = new int[rows][cols];
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                difference[i][j] = array1[i][j] - array2[i][j];
+            }
+        }
+
+        return difference;
     }
 }
