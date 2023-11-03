@@ -27,7 +27,7 @@ public class HillClimbing implements SearchAbstractAlgorithm {
         this.heuristic = heuristic;
     }
 
-    public HillClimbing(SearchProblem problem, int cutoff, boolean tieBreak) {    // standard de facto standard heuristic
+    public HillClimbing(SearchProblem problem, int cutoff, boolean tieBreak) { // de facto standard heuristic
         this(problem, cutoff, tieBreak, new HeuristicFunction() {
             public int apply(int startId, int goalId, int ncols) {
                 int startRow = startId / ncols;
@@ -41,10 +41,14 @@ public class HillClimbing implements SearchAbstractAlgorithm {
                 bit31 = diffCol >> 31;                      // Compute its absolute value
                 diffCol = (diffCol ^ bit31) - bit31;
 
-                if (diffRow > diffCol)                        // TODO: Any way to avoid the if statement here?
-                    return diffCol * 14 + (diffRow - diffCol) * 10;
-                else
-                    return diffRow * 14 + (diffCol - diffRow) * 10;
+//                if (diffRow > diffCol)
+//                    return diffCol * 14 + (diffRow - diffCol) * 10;
+//                else
+//                    return diffRow * 14 + (diffCol - diffRow) * 10;
+
+                // Got rid of if-statement
+                // return 10 * (diffRow + diffCol) + (14 - 2 * 10) * Math.min(diffRow, diffCol);
+                return 10 * (diffRow + diffCol) - 6 * Math.min(diffRow, diffCol);
             }
         });
     }
