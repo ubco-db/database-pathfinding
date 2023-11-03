@@ -46,6 +46,9 @@ public class EvaluateDynamicScenario {
         GameMap map = dbaStarBW.getMap();
         SearchProblem problem = dbaStarBW.getProblem();
 
+        // add wall
+        Walls.addWall(PATH_TO_MAP, wallLocation, map);
+
         // Get the id of the region rep of the region the wall was added in
         int regionRepId = dbaStarBW.getAbstractProblem().findRegionRep(wall).getId();
         System.out.println("regionRepId: " + regionRepId);
@@ -90,9 +93,6 @@ public class EvaluateDynamicScenario {
         System.out.println();
         System.out.println();
         System.out.println();
-
-        Walls.addWall(PATH_TO_MAP, wallLocation, startingMap);
-        startingMap = new GameMap(PATH_TO_MAP);
 
         // recompute database
         // try to only recompute immediate changes, then recompute entire database to see if I matched it
