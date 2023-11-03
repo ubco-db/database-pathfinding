@@ -76,34 +76,25 @@ public class EvaluateDynamicScenario {
             System.out.println(neighborRegionRegionRep);
         }
 
-        // TODO: Update regions for neighborIds in the database
         SubgoalDynamicDB2 dbBW = (SubgoalDynamicDB2) dbaStarBW.getDatabase();
-
-        /*
-        SearchProblem problem, HashMap<Integer, GroupRecord> groups, SearchAlgorithm searchAlg,
-                                    int[][] lowestCost, int[][][] paths, int[][] neighbor, int numGroups, int numLevels,
-                                    boolean asSubgoals, DBStatsRecord dbStats
-         */
         HillClimbing pathCompressAlgDba = new HillClimbing(problem, 10000);
-        // TODO: likely don't wanna pass groups, too much info, should I pass the problem I got back?
-        // TODO: use neighbour finding method?
 
-        HashMap<Integer, GroupRecord> groupsToRecompute = new HashMap<>();
-        ArrayList<Integer> neighbourIndices = new ArrayList<>();
-        for (int neighborId : neighborIds) {
-            groupsToRecompute.put(neighborId, groups.get(neighborId));
-            neighbourIndices.add(neighborId);
-        }
-
-        dbBW.recomputeBasePaths2(problem, groupsToRecompute, neighbourIndices, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(),
+        // Update regions for neighborIds in the database
+        // TODO: Does not seem like this changes anything
+        dbBW.recomputeBasePaths2(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(),
                 dbBW.getNeighbor(), neighborIds.size(), NUM_NEIGHBOUR_LEVELS, true);
 
+        // For checking recomputed database against AW database
+        dbBW.exportDB(DBA_STAR_DB_PATH + "BW_Recomp_" + MAP_FILE_NAME + "_DBA-STAR_G" + GRID_SIZE + "_N" + NUM_NEIGHBOUR_LEVELS + "_C" + CUTOFF + ".dat");
+
+        System.out.println();
+        System.out.println();
         System.out.println();
 
         Walls.addWall(PATH_TO_MAP, wallLocation, startingMap);
         startingMap = new GameMap(PATH_TO_MAP);
 
-        // recompute database TODO: don't fully recompute
+        // recompute database
         // try to only recompute immediate changes, then recompute entire database to see if I matched it
 
         DBAStar dbaStarAW = computeDBAStarDatabase(startingMap, "AW"); // AW = after wall

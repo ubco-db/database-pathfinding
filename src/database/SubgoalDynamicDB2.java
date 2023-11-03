@@ -338,10 +338,11 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
         int[] tmp = new int[5000];
         System.out.println("Creating base paths to neighbors.");
         int numStates = 0;
+
         // Need to find a better way to iterate here
-        for (int i = 0; i < numGroups; i++) {
-            startGroup = groups.get(neighbourIndices.get(i)); // will need to redo
-            startGroupLoc = i;
+        for (Integer neighbourIndex : neighbourIndices) {
+            startGroup = groups.get(neighbourIndex); // will need to redo
+            startGroupLoc = neighbourIndex - GameMap.START_NUM;
 
             neighbors = GameDB.getNeighbors(groups, startGroup, numLevels);
             int numNeighbors = neighbors.size();
@@ -355,7 +356,6 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
             int count = 0;
             while (it.hasNext()) {
                 // Compute the shortest path between center representative of both groups
-                // TODO: How to find goalGroupIds?
                 int goalGroupId = it.next();
                 goalGroup = groups.get(goalGroupId);
 
@@ -370,7 +370,7 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
                 neighborId[startGroupLoc][count] = goalGroupLoc;
                 lowestCost[startGroupLoc][count] = pathCost;
                 neighbor[startGroupLoc][count] = goalGroupLoc;
-                if (asSubgoals) {
+                if (asSubgoals) { // asSubgoals is always true
                     paths[startGroupLoc][count] = SubgoalDB.convertPathToIds(path);
                     paths[startGroupLoc][count] = SearchUtil.compressPath(paths[startGroupLoc][count], searchAlg, tmp, path.size());
                     numStates += paths[startGroupLoc][count].length;
