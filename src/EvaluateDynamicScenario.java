@@ -43,11 +43,12 @@ public class EvaluateDynamicScenario {
 
         // Use the map returned after the database is fully computed
         GameMap map = dbaStarBW.getMap();
+        // Do I need more updates here?
         MapSearchProblem problem = (MapSearchProblem) dbaStarBW.getProblem();
 
         // add wall
         // System.out.println(map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)]);
-        map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = '*';
+        // map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = '*';
         problem.getMap().squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = '*';
         // System.out.println(map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)]);
 
@@ -76,6 +77,7 @@ public class EvaluateDynamicScenario {
         HillClimbing pathCompressAlgDba = new HillClimbing(problem, 10000);
 
         // Update regions for neighborIds in the database
+        // TODO: It seems like the update only works one way
         dbBW.recomputeBasePaths2(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(),
                 dbBW.getNeighbor(), neighborIds.size(), NUM_NEIGHBOUR_LEVELS, true);
 
