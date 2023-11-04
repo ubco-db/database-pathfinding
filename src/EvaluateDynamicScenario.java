@@ -24,7 +24,7 @@ public class EvaluateDynamicScenario {
     public static void main(String[] args) {
         // add wall(s)
         ArrayList<SearchState> wallLocation = new ArrayList<>();
-        int wallLoc = 8942;
+        int wallLoc = 12969; // adding this wall changes the shortest path between 12963 and 12978
         SearchState wall = new SearchState(wallLoc);
         wallLocation.add(wall);
 
@@ -43,10 +43,13 @@ public class EvaluateDynamicScenario {
 
         // Use the map returned after the database is fully computed
         GameMap map = dbaStarBW.getMap();
-        SearchProblem problem = dbaStarBW.getProblem();
+        MapSearchProblem problem = (MapSearchProblem) dbaStarBW.getProblem();
 
         // add wall
+        // System.out.println(map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)]);
         map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = '*';
+        problem.getMap().squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = '*';
+        // System.out.println(map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)]);
 
         // Get the id of the region rep of the region the wall was added in
         int regionRepId = dbaStarBW.getAbstractProblem().findRegionRep(wall).getId();
@@ -93,15 +96,15 @@ public class EvaluateDynamicScenario {
         // getDBAStarPath(startId, goalId, "AW", dbaStarAW);
 
         // Why is there such a huge difference between the two squares arrays?
-        int[][] difference = findDifference(map.squares, startingMap.squares);
+//        int[][] difference = findDifference(map.squares, startingMap.squares);
 
         // Print the difference
-        for (int[] ints : difference) {
-            for (int j = 0; j < difference[0].length; j++) {
-                System.out.print(ints[j] + " ");
-            }
-            System.out.println();
-        }
+//        for (int[] ints : difference) {
+//            for (int j = 0; j < difference[0].length; j++) {
+//                System.out.print(ints[j] + " ");
+//            }
+//            System.out.println();
+//        }
 
         // remove wall
         Walls.removeWall(PATH_TO_MAP, wallLocation, startingMap);
@@ -150,6 +153,7 @@ public class EvaluateDynamicScenario {
 
         currentTime = System.currentTimeMillis();
 
+        // This is where region reps and groups on the map are computed
         map = map.sectorAbstract2(GRID_SIZE);
 
         long resultTime = System.currentTimeMillis() - currentTime;

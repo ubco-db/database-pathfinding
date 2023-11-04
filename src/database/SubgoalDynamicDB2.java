@@ -296,7 +296,7 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
         System.out.println("Time to compute base paths: " + (baseTime));
         System.out.println("Base neighbors generated paths: " + numBase + " Number of states: " + numStates);
         dbStats.addStat(9, numStates);        // Set number of subgoals.  Will be changed by a version that pre-computes all paths but will not be changed for the dynamic version.
-        dbStats.addStat(8, numBase);        // # of records (only corresponds to base paths)
+        dbStats.addStat(8, numBase);          // # of records (only corresponds to base paths)
         return baseTime;
     }
 
@@ -339,7 +339,6 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
         System.out.println("Creating base paths to neighbors.");
         int numStates = 0;
 
-        // Need to find a better way to iterate here
         for (Integer neighbourIndex : neighbourIndices) {
             startGroup = groups.get(neighbourIndex); // will need to redo
             startGroupLoc = neighbourIndex - GameMap.START_NUM;
@@ -370,14 +369,9 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
                 neighborId[startGroupLoc][count] = goalGroupLoc;
                 lowestCost[startGroupLoc][count] = pathCost;
                 neighbor[startGroupLoc][count] = goalGroupLoc;
-                if (asSubgoals) { // asSubgoals is always true
-                    paths[startGroupLoc][count] = SubgoalDB.convertPathToIds(path);
-                    paths[startGroupLoc][count] = SearchUtil.compressPath(paths[startGroupLoc][count], searchAlg, tmp, path.size());
-                    numStates += paths[startGroupLoc][count].length;
-                } else {
-                    paths[startGroupLoc][count] = SubgoalDB.convertPathToIds(path);
-                    numStates += path.size();
-                }
+                paths[startGroupLoc][count] = SubgoalDB.convertPathToIds(path);
+                paths[startGroupLoc][count] = SearchUtil.compressPath(paths[startGroupLoc][count], searchAlg, tmp, path.size());
+                numStates += paths[startGroupLoc][count].length;
                 count++;
             }
         }
