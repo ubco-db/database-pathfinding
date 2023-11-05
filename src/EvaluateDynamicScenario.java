@@ -75,14 +75,13 @@ public class EvaluateDynamicScenario {
         // Get the neighbour ids regions using the region id
         GroupRecord groupRecord = map.getGroups().get(regionId);
         ArrayList<Integer> neighborIds = new ArrayList<>(groupRecord.getNeighborIds());
-        neighborIds.add(groupRecord.groupId);
+        neighborIds.add(groupRecord.groupId); // need to pass this so updates work both ways
 
         // Get database and initialize pathCompressAlgDba
         SubgoalDynamicDB2 dbBW = (SubgoalDynamicDB2) dbaStarBW.getDatabase();
         HillClimbing pathCompressAlgDba = new HillClimbing(problem, 10000);
 
         // Update regions for neighborIds in the database
-        // TODO: It seems like the update only works one way
         dbBW.recomputeBasePaths2(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(),
                 dbBW.getNeighbor(), neighborIds.size(), NUM_NEIGHBOUR_LEVELS, true);
 
