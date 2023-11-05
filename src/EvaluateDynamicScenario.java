@@ -75,6 +75,7 @@ public class EvaluateDynamicScenario {
         // Get the neighbour ids regions using the region id
         GroupRecord groupRecord = map.getGroups().get(regionId);
         ArrayList<Integer> neighborIds = new ArrayList<>(groupRecord.getNeighborIds());
+        neighborIds.add(groupRecord.groupId);
 
         // Get database and initialize pathCompressAlgDba
         SubgoalDynamicDB2 dbBW = (SubgoalDynamicDB2) dbaStarBW.getDatabase();
