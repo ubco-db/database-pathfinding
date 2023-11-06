@@ -24,7 +24,7 @@ public class EvaluateDynamicScenario {
     public static void main(String[] args) {
         // add wall(s)
         ArrayList<SearchState> wallLocation = new ArrayList<>();
-        int wallLoc = 12969; // adding this wall changes the shortest path between 12963 and 12978
+        int wallLoc = 8195; // wall on rep
         SearchState wall = new SearchState(wallLoc);
         wallLocation.add(wall);
 
@@ -51,7 +51,7 @@ public class EvaluateDynamicScenario {
         // TODO: The abstract problem needs to be changed here
 
         // Get the id of the region rep of the region the wall was added in
-        int regionRepId = map.getAbstractProblem().findRegionRep(wall).getId();
+        int regionRepId = map.getAbstractProblem().findRegionRep(wall, map).getId();
         System.out.println("regionRepId: " + regionRepId);
 
         // Get the id of the region the wall was added in using its regionRepId

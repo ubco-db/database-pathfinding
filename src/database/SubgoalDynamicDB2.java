@@ -363,7 +363,7 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
 
                 goalGroupLoc = goalGroupId - GameMap.START_NUM;
 
-                // Save information
+                // Save information // TODO: What happens if path is null?
                 SearchUtil.computePathCost(path, stats, problem);
                 int pathCost = stats.getPathCost();
                 neighborId[startGroupLoc][count] = goalGroupLoc;
