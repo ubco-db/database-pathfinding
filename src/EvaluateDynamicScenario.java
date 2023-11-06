@@ -43,18 +43,10 @@ public class EvaluateDynamicScenario {
 
         // Use the map returned after the database is fully computed
         GameMap map = dbaStarBW.getMap();
-        // Do I need more updates here?
-        // MapSearchProblem problem = (MapSearchProblem) dbaStarBW.getProblem();
 
-        // add wall
-        Walls.addWall(PATH_TO_MAP, wallLocation, startingMap);
-        startingMap = new GameMap(PATH_TO_MAP);
-        SearchProblem problem = new MapSearchProblem(startingMap);
-
-        // System.out.println(map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)]);
-        // map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = '*';
-        // problem.getMap().squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = '*';
-        // System.out.println(map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)]);
+        // Add wall to existing map
+        map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = '*';
+        MapSearchProblem problem = new MapSearchProblem(map);
 
         // Get the id of the region rep of the region the wall was added in
         int regionRepId = dbaStarBW.getAbstractProblem().findRegionRep(wall).getId();
@@ -94,6 +86,10 @@ public class EvaluateDynamicScenario {
 
         // recompute database
         // try to only recompute immediate changes, then recompute entire database to see if I matched it
+
+        // add wall to starting map
+        Walls.addWall(PATH_TO_MAP, wallLocation, startingMap);
+        startingMap = new GameMap(PATH_TO_MAP);
 
         DBAStar dbaStarAW = computeDBAStarDatabase(startingMap, "AW"); // AW = after wall
         // getDBAStarPath(startId, goalId, "AW", dbaStarAW);
