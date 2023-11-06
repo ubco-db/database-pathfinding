@@ -48,8 +48,10 @@ public class EvaluateDynamicScenario {
         map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = '*';
         MapSearchProblem problem = new MapSearchProblem(map);
 
+        // TODO: The abstract problem needs to be changed here
+
         // Get the id of the region rep of the region the wall was added in
-        int regionRepId = dbaStarBW.getAbstractProblem().findRegionRep(wall).getId();
+        int regionRepId = map.getAbstractProblem().findRegionRep(wall).getId();
         System.out.println("regionRepId: " + regionRepId);
 
         // Get the id of the region the wall was added in using its regionRepId
