@@ -87,7 +87,8 @@ public class EvaluateDynamicScenario {
         int newRegionRep = map.recomputeCentroid(groupRecord, wallLoc);
         System.out.println("New rep at: " + newRegionRep);
         // get back new region rep and change the record
-        groupRecord.setGroupRepId(newRegionRep);
+        // TODO: Ok, if the recomputation worked properly, this would be fine
+        groupRecord.setGroupRepId(15199); // FIXME
         groups.replace(regionId, groupRecord);
 
         ArrayList<Integer> neighborIds = new ArrayList<>(groupRecord.getNeighborIds());
