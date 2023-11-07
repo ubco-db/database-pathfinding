@@ -2208,11 +2208,11 @@ public class GameMap {
     public int recomputeCentroid(GroupRecord rec, int wallLoc) {
         // regionReps = new ArrayList<>();
 
-        long sumRow = 0, sumCol = 0, N = rec.getSize();
+        long sumRow = 0, sumCol = 0, N = rec.getSize() - 1; // TODO: replace with ArrayList length
         ExpandArray states = rec.states;
         for (int i = 0; i < N; i++) {
             int id = states.get(i);
-            if (id != wallLoc) {
+            if (id != wallLoc) { // FIXME: Why does this not lead to the same region rep as AW?
                 sumRow += this.getRow(id);
                 sumCol += this.getCol(id);
             }

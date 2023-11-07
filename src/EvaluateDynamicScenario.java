@@ -84,10 +84,11 @@ public class EvaluateDynamicScenario {
 
         // TODO: This assumes that the regioning doesn't change significantly (region id stays the same)
         // do this if wall on rep
-        // TODO: This returns the location of the wall again, why?
         int newRegionRep = map.recomputeCentroid(groupRecord, wallLoc);
         System.out.println("New rep at: " + newRegionRep);
         // get back new region rep and change the record
+        groupRecord.setGroupRepId(newRegionRep);
+        groups.replace(regionId, groupRecord);
 
         ArrayList<Integer> neighborIds = new ArrayList<>(groupRecord.getNeighborIds());
         neighborIds.add(groupRecord.groupId); // need to pass this so updates work both ways
