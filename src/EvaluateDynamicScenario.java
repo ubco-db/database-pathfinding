@@ -22,9 +22,9 @@ public class EvaluateDynamicScenario {
 
 
     public static void main(String[] args) {
-        // add wall(s)
+        // set wall(s)
         ArrayList<SearchState> wallLocation = new ArrayList<>();
-        int wallLoc = 8195; // wall on rep
+        int wallLoc = 15347; // wall on rep
         SearchState wall = new SearchState(wallLoc);
         wallLocation.add(wall);
 
@@ -44,18 +44,31 @@ public class EvaluateDynamicScenario {
         // Use the map returned after the database is fully computed
         GameMap map = dbaStarBW.getMap();
 
+        boolean priorWall = map.isWall(wallLoc);
+
         // Add wall to existing map
         map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = '*';
+        // Make new MapSearchProblem (will use map with added wall)
         MapSearchProblem problem = new MapSearchProblem(map);
 
+        if (!priorWall && map.isWall(wallLoc)) {
+            System.out.println("Wall at " + wallLoc + " set successfully!");
+        }
+
         // TODO: The abstract problem needs to be changed here
+        // I need to find where the new region rep will be and replace it in the corresponding group
 
         // Get the id of the region rep of the region the wall was added in
         int regionRepId = map.getAbstractProblem().findRegionRep(wall, map).getId();
         System.out.println("regionRepId: " + regionRepId);
 
+        if (regionRepId == wallLoc) {
+            System.out.println("Wall on region rep!");
+        }
+
         // Get the id of the region the wall was added in using its regionRepId
         HashMap<Integer, GroupRecord> groups = new MapSearchProblem(map).getGroups(); // stores number of states per region as well, may be useful later
+
         Iterator<Map.Entry<Integer, GroupRecord>> it = groups.entrySet().iterator();
         Map.Entry<Integer, GroupRecord> elem;
         HashMap<Integer, Integer> regionRepIdToRegionId = new HashMap<>();
@@ -67,7 +80,15 @@ public class EvaluateDynamicScenario {
         System.out.println("regionId: " + regionId);
 
         // Get the neighbour ids regions using the region id
-        GroupRecord groupRecord = map.getGroups().get(regionId);
+        GroupRecord groupRecord = groups.get(regionId);
+
+        // TODO: This assumes that the regioning doesn't change significantly (region id stays the same)
+        // do this if wall on rep
+        // TODO: This returns the location of the wall again, why?
+        int newRegionRep = map.recomputeCentroid(groupRecord, wallLoc);
+        System.out.println("New rep at: " + newRegionRep);
+        // get back new region rep and change the record
+
         ArrayList<Integer> neighborIds = new ArrayList<>(groupRecord.getNeighborIds());
         neighborIds.add(groupRecord.groupId); // need to pass this so updates work both ways
 

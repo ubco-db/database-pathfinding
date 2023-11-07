@@ -329,7 +329,7 @@ public class RegionSearchProblem extends SearchProblem {
         return false;
     }
 
-    public SearchState findRegionRep(SearchState s) {
+    public SearchState findRegionRep(SearchState s, GameMap map) {
         int row = map.getRow(s.id);
         int col = map.getCol(s.id);
         int numSectorsPerRow = (int) Math.ceil(map.cols * 1.0 / gridSize);
