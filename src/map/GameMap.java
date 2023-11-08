@@ -2210,9 +2210,9 @@ public class GameMap {
 
         long sumRow = 0, sumCol = 0, N = rec.getSize() - 1; // TODO: replace with ArrayList length
         ExpandArray states = rec.states;
-        for (int i = 0; i < N; i++) {
+        for (int i = 0; i < (N + 1); i++) { // TODO: replace 1 with ArrayList length
             int id = states.get(i);
-            if (id != wallLoc) { // FIXME: Why does this not lead to the same region rep as AW?
+            if (id != wallLoc) { // TODO: replace this with search in ArrayList
                 sumRow += this.getRow(id);
                 sumCol += this.getCol(id);
             }
@@ -2221,19 +2221,20 @@ public class GameMap {
         int row = Math.round(sumRow / N);
         int col = Math.round(sumCol / N);
 
-        // TODO: region rep does not seem to be properly recomputed
         if (this.isWall(row, col) || squares[row][col] != rec.groupId) {    // If centroid point is not in group or is a wall
             // Find the point that is in the group that is closest
             int minDist = 10000, minRow = -1, minCol = -1;
-            for (int i = 0; i < N; i++) {
+            for (int i = 0; i < (N + 1); i++) { // TODO: replace 1 with ArrayList length
                 int id = states.get(i);
-                int r = this.getRow(id);
-                int c = this.getCol(id);
-                int dist = GameMap.computeDistance(row, col, r, c);
-                if (dist < minDist) {
-                    minRow = r;
-                    minCol = c;
-                    minDist = dist;
+                if (id != wallLoc) { // TODO: replace this with search in ArrayList
+                    int r = this.getRow(id);
+                    int c = this.getCol(id);
+                    int dist = GameMap.computeDistance(row, col, r, c);
+                    if (dist < minDist) {
+                        minRow = r;
+                        minCol = c;
+                        minDist = dist;
+                    }
                 }
             }
             row = minRow;
