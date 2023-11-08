@@ -102,6 +102,15 @@ public class EvaluateDynamicScenario {
         int[][] groupsArr = dbBW.getDb().getGroups();
         // TODO: Write correct regionId to groupsArr
 
+        // TODO: Why is the indexing in this array so strange?
+        // Loop through the array and print its elements
+        for (int[] ints : groupsArr) {
+            for (int anInt : ints) {
+                System.out.print(anInt + " ");
+            }
+            System.out.println(); // Move to the next row
+        }
+
         // write groupsArr back to db
         dbBW.getDb().setGroups(groupsArr);
 
