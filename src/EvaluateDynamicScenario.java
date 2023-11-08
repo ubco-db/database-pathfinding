@@ -24,7 +24,7 @@ public class EvaluateDynamicScenario {
     public static void main(String[] args) {
         // set wall(s)
         ArrayList<SearchState> wallLocation = new ArrayList<>();
-        int wallLoc = 12161;
+        int wallLoc = 12969;
         SearchState wall = new SearchState(wallLoc);
         wallLocation.add(wall);
 
