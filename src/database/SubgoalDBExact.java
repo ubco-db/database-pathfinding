@@ -166,4 +166,8 @@ public class SubgoalDBExact extends SubgoalDB {
         super.verify(searchAlg);
         db.verify(problem);
     }
+
+    public IndexDB getDb() {
+        return db;
+    }
 }

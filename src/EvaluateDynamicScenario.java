@@ -24,7 +24,7 @@ public class EvaluateDynamicScenario {
     public static void main(String[] args) {
         // set wall(s)
         ArrayList<SearchState> wallLocation = new ArrayList<>();
-        int wallLoc = 17420; // wall on different rep
+        int wallLoc = 8942;
         SearchState wall = new SearchState(wallLoc);
         wallLocation.add(wall);
 
@@ -55,9 +55,6 @@ public class EvaluateDynamicScenario {
             System.out.println("Wall at " + wallLoc + " set successfully!");
         }
 
-        // TODO: The abstract problem needs to be changed here
-        // I need to find where the new region rep will be and replace it in the corresponding group
-
         // Get the id of the region rep of the region the wall was added in
         int regionRepId = map.getAbstractProblem().findRegionRep(wall, map).getId();
         System.out.println("regionRepId: " + regionRepId);
@@ -83,7 +80,7 @@ public class EvaluateDynamicScenario {
         GroupRecord groupRecord = groups.get(regionId);
 
         // TODO: This assumes that the regioning doesn't change significantly (region id stays the same)
-        // do this if wall on rep
+        // do this if wall on rep or if regioning changes (TODO: condition to check this?)
         int newRegionRep = map.recomputeCentroid(groupRecord, wallLoc);
         System.out.println("New rep at: " + newRegionRep);
         // get back new region rep and change the record
@@ -101,6 +98,14 @@ public class EvaluateDynamicScenario {
         dbBW.recomputeBasePaths2(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(),
                 dbBW.getNeighbor(), neighborIds.size(), NUM_NEIGHBOUR_LEVELS, true);
 
+        // TODO: Update db
+        int[][] groupsArr = dbBW.getDb().getGroups();
+        // TODO: Write correct regionId to groupsArr
+
+        // write groupsArr back to db
+        dbBW.getDb().setGroups(groupsArr);
+
+        // records.set(regionId - 50, );
         // For checking recomputed database against AW database
         dbBW.exportDB(DBA_STAR_DB_PATH + "BW_Recomp_" + MAP_FILE_NAME + "_DBA-STAR_G" + GRID_SIZE + "_N" + NUM_NEIGHBOUR_LEVELS + "_C" + CUTOFF + ".dat");
 

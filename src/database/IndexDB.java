@@ -237,4 +237,8 @@ public class IndexDB {
         for (int[] group : groups) if (group[0] == groupId) return group[1];
         return -1;
     }
+
+    public int[][] getGroups() {
+        return groups;
+    }
 }
