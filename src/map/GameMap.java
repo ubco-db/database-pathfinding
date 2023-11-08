@@ -2204,12 +2204,12 @@ public class GameMap {
     }
 
     // Compute centroid for one group
-    // TODO: pass ArrayList of walls
+    // TODO: pass ArrayList of walls (currently assuming only one wall is placed)
     public int recomputeCentroid(GroupRecord rec, int wallLoc) {
         // regionReps = new ArrayList<>();
 
         long sumRow = 0, sumCol = 0, N = rec.getSize() - 1; // TODO: replace with ArrayList length
-        ExpandArray states = rec.states;
+        ExpandArray states = rec.states; // QUESTION: Why are we using ExpandArray here? Array should be enough
         for (int i = 0; i < (N + 1); i++) { // TODO: replace 1 with ArrayList length
             int id = states.get(i);
             if (id != wallLoc) { // TODO: replace this with search in ArrayList
