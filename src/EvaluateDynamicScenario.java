@@ -24,7 +24,7 @@ public class EvaluateDynamicScenario {
     public static void main(String[] args) {
         // set wall(s)
         ArrayList<SearchState> wallLocation = new ArrayList<>();
-        int wallLoc = 13556;
+        int wallLoc = 4651;
         SearchState wall = new SearchState(wallLoc);
         wallLocation.add(wall);
 
@@ -79,12 +79,23 @@ public class EvaluateDynamicScenario {
         // Get the neighbour ids regions using the region id
         GroupRecord groupRecord = groups.get(regionId);
 
-        // TODO: This assumes that the regioning doesn't change significantly (region id stays the same)
-        int newRegionRep = map.recomputeCentroid(groupRecord, wallLoc);
-        System.out.println("New rep at: " + newRegionRep);
-        // get back new region rep and change the record
-        groupRecord.setGroupRepId(newRegionRep);
-        groups.replace(regionId, groupRecord);
+        // TODO: scenario when there is only one state in the region
+        if (groupRecord.getNumStates() == 1) {
+            // need to tombstone region, and make sure it doesn't have neighbours or shortest paths anymore
+            groups.remove(regionId);
+            // tombstoning in array: add -1 and skip that when writing back?
+        } else {
+            // TODO: This assumes that the regioning doesn't change significantly (region id stays the same)
+            int newRegionRep = map.recomputeCentroid(groupRecord, wallLoc);
+            System.out.println("New rep at: " + newRegionRep);
+            // get back new region rep and change the record
+            groupRecord.setGroupRepId(newRegionRep);
+            groups.replace(regionId, groupRecord);
+        }
+
+        // TODO: scenario where map is partitioned by wall addition
+        // check that one other region is still reachable from current region
+        // if not: region is cut off, may introduce new rep
 
         ArrayList<Integer> neighborIds = new ArrayList<>(groupRecord.getNeighborIds());
         neighborIds.add(groupRecord.groupId); // need to pass this so updates work both ways

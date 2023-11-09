@@ -26,8 +26,7 @@ public class GroupRecord {
 
     // Returns true if two groups are neighbors by virtue of one group having a base state that is in the neighbor list of the other.
     // Since assuming non-directed edges (this works either way as both states should have the same pair of nodes as neighbors in the neighbor lists).
-    public boolean isNeighbor(GroupRecord g)
-    {
+    public boolean isNeighbor(GroupRecord g) {
         HashSet<Integer> otherGroupNeighbors = g.getNeighborIds();
         if (otherGroupNeighbors == null || neighborIds == null)
             return false;
@@ -56,6 +55,10 @@ public class GroupRecord {
 
     public void setGroupRepId(int groupRepId) {
         this.groupRepId = groupRepId;
+    }
+
+    public int getNumStates() {
+        return numStates;
     }
 
     public void setNumStates(int numStates) {
