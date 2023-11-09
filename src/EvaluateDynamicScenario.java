@@ -80,7 +80,6 @@ public class EvaluateDynamicScenario {
         GroupRecord groupRecord = groups.get(regionId);
 
         // TODO: This assumes that the regioning doesn't change significantly (region id stays the same)
-        // do this if wall on rep or if regioning changes (TODO: condition to check this?)
         int newRegionRep = map.recomputeCentroid(groupRecord, wallLoc);
         System.out.println("New rep at: " + newRegionRep);
         // get back new region rep and change the record
@@ -98,15 +97,14 @@ public class EvaluateDynamicScenario {
         dbBW.recomputeBasePaths2(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(),
                 dbBW.getNeighbor(), neighborIds.size(), NUM_NEIGHBOUR_LEVELS, true);
 
-        // TODO: Update db
+        // TODO: Update db (need to update numGroups, and potentially the map)
         int[][] groupsArr = dbBW.getDb().getGroups();
-        // TODO: Write correct regionId to groupsArr
 
         groupsArr[regionId-50] = new int[]{regionId-50, regionRepId};
 
         // write groupsArr back to db
         dbBW.getDb().setGroups(groupsArr);
-        // records.set(regionId - 50, );
+
         // For checking recomputed database against AW database
         dbBW.exportDB(DBA_STAR_DB_PATH + "BW_Recomp_" + MAP_FILE_NAME + "_DBA-STAR_G" + GRID_SIZE + "_N" + NUM_NEIGHBOUR_LEVELS + "_C" + CUTOFF + ".dat");
 
@@ -250,24 +248,5 @@ public class EvaluateDynamicScenario {
     private static String getImageName(String wallStatus, boolean hasCentroids) {
         String lastToken = hasCentroids ? "_DBA_Centroid.png" : "_DBA.png";
         return DBA_STAR_DB_PATH + wallStatus + MAP_FILE_NAME + lastToken;
-    }
-
-    public static int[][] findDifference(int[][] array1, int[][] array2) {
-        if (array1.length != array2.length || array1[0].length != array2[0].length) {
-            // Handle arrays of different dimensions, return null or throw an exception.
-            return null;
-        }
-
-        int rows = array1.length;
-        int cols = array1[0].length;
-        int[][] difference = new int[rows][cols];
-
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                difference[i][j] = array1[i][j] - array2[i][j];
-            }
-        }
-
-        return difference;
     }
 }
