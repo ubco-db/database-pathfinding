@@ -53,7 +53,7 @@ public class GameMap {
 
     public static final int START_NUM = 50;
 
-    private HashMap<Integer, GroupRecord> groups;
+    private TreeMap<Integer, GroupRecord> groups;
     private GroupRecord[] groupsArray;                // A faster lookup mechanism
 
     private int[] numRegions;                         // Number of regions in each sector (only used for sector abstraction)
@@ -249,7 +249,7 @@ public class GameMap {
 		*/
     }
 
-    public HashMap<Integer, GroupRecord> getGroups() {
+    public TreeMap<Integer, GroupRecord> getGroups() {
         if (groups == null) {    // Compute groups
             computeGroups();
         }
@@ -991,7 +991,7 @@ public class GameMap {
         GameMap baseMap = this.copyMap();
         GroupRecord group;
 
-        baseMap.groups = new HashMap<>();
+        baseMap.groups = new TreeMap<>();
         SavedSearch currentSet = new SavedSearch(65536);
         SavedSearch database = new SavedSearch(65536);
         long totalSize = 0;
@@ -1056,7 +1056,7 @@ public class GameMap {
         GroupRecord group;
         long totalSize = 0;
 
-        groups = new HashMap<Integer, GroupRecord>();
+        groups = new TreeMap<Integer, GroupRecord>();
 
         long currentTime = System.currentTimeMillis();
 
@@ -1287,7 +1287,7 @@ public class GameMap {
         int maxCoverageStateId = -1;
         GroupRecord bestCoverage;
         int currentNum = START_NUM - 1;    // Start # above 42 which is a wall
-        baseMap.groups = new HashMap<Integer, GroupRecord>();
+        baseMap.groups = new TreeMap<Integer, GroupRecord>();
         SavedSearch currentSet = new SavedSearch(65536);
         SavedSearch database = new SavedSearch(65536);
         int bestCoverCount = 0;
@@ -1309,7 +1309,7 @@ public class GameMap {
             GameMap newMap = this.copyMap(); // Get a new copy of map as previous expand spot would have marked up regions
             // newMap.groups = baseMap.groups;
             baseMap = newMap;
-            baseMap.groups = new HashMap<Integer, GroupRecord>();
+            baseMap.groups = new TreeMap<Integer, GroupRecord>();
             currentNum = START_NUM - 1;
 
             for (int i = 0; i < numTrailHeads; i++) {
@@ -2114,7 +2114,7 @@ public class GameMap {
      */
     public void computeGroups() {
         long currentTime = System.currentTimeMillis();
-        groups = new HashMap<Integer, GroupRecord>();
+        groups = new TreeMap<Integer, GroupRecord>();
 
         // Traverse all cells to create the groups
         for (int i = 0; i < rows; i++) {

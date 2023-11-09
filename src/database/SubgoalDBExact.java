@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 /**
  * A database of records organized as a 2D matrix from state representatives.
@@ -142,7 +143,7 @@ public class SubgoalDBExact extends SubgoalDB {
         db.setNumRegions(distinctStates.size());
 
         // Also store group (abstract region) id to group seed id (base state id of region representative) mapping
-        HashMap<Integer, GroupRecord> groups = problem.getGroups();
+        TreeMap<Integer, GroupRecord> groups = problem.getGroups();
         Iterator<Entry<Integer, GroupRecord>> it = groups.entrySet().iterator();
         Entry<Integer, GroupRecord> e;
         int[][] groupsMapping = new int[groups.size()][2];

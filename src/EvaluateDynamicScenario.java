@@ -64,7 +64,7 @@ public class EvaluateDynamicScenario {
         }
 
         // Get the id of the region the wall was added in using its regionRepId
-        HashMap<Integer, GroupRecord> groups = new MapSearchProblem(map).getGroups(); // stores number of states per region as well, may be useful later
+        TreeMap<Integer, GroupRecord> groups = new MapSearchProblem(map).getGroups(); // stores number of states per region as well, may be useful later
 
         Iterator<Map.Entry<Integer, GroupRecord>> it = groups.entrySet().iterator();
         Map.Entry<Integer, GroupRecord> elem;
@@ -102,18 +102,10 @@ public class EvaluateDynamicScenario {
         int[][] groupsArr = dbBW.getDb().getGroups();
         // TODO: Write correct regionId to groupsArr
 
-        // TODO: Why is the indexing in this array so strange?
-        // Loop through the array and print its elements
-        for (int[] ints : groupsArr) {
-            for (int anInt : ints) {
-                System.out.print(anInt + " ");
-            }
-            System.out.println(); // Move to the next row
-        }
+        groupsArr[regionId-50] = new int[]{regionId-50, regionRepId};
 
         // write groupsArr back to db
         dbBW.getDb().setGroups(groupsArr);
-
         // records.set(regionId - 50, );
         // For checking recomputed database against AW database
         dbBW.exportDB(DBA_STAR_DB_PATH + "BW_Recomp_" + MAP_FILE_NAME + "_DBA-STAR_G" + GRID_SIZE + "_N" + NUM_NEIGHBOUR_LEVELS + "_C" + CUTOFF + ".dat");
@@ -123,7 +115,7 @@ public class EvaluateDynamicScenario {
         System.out.println();
 
         // recompute database
-        // try to only recompute immediate changes, then recompute entire database to see if I matched it
+        // try to only recompute changes, then recompute entire database to see if I matched it
 
         // add wall to starting map
         Walls.addWall(PATH_TO_MAP, wallLocation, startingMap);
@@ -131,17 +123,6 @@ public class EvaluateDynamicScenario {
 
         DBAStar dbaStarAW = computeDBAStarDatabase(startingMap, "AW"); // AW = after wall
         // getDBAStarPath(startId, goalId, "AW", dbaStarAW);
-
-        // Why is there such a huge difference between the two squares arrays?
-//        int[][] difference = findDifference(map.squares, startingMap.squares);
-
-        // Print the difference
-//        for (int[] ints : difference) {
-//            for (int j = 0; j < difference[0].length; j++) {
-//                System.out.print(ints[j] + " ");
-//            }
-//            System.out.println();
-//        }
 
         // remove wall
         Walls.removeWall(PATH_TO_MAP, wallLocation, startingMap);

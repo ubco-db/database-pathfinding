@@ -5,12 +5,7 @@ import map.GroupRecord;
 import util.ExpandArray;
 import util.HeuristicFunction;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Supports searches of abstract regions used by PRA.
@@ -41,7 +36,7 @@ public class RegionSearchProblem extends SearchProblem {
     private HashMap<Integer, Region> regions;
 
     public RegionSearchProblem(int[] numRegions, int[][] edges, int[] regionCenter, GameMap map, int gridSize) {
-        HashMap<Integer, GroupRecord> groups = map.getGroups();
+        TreeMap<Integer, GroupRecord> groups = map.getGroups();
         regions = new HashMap<Integer, Region>();
 
         // Build the sector list
@@ -290,7 +285,7 @@ public class RegionSearchProblem extends SearchProblem {
         return "" + id;
     }
 
-    public HashMap<Integer, GroupRecord> getGroups() {
+    public TreeMap<Integer, GroupRecord> getGroups() {
         return this.searchSpace.getGroups();
     }
 

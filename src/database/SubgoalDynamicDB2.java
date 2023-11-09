@@ -206,7 +206,7 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
         db.verify(problem);
     }
 
-    public void compute(SearchProblem problem, HashMap<Integer, GroupRecord> groups, SearchAlgorithm searchAlg, DBStatsRecord dbStats, int numLevels) {
+    public void compute(SearchProblem problem, TreeMap<Integer, GroupRecord> groups, SearchAlgorithm searchAlg, DBStatsRecord dbStats, int numLevels) {
         numGroups = groups.size();
         lowestCost = new int[numGroups][];
         paths = new int[numGroups][][];
@@ -234,7 +234,7 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
      * @param dbStats
      * @param numLevels
      */
-    public long computeBasePaths2(SearchProblem problem, HashMap<Integer, GroupRecord> groups, SearchAlgorithm searchAlg, int[][] lowestCost, int[][][] paths, int[][] neighbor, int numGroups, int numLevels, boolean asSubgoals, DBStatsRecord dbStats) {
+    public long computeBasePaths2(SearchProblem problem, TreeMap<Integer, GroupRecord> groups, SearchAlgorithm searchAlg, int[][] lowestCost, int[][][] paths, int[][] neighbor, int numGroups, int numLevels, boolean asSubgoals, DBStatsRecord dbStats) {
         int goalGroupLoc, startGroupLoc;
         GroupRecord startGroup, goalGroup;
         HashSet<Integer> neighbors;
@@ -321,7 +321,7 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
      * @param searchAlg
      * @param numLevels
      */
-    public void recomputeBasePaths2(SearchProblem problem, HashMap<Integer, GroupRecord> groups,
+    public void recomputeBasePaths2(SearchProblem problem, TreeMap<Integer, GroupRecord> groups,
                                     ArrayList<Integer> neighbourIndices, SearchAlgorithm searchAlg, int[][] lowestCost,
                                     int[][][] paths, int[][] neighbor, int numGroups, int numLevels, boolean asSubgoals) {
         int goalGroupLoc, startGroupLoc;

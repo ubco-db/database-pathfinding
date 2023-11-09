@@ -13,13 +13,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Abstract a search space into a set of ids (no edges).  The edges are computed dynamically by invoking the corresponding problem.
@@ -30,7 +24,7 @@ public class SearchSpace {
     public static int EMPTY_CHAR = 0;
 
     private SearchProblem problem;
-    private HashMap<Integer, GroupRecord> groups;
+    private TreeMap<Integer, GroupRecord> groups;
     private int numAbstractStates, numStates;
     private int[] states;
     private Random generator;
@@ -59,7 +53,7 @@ public class SearchSpace {
         int currentNum = 0;
         GroupRecord group;
 
-        groups = new HashMap<Integer, GroupRecord>();
+        groups = new TreeMap<Integer, GroupRecord>();
 
         long currentTime = System.currentTimeMillis();
 
@@ -107,7 +101,7 @@ public class SearchSpace {
         int currentNum = GameMap.START_NUM;
         GroupRecord group;
         SearchState currentState = new SearchState();
-        abstractSpace.groups = new HashMap<Integer, GroupRecord>();
+        abstractSpace.groups = new TreeMap<Integer, GroupRecord>();
         ExpandArray neighbors = new ExpandArray(10);
         ExpandArray neighborsAddNode = new ExpandArray(10);
         ExpandArray clique = new ExpandArray(100);
@@ -506,7 +500,7 @@ public class SearchSpace {
         return seeds;
     }
 
-    public HashMap<Integer, GroupRecord> getGroups() {
+    public TreeMap<Integer, GroupRecord> getGroups() {
         return groups;
     }
 
