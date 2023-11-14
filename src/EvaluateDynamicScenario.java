@@ -24,7 +24,7 @@ public class EvaluateDynamicScenario {
     public static void main(String[] args) {
         // set wall(s)
         ArrayList<SearchState> wallLocation = new ArrayList<>();
-        int wallLoc = 9267; // wall that partitions map (6157)
+        int wallLoc = 11928; // fake partition // wall that partitions map (6157)
         SearchState wall = new SearchState(wallLoc);
         wallLocation.add(wall);
 
@@ -107,32 +107,35 @@ public class EvaluateDynamicScenario {
         int wallColId = map.getCol(wallLoc);
         System.out.println(map.squares[wallRowId][wallColId]);
         // it will have eight neighbours
+        // TODO: having the regions marked on the map is not part of DBA*, should I use this?
         int neighborNorth = map.squares[wallRowId][wallColId - 1];
-        int neighborNorthEast = map.squares[wallRowId + 1][wallColId - 1];
         int neighborEast = map.squares[wallRowId + 1][wallColId];
-        int neighborSouthEast = map.squares[wallRowId + 1][wallColId + 1];
         int neighborSouth = map.squares[wallRowId][wallColId + 1];
-        int neighborSouthWest = map.squares[wallRowId - 1][wallColId + 1];
         int neighborWest = map.squares[wallRowId - 1][wallColId];
-        int neighborNorthWest = map.squares[wallRowId - 1][wallColId - 1];
         // if the region has become partitioned, it would have to have neighbors that are across from each other be walls or in different regions
         // (this is a necessary condition, but not sufficient)
 
-        if (isContinuousWall(neighborNorth, neighborSouth) || isContinuousWall(neighborEast, neighborWest))
-
-        if (neighborNorth == '*' && neighborSouth == '*' || neighborEast == '*' && neighborWest == '*') {
+        // In order for a partition to happen, either the newly placed wall touches two walls, or it touches a wall and
+        // a state that is not in the region the wall was placed in (this is a necessary condition, but not sufficient)
+        // TODO: is there an exception to this?
+        if (isContinuousWall(neighborNorth, neighborSouth)
+                || isContinuousWall(neighborEast, neighborWest)
+                || isBetweenWallAndOtherRegion(neighborNorth, neighborSouth, regionId)
+                || isBetweenWallAndOtherRegion(neighborEast, neighborWest, regionId)) {
             potentialPartition = true;
         }
 
-        if (neighborNorth != regionId && neighborSouth == '*' || neighborSouth != regionId && neighborNorth == '*') {
-            potentialPartition = true;
-        }
+        System.out.println();
+        System.out.println("WALL IS PARTITIONING MAP: " + potentialPartition);
+        System.out.println();
 
-        if (neighborWest == '*' && neighborEast != regionId || neighborEast != regionId && neighborWest == '*') {
-            potentialPartition = true;
+        // potentialPartition because the wall was added such that it is either surrounded by a wall on either side or
+        // a wall on one and a different region on the other
+        // this may still not be a partition (see adding wall at 11928)
+        if (potentialPartition) {
+            // If it has become partitioned, need to check if both partitions are still reachable from the rest of the map
+            // check if we can find a path from one side of the region to the other
         }
-
-        // If it has become partitioned, need to check if both partitions are still reachable from the rest of the map
 
         ArrayList<Integer> neighborIds = new ArrayList<>(groupRecord.getNeighborIds());
         neighborIds.add(groupRecord.groupId); // need to pass this so updates work both ways
@@ -306,5 +309,9 @@ public class EvaluateDynamicScenario {
 
     private static boolean isContinuousWall(int n1, int n2) {
         return n1 == '*' && n2 == '*';
+    }
+
+    private static boolean isBetweenWallAndOtherRegion(int n1, int n2, int r) {
+        return n1 == '*' && n2 != r || n1 != r && n2 == '*';
     }
 }
