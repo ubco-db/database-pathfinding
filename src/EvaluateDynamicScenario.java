@@ -138,18 +138,26 @@ public class EvaluateDynamicScenario {
         // this may still not be a partition (see adding wall at 11928)
 
         // If it has become partitioned, need to check if both partitions are still reachable from the rest of the map
+
+        // CASE: region has become partitioned
         // check if we can find a path from one side of the region to the other
-        // TODO: ensure path does not leave region
+        boolean isPathWE = true, isPathNS = true;
+        // TODO: what if either path start or path goal are walls or in a different region?
         if (potentialVerticalPartition) {
             // check that we can still reach west to east without leaving the region
-            boolean isPath = isPathPossible(map.squares, new int[]{wallRowId, wallColId - 1}, new int[]{wallRowId, wallColId + 1}, regionId);
-            System.out.println("Can reach west to east: " + isPath);
+            isPathWE = isPathPossible(map.squares, new int[]{wallRowId, wallColId - 1}, new int[]{wallRowId, wallColId + 1}, regionId);
+            System.out.println("Can reach west to east: " + isPathWE);
         }
         if (potentialHorizontalPartition) {
-            AStar aStar = new AStar(new MapSearchProblem(map));
             // check that we can still reach north to south without leaving the region
-            boolean isPath = isPathPossible(map.squares, new int[]{wallRowId - 1, wallColId}, new int[]{wallRowId + 1, wallColId}, regionId);
-            System.out.println("Can reach north to south: " + isPath);
+            isPathNS = isPathPossible(map.squares, new int[]{wallRowId - 1, wallColId}, new int[]{wallRowId + 1, wallColId}, regionId);
+            System.out.println("Can reach north to south: " + isPathNS);
+        }
+        if (!isPathWE) {
+            // if there is no longer a path from west to east, the region has become partitioned and must be split in two
+        }
+        if (!isPathNS) {
+            // if there is no longer a path from north to south, the region has become partitioned and must be split in two
         }
 
         ArrayList<Integer> neighborIds = new ArrayList<>(groupRecord.getNeighborIds());
@@ -334,6 +342,7 @@ public class EvaluateDynamicScenario {
         int rows = map.length;
         int cols = map[0].length;
 
+        // checking map[row][col] == r to ensure we are still in the region
         return row >= 0 && row < rows && col >= 0 && col < cols && map[row][col] != '*' && map[row][col] == r && !visited[row][col];
     }
 
