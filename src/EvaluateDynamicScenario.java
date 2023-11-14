@@ -76,16 +76,14 @@ public class EvaluateDynamicScenario {
         int regionId = regionRepIdToRegionId.get(regionRepId);
         System.out.println("regionId: " + regionId);
 
-        // Get the neighbour ids regions using the region id
+        // get the neighbour ids regions using the region id
         GroupRecord groupRecord = groups.get(regionId);
 
-        // TODO: scenario when there is only one state in the region
-        if (groupRecord.getNumStates() == 1) {
+        if (groupRecord.getNumStates() == 1) { // scenario when there is only one state in the region
             // need to tombstone region, and make sure it doesn't have neighbours or shortest paths anymore
             groups.remove(regionId);
-            // tombstoning in array: add -1 and skip that when writing back?
         } else {
-            // TODO: This assumes that the regioning doesn't change significantly (region id stays the same)
+            // scenario when the regioning doesn't change significantly (region id stays the same)
             int newRegionRep = map.recomputeCentroid(groupRecord, wallLoc);
             System.out.println("New rep at: " + newRegionRep);
             // get back new region rep and change the record
@@ -109,9 +107,15 @@ public class EvaluateDynamicScenario {
                 dbBW.getNeighbor(), neighborIds.size(), NUM_NEIGHBOUR_LEVELS, true);
 
         // TODO: Update db (need to update numGroups, and potentially the map)
+
         int[][] groupsArr = dbBW.getDb().getGroups();
 
-        groupsArr[regionId-50] = new int[]{regionId-50, regionRepId};
+        if (groupRecord.getNumStates() == 1) { // tombstone record
+            groupsArr[regionId-50] = null;
+            dbBW.getDb().setNumRegions(groupsArr.length - 1);
+        } else { // update groupsArr
+            groupsArr[regionId-50] = new int[]{regionId-50, regionRepId};
+        }
 
         // write groupsArr back to db
         dbBW.getDb().setGroups(groupsArr);

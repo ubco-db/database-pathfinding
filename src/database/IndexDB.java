@@ -146,7 +146,10 @@ public class IndexDB {
 
             // Write out group id to group seed id mapping
             for (int i = 0; i < numRegions; i++)
-                out.println(groups[i][0] + " " + groups[i][1]);
+                if (groups[i] != null) {
+                    out.println(groups[i][0] + " " + groups[i][1]);
+                }
+            if (groups.length == numRegions + 1) out.println(groups[numRegions][0] + " " + groups[numRegions][1]);
             // Write out node and seeds array
             for (int i = 0; i < count; i++)
                 out.print(nodeIds[i] + " ");
