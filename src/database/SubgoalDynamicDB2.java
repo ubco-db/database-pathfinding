@@ -352,13 +352,15 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
             startGroup = groups.get(neighbourIndex); // will need to redo
             startGroupLoc = neighbourIndex - GameMap.START_NUM;
 
-            if (startGroup == null) continue;
+            if (startGroup == null) {
+                continue;
+            }
 
             neighbors = GameDB.getNeighbors(groups, startGroup, numLevels);
             int numNeighbors = neighbors.size();
-            lowestCost[startGroupLoc] = new int[numNeighbors];
-            neighbor[startGroupLoc] = new int[numNeighbors];
-            neighborId[startGroupLoc] = new int[numNeighbors];
+            lowestCost[startGroupLoc] = new int[numNeighbors - 1];
+            neighbor[startGroupLoc] = new int[numNeighbors  - 1];
+            neighborId[startGroupLoc] = new int[numNeighbors - 1];
             paths[startGroupLoc] = new int[numNeighbors][];
 
             Iterator<Integer> it = neighbors.iterator();
@@ -377,6 +379,7 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
                     // Save information
                     SearchUtil.computePathCost(path, stats, problem);
                     int pathCost = stats.getPathCost();
+
                     neighborId[startGroupLoc][count] = goalGroupLoc;
                     lowestCost[startGroupLoc][count] = pathCost;
                     neighbor[startGroupLoc][count] = goalGroupLoc;
@@ -391,6 +394,8 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
                 }
             }
         }
+
+        this.numGroups = groups.size();
 
         long endTime = System.currentTimeMillis();
         long baseTime = endTime - currentTime;
