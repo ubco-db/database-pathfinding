@@ -176,18 +176,15 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
                 int numNeighbors = neighborId[i].length;
                 out.println(numNeighbors);
                 for (int j = 0; j < numNeighbors; j++) {
-                    // neighborId could be -1 if neighbour was eliminated, in that case don't write back
-                    if (neighborId[i][j] != -1) out.print(neighborId[i][j] + "\t");
+                    out.print(neighborId[i][j] + "\t");
                 }
                 out.println();
                 for (int j = 0; j < numNeighbors; j++) {
-                    // lowestCost could be -1 if neighbour was eliminated, in that case don't write back
-                    if (lowestCost[i][j] != -1) out.print(lowestCost[i][j] + "\t");
+                    out.print(lowestCost[i][j] + "\t");
                 }
                 out.println();
                 for (int j = 0; j < numNeighbors; j++) {
-                    // neighbor could be -1 if neighbour was eliminated, in that case don't write back
-                    if (neighbor[i][j] != -1) out.print(neighbor[i][j] + "\t");
+                    out.print(neighbor[i][j] + "\t");
                 }
                 out.println();
                 for (int j = 0; j < numNeighbors; j++) {
@@ -356,6 +353,7 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
                 continue;
             }
 
+            // TODO: could probably simplify this code since we are not taking advanatge of numLevels currently anyways
             neighbors = GameDB.getNeighbors(groups, startGroup, numLevels);
             int numNeighbors = neighbors.size();
             lowestCost[startGroupLoc] = new int[numNeighbors - 1];
@@ -387,10 +385,6 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
                     paths[startGroupLoc][count] = SearchUtil.compressPath(paths[startGroupLoc][count], searchAlg, tmp, path.size());
                     numStates += paths[startGroupLoc][count].length;
                     count++;
-                } else {
-                    neighborId[startGroupLoc][count] = -1;
-                    lowestCost[startGroupLoc][count] = -1;
-                    neighbor[startGroupLoc][count] = -1;
                 }
             }
         }
