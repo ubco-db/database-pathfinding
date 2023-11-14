@@ -24,7 +24,7 @@ public class EvaluateDynamicScenario {
     public static void main(String[] args) {
         // set wall(s)
         ArrayList<SearchState> wallLocation = new ArrayList<>();
-        int wallLoc = 6157; // fake partition (11928) // wall that partitions map (6157)
+        int wallLoc = 14325; // real region partition (14325) // fake partition (11928) // wall that partitions map (6157)
         SearchState wall = new SearchState(wallLoc);
         wallLocation.add(wall);
 
@@ -139,6 +139,7 @@ public class EvaluateDynamicScenario {
 
         // If it has become partitioned, need to check if both partitions are still reachable from the rest of the map
         // check if we can find a path from one side of the region to the other
+        // TODO: ensure path does not leave region
         if (potentialVerticalPartition) {
             AStar aStar = new AStar(new MapSearchProblem(map));
             // check that we can still reach west to east without leaving the region
