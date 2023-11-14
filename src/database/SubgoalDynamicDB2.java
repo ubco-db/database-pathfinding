@@ -188,13 +188,10 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
                 }
                 out.println();
                 for (int j = 0; j < numNeighbors; j++) {
-                    // path could be null if neighbour was eliminated, in that case don't write back
-                    if (paths[i][j] != null) {
-                        out.print(paths[i][j].length + "\t");
-                        for (int k = 0; k < paths[i][j].length; k++)
-                            out.print("\t" + paths[i][j][k]);
-                        out.println();
-                    }
+                    out.print(paths[i][j].length + "\t");
+                    for (int k = 0; k < paths[i][j].length; k++)
+                        out.print("\t" + paths[i][j][k]);
+                    out.println();
                 }
             }
         } catch (FileNotFoundException e) {
@@ -356,15 +353,14 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
             // TODO: could probably simplify this code since we are not taking advantage of numLevels currently anyways
             neighbors = GameDB.getNeighbors(groups, startGroup, numLevels);
             int numNeighbors = neighbors.size();
+
             if (isElimination) {
-                lowestCost[startGroupLoc] = new int[numNeighbors - 1];
-                neighbor[startGroupLoc] = new int[numNeighbors  - 1];
-                neighborId[startGroupLoc] = new int[numNeighbors - 1];
-            } else {
-                lowestCost[startGroupLoc] = new int[numNeighbors];
-                neighbor[startGroupLoc] = new int[numNeighbors];
-                neighborId[startGroupLoc] = new int[numNeighbors];
+                numNeighbors -= 1;
             }
+
+            lowestCost[startGroupLoc] = new int[numNeighbors];
+            neighbor[startGroupLoc] = new int[numNeighbors];
+            neighborId[startGroupLoc] = new int[numNeighbors];
             paths[startGroupLoc] = new int[numNeighbors][];
 
             Iterator<Integer> it = neighbors.iterator();
