@@ -175,20 +175,29 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
             for (int i = 0; i < numGroups; i++) {    // Read each group which has # neighbors as N, neighborId[N], lowest cost[N], neighbor[] and paths on each line
                 int numNeighbors = neighborId[i].length;
                 out.println(numNeighbors);
-                for (int j = 0; j < numNeighbors; j++)
-                    out.print(neighborId[i][j] + "\t");
-                out.println();
-                for (int j = 0; j < numNeighbors; j++)
-                    out.print(lowestCost[i][j] + "\t");
-                out.println();
-                for (int j = 0; j < numNeighbors; j++)
-                    out.print(neighbor[i][j] + "\t");
+                for (int j = 0; j < numNeighbors; j++) {
+                    // neighborId could be -1 if neighbour was eliminated, in that case don't write back
+                    if (neighborId[i][j] != -1) out.print(neighborId[i][j] + "\t");
+                }
                 out.println();
                 for (int j = 0; j < numNeighbors; j++) {
-                    out.print(paths[i][j].length + "\t");
-                    for (int k = 0; k < paths[i][j].length; k++)
-                        out.print("\t" + paths[i][j][k]);
-                    out.println();
+                    // lowestCost could be -1 if neighbour was eliminated, in that case don't write back
+                    if (lowestCost[i][j] != -1) out.print(lowestCost[i][j] + "\t");
+                }
+                out.println();
+                for (int j = 0; j < numNeighbors; j++) {
+                    // neighbor could be -1 if neighbour was eliminated, in that case don't write back
+                    if (neighbor[i][j] != -1) out.print(neighbor[i][j] + "\t");
+                }
+                out.println();
+                for (int j = 0; j < numNeighbors; j++) {
+                    // path could be null if neighbour was eliminated, in that case don't write back
+                    if (paths[i][j] != null) {
+                        out.print(paths[i][j].length + "\t");
+                        for (int k = 0; k < paths[i][j].length; k++)
+                            out.print("\t" + paths[i][j][k]);
+                        out.println();
+                    }
                 }
             }
         } catch (FileNotFoundException e) {
@@ -343,6 +352,8 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
             startGroup = groups.get(neighbourIndex); // will need to redo
             startGroupLoc = neighbourIndex - GameMap.START_NUM;
 
+            if (startGroup == null) continue;
+
             neighbors = GameDB.getNeighbors(groups, startGroup, numLevels);
             int numNeighbors = neighbors.size();
             lowestCost[startGroupLoc] = new int[numNeighbors];
@@ -358,21 +369,26 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
                 int goalGroupId = it.next();
                 goalGroup = groups.get(goalGroupId);
 
-                path = astar.computePath(new SearchState(startGroup.groupRepId), new SearchState(goalGroup.groupRepId), stats);
-                numBase++;
+                if (goalGroup != null) {
+                    path = astar.computePath(new SearchState(startGroup.groupRepId), new SearchState(goalGroup.groupRepId), stats);
+                    numBase++;
+                    goalGroupLoc = goalGroupId - GameMap.START_NUM;
 
-                goalGroupLoc = goalGroupId - GameMap.START_NUM;
-
-                // Save information // TODO: What happens if path is null?
-                SearchUtil.computePathCost(path, stats, problem);
-                int pathCost = stats.getPathCost();
-                neighborId[startGroupLoc][count] = goalGroupLoc;
-                lowestCost[startGroupLoc][count] = pathCost;
-                neighbor[startGroupLoc][count] = goalGroupLoc;
-                paths[startGroupLoc][count] = SubgoalDB.convertPathToIds(path);
-                paths[startGroupLoc][count] = SearchUtil.compressPath(paths[startGroupLoc][count], searchAlg, tmp, path.size());
-                numStates += paths[startGroupLoc][count].length;
-                count++;
+                    // Save information
+                    SearchUtil.computePathCost(path, stats, problem);
+                    int pathCost = stats.getPathCost();
+                    neighborId[startGroupLoc][count] = goalGroupLoc;
+                    lowestCost[startGroupLoc][count] = pathCost;
+                    neighbor[startGroupLoc][count] = goalGroupLoc;
+                    paths[startGroupLoc][count] = SubgoalDB.convertPathToIds(path);
+                    paths[startGroupLoc][count] = SearchUtil.compressPath(paths[startGroupLoc][count], searchAlg, tmp, path.size());
+                    numStates += paths[startGroupLoc][count].length;
+                    count++;
+                } else {
+                    neighborId[startGroupLoc][count] = -1;
+                    lowestCost[startGroupLoc][count] = -1;
+                    neighbor[startGroupLoc][count] = -1;
+                }
             }
         }
 
