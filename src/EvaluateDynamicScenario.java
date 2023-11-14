@@ -109,10 +109,10 @@ public class EvaluateDynamicScenario {
         System.out.println(map.squares[wallRowId][wallColId]);
         // it will have eight neighbours
         // TODO: having the regions marked on the map is not part of DBA*, should I use this?
-        int neighborNorth = map.squares[wallRowId][wallColId - 1];
-        int neighborEast = map.squares[wallRowId + 1][wallColId];
-        int neighborSouth = map.squares[wallRowId][wallColId + 1];
-        int neighborWest = map.squares[wallRowId - 1][wallColId];
+        int neighborNorth = map.squares[wallRowId - 1][wallColId];
+        int neighborEast = map.squares[wallRowId][wallColId + 1];
+        int neighborSouth = map.squares[wallRowId + 1][wallColId];
+        int neighborWest = map.squares[wallRowId][wallColId - 1];
         // if the region has become partitioned, it would have to have neighbors that are across from each other be walls or in different regions
         // (this is a necessary condition, but not sufficient)
 
