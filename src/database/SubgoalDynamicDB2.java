@@ -329,7 +329,7 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
      */
     public void recomputeBasePaths2(SearchProblem problem, TreeMap<Integer, GroupRecord> groups,
                                     ArrayList<Integer> neighbourIndices, SearchAlgorithm searchAlg, int[][] lowestCost,
-                                    int[][][] paths, int[][] neighbor, int numGroups, int numLevels, boolean asSubgoals) {
+                                    int[][][] paths, int[][] neighbor, int numGroups, int numLevels, boolean isElimination) {
         int goalGroupLoc, startGroupLoc;
         GroupRecord startGroup, goalGroup;
         HashSet<Integer> neighbors;
@@ -353,12 +353,18 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
                 continue;
             }
 
-            // TODO: could probably simplify this code since we are not taking advanatge of numLevels currently anyways
+            // TODO: could probably simplify this code since we are not taking advantage of numLevels currently anyways
             neighbors = GameDB.getNeighbors(groups, startGroup, numLevels);
             int numNeighbors = neighbors.size();
-            lowestCost[startGroupLoc] = new int[numNeighbors - 1];
-            neighbor[startGroupLoc] = new int[numNeighbors  - 1];
-            neighborId[startGroupLoc] = new int[numNeighbors - 1];
+            if (isElimination) {
+                lowestCost[startGroupLoc] = new int[numNeighbors - 1];
+                neighbor[startGroupLoc] = new int[numNeighbors  - 1];
+                neighborId[startGroupLoc] = new int[numNeighbors - 1];
+            } else {
+                lowestCost[startGroupLoc] = new int[numNeighbors];
+                neighbor[startGroupLoc] = new int[numNeighbors];
+                neighborId[startGroupLoc] = new int[numNeighbors];
+            }
             paths[startGroupLoc] = new int[numNeighbors][];
 
             Iterator<Integer> it = neighbors.iterator();

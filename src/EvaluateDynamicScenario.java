@@ -24,7 +24,7 @@ public class EvaluateDynamicScenario {
     public static void main(String[] args) {
         // set wall(s)
         ArrayList<SearchState> wallLocation = new ArrayList<>();
-        int wallLoc = 4651; // wall eliminates region
+        int wallLoc = 12161; // wall on rep
         SearchState wall = new SearchState(wallLoc);
         wallLocation.add(wall);
 
@@ -79,16 +79,22 @@ public class EvaluateDynamicScenario {
         // get the neighbour ids regions using the region id
         GroupRecord groupRecord = groups.get(regionId);
 
+        // TODO: make better check, this is for setting array length in recomputeBasePaths2
+        boolean isElimination;
+
         if (groupRecord.getNumStates() == 1) { // scenario when there is only one state in the region
             // need to tombstone region, and make sure it doesn't have neighbours or shortest paths anymore
             groups.remove(regionId);
+            isElimination = true;
         } else {
             // scenario when the regioning doesn't change significantly (region id stays the same)
             int newRegionRep = map.recomputeCentroid(groupRecord, wallLoc);
+            regionRepId = newRegionRep;
             System.out.println("New rep at: " + newRegionRep);
             // get back new region rep and change the record
             groupRecord.setGroupRepId(newRegionRep);
             groups.replace(regionId, groupRecord);
+            isElimination = false;
         }
 
         // TODO: scenario where map is partitioned by wall addition
@@ -104,9 +110,9 @@ public class EvaluateDynamicScenario {
 
         // Update regions for neighborIds in the database
         dbBW.recomputeBasePaths2(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(),
-                dbBW.getNeighbor(), neighborIds.size(), NUM_NEIGHBOUR_LEVELS, true);
+                dbBW.getNeighbor(), neighborIds.size(), NUM_NEIGHBOUR_LEVELS, isElimination);
 
-        // TODO: Update db (need to update numGroups, and potentially the map)
+        // TODO: Update db (need to update node id to seed id mapping, potentially map?)
 
         int[][] groupsArr = dbBW.getDb().getGroups();
 
