@@ -24,7 +24,7 @@ public class EvaluateDynamicScenario {
     public static void main(String[] args) {
         // set wall(s)
         ArrayList<SearchState> wallLocation = new ArrayList<>();
-        int wallLoc = 11928; // fake partition // wall that partitions map (6157)
+        int wallLoc = 6157; // fake partition (11928) // wall that partitions map (6157)
         SearchState wall = new SearchState(wallLoc);
         wallLocation.add(wall);
 
@@ -136,12 +136,20 @@ public class EvaluateDynamicScenario {
         // potentialPartition because the wall was added such that it is either surrounded by a wall on either side or
         // a wall on one and a different region on the other
         // this may still not be a partition (see adding wall at 11928)
+
+        // If it has become partitioned, need to check if both partitions are still reachable from the rest of the map
+        // check if we can find a path from one side of the region to the other
         if (potentialVerticalPartition) {
-            // If it has become partitioned, need to check if both partitions are still reachable from the rest of the map
-            // check if we can find a path from one side of the region to the other
+            AStar aStar = new AStar(new MapSearchProblem(map));
+            // check that we can still reach west to east without leaving the region
+            boolean isPath = aStar.isPath(map.getId(wallRowId, wallColId - 1), map.getId(wallRowId, wallColId + 1), new StatsRecord());
+            System.out.println("Can reach west to east: " + isPath);
         }
         if (potentialHorizontalPartition) {
-
+            AStar aStar = new AStar(new MapSearchProblem(map));
+            // check that we can still reach north to south without leaving the region
+            boolean isPath = aStar.isPath(map.getId(wallRowId - 1, wallColId), map.getId(wallRowId + 1, wallColId), new StatsRecord());
+            System.out.println("Can reach north to south: " + isPath);
         }
 
         ArrayList<Integer> neighborIds = new ArrayList<>(groupRecord.getNeighborIds());
