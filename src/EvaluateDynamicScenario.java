@@ -99,7 +99,8 @@ public class EvaluateDynamicScenario {
 
         // TODO: scenario where map is partitioned by wall addition
 
-        boolean potentialPartition = false;
+        boolean potentialHorizontalPartition = false;
+        boolean potentialVerticalPartition = false;
 
         // Need to check entire region to make sure it has not become partitioned by wall addition
         // idea: get neighbours of wall
@@ -118,23 +119,29 @@ public class EvaluateDynamicScenario {
         // In order for a partition to happen, either the newly placed wall touches two walls, or it touches a wall and
         // a state that is not in the region the wall was placed in (this is a necessary condition, but not sufficient)
         // TODO: is there an exception to this?
-        if (isContinuousWall(neighborNorth, neighborSouth)
-                || isContinuousWall(neighborEast, neighborWest)
-                || isBetweenWallAndOtherRegion(neighborNorth, neighborSouth, regionId)
-                || isBetweenWallAndOtherRegion(neighborEast, neighborWest, regionId)) {
-            potentialPartition = true;
+
+        if (isContinuousWall(neighborNorth, neighborSouth) || isBetweenWallAndOtherRegion(neighborNorth, neighborSouth, regionId)) {
+            potentialVerticalPartition = true;
+        }
+        if (isContinuousWall(neighborWest, neighborEast) || isBetweenWallAndOtherRegion(neighborWest, neighborEast, regionId)) {
+            potentialHorizontalPartition = true;
         }
 
         System.out.println();
-        System.out.println("WALL IS PARTITIONING MAP: " + potentialPartition);
+        System.out.println("WALL IS PARTITIONING MAP: " + (potentialHorizontalPartition || potentialVerticalPartition));
+        if (potentialHorizontalPartition || potentialVerticalPartition)
+            System.out.println(potentialHorizontalPartition ? "HORIZONTALLY" : "VERTICALLY");
         System.out.println();
 
         // potentialPartition because the wall was added such that it is either surrounded by a wall on either side or
         // a wall on one and a different region on the other
         // this may still not be a partition (see adding wall at 11928)
-        if (potentialPartition) {
+        if (potentialVerticalPartition) {
             // If it has become partitioned, need to check if both partitions are still reachable from the rest of the map
             // check if we can find a path from one side of the region to the other
+        }
+        if (potentialHorizontalPartition) {
+
         }
 
         ArrayList<Integer> neighborIds = new ArrayList<>(groupRecord.getNeighborIds());
