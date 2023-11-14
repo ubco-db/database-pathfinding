@@ -24,7 +24,7 @@ public class EvaluateDynamicScenario {
     public static void main(String[] args) {
         // set wall(s)
         ArrayList<SearchState> wallLocation = new ArrayList<>();
-        int wallLoc = 14325; // real region partition (14325) // fake partition (11928) // wall that partitions map (6157)
+        int wallLoc = 11928; // real region partition (14325) // fake partition (11928) // wall that partitions map (6157)
         SearchState wall = new SearchState(wallLoc);
         wallLocation.add(wall);
 
@@ -141,15 +141,14 @@ public class EvaluateDynamicScenario {
         // check if we can find a path from one side of the region to the other
         // TODO: ensure path does not leave region
         if (potentialVerticalPartition) {
-            AStar aStar = new AStar(new MapSearchProblem(map));
             // check that we can still reach west to east without leaving the region
-            boolean isPath = aStar.isPath(map.getId(wallRowId, wallColId - 1), map.getId(wallRowId, wallColId + 1), new StatsRecord());
+            boolean isPath = isPathPossible(map.squares, new int[]{wallRowId, wallColId - 1}, new int[]{wallRowId, wallColId + 1}, regionId);
             System.out.println("Can reach west to east: " + isPath);
         }
         if (potentialHorizontalPartition) {
             AStar aStar = new AStar(new MapSearchProblem(map));
             // check that we can still reach north to south without leaving the region
-            boolean isPath = aStar.isPath(map.getId(wallRowId - 1, wallColId), map.getId(wallRowId + 1, wallColId), new StatsRecord());
+            boolean isPath = isPathPossible(map.squares, new int[]{wallRowId - 1, wallColId}, new int[]{wallRowId + 1, wallColId}, regionId);
             System.out.println("Can reach north to south: " + isPath);
         }
 
@@ -329,5 +328,46 @@ public class EvaluateDynamicScenario {
 
     private static boolean isBetweenWallAndOtherRegion(int n1, int n2, int r) {
         return n1 == '*' && n2 != r || n1 != r && n2 == '*';
+    }
+
+    private static boolean isValid(int[][] map, boolean[][] visited, int row, int col, int r) {
+        int rows = map.length;
+        int cols = map[0].length;
+
+        return row >= 0 && row < rows && col >= 0 && col < cols && map[row][col] != '*' && map[row][col] == r && !visited[row][col];
+    }
+
+    // TODO: could likely optimize using A*
+    private static boolean isPathPossible(int[][] map, int[] start, int[] end, int r) {
+        int rows = map.length;
+        int cols = map[0].length;
+
+        boolean[][] visited = new boolean[rows][cols];
+
+        int[][] directions = { {1, 0}, {-1, 0}, {0, 1}, {0, -1} };
+
+        Queue<int[]> queue = new LinkedList<>();
+        queue.add(start);
+        visited[start[0]][start[1]] = true;
+
+        while (!queue.isEmpty()) {
+            int[] current = queue.poll();
+
+            if (Arrays.equals(current, end)) {
+                return true;  // Path exists
+            }
+
+            for (int[] dir : directions) {
+                int newRow = current[0] + dir[0];
+                int newCol = current[1] + dir[1];
+
+                if (isValid(map, visited, newRow, newCol, r)) {
+                    visited[newRow][newCol] = true;
+                    queue.add(new int[]{newRow, newCol});
+                }
+            }
+        }
+
+        return false;  // No path exists
     }
 }
