@@ -24,7 +24,7 @@ public class EvaluateDynamicScenario {
     public static void main(String[] args) {
         // set wall(s)
         ArrayList<SearchState> wallLocation = new ArrayList<>();
-        int wallLoc = 12161; // wall on rep
+        int wallLoc = 9267; // wall that partitions map (6157)
         SearchState wall = new SearchState(wallLoc);
         wallLocation.add(wall);
 
@@ -98,8 +98,41 @@ public class EvaluateDynamicScenario {
         }
 
         // TODO: scenario where map is partitioned by wall addition
-        // check that one other region is still reachable from current region
-        // if not: region is cut off, may introduce new rep
+
+        boolean potentialPartition = false;
+
+        // Need to check entire region to make sure it has not become partitioned by wall addition
+        // idea: get neighbours of wall
+        int wallRowId = map.getRow(wallLoc);
+        int wallColId = map.getCol(wallLoc);
+        System.out.println(map.squares[wallRowId][wallColId]);
+        // it will have eight neighbours
+        int neighborNorth = map.squares[wallRowId][wallColId - 1];
+        int neighborNorthEast = map.squares[wallRowId + 1][wallColId - 1];
+        int neighborEast = map.squares[wallRowId + 1][wallColId];
+        int neighborSouthEast = map.squares[wallRowId + 1][wallColId + 1];
+        int neighborSouth = map.squares[wallRowId][wallColId + 1];
+        int neighborSouthWest = map.squares[wallRowId - 1][wallColId + 1];
+        int neighborWest = map.squares[wallRowId - 1][wallColId];
+        int neighborNorthWest = map.squares[wallRowId - 1][wallColId - 1];
+        // if the region has become partitioned, it would have to have neighbors that are across from each other be walls or in different regions
+        // (this is a necessary condition, but not sufficient)
+
+        if (isContinuousWall(neighborNorth, neighborSouth) || isContinuousWall(neighborEast, neighborWest))
+
+        if (neighborNorth == '*' && neighborSouth == '*' || neighborEast == '*' && neighborWest == '*') {
+            potentialPartition = true;
+        }
+
+        if (neighborNorth != regionId && neighborSouth == '*' || neighborSouth != regionId && neighborNorth == '*') {
+            potentialPartition = true;
+        }
+
+        if (neighborWest == '*' && neighborEast != regionId || neighborEast != regionId && neighborWest == '*') {
+            potentialPartition = true;
+        }
+
+        // If it has become partitioned, need to check if both partitions are still reachable from the rest of the map
 
         ArrayList<Integer> neighborIds = new ArrayList<>(groupRecord.getNeighborIds());
         neighborIds.add(groupRecord.groupId); // need to pass this so updates work both ways
@@ -117,10 +150,10 @@ public class EvaluateDynamicScenario {
         int[][] groupsArr = dbBW.getDb().getGroups();
 
         if (groupRecord.getNumStates() == 1) { // tombstone record
-            groupsArr[regionId-50] = null;
+            groupsArr[regionId - 50] = null;
             dbBW.getDb().setNumRegions(groupsArr.length - 1);
         } else { // update groupsArr
-            groupsArr[regionId-50] = new int[]{regionId-50, regionRepId};
+            groupsArr[regionId - 50] = new int[]{regionId - 50, regionRepId};
         }
 
         // write groupsArr back to db
@@ -269,5 +302,9 @@ public class EvaluateDynamicScenario {
     private static String getImageName(String wallStatus, boolean hasCentroids) {
         String lastToken = hasCentroids ? "_DBA_Centroid.png" : "_DBA.png";
         return DBA_STAR_DB_PATH + wallStatus + MAP_FILE_NAME + lastToken;
+    }
+
+    private static boolean isContinuousWall(int n1, int n2) {
+        return n1 == '*' && n2 == '*';
     }
 }
