@@ -73,6 +73,10 @@ public class GroupRecord {
         this.computedNeighborIds = immediateNeighborIds;
     }
 
+    public void setStates(ExpandArray states) {
+        this.states = states;
+    }
+
     public String toString() {
         StringBuilder buf = new StringBuilder(100);
         buf.append("Id: ").append(groupId).append(" Rep. Id: ").append(groupRepId).append(" Size: ").append(numStates);

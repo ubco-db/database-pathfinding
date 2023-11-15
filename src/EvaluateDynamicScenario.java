@@ -4,6 +4,7 @@ import dynamic.Walls;
 import map.GameMap;
 import map.GroupRecord;
 import search.*;
+import util.ExpandArray;
 
 import java.io.IOException;
 import java.util.*;
@@ -24,7 +25,7 @@ public class EvaluateDynamicScenario {
     public static void main(String[] args) {
         // set wall(s)
         ArrayList<SearchState> wallLocation = new ArrayList<>();
-        int wallLoc = 11928; // real region partition (14325) // fake partition (11928) // wall that partitions map (6157)
+        int wallLoc = 14325; // real region partition (14325) // fake partition (11928) // wall that partitions map (6157)
         SearchState wall = new SearchState(wallLoc);
         wallLocation.add(wall);
 
@@ -119,6 +120,7 @@ public class EvaluateDynamicScenario {
         // In order for a partition to happen, either the newly placed wall touches two walls, or it touches a wall and
         // a state that is not in the region the wall was placed in (this is a necessary condition, but not sufficient)
         // TODO: is there an exception to this?
+        // TODO: what about adding a wall that cuts off a diagonal path
 
         if (isContinuousWall(neighborNorth, neighborSouth) || isBetweenWallAndOtherRegion(neighborNorth, neighborSouth, regionId)) {
             potentialVerticalPartition = true;
@@ -141,23 +143,40 @@ public class EvaluateDynamicScenario {
 
         // CASE: region has become partitioned
         // check if we can find a path from one side of the region to the other
-        boolean isPathWE = true, isPathNS = true;
+        boolean verticalPartition = false, horizontalPartition = false;
         // TODO: what if either path start or path goal are walls or in a different region?
         if (potentialVerticalPartition) {
             // check that we can still reach west to east without leaving the region
-            isPathWE = isPathPossible(map.squares, new int[]{wallRowId, wallColId - 1}, new int[]{wallRowId, wallColId + 1}, regionId);
-            System.out.println("Can reach west to east: " + isPathWE);
+            verticalPartition = !isPathPossible(map.squares, new int[]{wallRowId, wallColId - 1}, new int[]{wallRowId, wallColId + 1}, regionId);
         }
         if (potentialHorizontalPartition) {
             // check that we can still reach north to south without leaving the region
-            isPathNS = isPathPossible(map.squares, new int[]{wallRowId - 1, wallColId}, new int[]{wallRowId + 1, wallColId}, regionId);
-            System.out.println("Can reach north to south: " + isPathNS);
+            horizontalPartition = !isPathPossible(map.squares, new int[]{wallRowId - 1, wallColId}, new int[]{wallRowId + 1, wallColId}, regionId);
         }
-        if (!isPathWE) {
+        if (verticalPartition) {
             // if there is no longer a path from west to east, the region has become partitioned and must be split in two
+            // idea: grab the region
+            // iterate through it and reassign states to new region if necessary
+            // could this be easily done through comparison with wall location, knowing the partition is vertical?
+            // check which side of the wall each state in the group record is on, if it's on the side that is no longer reachable, pack it into its own group record
+            GroupRecord newRegion = new GroupRecord();
+            ExpandArray newRegionStates = new ExpandArray();
+            int[] regionStates = groupRecord.states.values;
+            // ExpandArray regionStates = groupRecord.states;
+            for (int regionState: regionStates) {
+                int regionStateCol = map.getCol(regionState);
+                if (regionStateCol > wallColId) {
+                    newRegionStates.add(regionState);
+                }
+            }
+            newRegion.setNumStates(newRegionStates.num());
+            newRegion.setStates(newRegionStates);
+            // need to find rep for new region
+            // need to set neighbors of new region and update neighbor lists of old and new regions
         }
-        if (!isPathNS) {
+        if (horizontalPartition) {
             // if there is no longer a path from north to south, the region has become partitioned and must be split in two
+            System.out.println(groupRecord.states);
         }
 
         ArrayList<Integer> neighborIds = new ArrayList<>(groupRecord.getNeighborIds());
