@@ -102,6 +102,7 @@ public class EvaluateDynamicScenario {
 
         boolean potentialHorizontalPartition = false;
         boolean potentialVerticalPartition = false;
+        boolean potentialDiagonalPartition = false;
 
         // Need to check entire region to make sure it has not become partitioned by wall addition
         // idea: get neighbours of wall
@@ -111,22 +112,32 @@ public class EvaluateDynamicScenario {
         // it will have eight neighbours
         // TODO: having the regions marked on the map is not part of DBA*, should I use this?
         int neighborNorth = map.squares[wallRowId - 1][wallColId];
+        int neighborNorthEast = map.squares[wallRowId - 1][wallColId + 1];
         int neighborEast = map.squares[wallRowId][wallColId + 1];
+        int neighborSouthEast = map.squares[wallRowId + 1][wallColId + 1];
         int neighborSouth = map.squares[wallRowId + 1][wallColId];
+        int neighborSouthWest = map.squares[wallRowId + 1][wallColId - 1];
         int neighborWest = map.squares[wallRowId][wallColId - 1];
+        int neighborNorthWest = map.squares[wallRowId - 1][wallColId - 1];
         // if the region has become partitioned, it would have to have neighbors that are across from each other be walls or in different regions
         // (this is a necessary condition, but not sufficient)
 
         // In order for a partition to happen, either the newly placed wall touches two walls, or it touches a wall and
         // a state that is not in the region the wall was placed in (this is a necessary condition, but not sufficient)
         // TODO: is there an exception to this?
-        // TODO: what about adding a wall that cuts off a diagonal path
 
         if (isContinuousWall(neighborNorth, neighborSouth) || isBetweenWallAndOtherRegion(neighborNorth, neighborSouth, regionId)) {
             potentialVerticalPartition = true;
         }
         if (isContinuousWall(neighborWest, neighborEast) || isBetweenWallAndOtherRegion(neighborWest, neighborEast, regionId)) {
             potentialHorizontalPartition = true;
+        }
+        // TODO: address diagonal partition
+        if (isOpenDiagonal(neighborNorth, neighborNorthEast, neighborEast)
+                || isOpenDiagonal(neighborEast, neighborSouthEast, neighborSouth)
+                || isOpenDiagonal(neighborSouth, neighborSouthWest, neighborWest)
+                || isOpenDiagonal(neighborWest, neighborNorthWest, neighborNorth)) {
+            potentialDiagonalPartition = true;
         }
 
         System.out.println();
@@ -156,28 +167,7 @@ public class EvaluateDynamicScenario {
         if (verticalPartition) {
             // if there is no longer a path from west to east, the region has become partitioned and must be split in two
             // idea: grab the region
-            // iterate through it and reassign states to new region if necessary
-            // could this be easily done through comparison with wall location, knowing the partition is vertical?
-            // check which side of the wall each state in the group record is on, if it's on the side that is no longer reachable, pack it into its own group record
-            GroupRecord newRegion = new GroupRecord();
-            ExpandArray newRegionStates = new ExpandArray();
-            ExpandArray oldRegionStates = new ExpandArray();
             int[] regionStates = groupRecord.states.values;
-            // ExpandArray regionStates = groupRecord.states;
-            for (int regionState: regionStates) {
-                int regionStateCol = map.getCol(regionState);
-                if (regionStateCol > wallColId) {
-                    newRegionStates.add(regionState);
-                } else if (regionStateCol < wallColId) {
-                    oldRegionStates.add(regionState);
-                }
-            }
-            newRegion.setNumStates(newRegionStates.num());
-            newRegion.setStates(newRegionStates);
-            groupRecord.setStates(oldRegionStates);
-            groupRecord.setNumStates(oldRegionStates.num());
-            // need to find rep for new region
-            // need to set neighbors of new region and update neighbor lists of old and new regions
         }
         if (horizontalPartition) {
             // if there is no longer a path from north to south, the region has become partitioned and must be split in two
@@ -355,11 +345,20 @@ public class EvaluateDynamicScenario {
     }
 
     private static boolean isContinuousWall(int n1, int n2) {
+        // if n1 and n2 is are walls, adding a wall between them leads to a continuous wall segment
+        // this assumes n1 and n2 are across from each other
         return n1 == '*' && n2 == '*';
     }
 
     private static boolean isBetweenWallAndOtherRegion(int n1, int n2, int r) {
+        // if n1 is a wall and n2 is a different region or vice versa, the wall addition between them may constitute a partition
+        // this assumes n1 and n2 are across from each other
         return n1 == '*' && n2 != r || n1 != r && n2 == '*';
+    }
+
+    private static boolean isOpenDiagonal(int n1, int nDiag, int n2) {
+        // if n1 and n2 are walls, but nDiag is not, placing a new wall may make it impossible to reach nDiag
+        return n1 == '*' && n2 == '*' && nDiag != '*';
     }
 
     private static boolean isValid(int[][] map, boolean[][] visited, int row, int col, int r) {
@@ -377,7 +376,7 @@ public class EvaluateDynamicScenario {
 
         boolean[][] visited = new boolean[rows][cols];
 
-        int[][] directions = { {1, 0}, {-1, 0}, {0, 1}, {0, -1} };
+        int[][] directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
 
         Queue<int[]> queue = new LinkedList<>();
         queue.add(start);
