@@ -161,16 +161,21 @@ public class EvaluateDynamicScenario {
             // check which side of the wall each state in the group record is on, if it's on the side that is no longer reachable, pack it into its own group record
             GroupRecord newRegion = new GroupRecord();
             ExpandArray newRegionStates = new ExpandArray();
+            ExpandArray oldRegionStates = new ExpandArray();
             int[] regionStates = groupRecord.states.values;
             // ExpandArray regionStates = groupRecord.states;
             for (int regionState: regionStates) {
                 int regionStateCol = map.getCol(regionState);
                 if (regionStateCol > wallColId) {
                     newRegionStates.add(regionState);
+                } else if (regionStateCol < wallColId) {
+                    oldRegionStates.add(regionState);
                 }
             }
             newRegion.setNumStates(newRegionStates.num());
             newRegion.setStates(newRegionStates);
+            groupRecord.setStates(oldRegionStates);
+            groupRecord.setNumStates(oldRegionStates.num());
             // need to find rep for new region
             // need to set neighbors of new region and update neighbor lists of old and new regions
         }
