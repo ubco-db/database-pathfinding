@@ -167,11 +167,48 @@ public class EvaluateDynamicScenario {
         if (verticalPartition) {
             // if there is no longer a path from west to east, the region has become partitioned and must be split in two
             // idea: grab the region
+            // can I just know which sector I am in and recompute in that sector?
+
+            // TODO: remove wall
             int[] regionStates = groupRecord.states.values;
+
+            ExpandArray neighbors = new ExpandArray(10);
+
+            int maxr = (map.getRow(regionStates[0]) / GRID_SIZE) * GRID_SIZE + GRID_SIZE;
+            int maxc = (map.getCol(regionStates[0]) / GRID_SIZE) * GRID_SIZE + GRID_SIZE;
+
+            for (int regionState : regionStates) {
+                if (regionState != wallLoc) {
+                    Queue<Integer> stateIds = new LinkedList<>();
+                    stateIds.add(regionState);
+
+                    //  baseMap.squares[row][col] = currentNum;
+
+                    while (!stateIds.isEmpty()) {
+                        int id = stateIds.remove();
+                        int row = map.getRow(id);
+                        int col = map.getCol(id);
+
+                        map.getNeighbors(row, col, neighbors);
+
+                        for (int n = 0; n < neighbors.num(); n++) {
+                            int nid = neighbors.get(n);
+                            int nr = map.getRow(nid);
+                            int nc = map.getCol(nid);
+                            if (map.isOpenInRange(nr, nc, maxr, maxc, GRID_SIZE)) {
+                                //Add neighbor
+                                // map.squares[nr][nc] = currentNum;
+                                stateIds.add(nid);
+                            }
+                        }
+                    }
+                }
+            }
         }
         if (horizontalPartition) {
             // if there is no longer a path from north to south, the region has become partitioned and must be split in two
             System.out.println(groupRecord.states);
+            int[] regionStates = groupRecord.states.values;
         }
 
         ArrayList<Integer> neighborIds = new ArrayList<>(groupRecord.getNeighborIds());
