@@ -1,10 +1,14 @@
 import comparison.DBDiff;
-import database.*;
+import database.DBStats;
+import database.DBStatsRecord;
+import database.GameDB;
+import database.SubgoalDynamicDB2;
 import dynamic.Walls;
 import map.GameMap;
 import map.GroupRecord;
 import search.*;
 import util.ExpandArray;
+import util.RegionCounter;
 
 import java.io.IOException;
 import java.util.*;
@@ -170,45 +174,27 @@ public class EvaluateDynamicScenario {
             // can I just know which sector I am in and recompute in that sector?
 
             // TODO: remove wall
-            int[] regionStates = groupRecord.states.values;
+            ExpandArray regionStates = groupRecord.states;
 
-            ExpandArray neighbors = new ExpandArray(10);
-
-            int maxr = (map.getRow(regionStates[0]) / GRID_SIZE) * GRID_SIZE + GRID_SIZE;
-            int maxc = (map.getCol(regionStates[0]) / GRID_SIZE) * GRID_SIZE + GRID_SIZE;
-
-            for (int regionState : regionStates) {
-                if (regionState != wallLoc) {
-                    Queue<Integer> stateIds = new LinkedList<>();
-                    stateIds.add(regionState);
-
-                    //  baseMap.squares[row][col] = currentNum;
-
-                    while (!stateIds.isEmpty()) {
-                        int id = stateIds.remove();
-                        int row = map.getRow(id);
-                        int col = map.getCol(id);
-
-                        map.getNeighbors(row, col, neighbors);
-
-                        for (int n = 0; n < neighbors.num(); n++) {
-                            int nid = neighbors.get(n);
-                            int nr = map.getRow(nid);
-                            int nc = map.getCol(nid);
-                            if (map.isOpenInRange(nr, nc, maxr, maxc, GRID_SIZE)) {
-                                //Add neighbor
-                                // map.squares[nr][nc] = currentNum;
-                                stateIds.add(nid);
-                            }
-                        }
-                    }
+            RegionCounter counter = new RegionCounter();
+            int[][] coordinates = new int[regionStates.num()][2];
+            boolean afterWall = false;
+            for (int i = 0; i < regionStates.num(); i++) {
+                if (regionStates.get(i) != wallLoc) {
+                    int idx = afterWall? i-1:i;
+                    coordinates[idx][0] = map.getRow(regionStates.get(i));
+                    coordinates[idx][1] = map.getCol(regionStates.get(i));
+                } else {
+                    afterWall = true;
                 }
             }
+            int regions = counter.countRegions(coordinates);
+            System.out.println("Number of regions: " + regions);
+            System.out.println();
         }
         if (horizontalPartition) {
             // if there is no longer a path from north to south, the region has become partitioned and must be split in two
             System.out.println(groupRecord.states);
-            int[] regionStates = groupRecord.states.values;
         }
 
         ArrayList<Integer> neighborIds = new ArrayList<>(groupRecord.getNeighborIds());
@@ -413,7 +399,7 @@ public class EvaluateDynamicScenario {
 
         boolean[][] visited = new boolean[rows][cols];
 
-        int[][] directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+        int[][] directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}, {-1, 1}, {1, -1}, {1, 1}, {-1, -1}};
 
         Queue<int[]> queue = new LinkedList<>();
         queue.add(start);
