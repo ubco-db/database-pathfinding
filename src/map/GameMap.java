@@ -428,6 +428,10 @@ public class GameMap {
         return (c >= maxC - gridSize && r >= maxR - gridSize && r < maxR && c < maxC && squares[r][c] == EMPTY_CHAR);
     }
 
+    public boolean isRegionInRange(int r, int c, int maxR, int maxC, int gridSize, int regionId) {
+        return (c >= maxC - gridSize && r >= maxR - gridSize && r < maxR && c < maxC && squares[r][c] == regionId);
+    }
+
     public boolean isInRange(int r, int c, int maxR, int maxC, int gridSize) {
         return (c >= maxC - gridSize && r >= maxR - gridSize && r < maxR && c < maxC);
     }
@@ -1163,7 +1167,7 @@ public class GameMap {
                         //pointer to a col
                         int col = startCol + c;
 
-                        //if this state is vaild and isn't a wall and is ' '
+                        //if this state is valid and isn't a wall and is ' '
                         if (baseMap.isValid(row, col) && !baseMap.isWall(row, col) && baseMap.squares[row][col] == ' ') {    // Open cell for abstraction - perform constrained BFS within this sector to label all nodes in sector
                             currentNum++;
                             numRegionsInSector++;

@@ -168,33 +168,65 @@ public class EvaluateDynamicScenario {
             // check that we can still reach north to south without leaving the region
             horizontalPartition = !isPathPossible(map.squares, new int[]{wallRowId - 1, wallColId}, new int[]{wallRowId + 1, wallColId}, regionId);
         }
-        if (verticalPartition) {
-            // if there is no longer a path from west to east, the region has become partitioned and must be split in two
+        if (verticalPartition || horizontalPartition) {
             // idea: grab the region
             // can I just know which sector I am in and recompute in that sector?
 
             // TODO: remove wall
             ExpandArray regionStates = groupRecord.states;
+            int stateId = regionStates.get(0);
 
-            RegionCounter counter = new RegionCounter();
-            int[][] coordinates = new int[regionStates.num()][2];
-            boolean afterWall = false;
-            for (int i = 0; i < regionStates.num(); i++) {
-                if (regionStates.get(i) != wallLoc) {
-                    int idx = afterWall? i-1:i;
-                    coordinates[idx][0] = map.getRow(regionStates.get(i));
-                    coordinates[idx][1] = map.getCol(regionStates.get(i));
-                } else {
-                    afterWall = true;
+            ExpandArray neighbors = new ExpandArray(10);
+
+            int startRow = map.getRow(stateId); // 96
+            int startCol = map.getCol(stateId); // 112
+            int currentNum = 1000;
+            int numRegionsInSector = 0;
+            int maxr = startRow + GRID_SIZE; // 112
+            int maxc = startCol + GRID_SIZE; // 128
+
+            for (int r = 0; r < GRID_SIZE; r++) {
+                // for each col in this sector
+                for (int c = 0; c < GRID_SIZE; c++) {
+                    int row = startRow + r; // pointer to a row
+                    int col = startCol + c; // pointer to a col
+
+                    // if this state is valid and isn't a wall and is ' '
+                    if (map.isValid(row, col) && !map.isWall(row, col) && map.squares[row][col] == regionId) {    // Open cell for abstraction - perform constrained BFS within this sector to label all nodes in sector
+                        currentNum++;
+                        numRegionsInSector++;
+
+                        Queue<Integer> stateIds = new LinkedList<>();
+                        stateIds.add(map.getId(row, col));
+                        map.squares[row][col] = currentNum;
+
+                        while (!stateIds.isEmpty()) {
+                            int id = stateIds.remove();
+                            row = map.getRow(id); // Row of state
+                            col = map.getCol(id); // Col of state
+
+                            // Generate neighbors and add to list if in region
+                            map.getNeighbors(row, col, neighbors);
+
+                            // For number of neighbors
+                            for (int n = 0; n < neighbors.num(); n++) {
+
+                                int nid = neighbors.get(n); // ID of neighbor state
+                                int nr = map.getRow(nid); //Row of that neighbor
+                                int nc = map.getCol(nid); //Col of that neighbor
+
+                                // Check if neighbor is in range
+                                if (map.isRegionInRange(nr, nc, maxr, maxc, GRID_SIZE, regionId)) {
+                                    // Add neighbor
+                                    map.squares[nr][nc] = currentNum;
+                                    stateIds.add(nid);
+                                }
+                            }
+                        }
+                    }
                 }
             }
-            int regions = counter.countRegions(coordinates);
-            System.out.println("Number of regions: " + regions);
-            System.out.println();
-        }
-        if (horizontalPartition) {
-            // if there is no longer a path from north to south, the region has become partitioned and must be split in two
-            System.out.println(groupRecord.states);
+            System.out.println("Num regions: " + numRegionsInSector);
         }
 
         ArrayList<Integer> neighborIds = new ArrayList<>(groupRecord.getNeighborIds());
