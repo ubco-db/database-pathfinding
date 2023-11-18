@@ -8,7 +8,6 @@ import map.GameMap;
 import map.GroupRecord;
 import search.*;
 import util.ExpandArray;
-import util.RegionCounter;
 
 import java.io.IOException;
 import java.util.*;
@@ -169,21 +168,18 @@ public class EvaluateDynamicScenario {
             horizontalPartition = !isPathPossible(map.squares, new int[]{wallRowId - 1, wallColId}, new int[]{wallRowId + 1, wallColId}, regionId);
         }
         if (verticalPartition || horizontalPartition) {
-            // idea: grab the region
-            // can I just know which sector I am in and recompute in that sector?
-
-            // TODO: remove wall
-            ExpandArray regionStates = groupRecord.states;
-            int stateId = regionStates.get(0);
+            // states in a groupRecord are in order, the first one is first in the region (top-left-most)
+            int stateId = groupRecord.states.get(0);
 
             ExpandArray neighbors = new ExpandArray(10);
 
             int startRow = map.getRow(stateId); // 96
             int startCol = map.getCol(stateId); // 112
-            int currentNum = 1000;
-            int numRegionsInSector = 0;
             int maxr = startRow + GRID_SIZE; // 112
             int maxc = startCol + GRID_SIZE; // 128
+
+            int currentNum = groups.size(); // TODO: set current num properly
+            int numRegionsInSector = 0;
 
             for (int r = 0; r < GRID_SIZE; r++) {
                 // for each col in this sector
@@ -212,8 +208,8 @@ public class EvaluateDynamicScenario {
                             for (int n = 0; n < neighbors.num(); n++) {
 
                                 int nid = neighbors.get(n); // ID of neighbor state
-                                int nr = map.getRow(nid); //Row of that neighbor
-                                int nc = map.getCol(nid); //Col of that neighbor
+                                int nr = map.getRow(nid); // Row of that neighbor
+                                int nc = map.getCol(nid); // Col of that neighbor
 
                                 // Check if neighbor is in range
                                 if (map.isRegionInRange(nr, nc, maxr, maxc, GRID_SIZE, regionId)) {
@@ -227,6 +223,8 @@ public class EvaluateDynamicScenario {
                 }
             }
             System.out.println("Num regions: " + numRegionsInSector);
+
+            // add code from buildAbstractProblem and computeGroups here
         }
 
         ArrayList<Integer> neighborIds = new ArrayList<>(groupRecord.getNeighborIds());

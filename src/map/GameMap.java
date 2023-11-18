@@ -1122,6 +1122,7 @@ public class GameMap {
     }
 
 
+    // 1
     public GameMap sectorAbstract2(int gridSize) {
         int currentNum = START_NUM - 1;    // Start # above 42 which is a wall
         GameMap baseMap = this.copyMap();
@@ -1406,6 +1407,7 @@ public class GameMap {
     }
 
 
+    // 2
     public void buildAbstractProblem(int gridSize) {
         GameMap baseMap = this;
         int maxr, maxc;
@@ -2116,6 +2118,8 @@ public class GameMap {
     /**
      * Compute group records from abstract regions in a map.
      */
+    // 3
+    // TODO
     public void computeGroups() {
         long currentTime = System.currentTimeMillis();
         groups = new TreeMap<Integer, GroupRecord>();
@@ -2153,6 +2157,7 @@ public class GameMap {
     }
 
     // Compute centroids of all groups
+    // 4
     public void computeCentroids() {
         regionReps = new ArrayList<>();
         long currentTime = System.currentTimeMillis();
