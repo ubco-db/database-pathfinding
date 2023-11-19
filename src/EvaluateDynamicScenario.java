@@ -169,7 +169,9 @@ public class EvaluateDynamicScenario {
         }
 
         if (verticalPartition || horizontalPartition) {
+            System.out.println("Group size before removal: " + groups.size());
             groups.remove(regionId); // remove region from groups and recreate it later
+            System.out.println("Group size after removal: " + groups.size());
 
             // states in a groupRecord are in order, the first one is first in the region (top-left-most)
             int stateId = groupRecord.states.get(0);
@@ -190,8 +192,9 @@ public class EvaluateDynamicScenario {
                     int row = startRow + r; // pointer to a row
                     int col = startCol + c; // pointer to a col
 
-                    // if this state is valid and isn't a wall and is ' '
-                    if (map.isValid(row, col) && !map.isWall(row, col) && map.squares[row][col] == regionId) {    // Open cell for abstraction - perform constrained BFS within this sector to label all nodes in sector
+                    // if this state is valid and isn't a wall and is in the region to be recomputed:
+                    // open cell for abstraction - perform constrained BFS within this sector to label all nodes in sector
+                    if (map.isValid(row, col) && !map.isWall(row, col) && map.squares[row][col] == regionId) {
                         currentNum++;
                         numRegionsInSector++;
 
@@ -225,16 +228,13 @@ public class EvaluateDynamicScenario {
                     }
                 }
             }
+
             System.out.println("Num regions: " + numRegionsInSector);
 
-            for (int i = 0; i < map.squares.length; i++) {
-                for (int j = 0; j < map.squares[0].length; j++) {
-                    System.out.print(map.squares[i][j] + " ");
-                }
-                System.out.println();
-            }
+            int count = 0;
+            GroupRecord[] newRecs = new GroupRecord[numRegionsInSector];
 
-            // Traverse all cells to create the groups
+            // Traverse cells in sector to re-create the groups
             for (int i = startRow; i < endRow; i++) {
                 for (int j = startCol; j < endCol; j++) {
                     int groupId = map.squares[i][j];
@@ -250,6 +250,7 @@ public class EvaluateDynamicScenario {
                             newRec.states = new ExpandArray(10);
                             newRec.states.add(newRec.groupRepId);
                             map.addGroup(groupId, newRec);
+                            newRecs[count++] = newRec;
                         } else {    // Update group
                             rec.setNumStates(rec.getSize() + 1);
                             rec.states.add(map.getId(i, j));
@@ -258,11 +259,14 @@ public class EvaluateDynamicScenario {
                 }
             }
 
-            System.out.println("Here!");
+            System.out.println("Group size after addition: " + groups.size());
 
-            // need to recompute centroids
+            // Recompute region reps for newly added regions
+            for (GroupRecord newRec: newRecs) {
+                map.recomputeCentroid(newRec, wallLoc);
+            }
 
-            // add code from buildAbstractProblem and computeGroups here
+            // add code from buildAbstractProblem here
         }
 
         ArrayList<Integer> neighborIds = new ArrayList<>(groupRecord.getNeighborIds());
