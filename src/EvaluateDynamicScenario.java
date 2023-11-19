@@ -167,7 +167,10 @@ public class EvaluateDynamicScenario {
             // check that we can still reach north to south without leaving the region
             horizontalPartition = !isPathPossible(map.squares, new int[]{wallRowId - 1, wallColId}, new int[]{wallRowId + 1, wallColId}, regionId);
         }
+
         if (verticalPartition || horizontalPartition) {
+            groups.remove(regionId); // remove region from groups and recreate it later
+
             // states in a groupRecord are in order, the first one is first in the region (top-left-most)
             int stateId = groupRecord.states.get(0);
 
@@ -175,10 +178,10 @@ public class EvaluateDynamicScenario {
 
             int startRow = map.getRow(stateId); // 96
             int startCol = map.getCol(stateId); // 112
-            int maxr = startRow + GRID_SIZE; // 112
-            int maxc = startCol + GRID_SIZE; // 128
+            int endRow = startRow + GRID_SIZE; // 112
+            int endCol = startCol + GRID_SIZE; // 128
 
-            int currentNum = groups.size(); // TODO: set current num properly
+            int currentNum = groups.size() + 50; // TODO: set current num properly
             int numRegionsInSector = 0;
 
             for (int r = 0; r < GRID_SIZE; r++) {
@@ -212,7 +215,7 @@ public class EvaluateDynamicScenario {
                                 int nc = map.getCol(nid); // Col of that neighbor
 
                                 // Check if neighbor is in range
-                                if (map.isRegionInRange(nr, nc, maxr, maxc, GRID_SIZE, regionId)) {
+                                if (map.isRegionInRange(nr, nc, endRow, endCol, GRID_SIZE, regionId)) {
                                     // Add neighbor
                                     map.squares[nr][nc] = currentNum;
                                     stateIds.add(nid);
@@ -223,6 +226,41 @@ public class EvaluateDynamicScenario {
                 }
             }
             System.out.println("Num regions: " + numRegionsInSector);
+
+            for (int i = 0; i < map.squares.length; i++) {
+                for (int j = 0; j < map.squares[0].length; j++) {
+                    System.out.print(map.squares[i][j] + " ");
+                }
+                System.out.println();
+            }
+
+            // Traverse all cells to create the groups
+            for (int i = startRow; i < endRow; i++) {
+                for (int j = startCol; j < endCol; j++) {
+                    int groupId = map.squares[i][j];
+
+                    if (groupId != GameMap.EMPTY_CHAR && groupId != GameMap.WALL_CHAR) {
+                        // See if group already exists
+                        GroupRecord rec = groups.get(groupId);
+                        if (rec == null) {    // New group
+                            GroupRecord newRec = new GroupRecord();
+                            newRec.setNumStates(1);
+                            newRec.groupId = groupId;
+                            newRec.groupRepId = map.getId(i, j);
+                            newRec.states = new ExpandArray(10);
+                            newRec.states.add(newRec.groupRepId);
+                            map.addGroup(groupId, newRec);
+                        } else {    // Update group
+                            rec.setNumStates(rec.getSize() + 1);
+                            rec.states.add(map.getId(i, j));
+                        }
+                    }
+                }
+            }
+
+            System.out.println("Here!");
+
+            // need to recompute centroids
 
             // add code from buildAbstractProblem and computeGroups here
         }
