@@ -23,6 +23,7 @@ public class EvaluateDynamicScenario {
     final static int CUTOFF = 250; // The maximum # of moves for hill-climbing checks.
     final static int GRID_SIZE = 16;
     final static int NUM_NEIGHBOUR_LEVELS = 1; // # of neighbor levels for HCDPS
+    final static int START_NUM = 50;
 
 
     public static void main(String[] args) {
@@ -135,7 +136,7 @@ public class EvaluateDynamicScenario {
         if (isContinuousWall(neighborWest, neighborEast) || isBetweenWallAndOtherRegion(neighborWest, neighborEast, regionId)) {
             potentialHorizontalPartition = true;
         }
-        // TODO: address diagonal partition
+        // TODO: address diagonal partition (maybe split into two cases?)
         if (isOpenDiagonal(neighborNorth, neighborNorthEast, neighborEast)
                 || isOpenDiagonal(neighborEast, neighborSouthEast, neighborSouth)
                 || isOpenDiagonal(neighborSouth, neighborSouthWest, neighborWest)
@@ -183,7 +184,7 @@ public class EvaluateDynamicScenario {
             int endRow = startRow + GRID_SIZE; // 112
             int endCol = startCol + GRID_SIZE; // 128
 
-            int currentNum = groups.size() + 50; // TODO: set current num properly
+            int currentNum = groups.size() + START_NUM; // TODO: set current num properly
             int numRegionsInSector = 0;
 
             for (int r = 0; r < GRID_SIZE; r++) {
@@ -266,7 +267,8 @@ public class EvaluateDynamicScenario {
                 map.recomputeCentroid(newRec, wallLoc);
             }
 
-            // add code from buildAbstractProblem here
+            // Rebuild abstract problem
+            map.rebuildAbstractProblem(GRID_SIZE, startRow, startCol);
         }
 
         ArrayList<Integer> neighborIds = new ArrayList<>(groupRecord.getNeighborIds());
@@ -285,10 +287,10 @@ public class EvaluateDynamicScenario {
         int[][] groupsArr = dbBW.getDb().getGroups();
 
         if (groupRecord.getNumStates() == 1) { // tombstone record
-            groupsArr[regionId - 50] = null;
+            groupsArr[regionId - START_NUM] = null;
             dbBW.getDb().setNumRegions(groupsArr.length - 1);
         } else { // update groupsArr
-            groupsArr[regionId - 50] = new int[]{regionId - 50, regionRepId};
+            groupsArr[regionId - START_NUM] = new int[]{regionId - START_NUM, regionRepId};
         }
 
         // write groupsArr back to db

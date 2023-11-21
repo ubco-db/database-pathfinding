@@ -1496,7 +1496,7 @@ public class GameMap {
                     if (isValid(startRow + r, col) && !isWall(startRow + r, col) && isValid(startRow + r, col + 1) && !isWall(startRow + r, col + 1)) {
                         fromRegion = baseMap.getCell(startRow + r, col) - START_NUM;
                         toRegion = baseMap.getCell(startRow + r, col + 1) - START_NUM;
-                        //build adjacentcy matrix
+                        //build adjacency matrix
                         addEdge(fromRegion, toRegion, edges);
                     }
                 }
@@ -1515,6 +1515,79 @@ public class GameMap {
                     current++;
                     // System.out.println();
                 }
+            }
+        }
+
+        abstractProblem = new RegionSearchProblem(numRegions, edges, null, this, gridSize);
+    }
+
+    public void rebuildAbstractProblem(int gridSize, int startRow, int startCol) {
+        GameMap baseMap = this;
+
+        int[][] edges = new int[baseMap.states + 1][];
+        int fromRegion, toRegion;
+
+        // Examine up-left
+        if (isValid(startRow, startCol) && !isWall(startRow, startCol) && isValid(startRow - 1, startCol - 1) && !isWall(startRow - 1, startCol - 1)) {
+            fromRegion = baseMap.getCell(startRow, startCol) - START_NUM;
+            toRegion = baseMap.getCell(startRow - 1, startCol - 1) - START_NUM;
+            addEdge(fromRegion, toRegion, edges);
+        }
+        // Examine up-right
+        if (isValid(startRow, startCol + gridSize - 1) && !isWall(startRow, startCol + gridSize - 1) && isValid(startRow - 1, startCol + 1 + gridSize - 1) && !isWall(startRow - 1, startCol + 1 + gridSize - 1)) {
+            fromRegion = baseMap.getCell(startRow, startCol + gridSize - 1) - START_NUM;
+            toRegion = baseMap.getCell(startRow - 1, startCol + 1 + gridSize - 1) - START_NUM;
+            addEdge(fromRegion, toRegion, edges);
+        }
+        // Examine down-left
+        if (isValid(startRow + gridSize - 1, startCol) && !isWall(startRow + gridSize - 1, startCol) && isValid(startRow + 1 + gridSize - 1, startCol - 1) && !isWall(startRow + 1 + gridSize - 1, startCol - 1)) {
+            fromRegion = baseMap.getCell(startRow + gridSize - 1, startCol) - START_NUM;
+            toRegion = baseMap.getCell(startRow + 1 + gridSize - 1, startCol - 1) - START_NUM;
+            addEdge(fromRegion, toRegion, edges);
+        }
+        // Examine down-right
+        if (isValid(startRow + gridSize - 1, startCol + gridSize - 1) && !isWall(startRow + gridSize - 1, startCol + gridSize - 1) && isValid(startRow + 1 + gridSize - 1, startCol + 1 + gridSize - 1) && !isWall(startRow + 1 + gridSize - 1, startCol + 1 + gridSize - 1)) {
+            fromRegion = baseMap.getCell(startRow + gridSize - 1, startCol + gridSize - 1) - START_NUM;
+            toRegion = baseMap.getCell(startRow + 1 + gridSize - 1, startCol + 1 + gridSize - 1) - START_NUM;
+            addEdge(fromRegion, toRegion, edges);
+        }
+
+        // Examine all cells in row at top of region
+        for (int c = 0; c < gridSize; c++) {
+            if (isValid(startRow, startCol + c) && !isWall(startRow, startCol + c) && isValid(startRow - 1, startCol + c) && !isWall(startRow - 1, startCol + c)) {
+                fromRegion = baseMap.getCell(startRow, startCol + c) - START_NUM;
+                toRegion = baseMap.getCell(startRow - 1, startCol + c) - START_NUM;
+                addEdge(fromRegion, toRegion, edges);
+            }
+        }
+
+        // Examine all cells in row at bottom of region
+        int row = startRow + gridSize - 1;
+        for (int c = 0; c < gridSize; c++) {
+            if (isValid(row, startCol + c) && !isWall(row, startCol + c) && isValid(row + 1, startCol + c) && !isWall(row + 1, startCol + c)) {
+                fromRegion = baseMap.getCell(row, startCol + c) - START_NUM;
+                toRegion = baseMap.getCell(row + 1, startCol + c) - START_NUM;
+                addEdge(fromRegion, toRegion, edges);
+            }
+        }
+
+        // Examine all cells in column at left of region
+        for (int r = 0; r < gridSize; r++) {
+            if (isValid(startRow + r, startCol) && !isWall(startRow + r, startCol) && isValid(startRow + r, startCol - 1) && !isWall(startRow + r, startCol - 1)) {
+                fromRegion = baseMap.getCell(startRow + r, startCol) - START_NUM;
+                toRegion = baseMap.getCell(startRow + r, startCol - 1) - START_NUM;
+                addEdge(fromRegion, toRegion, edges);
+            }
+        }
+
+        // Examine all cells in column at right of region
+        int col = startCol + gridSize - 1;
+        for (int r = 0; r < gridSize; r++) {
+            if (isValid(startRow + r, col) && !isWall(startRow + r, col) && isValid(startRow + r, col + 1) && !isWall(startRow + r, col + 1)) {
+                fromRegion = baseMap.getCell(startRow + r, col) - START_NUM;
+                toRegion = baseMap.getCell(startRow + r, col + 1) - START_NUM;
+                //build adjacency matrix
+                addEdge(fromRegion, toRegion, edges);
             }
         }
 
