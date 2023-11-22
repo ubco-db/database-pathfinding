@@ -198,6 +198,7 @@ public class EvaluateDynamicScenario {
                 }
             }
 
+            // Boolean flag
             boolean firstTime = true;
 
             for (int r = 0; r < GRID_SIZE; r++) {
@@ -212,6 +213,7 @@ public class EvaluateDynamicScenario {
                         currentNum++;
                         numRegionsInSector++;
 
+                        // For first region: Use region id of region that was deleted
                         if (firstTime) {
                             currentNum = regionId;
                         }
@@ -244,6 +246,7 @@ public class EvaluateDynamicScenario {
                             }
                         }
 
+                        // After the first time, we want to assign region-ids at the end of the groups map
                         if (firstTime) {
                             currentNum = groups.size() + START_NUM;
                             firstTime = false;
