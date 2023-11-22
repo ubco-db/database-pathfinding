@@ -184,8 +184,21 @@ public class EvaluateDynamicScenario {
             int endRow = startRow + GRID_SIZE; // 112
             int endCol = startCol + GRID_SIZE; // 128
 
-            int currentNum = groups.size() + START_NUM; // TODO: set current num properly
+            int currentNum = -1; // TODO: set current num properly
             int numRegionsInSector = 0;
+
+            // reset region
+            for (int r = 0; r < GRID_SIZE; r++) {
+                for (int c = 0; c < GRID_SIZE; c++) {
+                    int row = startRow + r;
+                    int col = startCol + c;
+                    if (!map.isWall(row, col) && map.squares[row][col] == regionId) {
+                        map.squares[row][col] = ' '; // 32
+                    }
+                }
+            }
+
+            boolean firstTime = true;
 
             for (int r = 0; r < GRID_SIZE; r++) {
                 // for each col in this sector
@@ -195,9 +208,13 @@ public class EvaluateDynamicScenario {
 
                     // if this state is valid and isn't a wall and is in the region to be recomputed:
                     // open cell for abstraction - perform constrained BFS within this sector to label all nodes in sector
-                    if (map.isValid(row, col) && !map.isWall(row, col) && map.squares[row][col] == regionId) {
+                    if (map.isValid(row, col) && !map.isWall(row, col) && map.squares[row][col] == ' ') {
                         currentNum++;
                         numRegionsInSector++;
+
+                        if (firstTime) {
+                            currentNum = regionId;
+                        }
 
                         Queue<Integer> stateIds = new LinkedList<>();
                         stateIds.add(map.getId(row, col));
@@ -219,12 +236,17 @@ public class EvaluateDynamicScenario {
                                 int nc = map.getCol(nid); // Col of that neighbor
 
                                 // Check if neighbor is in range
-                                if (map.isRegionInRange(nr, nc, endRow, endCol, GRID_SIZE, regionId)) {
+                                if (map.isOpenInRange(nr, nc, endRow, endCol, GRID_SIZE)) {
                                     // Add neighbor
                                     map.squares[nr][nc] = currentNum;
                                     stateIds.add(nid);
                                 }
                             }
+                        }
+
+                        if (firstTime) {
+                            currentNum = groups.size() + START_NUM;
+                            firstTime = false;
                         }
                     }
                 }
@@ -267,8 +289,11 @@ public class EvaluateDynamicScenario {
                 map.recomputeCentroid(newRec, wallLoc);
             }
 
+            // VISUAL CHECK: TODO: Centroids are different for some reason
+            map.computeCentroidMap().outputImage(DBA_STAR_DB_PATH + "TEST" + MAP_FILE_NAME + ".png", null, null);
+
             // Rebuild abstract problem
-            map.rebuildAbstractProblem(GRID_SIZE, startRow, startCol);
+            map.rebuildAbstractProblem(GRID_SIZE, startRow, startCol, groups);
         }
 
         ArrayList<Integer> neighborIds = new ArrayList<>(groupRecord.getNeighborIds());
@@ -277,6 +302,8 @@ public class EvaluateDynamicScenario {
         // Get database and initialize pathCompressAlgDba
         SubgoalDynamicDB2 dbBW = (SubgoalDynamicDB2) dbaStarBW.getDatabase();
         HillClimbing pathCompressAlgDba = new HillClimbing(problem, 10000);
+
+        // TODO: Why are the neighbours not set properly?
 
         // Update regions for neighborIds in the database
         dbBW.recomputeBasePaths2(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(),

@@ -1521,10 +1521,17 @@ public class GameMap {
         abstractProblem = new RegionSearchProblem(numRegions, edges, null, this, gridSize);
     }
 
-    public void rebuildAbstractProblem(int gridSize, int startRow, int startCol) {
+    public void rebuildAbstractProblem(int gridSize, int startRow, int startCol, TreeMap<Integer, GroupRecord> groups) {
         GameMap baseMap = this;
 
-        int[][] edges = new int[baseMap.states + 1][];
+        int[] regionCenter = new int[groups.size()];
+        for (int i = 0; i < groups.size(); i++) {
+            // TODO: issue when i + START_NUM = 119
+            GroupRecord rec = groups.get(i + START_NUM);
+            regionCenter[i] = rec.groupRepId;
+        }
+
+        int[][] edges = new int[groups.size()][];
         int fromRegion, toRegion;
 
         // Examine up-left
