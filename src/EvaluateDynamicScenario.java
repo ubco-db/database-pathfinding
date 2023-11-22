@@ -171,6 +171,8 @@ public class EvaluateDynamicScenario {
 
         if (verticalPartition || horizontalPartition) {
             System.out.println("Group size before removal: " + groups.size());
+            // TODO: set neighbours of new regions using this
+            HashSet<Integer> neighboursOfOldRegion = groups.get(regionId).getNeighborIds();
             groups.remove(regionId); // remove region from groups and recreate it later
             System.out.println("Group size after removal: " + groups.size());
 
@@ -184,10 +186,10 @@ public class EvaluateDynamicScenario {
             int endRow = startRow + GRID_SIZE; // 112
             int endCol = startCol + GRID_SIZE; // 128
 
-            int currentNum = -1; // TODO: set current num properly
+            int currentNum = -1;
             int numRegionsInSector = 0;
 
-            // reset region
+            // reset region (necessary in order for me to be able to reuse the regionId)
             for (int r = 0; r < GRID_SIZE; r++) {
                 for (int c = 0; c < GRID_SIZE; c++) {
                     int row = startRow + r;
@@ -255,6 +257,8 @@ public class EvaluateDynamicScenario {
                 }
             }
 
+            // TODO: missing code here?
+
             System.out.println("Num regions: " + numRegionsInSector);
 
             int count = 0;
@@ -297,6 +301,9 @@ public class EvaluateDynamicScenario {
 
             // Rebuild abstract problem
             map.rebuildAbstractProblem(GRID_SIZE, startRow, startCol, groups);
+
+            // TODO: Set neighbours properly
+            map.recomputeNeighbors(startRow, startCol, endRow, endCol);
         }
 
         ArrayList<Integer> neighborIds = new ArrayList<>(groupRecord.getNeighborIds());
@@ -305,8 +312,6 @@ public class EvaluateDynamicScenario {
         // Get database and initialize pathCompressAlgDba
         SubgoalDynamicDB2 dbBW = (SubgoalDynamicDB2) dbaStarBW.getDatabase();
         HillClimbing pathCompressAlgDba = new HillClimbing(problem, 10000);
-
-        // TODO: Why are the neighbours not set properly?
 
         // Update regions for neighborIds in the database
         dbBW.recomputeBasePaths2(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(),
@@ -412,6 +417,7 @@ public class EvaluateDynamicScenario {
 
         currentTime = System.currentTimeMillis();
 
+        // TODO
         database.computeIndex(tmpProb, rec);
 
         rec.addStat(23, System.currentTimeMillis() - currentTime);

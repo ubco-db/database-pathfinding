@@ -962,6 +962,49 @@ public class GameMap {
         System.out.println("Time to compute neighbors: " + (endTime - currentTime));
     }
 
+    // TODO: recompute neighbours in more efficient way, should be possible since I know neighbours of original region and ids of new regions
+    public void recomputeNeighbors(int startRow, int startCol, int endRow, int endCol) {    // Only computes the neighbor group ids for each group not the list of neighbor cells
+        // IDEA: Perform one pass through map updating group records everytime encounter new neighbor
+
+        // Create a neighbor set for each group
+        for (Entry<Integer, GroupRecord> integerGroupRecordEntry : groups.entrySet()) {
+            GroupRecord rec = integerGroupRecordEntry.getValue();
+            rec.setNeighborIds(new HashSet<Integer>());
+        }
+
+        long currentTime = System.currentTimeMillis();
+        for (int r = startRow; r < endRow; r++) {
+            for (int c = startCol; c < endCol; c++) {
+                if (!isWall(r, c)) {
+                    int val = squares[r][c];
+                    GroupRecord rec = groups.get(val);
+                    if (rec == null) {
+                        System.out.println("Unable to find group: " + val + " for row: " + r + " col: " + c + " id: " + getId(r, c));
+                        continue;
+                    }
+                    if (isValid(r - 1, c) && !isWall(r - 1, c) && squares[r - 1][c] != val)    // Above
+                        rec.getNeighborIds().add(squares[r - 1][c]);
+                    if (isValid(r - 1, c + 1) && !isWall(r - 1, c + 1) && squares[r - 1][c + 1] != val) // Top right
+                        rec.getNeighborIds().add(squares[r - 1][c + 1]);
+                    if (isValid(r, c + 1) && !isWall(r, c + 1) && squares[r][c + 1] != val) // Right
+                        rec.getNeighborIds().add(squares[r][c + 1]);
+                    if (isValid(r + 1, c + 1) && !isWall(r + 1, c + 1) && squares[r + 1][c + 1] != val) // Bottom right
+                        rec.getNeighborIds().add(squares[r + 1][c + 1]);
+                    if (isValid(r + 1, c) && !isWall(r + 1, c) && squares[r + 1][c] != val) // Bottom
+                        rec.getNeighborIds().add(squares[r + 1][c]);
+                    if (isValid(r + 1, c - 1) && !isWall(r + 1, c - 1) && squares[r + 1][c - 1] != val) // Bottom left
+                        rec.getNeighborIds().add(squares[r + 1][c - 1]);
+                    if (isValid(r, c - 1) && !isWall(r, c - 1) && squares[r][c - 1] != val) // Left
+                        rec.getNeighborIds().add(squares[r][c - 1]);
+                    if (isValid(r - 1, c - 1) && !isWall(r - 1, c - 1) && squares[r - 1][c - 1] != val) // Top left
+                        rec.getNeighborIds().add(squares[r - 1][c - 1]);
+                }
+            }
+        }
+        long endTime = System.currentTimeMillis();
+        System.out.println("Time to recompute neighbors: " + (endTime - currentTime));
+    }
+
     public int generateRandomState() {
         int r, c;
         do {
