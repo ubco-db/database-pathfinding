@@ -297,7 +297,7 @@ public class EvaluateDynamicScenario {
                 map.recomputeCentroid2(newRec, wallLoc);
             }
 
-            // VISUAL CHECK: TODO: Centroids are different for some reason
+            // VISUAL CHECK:
             map.computeCentroidMap().outputImage(DBA_STAR_DB_PATH + "TEST" + MAP_FILE_NAME + ".png", null, null);
 
             // Rebuild abstract problem

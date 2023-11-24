@@ -327,6 +327,27 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
     public void recomputeBasePaths2(SearchProblem problem, TreeMap<Integer, GroupRecord> groups,
                                     ArrayList<Integer> neighbourIndices, SearchAlgorithm searchAlg, int[][] lowestCost,
                                     int[][][] paths, int[][] neighbor, int numGroups, int numLevels, boolean isElimination) {
+        if (lowestCost.length < groups.size()) {
+            int[][] resizedLowestCost = new int[groups.size()][];
+            System.arraycopy(lowestCost, 0, resizedLowestCost, 0, lowestCost.length);
+            lowestCost = resizedLowestCost;
+        }
+        if (paths.length < groups.size()) {
+            int[][][] resizedPath = new int[groups.size()][][];
+            System.arraycopy(paths, 0, resizedPath, 0, paths.length);
+            paths = resizedPath;
+        }
+        if (neighbor.length < groups.size()) {
+            int[][] resizedNeighbor = new int[groups.size()][];
+            System.arraycopy(neighbor, 0, resizedNeighbor, 0, neighbor.length);
+            neighbor = resizedNeighbor;
+        }
+        if (neighborId.length < groups.size()) {
+            int[][] resizedNeighborId = new int[groups.size()][];
+            System.arraycopy(neighborId, 0, resizedNeighborId, 0, neighborId.length);
+            neighborId = resizedNeighborId;
+        }
+
         int goalGroupLoc, startGroupLoc;
         GroupRecord startGroup, goalGroup;
         HashSet<Integer> neighbors;
