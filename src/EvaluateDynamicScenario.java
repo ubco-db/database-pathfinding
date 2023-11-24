@@ -186,6 +186,7 @@ public class EvaluateDynamicScenario {
             int endRow = startRow + GRID_SIZE; // 112
             int endCol = startCol + GRID_SIZE; // 128
 
+            // TODO: put this stuff into a method in GameMap
             int currentNum = -1;
             int numRegionsInSector = 0;
 
@@ -293,7 +294,7 @@ public class EvaluateDynamicScenario {
 
             // Recompute region reps for newly added regions
             for (GroupRecord newRec: newRecs) {
-                map.recomputeCentroid(newRec, wallLoc);
+                map.recomputeCentroid2(newRec, wallLoc);
             }
 
             // VISUAL CHECK: TODO: Centroids are different for some reason
@@ -332,6 +333,7 @@ public class EvaluateDynamicScenario {
         dbBW.getDb().setGroups(groupsArr);
 
         // For checking recomputed database against AW database
+        // TODO: ArrayIndexOutOfBounds here
         dbBW.exportDB(DBA_STAR_DB_PATH + "BW_Recomp_" + MAP_FILE_NAME + "_DBA-STAR_G" + GRID_SIZE + "_N" + NUM_NEIGHBOUR_LEVELS + "_C" + CUTOFF + ".dat");
 
         System.out.println();

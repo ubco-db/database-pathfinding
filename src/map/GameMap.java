@@ -2340,6 +2340,8 @@ public class GameMap {
     public int recomputeCentroid(GroupRecord rec, int wallLoc) {
         // regionReps = new ArrayList<>();
 
+        // TODO: states will not always contain wallLoc
+
         long sumRow = 0, sumCol = 0, N = rec.getSize() - 1; // TODO: replace with ArrayList length
         ExpandArray states = rec.states; // QUESTION: Why are we using ExpandArray here? Array should be enough
         for (int i = 0; i < (N + 1); i++) { // TODO: replace 1 with ArrayList length
@@ -2357,6 +2359,46 @@ public class GameMap {
             // Find the point that is in the group that is closest
             int minDist = 10000, minRow = -1, minCol = -1;
             for (int i = 0; i < (N + 1); i++) { // TODO: replace 1 with ArrayList length
+                int id = states.get(i);
+                if (id != wallLoc) { // TODO: replace this with search in ArrayList
+                    int r = this.getRow(id);
+                    int c = this.getCol(id);
+                    int dist = GameMap.computeDistance(row, col, r, c);
+                    if (dist < minDist) {
+                        minRow = r;
+                        minCol = c;
+                        minDist = dist;
+                    }
+                }
+            }
+            row = minRow;
+            col = minCol;
+        }
+//        System.out.println("New rep at: " + this.getId(row, col));
+        rec.setGroupRepId(this.getId(row, col));
+//        regionReps.add(this.getId(row, col)); // remove existing rep?
+        return this.getId(row, col);
+    }
+
+    // TODO: This method has a lot of duplicate code, will need to refactor
+    public int recomputeCentroid2(GroupRecord rec, int wallLoc) {
+        // regionReps = new ArrayList<>();
+
+        long sumRow = 0, sumCol = 0, N = rec.getSize(); // TODO: replace with ArrayList length
+        ExpandArray states = rec.states; // QUESTION: Why are we using ExpandArray here? Array should be enough
+        for (int i = 0; i < N; i++) { // TODO: replace 1 with ArrayList length
+            int id = states.get(i);
+            sumRow += this.getRow(id);
+            sumCol += this.getCol(id);
+        }
+
+        int row = Math.round(sumRow / N);
+        int col = Math.round(sumCol / N);
+
+        if (this.isWall(row, col) || squares[row][col] != rec.groupId) {    // If centroid point is not in group or is a wall
+            // Find the point that is in the group that is closest
+            int minDist = 10000, minRow = -1, minCol = -1;
+            for (int i = 0; i < N; i++) { // TODO: replace 1 with ArrayList length
                 int id = states.get(i);
                 if (id != wallLoc) { // TODO: replace this with search in ArrayList
                     int r = this.getRow(id);
