@@ -27,9 +27,14 @@ public class EvaluateDynamicScenario {
 
 
     public static void main(String[] args) {
+        // build DBAStar Database
+        GameMap startingMap = new GameMap(PATH_TO_MAP);
+        DBAStar dbaStarBW = computeDBAStarDatabase(startingMap, "BW"); // BW = before wall
+        // getDBAStarPath(startId, goalId, "BW", dbaStarBW);
+
         // set wall(s)
         ArrayList<SearchState> wallLocation = new ArrayList<>();
-        int wallLoc = 14325; // real region partition (14325) // fake partition (11928) // wall that partitions map (6157)
+        int wallLoc = 6157; // real region partition (14325) // fake partition (11928) // wall that partitions map (6157)
         SearchState wall = new SearchState(wallLoc);
         wallLocation.add(wall);
 
@@ -37,14 +42,11 @@ public class EvaluateDynamicScenario {
         int startId = 13411;
         int goalId = 13901;
 
-        // build DBAStar Database
-        GameMap startingMap = new GameMap(PATH_TO_MAP);
-        DBAStar dbaStarBW = computeDBAStarDatabase(startingMap, "BW"); // BW = before wall
-        // getDBAStarPath(startId, goalId, "BW", dbaStarBW);
+        System.out.println();
+        System.out.println();
+        System.out.println();
 
-        System.out.println();
-        System.out.println();
-        System.out.println();
+        long startTimeRecomp = System.currentTimeMillis();
 
         // Use the map returned after the database is fully computed
         GameMap map = dbaStarBW.getMap();
@@ -84,7 +86,6 @@ public class EvaluateDynamicScenario {
         // get the neighbour ids regions using the region id
         GroupRecord groupRecord = groups.get(regionId);
 
-        // TODO: make better check, this is for setting array length in recomputeBasePaths2
         boolean isElimination;
 
         if (groupRecord.getNumStates() == 1) { // scenario when there is only one state in the region
@@ -102,8 +103,7 @@ public class EvaluateDynamicScenario {
             isElimination = false;
         }
 
-        // TODO: scenario where map is partitioned by wall addition
-
+        // scenario where map is partitioned by wall addition
         boolean potentialHorizontalPartition = false;
         boolean potentialVerticalPartition = false;
         boolean potentialDiagonalPartition = false;
@@ -130,24 +130,26 @@ public class EvaluateDynamicScenario {
         // a state that is not in the region the wall was placed in (this is a necessary condition, but not sufficient)
         // TODO: is there an exception to this?
 
-        if (isContinuousWall(neighborNorth, neighborSouth) || isBetweenWallAndOtherRegion(neighborNorth, neighborSouth, regionId)) {
+        // need to check !isElimination, because the algorithm sees the elimination case as a partition
+        if (!isElimination && (isContinuousWall(neighborNorth, neighborSouth) || isBetweenWallAndOtherRegion(neighborNorth, neighborSouth, regionId))) {
             potentialVerticalPartition = true;
         }
-        if (isContinuousWall(neighborWest, neighborEast) || isBetweenWallAndOtherRegion(neighborWest, neighborEast, regionId)) {
+        if (!isElimination && (isContinuousWall(neighborWest, neighborEast) || isBetweenWallAndOtherRegion(neighborWest, neighborEast, regionId))) {
             potentialHorizontalPartition = true;
         }
         // TODO: address diagonal partition (maybe split into two cases?)
-        if (isOpenDiagonal(neighborNorth, neighborNorthEast, neighborEast)
+        if (!isElimination && (isOpenDiagonal(neighborNorth, neighborNorthEast, neighborEast)
                 || isOpenDiagonal(neighborEast, neighborSouthEast, neighborSouth)
                 || isOpenDiagonal(neighborSouth, neighborSouthWest, neighborWest)
-                || isOpenDiagonal(neighborWest, neighborNorthWest, neighborNorth)) {
+                || isOpenDiagonal(neighborWest, neighborNorthWest, neighborNorth))) {
             potentialDiagonalPartition = true;
         }
 
         System.out.println();
-        System.out.println("WALL IS PARTITIONING MAP: " + (potentialHorizontalPartition || potentialVerticalPartition));
-        if (potentialHorizontalPartition || potentialVerticalPartition)
-            System.out.println(potentialHorizontalPartition ? "HORIZONTALLY" : "VERTICALLY");
+        System.out.println("WALL IS PARTITIONING MAP: " + (potentialHorizontalPartition || potentialVerticalPartition || potentialDiagonalPartition));
+        if (potentialHorizontalPartition) System.out.println("HORIZONTALLY");
+        if (potentialVerticalPartition) System.out.println("VERTICALLY");
+        if (potentialDiagonalPartition) System.out.println("DIAGONALLY");
         System.out.println();
 
         // potentialPartition because the wall was added such that it is either surrounded by a wall on either side or
@@ -169,10 +171,13 @@ public class EvaluateDynamicScenario {
             horizontalPartition = !isPathPossible(map.squares, new int[]{wallRowId - 1, wallColId}, new int[]{wallRowId + 1, wallColId}, regionId);
         }
 
-        if (verticalPartition || horizontalPartition) {
+        ArrayList<Integer> newRegions = new ArrayList<>();
+        boolean partition = verticalPartition || horizontalPartition || potentialDiagonalPartition;
+
+        if (partition) {
             System.out.println("Group size before removal: " + groups.size());
             // TODO: set neighbours of new regions using this
-            HashSet<Integer> neighboursOfOldRegion = groups.get(regionId).getNeighborIds();
+            // HashSet<Integer> neighboursOfOldRegion = groups.get(regionId).getNeighborIds();
             groups.remove(regionId); // remove region from groups and recreate it later
             System.out.println("Group size after removal: " + groups.size());
 
@@ -293,26 +298,28 @@ public class EvaluateDynamicScenario {
             System.out.println("Group size after addition: " + groups.size());
 
             // Recompute region reps for newly added regions
-            for (GroupRecord newRec: newRecs) {
+            for (GroupRecord newRec : newRecs) {
                 map.recomputeCentroid2(newRec, wallLoc);
+                // Add regions that didn't exist before to list
+                if (newRec.groupId != regionId) newRegions.add(newRec.groupId);
             }
 
             // VISUAL CHECK:
-            map.computeCentroidMap().outputImage(DBA_STAR_DB_PATH + "TEST" + MAP_FILE_NAME + ".png", null, null);
+            // map.computeCentroidMap().outputImage(DBA_STAR_DB_PATH + "TEST" + MAP_FILE_NAME + ".png", null, null);
 
             // Rebuild abstract problem
             map.rebuildAbstractProblem(GRID_SIZE, startRow, startCol, groups);
 
-            // TODO: Set neighbours properly
+            // Set neighbours
             map.recomputeNeighbors(startRow, startCol, endRow, endCol);
         }
 
         ArrayList<Integer> neighborIds = new ArrayList<>(groupRecord.getNeighborIds());
         neighborIds.add(groupRecord.groupId); // need to pass this so updates work both ways
 
-        if (verticalPartition || horizontalPartition) {
-            // TODO: keep list of neighbour ids and add here
-            neighborIds.add(135);
+        if (partition) {
+            // need to add new regions here for neighbourhood recomputation
+            neighborIds.addAll(newRegions);
         }
 
         // Get database and initialize pathCompressAlgDba
@@ -340,6 +347,11 @@ public class EvaluateDynamicScenario {
         // For checking recomputed database against AW database
         dbBW.exportDB(DBA_STAR_DB_PATH + "BW_Recomp_" + MAP_FILE_NAME + "_DBA-STAR_G" + GRID_SIZE + "_N" + NUM_NEIGHBOUR_LEVELS + "_C" + CUTOFF + ".dat");
 
+        long endTimeRecomp = System.currentTimeMillis();
+        long elapsedTime = endTimeRecomp - startTimeRecomp;
+
+        System.out.println("Elapsed Time in milliseconds for partial recomputation: " + elapsedTime);
+
         System.out.println();
         System.out.println();
         System.out.println();
@@ -347,12 +359,19 @@ public class EvaluateDynamicScenario {
         // try to only recompute changes, then recompute entire database to see if I matched it
         // recompute database
 
+        long startTime = System.currentTimeMillis();
+
         // add wall to starting map
         Walls.addWall(PATH_TO_MAP, wallLocation, startingMap);
         startingMap = new GameMap(PATH_TO_MAP);
 
         DBAStar dbaStarAW = computeDBAStarDatabase(startingMap, "AW"); // AW = after wall
         // getDBAStarPath(startId, goalId, "AW", dbaStarAW);
+
+        long endTime = System.currentTimeMillis();
+        elapsedTime = endTime - startTime;
+
+        System.out.println("Elapsed Time in milliseconds for full recomputation: " + elapsedTime);
 
         // remove wall
         Walls.removeWall(PATH_TO_MAP, wallLocation, startingMap);
@@ -412,10 +431,10 @@ public class EvaluateDynamicScenario {
         rec.addStat(7, map.states);
         dbStats.addRecord(rec);
 
-        System.out.println("Exporting map with areas.");
+/*        System.out.println("Exporting map with areas.");
         map.outputImage(getImageName(wallStatus, false), null, null);
         System.out.println("Exporting map with areas and centroids.");
-        map.computeCentroidMap().outputImage(getImageName(wallStatus, true), null, null);
+        map.computeCentroidMap().outputImage(getImageName(wallStatus, true), null, null);*/
 
         // QUESTION: Why are we passing this tmpProb?
         SearchProblem tmpProb = new MapSearchProblem(map);
