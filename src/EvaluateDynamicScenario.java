@@ -310,6 +310,11 @@ public class EvaluateDynamicScenario {
         ArrayList<Integer> neighborIds = new ArrayList<>(groupRecord.getNeighborIds());
         neighborIds.add(groupRecord.groupId); // need to pass this so updates work both ways
 
+        if (verticalPartition || horizontalPartition) {
+            // TODO: keep list of neighbour ids and add here
+            neighborIds.add(135);
+        }
+
         // Get database and initialize pathCompressAlgDba
         SubgoalDynamicDB2 dbBW = (SubgoalDynamicDB2) dbaStarBW.getDatabase();
         HillClimbing pathCompressAlgDba = new HillClimbing(problem, 10000);
@@ -333,15 +338,14 @@ public class EvaluateDynamicScenario {
         dbBW.getDb().setGroups(groupsArr);
 
         // For checking recomputed database against AW database
-        // TODO: ArrayIndexOutOfBounds here
         dbBW.exportDB(DBA_STAR_DB_PATH + "BW_Recomp_" + MAP_FILE_NAME + "_DBA-STAR_G" + GRID_SIZE + "_N" + NUM_NEIGHBOUR_LEVELS + "_C" + CUTOFF + ".dat");
 
         System.out.println();
         System.out.println();
         System.out.println();
 
-        // recompute database
         // try to only recompute changes, then recompute entire database to see if I matched it
+        // recompute database
 
         // add wall to starting map
         Walls.addWall(PATH_TO_MAP, wallLocation, startingMap);

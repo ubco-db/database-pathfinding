@@ -330,17 +330,17 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
         if (lowestCost.length < groups.size()) {
             int[][] resizedLowestCost = new int[groups.size()][];
             System.arraycopy(lowestCost, 0, resizedLowestCost, 0, lowestCost.length);
-            lowestCost = resizedLowestCost;
+            this.lowestCost = resizedLowestCost;
         }
         if (paths.length < groups.size()) {
             int[][][] resizedPath = new int[groups.size()][][];
             System.arraycopy(paths, 0, resizedPath, 0, paths.length);
-            paths = resizedPath;
+            this.paths = resizedPath;
         }
         if (neighbor.length < groups.size()) {
             int[][] resizedNeighbor = new int[groups.size()][];
             System.arraycopy(neighbor, 0, resizedNeighbor, 0, neighbor.length);
-            neighbor = resizedNeighbor;
+            this.neighbor = resizedNeighbor;
         }
         if (neighborId.length < groups.size()) {
             int[][] resizedNeighborId = new int[groups.size()][];
@@ -379,10 +379,10 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
                 numNeighbors -= 1;
             }
 
-            lowestCost[startGroupLoc] = new int[numNeighbors];
-            neighbor[startGroupLoc] = new int[numNeighbors];
+            this.lowestCost[startGroupLoc] = new int[numNeighbors];
+            this.neighbor[startGroupLoc] = new int[numNeighbors];
             neighborId[startGroupLoc] = new int[numNeighbors];
-            paths[startGroupLoc] = new int[numNeighbors][];
+            this.paths[startGroupLoc] = new int[numNeighbors][];
 
             Iterator<Integer> it = neighbors.iterator();
             // Generate for each neighbor group
@@ -402,11 +402,11 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
                     int pathCost = stats.getPathCost();
 
                     neighborId[startGroupLoc][count] = goalGroupLoc;
-                    lowestCost[startGroupLoc][count] = pathCost;
-                    neighbor[startGroupLoc][count] = goalGroupLoc;
-                    paths[startGroupLoc][count] = SubgoalDB.convertPathToIds(path);
-                    paths[startGroupLoc][count] = SearchUtil.compressPath(paths[startGroupLoc][count], searchAlg, tmp, path.size());
-                    numStates += paths[startGroupLoc][count].length;
+                    this.lowestCost[startGroupLoc][count] = pathCost;
+                    this.neighbor[startGroupLoc][count] = goalGroupLoc;
+                    this.paths[startGroupLoc][count] = SubgoalDB.convertPathToIds(path);
+                    this.paths[startGroupLoc][count] = SearchUtil.compressPath(this.paths[startGroupLoc][count], searchAlg, tmp, path.size());
+                    numStates += this.paths[startGroupLoc][count].length;
                     count++;
                 }
             }
