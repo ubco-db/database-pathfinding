@@ -963,14 +963,15 @@ public class GameMap {
     }
 
     // TODO: recompute neighbours in more efficient way, should be possible since I know neighbours of original region and ids of new regions
-    public void recomputeNeighbors(int startRow, int startCol, int endRow, int endCol) {    // Only computes the neighbor group ids for each group not the list of neighbor cells
+    public void recomputeNeighbors(int startRow, int startCol, int endRow, int endCol, ArrayList<Integer> neighborIds) {    // Only computes the neighbor group ids for each group not the list of neighbor cells
         // IDEA: Perform one pass through map updating group records everytime encounter new neighbor
 
         // Create a neighbor set for each group
-        for (Entry<Integer, GroupRecord> integerGroupRecordEntry : groups.entrySet()) {
-            GroupRecord rec = integerGroupRecordEntry.getValue();
-            rec.setNeighborIds(new HashSet<Integer>());
+        for (int neighborId: neighborIds) {
+            groups.get(neighborId).setNeighborIds(new HashSet<>());
         }
+
+        // TODO: I am only recomputing neighbours in the sector where the partition happened, that is not actually enough
 
         long currentTime = System.currentTimeMillis();
         for (int r = startRow; r < endRow; r++) {

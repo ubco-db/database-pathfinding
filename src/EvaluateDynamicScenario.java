@@ -34,7 +34,7 @@ public class EvaluateDynamicScenario {
 
         // set wall(s)
         ArrayList<SearchState> wallLocation = new ArrayList<>();
-        int wallLoc = 6157; // real region partition (14325) // fake partition (11928) // wall that partitions map (6157)
+        int wallLoc = 14325; // real region partition (14325) // fake partition (11928) // wall that partitions map (6157)
         SearchState wall = new SearchState(wallLoc);
         wallLocation.add(wall);
 
@@ -174,6 +174,8 @@ public class EvaluateDynamicScenario {
         ArrayList<Integer> newRegions = new ArrayList<>();
         boolean partition = verticalPartition || horizontalPartition || potentialDiagonalPartition;
 
+        ArrayList<Integer> neighborIds = new ArrayList<>(groupRecord.getNeighborIds());
+
         if (partition) {
             System.out.println("Group size before removal: " + groups.size());
             // TODO: set neighbours of new regions using this
@@ -301,7 +303,7 @@ public class EvaluateDynamicScenario {
             for (GroupRecord newRec : newRecs) {
                 map.recomputeCentroid2(newRec, wallLoc);
                 // Add regions that didn't exist before to list
-                if (newRec.groupId != regionId) newRegions.add(newRec.groupId);
+                neighborIds.add(newRec.groupId);
             }
 
             // VISUAL CHECK:
@@ -311,15 +313,12 @@ public class EvaluateDynamicScenario {
             map.rebuildAbstractProblem(GRID_SIZE, startRow, startCol, groups);
 
             // Set neighbours
-            map.recomputeNeighbors(startRow, startCol, endRow, endCol);
+            // TODO: something in here is going wrong
+            map.recomputeNeighbors(startRow, startCol, endRow, endCol, neighborIds);
         }
 
-        ArrayList<Integer> neighborIds = new ArrayList<>(groupRecord.getNeighborIds());
-        neighborIds.add(groupRecord.groupId); // need to pass this so updates work both ways
-
-        if (partition) {
-            // need to add new regions here for neighbourhood recomputation
-            neighborIds.addAll(newRegions);
+        if (!partition) {
+            neighborIds.add(groupRecord.groupId); // need to pass this so updates work both ways (for partition this is already added)
         }
 
         // Get database and initialize pathCompressAlgDba
@@ -527,7 +526,7 @@ public class EvaluateDynamicScenario {
         return row >= 0 && row < rows && col >= 0 && col < cols && map[row][col] != '*' && map[row][col] == r && !visited[row][col];
     }
 
-    // TODO: could likely optimize using A*
+    // TODO: could likely optimize using A* (also, can I trust this code?)
     private static boolean isPathPossible(int[][] map, int[] start, int[] end, int r) {
         int rows = map.length;
         int cols = map[0].length;
