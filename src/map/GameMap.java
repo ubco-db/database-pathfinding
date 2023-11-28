@@ -963,19 +963,26 @@ public class GameMap {
     }
 
     // TODO: recompute neighbours in more efficient way, should be possible since I know neighbours of original region and ids of new regions
-    public void recomputeNeighbors(int startRow, int startCol, int endRow, int endCol, ArrayList<Integer> neighborIds) {    // Only computes the neighbor group ids for each group not the list of neighbor cells
+    public void recomputeNeighbors(int gridSize, int startRow, int startCol, int endRow, int endCol, ArrayList<Integer> neighborIds) {    // Only computes the neighbor group ids for each group not the list of neighbor cells
         // IDEA: Perform one pass through map updating group records everytime encounter new neighbor
 
-        // Create a neighbor set for each group
+        // Create a neighbor set for each group that needs recomputation (original region and all its neighbours)
         for (int neighborId: neighborIds) {
             groups.get(neighborId).setNeighborIds(new HashSet<>());
         }
 
-        // TODO: I am only recomputing neighbours in the sector where the partition happened, that is not actually enough
+        // Need to recompute neighbours for original region and all its neighbours, so passing entire 3 sector x 3 sector area
 
         long currentTime = System.currentTimeMillis();
-        for (int r = startRow; r < endRow; r++) {
-            for (int c = startCol; c < endCol; c++) {
+
+        // Make sure I am in bounds
+        int startOuterLoop = Math.max(startRow - gridSize, 0);
+        int endOuterLoop = Math.min(endRow + gridSize, rows);
+        int startInnerLoop = Math.max(startCol - gridSize, 0);
+        int endInnerLoop = Math.min(endCol + gridSize, cols);
+
+        for (int r = startOuterLoop; r < endOuterLoop; r++) {
+            for (int c = startInnerLoop; c < endInnerLoop; c++) {
                 if (!isWall(r, c)) {
                     int val = squares[r][c];
                     GroupRecord rec = groups.get(val);

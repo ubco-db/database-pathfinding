@@ -172,11 +172,11 @@ public class EvaluateDynamicScenario {
         }
 
         ArrayList<Integer> newRegions = new ArrayList<>();
-        boolean partition = verticalPartition || horizontalPartition || potentialDiagonalPartition;
+        boolean isPartition = verticalPartition || horizontalPartition || potentialDiagonalPartition;
 
         ArrayList<Integer> neighborIds = new ArrayList<>(groupRecord.getNeighborIds());
 
-        if (partition) {
+        if (isPartition) {
             System.out.println("Group size before removal: " + groups.size());
             // TODO: set neighbours of new regions using this
             // HashSet<Integer> neighboursOfOldRegion = groups.get(regionId).getNeighborIds();
@@ -313,11 +313,10 @@ public class EvaluateDynamicScenario {
             map.rebuildAbstractProblem(GRID_SIZE, startRow, startCol, groups);
 
             // Set neighbours
-            // TODO: something in here is going wrong
-            map.recomputeNeighbors(startRow, startCol, endRow, endCol, neighborIds);
+            map.recomputeNeighbors(GRID_SIZE, startRow, startCol, endRow, endCol, neighborIds);
         }
 
-        if (!partition) {
+        if (!isPartition) {
             neighborIds.add(groupRecord.groupId); // need to pass this so updates work both ways (for partition this is already added)
         }
 
@@ -327,7 +326,7 @@ public class EvaluateDynamicScenario {
 
         // Update regions for neighborIds in the database
         dbBW.recomputeBasePaths2(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(),
-                dbBW.getNeighbor(), neighborIds.size(), NUM_NEIGHBOUR_LEVELS, isElimination);
+                dbBW.getNeighbor(), neighborIds.size(), NUM_NEIGHBOUR_LEVELS, isElimination, isPartition);
 
         // TODO: Update db (need to update node id to seed id mapping, potentially map?)
 

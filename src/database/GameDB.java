@@ -540,10 +540,10 @@ public class GameDB {
         return db;
     }
 
-    public static HashSet<Integer> getNeighbors(TreeMap<Integer, GroupRecord> groups, GroupRecord startGroup, int numLevels) {
+    public static HashSet<Integer> getNeighbors(TreeMap<Integer, GroupRecord> groups, GroupRecord startGroup, int numLevels, boolean isPartition) {
         HashSet<Integer> neighbors = startGroup.getComputedNeighborIds();
 
-        if (neighbors == null) {
+        if (neighbors == null || isPartition) {
             // This supports Level 1 (immediate neighbors)
             neighbors = new HashSet<Integer>(startGroup.getNeighborIds().size());
             neighbors.addAll(startGroup.getNeighborIds());
@@ -599,7 +599,7 @@ public class GameDB {
         for (int i = 0; i < numGroups; i++) {
             startGroup = groups.get(i + GameMap.START_NUM);
 
-            neighbors = GameDB.getNeighbors(groups, startGroup, numLevels);
+            neighbors = GameDB.getNeighbors(groups, startGroup, numLevels, false);
             // System.out.println("Doing group: "+i+" Neighbors: "+neighbors.size());
             // Generate for each neighbor group
             for (int goalGroupId : neighbors) {

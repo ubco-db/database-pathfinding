@@ -256,7 +256,7 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
             startGroup = groups.get(i + GameMap.START_NUM);
             startGroupLoc = i;
 
-            neighbors = GameDB.getNeighbors(groups, startGroup, numLevels);
+            neighbors = GameDB.getNeighbors(groups, startGroup, numLevels, false);
             int numNeighbors = neighbors.size();
             lowestCost[startGroupLoc] = new int[numNeighbors];
             neighbor[startGroupLoc] = new int[numNeighbors];
@@ -325,8 +325,10 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
      * @param numLevels
      */
     public void recomputeBasePaths2(SearchProblem problem, TreeMap<Integer, GroupRecord> groups,
-                                    ArrayList<Integer> neighbourIndices, SearchAlgorithm searchAlg, int[][] lowestCost,
-                                    int[][][] paths, int[][] neighbor, int numGroups, int numLevels, boolean isElimination) {
+                                    ArrayList<Integer> neighbourIndices, SearchAlgorithm searchAlg,
+                                    int[][] lowestCost, int[][][] paths, int[][] neighbor,
+                                    int numGroups, int numLevels,
+                                    boolean isElimination, boolean isPartition) {
         if (lowestCost.length < groups.size()) {
             int[][] resizedLowestCost = new int[groups.size()][];
             System.arraycopy(lowestCost, 0, resizedLowestCost, 0, lowestCost.length);
@@ -372,7 +374,8 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
             }
 
             // TODO: could probably simplify this code since we are not taking advantage of numLevels currently anyways
-            neighbors = GameDB.getNeighbors(groups, startGroup, numLevels);
+            // TODO: this does not work for region 108
+            neighbors = GameDB.getNeighbors(groups, startGroup, numLevels, isPartition);
             int numNeighbors = neighbors.size();
 
             if (isElimination) {
