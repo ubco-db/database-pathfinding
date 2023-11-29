@@ -330,17 +330,7 @@ public class EvaluateDynamicScenario {
 
         // TODO: Update db (need to update node id to seed id mapping, potentially map?)
 
-        int[][] groupsArr = dbBW.getDb().getGroups();
-
-        if (groupRecord.getNumStates() == 1) { // tombstone record
-            groupsArr[regionId - START_NUM] = null;
-            dbBW.getDb().setNumRegions(groupsArr.length - 1);
-        } else { // update groupsArr
-            groupsArr[regionId - START_NUM] = new int[]{regionId - START_NUM, regionRepId};
-        }
-
-        // write groupsArr back to db
-        dbBW.getDb().setGroups(groupsArr);
+        dbBW.regenerateIndexDB(isElimination, regionId, regionRepId, groups.size());
 
         // For checking recomputed database against AW database
         dbBW.exportDB(DBA_STAR_DB_PATH + "BW_Recomp_" + MAP_FILE_NAME + "_DBA-STAR_G" + GRID_SIZE + "_N" + NUM_NEIGHBOUR_LEVELS + "_C" + CUTOFF + ".dat");

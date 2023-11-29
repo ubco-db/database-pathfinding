@@ -156,6 +156,27 @@ public class SubgoalDBExact extends SubgoalDB {
         db.setGroups(groupsMapping);
     }
 
+    public void regenerateIndexDB(boolean isElimination, int regionId, int regionRepId, int numRegions) {
+        // TODO: need to update state.id to state.cost mapping
+
+        // TODO: need to resize arrays
+
+        db.setTotalCells(db.getTotalCells() - 1); // TODO: change this to # of walls
+        db.setNumRegions(numRegions);
+
+        int[][] groupsMapping = db.getGroups();
+
+        if (isElimination) { // tombstone record
+            groupsMapping[regionId - GameMap.START_NUM] = null;
+            db.setNumRegions(groupsMapping.length - 1);
+        } else { // update groupsMapping/groupsArr
+            groupsMapping[regionId - GameMap.START_NUM] = new int[]{regionId - GameMap.START_NUM, regionRepId};
+        }
+
+        // write groupsArr back to db
+        db.setGroups(groupsMapping);
+    }
+
     /**
      * Verifies all subgoals in the record can be reached via hill-climbing from the previous one.
      * Verification is performed for all records.
