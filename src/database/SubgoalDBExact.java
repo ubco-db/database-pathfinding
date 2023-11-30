@@ -156,19 +156,27 @@ public class SubgoalDBExact extends SubgoalDB {
         db.setGroups(groupsMapping);
     }
 
-    public void regenerateIndexDB(boolean isElimination, int regionId, int regionRepId, int numRegions) {
+    public void regenerateIndexDB(boolean isPartition, boolean isElimination, int regionId, int regionRepId, int numRegions) {
         // TODO: need to update state.id to state.cost mapping
 
-        // TODO: need to resize arrays
-
-        db.setTotalCells(db.getTotalCells() - 1); // TODO: change this to # of walls
+        // db.setTotalCells(db.getTotalCells() - 1); // TODO: change this to # of walls
         db.setNumRegions(numRegions);
 
         int[][] groupsMapping = db.getGroups();
 
+        // Do I need to shrink the array in the elimination case?
+        // TODO: I think I will need to skip the wall here potentially
+        if (isPartition) {
+            if (groupsMapping.length < numRegions) {
+                int[][] resizedGroupsMapping = new int[numRegions][];
+                System.arraycopy(groupsMapping, 0, resizedGroupsMapping, 0, groupsMapping.length);
+                groupsMapping = resizedGroupsMapping;
+            }
+        }
+
         if (isElimination) { // tombstone record
             groupsMapping[regionId - GameMap.START_NUM] = null;
-            db.setNumRegions(groupsMapping.length - 1);
+            // db.setNumRegions(groupsMapping.length - 1);
         } else { // update groupsMapping/groupsArr
             groupsMapping[regionId - GameMap.START_NUM] = new int[]{regionId - GameMap.START_NUM, regionRepId};
         }
@@ -189,7 +197,4 @@ public class SubgoalDBExact extends SubgoalDB {
         db.verify(problem);
     }
 
-    public IndexDB getDb() {
-        return db;
-    }
 }

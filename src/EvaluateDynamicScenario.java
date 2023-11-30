@@ -171,7 +171,6 @@ public class EvaluateDynamicScenario {
             horizontalPartition = !isPathPossible(map.squares, new int[]{wallRowId - 1, wallColId}, new int[]{wallRowId + 1, wallColId}, regionId);
         }
 
-        ArrayList<Integer> newRegions = new ArrayList<>();
         boolean isPartition = verticalPartition || horizontalPartition || potentialDiagonalPartition;
 
         ArrayList<Integer> neighborIds = new ArrayList<>(groupRecord.getNeighborIds());
@@ -330,7 +329,7 @@ public class EvaluateDynamicScenario {
 
         // TODO: Update db (need to update node id to seed id mapping, potentially map?)
 
-        dbBW.regenerateIndexDB(isElimination, regionId, regionRepId, groups.size());
+        dbBW.regenerateIndexDB(isPartition, isElimination, regionId, regionRepId, groups.size());
 
         // For checking recomputed database against AW database
         dbBW.exportDB(DBA_STAR_DB_PATH + "BW_Recomp_" + MAP_FILE_NAME + "_DBA-STAR_G" + GRID_SIZE + "_N" + NUM_NEIGHBOUR_LEVELS + "_C" + CUTOFF + ".dat");
