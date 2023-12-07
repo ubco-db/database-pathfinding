@@ -2,10 +2,7 @@ package database;
 
 import map.GameMap;
 import map.GroupRecord;
-import search.SearchAlgorithm;
-import search.SearchProblem;
-import search.SearchState;
-import search.StatsRecord;
+import search.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -156,13 +153,33 @@ public class SubgoalDBExact extends SubgoalDB {
         db.setGroups(groupsMapping);
     }
 
-    public void regenerateIndexDB(boolean isPartition, boolean isElimination, int regionId, int regionRepId, int numRegions) {
+    public void regenerateIndexDB(boolean isPartition, boolean isElimination, int regionId, int regionRepId, int numRegions, GameMap startingMap) {
         // TODO: need to update state.id to state.cost mapping
+        int[][] groupsMapping = db.getGroups();
+        // TODO: this matches the .dati2 AW completely now, even though it shouldn't
+        setProblem(new MapSearchProblem(startingMap));
+
+        db = new IndexDB();
+        HashMap<Integer, Integer> distinctStates = new HashMap<>(5000);
+        SearchState state = new SearchState();
+        int lastStateVal = -1;
+        int numStates = 0;
+        // IDEA: Scan cells in order of index number.  When hit new cell that is in a different state than last, add entry to the DB.
+        // NOTE: Using the state.cost variable to pass back the abstract state id.
+        problem.initIterator();
+        while (problem.nextState(state)) {
+            numStates++;
+            if (state.cost != lastStateVal) {
+                db.add(state.id, (int) state.cost);
+                lastStateVal = (int) state.cost;
+            }
+            if (!distinctStates.containsKey(lastStateVal)) distinctStates.put(lastStateVal, lastStateVal);
+        }
+
+        db.setTotalCells(numStates);
 
         // db.setTotalCells(db.getTotalCells() - 1); // TODO: change this to # of walls
         db.setNumRegions(numRegions);
-
-        int[][] groupsMapping = db.getGroups();
 
         // Do I need to shrink the array in the elimination case?
         // TODO: I think I will need to skip the wall here potentially

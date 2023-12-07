@@ -34,7 +34,7 @@ public class EvaluateDynamicScenario {
 
         // set wall(s)
         ArrayList<SearchState> wallLocation = new ArrayList<>();
-        int wallLoc = 14325; // real region partition (14325) // fake partition (11928) // wall that partitions map (6157)
+        int wallLoc = 8942; // real region partition (14325) // fake partition (11928) // wall that partitions map (6157)
         SearchState wall = new SearchState(wallLoc);
         wallLocation.add(wall);
 
@@ -329,7 +329,7 @@ public class EvaluateDynamicScenario {
 
         // TODO: Update db (need to update node id to seed id mapping, potentially map?)
 
-        dbBW.regenerateIndexDB(isPartition, isElimination, regionId, regionRepId, groups.size());
+        dbBW.regenerateIndexDB(isPartition, isElimination, regionId, regionRepId, groups.size(), map);
 
         // For checking recomputed database against AW database
         dbBW.exportDB(DBA_STAR_DB_PATH + "BW_Recomp_" + MAP_FILE_NAME + "_DBA-STAR_G" + GRID_SIZE + "_N" + NUM_NEIGHBOUR_LEVELS + "_C" + CUTOFF + ".dat");
