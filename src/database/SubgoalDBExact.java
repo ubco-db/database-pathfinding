@@ -150,7 +150,7 @@ public class SubgoalDBExact extends SubgoalDB {
         db.setGroups(groupsMapping);
     }
 
-    public void regenerateIndexDB(boolean isPartition, boolean isElimination, int regionId, int regionRepId, int numRegions, GameMap map) {
+    public void regenerateIndexDB(boolean isPartition, boolean isElimination, int regionId, int regionRepId, int numRegions, GameMap map, GroupRecord[] newRecs) {
         // TODO: need to update state.id to state.cost mapping
         int[][] groupsMapping = db.getGroups();
         // TODO: this matches the .dati2 AW completely now, even though it shouldn't
@@ -185,15 +185,20 @@ public class SubgoalDBExact extends SubgoalDB {
                 int[][] resizedGroupsMapping = new int[numRegions][];
                 System.arraycopy(groupsMapping, 0, resizedGroupsMapping, 0, groupsMapping.length);
                 groupsMapping = resizedGroupsMapping;
+                for (GroupRecord newRec: newRecs) {
+                    groupsMapping[newRec.groupId - GameMap.START_NUM]  = new int[]{newRec.groupId - GameMap.START_NUM, newRec.groupRepId};
+                }
             }
         }
 
         if (isElimination) { // tombstone record
             groupsMapping[regionId - GameMap.START_NUM] = null;
             // db.setNumRegions(groupsMapping.length - 1);
-        } else { // update groupsMapping/groupsArr
-            groupsMapping[regionId - GameMap.START_NUM] = new int[]{regionId - GameMap.START_NUM, regionRepId};
         }
+
+//        if (!(isElimination || isPartition)){ // update groupsMapping/groupsArr
+//            groupsMapping[regionId - GameMap.START_NUM] = new int[]{regionId - GameMap.START_NUM, regionRepId};
+//        }
 
         // write groupsArr back to db
         db.setGroups(groupsMapping);

@@ -175,6 +175,8 @@ public class EvaluateDynamicScenario {
 
         ArrayList<Integer> neighborIds = new ArrayList<>(groupRecord.getNeighborIds());
 
+        GroupRecord[] newRecs = null;
+
         if (isPartition) {
             System.out.println("Group size before removal: " + groups.size());
             // TODO: set neighbours of new regions using this
@@ -206,7 +208,7 @@ public class EvaluateDynamicScenario {
             System.out.println("Num regions: " + numRegionsInSector);
 
             int count = 0;
-            GroupRecord[] newRecs = new GroupRecord[numRegionsInSector];
+            newRecs = new GroupRecord[numRegionsInSector];
 
             // Traverse cells in sector to re-create the groups
             for (int i = startRow; i < endRow; i++) {
@@ -266,7 +268,7 @@ public class EvaluateDynamicScenario {
 
         // TODO: Update db (need to update node id to seed id mapping, potentially map?)
 
-        dbBW.regenerateIndexDB(isPartition, isElimination, regionId, regionRepId, groups.size(), map);
+        dbBW.regenerateIndexDB(isPartition, isElimination, regionId, regionRepId, groups.size(), map, newRecs);
 
         // For checking recomputed database against AW database
         dbBW.exportDB(DBA_STAR_DB_PATH + "BW_Recomp_" + MAP_FILE_NAME + "_DBA-STAR_G" + GRID_SIZE + "_N" + NUM_NEIGHBOUR_LEVELS + "_C" + CUTOFF + ".dat");
