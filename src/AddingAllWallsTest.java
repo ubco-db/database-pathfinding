@@ -9,6 +9,8 @@ import map.GroupRecord;
 import search.*;
 import util.ExpandArray;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
@@ -61,11 +63,19 @@ public class AddingAllWallsTest {
             paths.put(goalId, getDBAStarPath(startId, goalId, dbaStar));
         }
 
+        /* partial recomputation */
+
         // TODO: compute all paths after recomputation
+        long elapsedTimePartialRecomputation = 0;
 
         for (int wallId: goalIds) {
-            // need to have access to map etc
+            // TODO: Copy map and database so I can use them here:
+
+            long startTimePartialRecomputation = System.currentTimeMillis();
             recomputeDBAStar(wallId, dbaStar.getMap(), (SubgoalDynamicDB2) dbaStar.getDatabase());
+            long endTimePartialRecomputation = System.currentTimeMillis();
+
+            elapsedTimePartialRecomputation += endTimePartialRecomputation - startTimePartialRecomputation;
 
             for (int goalId : goalIds) {
                 if (goalId != wallId) {
@@ -74,7 +84,11 @@ public class AddingAllWallsTest {
             }
         }
 
-        /* start loop */
+        System.out.println("Elapsed Time in milliseconds for partial recomputation: " + elapsedTimePartialRecomputation);
+
+        /* complete recomputation */
+
+        long elapsedTimeCompleteRecomputation = 0;
 
         for (int wallId : goalIds) {
             // setting up walls
@@ -83,11 +97,15 @@ public class AddingAllWallsTest {
             wallLocation.add(wall); // adding wall for each open state
             Walls.addWall(PATH_TO_MAP, wallLocation, startingMap);
 
-            startingMap = new GameMap(PATH_TO_MAP); // recomputing map
-            System.out.println();
-            dbaStar = computeDBAStar(startingMap, wallId, "AW");
+            startingMap = new GameMap(PATH_TO_MAP); // resetting map
 
-            Walls.removeWall(PATH_TO_MAP, wallLocation, startingMap);;
+            long startTimeCompleteRecomputation = System.currentTimeMillis();
+            dbaStar = computeDBAStar(startingMap, wallId, "AW");
+            long endTimeCompleteRecomputation = System.currentTimeMillis();
+
+            elapsedTimeCompleteRecomputation += endTimeCompleteRecomputation - startTimeCompleteRecomputation;
+
+            Walls.removeWall(PATH_TO_MAP, wallLocation, startingMap);
 
             for (int goalId : goalIds) {
                 if (goalId != wallId) {
@@ -96,7 +114,14 @@ public class AddingAllWallsTest {
             }
         }
 
-        /* end loop */
+        System.out.println("Elapsed Time in milliseconds for complete recomputation: " + elapsedTimeCompleteRecomputation);
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(DBA_STAR_DB_PATH + "times.txt"))) {
+            writer.write("Elapsed Time in milliseconds for partial recomputation: " + elapsedTimePartialRecomputation);
+            writer.write("Elapsed Time in milliseconds for complete recomputation: " + elapsedTimeCompleteRecomputation);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private static void recomputeDBAStar(int wallLoc, GameMap map, SubgoalDynamicDB2 dbBW) {
