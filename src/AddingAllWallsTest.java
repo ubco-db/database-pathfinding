@@ -1,4 +1,3 @@
-import comparison.DBDiff;
 import database.DBStats;
 import database.DBStatsRecord;
 import database.GameDB;
@@ -17,7 +16,7 @@ import java.util.*;
 import static util.MapHelpers.*;
 
 public class AddingAllWallsTest {
-    final static String DB_PATH = "dynamic/databases";
+    final static String DB_PATH = "dynamic/databases/";
     final static String DBA_STAR_DB_PATH = DB_PATH + "test/";
 
     final static String MAP_FILE_PATH = "maps/dMap/";
@@ -65,7 +64,6 @@ public class AddingAllWallsTest {
 
         /* partial recomputation */
 
-        // TODO: compute all paths after recomputation
         long elapsedTimePartialRecomputation = 0;
 
         for (int wallId: goalIds) {
@@ -423,18 +421,18 @@ public class AddingAllWallsTest {
         System.out.println("Databases loaded.");
 
         // compare databases
-        try {
-            String f1Name = "BW012.map_DBA-STAR_G16_N1_C250.";
-            String f2Name = "AW012.map_DBA-STAR_G16_N1_C250.";
-            String ext = "dati2";
-            DBDiff.getDBDiff(DBA_STAR_DB_PATH, wallLoc, f1Name, f2Name, ext);
-            f1Name = "BW012.map_DBA-STAR_G16_N1_C250.";
-            f2Name = "AW012.map_DBA-STAR_G16_N1_C250.";
-            ext = "dat";
-            DBDiff.getDBDiff(DBA_STAR_DB_PATH, wallLoc, f1Name, f2Name, ext);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            String f1Name = "BW012.map_DBA-STAR_G16_N1_C250.";
+//            String f2Name = "AW012.map_DBA-STAR_G16_N1_C250.";
+//            String ext = "dati2";
+//            DBDiff.getDBDiff(DBA_STAR_DB_PATH, wallLoc, f1Name, f2Name, ext);
+//            f1Name = "BW012.map_DBA-STAR_G16_N1_C250.";
+//            f2Name = "AW012.map_DBA-STAR_G16_N1_C250.";
+//            ext = "dat";
+//            DBDiff.getDBDiff(DBA_STAR_DB_PATH, wallLoc, f1Name, f2Name, ext);
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
 
         return new DBAStar(problem, map, database);
     }
