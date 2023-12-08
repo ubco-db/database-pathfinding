@@ -967,7 +967,7 @@ public class GameMap {
         // IDEA: Perform one pass through map updating group records everytime encounter new neighbor
 
         // Create a neighbor set for each group that needs recomputation (original region and all its neighbours)
-        for (int neighborId: neighborIds) {
+        for (int neighborId : neighborIds) {
             groups.get(neighborId).setNeighborIds(new HashSet<>());
         }
 
@@ -1277,6 +1277,92 @@ public class GameMap {
         //	dbstat.addStat(12, endTime-currentTime);
         //dbstat.addStat(11, baseMap.states);
         //dbstat.addStat(7, baseMap.states);
+        return baseMap;
+    }
+
+    public GameMap resectorAbstract2(int gridSize, int startRow, int startCol, int endRow, int endCol) {
+        int currentNum = START_NUM - 1;    // Start # above 42 which is a wall
+        GameMap baseMap = this.copyMap();
+        int maxr, maxc;
+        int numSectors = (int) (Math.ceil(rows * 1.0 / gridSize) * Math.ceil(cols * 1.0 / gridSize));
+
+        baseMap.numRegions = new int[numSectors];
+        int totalRegions = 0;
+        ExpandArray neighbors = new ExpandArray(10);
+
+        //if bottom of the grid exceed the map~
+        if (endRow > this.rows) maxr = rows;
+
+        //if last col of the grid exceed the map~
+        if (endCol > this.cols) maxc = cols;
+
+        //??Counter for # of states in the region(sector) that isn't a wall
+        int numRegionsInSector = 0;
+
+        //for each row in this grid cell
+        for (int r = 0; r < gridSize; r++) {
+            //for each col in this grid cell
+            for (int c = 0; c < gridSize; c++) {
+                //pointer to a row
+                int row = startRow + r;
+
+                //pointer to a col
+                int col = startCol + c;
+
+                //if this state is valid and isn't a wall and is ' '
+                if (baseMap.isValid(row, col) && !baseMap.isWall(row, col) && baseMap.squares[row][col] == ' ') {    // Open cell for abstraction - perform constrained BFS within this sector to label all nodes in sector
+                    currentNum++;
+                    numRegionsInSector++;
+
+
+                    Queue<Integer> stateIds = new LinkedList<Integer>();
+
+                    //?Calculate and return some sort of id
+                    stateIds.add(baseMap.getId(row, col));
+
+                    //?Assign some number to this square
+                    baseMap.squares[row][col] = currentNum;
+
+
+                    while (!stateIds.isEmpty()) {
+                        int id = stateIds.remove();
+                        row = baseMap.getRow(id);//Row of state
+                        col = baseMap.getCol(id);//Col of state
+
+                        // Generate neighbors and add to list if in region
+                        baseMap.getNeighbors(row, col, neighbors);
+
+                        //For number of neighbors
+                        for (int n = 0; n < neighbors.num(); n++) {
+
+                            int nid = neighbors.get(n);//ID of neighbor state
+                            int nr = baseMap.getRow(nid);//Row of that neighbor
+                            int nc = baseMap.getCol(nid);//Col of that neighbor
+
+                            //Check if neighbor is in range
+                            if (baseMap.isOpenInRange(nr, nc, endRow, endCol, gridSize)) {
+                                //Add neighbor
+                                baseMap.squares[nr][nc] = currentNum;
+                                stateIds.add(nid);
+                            }
+                        }
+                    }
+
+                    // Put in new group
+                    Color color = new Color(generator.nextFloat(), generator.nextFloat(), generator.nextFloat());
+                    baseMap.colors.put(currentNum, color);
+                }
+            }
+        }
+        totalRegions += numRegionsInSector; //increment region count
+        //???
+        // baseMap.numRegions[i * (int) Math.ceil(cols * 1.0 / gridSize) + j] = numRegionsInSector;
+
+
+        baseMap.states = totalRegions;
+        System.out.println("Number of areas: " + (baseMap.states));
+
+        baseMap.buildAbstractProblem(gridSize);
         return baseMap;
     }
 
