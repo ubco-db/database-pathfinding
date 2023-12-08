@@ -34,7 +34,7 @@ public class EvaluateDynamicScenario {
 
         // set wall(s)
         ArrayList<SearchState> wallLocation = new ArrayList<>();
-        int wallLoc = 8942; // real region partition (14325) // fake partition (11928) // wall that partitions map (6157)
+        int wallLoc = 14325; // real region partition (14325) // fake partition (11928) // wall that partitions map (6157)
         SearchState wall = new SearchState(wallLoc);
         wallLocation.add(wall);
 
@@ -185,16 +185,10 @@ public class EvaluateDynamicScenario {
             // states in a groupRecord are in order, the first one is first in the region (top-left-most)
             int stateId = groupRecord.states.get(0);
 
-            ExpandArray neighbors = new ExpandArray(10);
-
             int startRow = map.getRow(stateId); // 96
             int startCol = map.getCol(stateId); // 112
             int endRow = startRow + GRID_SIZE; // 112
             int endCol = startCol + GRID_SIZE; // 128
-
-            // TODO: put this stuff into a method in GameMap
-            int currentNum = -1;
-            int numRegionsInSector = 0;
 
             // reset region (necessary in order for me to be able to reuse the regionId)
             for (int r = 0; r < GRID_SIZE; r++) {
@@ -207,64 +201,7 @@ public class EvaluateDynamicScenario {
                 }
             }
 
-            // Boolean flag
-            boolean firstTime = true;
-
-            for (int r = 0; r < GRID_SIZE; r++) {
-                // for each col in this sector
-                for (int c = 0; c < GRID_SIZE; c++) {
-                    int row = startRow + r; // pointer to a row
-                    int col = startCol + c; // pointer to a col
-
-                    // if this state is valid and isn't a wall and is in the region to be recomputed:
-                    // open cell for abstraction - perform constrained BFS within this sector to label all nodes in sector
-                    if (map.isValid(row, col) && !map.isWall(row, col) && map.squares[row][col] == ' ') {
-                        currentNum++;
-                        numRegionsInSector++;
-
-                        // For first region: Use region id of region that was deleted
-                        if (firstTime) {
-                            currentNum = regionId;
-                        }
-
-                        Queue<Integer> stateIds = new LinkedList<>();
-                        stateIds.add(map.getId(row, col));
-                        map.squares[row][col] = currentNum;
-
-                        while (!stateIds.isEmpty()) {
-                            int id = stateIds.remove();
-                            row = map.getRow(id); // Row of state
-                            col = map.getCol(id); // Col of state
-
-                            // Generate neighbors and add to list if in region
-                            map.getNeighbors(row, col, neighbors);
-
-                            // For number of neighbors
-                            for (int n = 0; n < neighbors.num(); n++) {
-
-                                int nid = neighbors.get(n); // ID of neighbor state
-                                int nr = map.getRow(nid); // Row of that neighbor
-                                int nc = map.getCol(nid); // Col of that neighbor
-
-                                // Check if neighbor is in range
-                                if (map.isOpenInRange(nr, nc, endRow, endCol, GRID_SIZE)) {
-                                    // Add neighbor
-                                    map.squares[nr][nc] = currentNum;
-                                    stateIds.add(nid);
-                                }
-                            }
-                        }
-
-                        // After the first time, we want to assign region-ids at the end of the groups map
-                        if (firstTime) {
-                            currentNum = groups.size() + START_NUM;
-                            firstTime = false;
-                        }
-                    }
-                }
-            }
-
-            // TODO: missing code here?
+            int numRegionsInSector = map.sectorReAbstract2(GRID_SIZE, startRow, startCol, endRow, endCol, regionId, map);
 
             System.out.println("Num regions: " + numRegionsInSector);
 

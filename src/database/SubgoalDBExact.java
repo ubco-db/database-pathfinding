@@ -4,11 +4,8 @@ import map.GameMap;
 import map.GroupRecord;
 import search.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.TreeMap;
 
 /**
  * A database of records organized as a 2D matrix from state representatives.
@@ -153,11 +150,11 @@ public class SubgoalDBExact extends SubgoalDB {
         db.setGroups(groupsMapping);
     }
 
-    public void regenerateIndexDB(boolean isPartition, boolean isElimination, int regionId, int regionRepId, int numRegions, GameMap startingMap) {
+    public void regenerateIndexDB(boolean isPartition, boolean isElimination, int regionId, int regionRepId, int numRegions, GameMap map) {
         // TODO: need to update state.id to state.cost mapping
         int[][] groupsMapping = db.getGroups();
         // TODO: this matches the .dati2 AW completely now, even though it shouldn't
-        setProblem(new MapSearchProblem(startingMap));
+        setProblem(new MapSearchProblem(map));
 
         db = new IndexDB();
         HashMap<Integer, Integer> distinctStates = new HashMap<>(5000);

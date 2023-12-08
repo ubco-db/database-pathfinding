@@ -1280,90 +1280,91 @@ public class GameMap {
         return baseMap;
     }
 
-    public GameMap resectorAbstract2(int gridSize, int startRow, int startCol, int endRow, int endCol) {
-        int currentNum = START_NUM - 1;    // Start # above 42 which is a wall
-        GameMap baseMap = this.copyMap();
-        int maxr, maxc;
+    public int sectorReAbstract2(int gridSize, int startRow, int startCol, int endRow, int endCol, int regionId, GameMap map) {
+
+        int currentNum = -1;
         int numSectors = (int) (Math.ceil(rows * 1.0 / gridSize) * Math.ceil(cols * 1.0 / gridSize));
 
-        baseMap.numRegions = new int[numSectors];
-        int totalRegions = 0;
-        ExpandArray neighbors = new ExpandArray(10);
+        map.numRegions = new int[numSectors];
 
-        //if bottom of the grid exceed the map~
-        if (endRow > this.rows) maxr = rows;
-
-        //if last col of the grid exceed the map~
-        if (endCol > this.cols) maxc = cols;
-
-        //??Counter for # of states in the region(sector) that isn't a wall
+        int totalRegions = map.states;
         int numRegionsInSector = 0;
 
-        //for each row in this grid cell
+        ExpandArray neighbors = new ExpandArray(10);
+
+        // If bottom of the grid exceeds the map
+        if (endRow > this.rows) endRow = rows;
+
+        // If last col of the grid exceeds the map
+        if (endCol > this.cols) endCol = cols;;
+
+        // Boolean flag
+        boolean firstTime = true;
+
         for (int r = 0; r < gridSize; r++) {
-            //for each col in this grid cell
+            // For each col in this sector
             for (int c = 0; c < gridSize; c++) {
-                //pointer to a row
-                int row = startRow + r;
+                int row = startRow + r; // pointer to a row
+                int col = startCol + c; // pointer to a col
 
-                //pointer to a col
-                int col = startCol + c;
-
-                //if this state is valid and isn't a wall and is ' '
-                if (baseMap.isValid(row, col) && !baseMap.isWall(row, col) && baseMap.squares[row][col] == ' ') {    // Open cell for abstraction - perform constrained BFS within this sector to label all nodes in sector
+                // if this state is valid and isn't a wall and is in the region to be recomputed:
+                // open cell for abstraction - perform constrained BFS within this sector to label all nodes in sector
+                if (map.isValid(row, col) && !map.isWall(row, col) && map.squares[row][col] == ' ') {
                     currentNum++;
                     numRegionsInSector++;
 
+                    // For first region: Use region id of region that was deleted
+                    if (firstTime) {
+                        currentNum = regionId;
+                    }
 
-                    Queue<Integer> stateIds = new LinkedList<Integer>();
-
-                    //?Calculate and return some sort of id
-                    stateIds.add(baseMap.getId(row, col));
-
-                    //?Assign some number to this square
-                    baseMap.squares[row][col] = currentNum;
-
+                    Queue<Integer> stateIds = new LinkedList<>();
+                    stateIds.add(map.getId(row, col));
+                    map.squares[row][col] = currentNum;
 
                     while (!stateIds.isEmpty()) {
                         int id = stateIds.remove();
-                        row = baseMap.getRow(id);//Row of state
-                        col = baseMap.getCol(id);//Col of state
+                        row = map.getRow(id); // Row of state
+                        col = map.getCol(id); // Col of state
 
                         // Generate neighbors and add to list if in region
-                        baseMap.getNeighbors(row, col, neighbors);
+                        map.getNeighbors(row, col, neighbors);
 
-                        //For number of neighbors
+                        // For number of neighbors
                         for (int n = 0; n < neighbors.num(); n++) {
 
-                            int nid = neighbors.get(n);//ID of neighbor state
-                            int nr = baseMap.getRow(nid);//Row of that neighbor
-                            int nc = baseMap.getCol(nid);//Col of that neighbor
+                            int nid = neighbors.get(n); // ID of neighbor state
+                            int nr = map.getRow(nid); // Row of that neighbor
+                            int nc = map.getCol(nid); // Col of that neighbor
 
-                            //Check if neighbor is in range
-                            if (baseMap.isOpenInRange(nr, nc, endRow, endCol, gridSize)) {
-                                //Add neighbor
-                                baseMap.squares[nr][nc] = currentNum;
+                            // Check if neighbor is in range
+                            if (map.isOpenInRange(nr, nc, endRow, endCol, gridSize)) {
+                                // Add neighbor
+                                map.squares[nr][nc] = currentNum;
                                 stateIds.add(nid);
                             }
                         }
                     }
 
-                    // Put in new group
-                    Color color = new Color(generator.nextFloat(), generator.nextFloat(), generator.nextFloat());
-                    baseMap.colors.put(currentNum, color);
+                    // After the first time, we want to assign region-ids at the end of the groups map
+                    if (firstTime) {
+                        currentNum = groups.size() + START_NUM;
+                        firstTime = false;
+                    }
                 }
             }
+
+            // Put in new group
+            Color color = new Color(generator.nextFloat(), generator.nextFloat(), generator.nextFloat());
+            map.colors.put(currentNum, color);
         }
-        totalRegions += numRegionsInSector; //increment region count
-        //???
+        totalRegions += numRegionsInSector; // Increment region count
         // baseMap.numRegions[i * (int) Math.ceil(cols * 1.0 / gridSize) + j] = numRegionsInSector;
 
+        map.states = totalRegions;
+        System.out.println("Number of areas: " + (map.states));
 
-        baseMap.states = totalRegions;
-        System.out.println("Number of areas: " + (baseMap.states));
-
-        baseMap.buildAbstractProblem(gridSize);
-        return baseMap;
+        return numRegionsInSector;
     }
 
     /*
