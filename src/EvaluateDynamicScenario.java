@@ -31,8 +31,8 @@ public class EvaluateDynamicScenario {
 
     public static void main(String[] args) {
         // set start and goal
-        int startId = 11925;
-        int goalId = 11340;
+        int startId = 7489;
+        int goalId = 6009;
 
         // build DBAStar Database
         GameMap startingMap = new GameMap(PATH_TO_MAP);
@@ -41,7 +41,7 @@ public class EvaluateDynamicScenario {
 
         // set wall(s)
         ArrayList<SearchState> wallLocation = new ArrayList<>();
-        int wallLoc = 11928; // real region partition (14325) // fake partition (11928) // wall that partitions map (6157)
+        int wallLoc = 6157; // real region partition (14325) // fake partition (11928) // wall that partitions map (6157)
         SearchState wall = new SearchState(wallLoc);
         wallLocation.add(wall);
 
