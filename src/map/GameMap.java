@@ -260,6 +260,7 @@ public class GameMap {
         colors = new HashMap<Integer, Color>();
         states = rows * cols;
         generator = new Random();
+        generator.setSeed(56256902);
         masks = new ArrayList<MapMask>();
         cellHeight = PANEL_HEIGHT / rows;
         cellWidth = PANEL_WIDTH / cols;
