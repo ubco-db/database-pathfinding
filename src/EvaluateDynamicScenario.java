@@ -26,22 +26,21 @@ public class EvaluateDynamicScenario {
     final static int CUTOFF = 250; // The maximum # of moves for hill-climbing checks.
     final static int GRID_SIZE = 16;
     final static int NUM_NEIGHBOUR_LEVELS = 1; // # of neighbor levels for HCDPS
-    final static int START_NUM = 50;
 
 
     public static void main(String[] args) {
         // set start and goal
-        int startId = 7489;
-        int goalId = 6009;
+        int startId = 10219;
+        int goalId = 13905;
 
         // build DBAStar Database
         GameMap startingMap = new GameMap(PATH_TO_MAP);
         DBAStar dbaStarBW = computeDBAStarDatabase(startingMap, "BW"); // BW = before wall
-        // getDBAStarPath(startId, goalId, "BW", dbaStarBW);
+        getDBAStarPath(startId, goalId, "BW", dbaStarBW);
 
         // set wall(s)
         ArrayList<SearchState> wallLocation = new ArrayList<>();
-        int wallLoc = 6157; // real region partition (14325) // fake partition (11928) // wall that partitions map (6157)
+        int wallLoc = 15347; // real region partition (14325) // fake partition (11928) // wall that partitions map (6157)
         SearchState wall = new SearchState(wallLoc);
         wallLocation.add(wall);
 
