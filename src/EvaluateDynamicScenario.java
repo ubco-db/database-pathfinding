@@ -57,10 +57,10 @@ public class EvaluateDynamicScenario {
 
         boolean priorWall = map.isWall(wallLoc);
 
-        // Add wall to existing map
+        // Add wall to existing map and to map inside problem
         map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = '*'; // 96, 117
-        // Make new MapSearchProblem (will use map with added wall)
-        MapSearchProblem problem = new MapSearchProblem(map);
+        MapSearchProblem problem = (MapSearchProblem) dbaStarBW.getProblem();
+        problem.getMap().squares[map.getRow(14325)][map.getCol(14325)] = '*';
 
         if (!priorWall && map.isWall(wallLoc)) {
             System.out.println("Wall at " + wallLoc + " set successfully!");
@@ -398,10 +398,9 @@ public class EvaluateDynamicScenario {
     }
 
     private static void getDBAStarPath(int startId, int goalId, String wallStatus, DBAStar dbaStar) {
-        SearchProblem problem = dbaStar.getProblem(); // this does not have the correct map info
         GameMap map = dbaStar.getMap();
 
-        AStar aStar = new AStar(new MapSearchProblem(map)); // fixes incorrect map, any downsides to this?
+        AStar aStar = new AStar(dbaStar.getProblem());
 
         StatsRecord dbaStats = new StatsRecord();
         ArrayList<SearchState> path = dbaStar.computePath(new SearchState(startId), new SearchState(goalId), dbaStats);
