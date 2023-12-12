@@ -31,8 +31,8 @@ public class EvaluateDynamicScenario {
 
     public static void main(String[] args) {
         // set start and goal
-        int startId = 13411;
-        int goalId = 13901;
+        int startId = 11925;
+        int goalId = 11340;
 
         // build DBAStar Database
         GameMap startingMap = new GameMap(PATH_TO_MAP);
@@ -41,7 +41,7 @@ public class EvaluateDynamicScenario {
 
         // set wall(s)
         ArrayList<SearchState> wallLocation = new ArrayList<>();
-        int wallLoc = 14325; // real region partition (14325) // fake partition (11928) // wall that partitions map (6157)
+        int wallLoc = 11928; // real region partition (14325) // fake partition (11928) // wall that partitions map (6157)
         SearchState wall = new SearchState(wallLoc);
         wallLocation.add(wall);
 
@@ -60,9 +60,10 @@ public class EvaluateDynamicScenario {
         // Add wall to existing map and to map inside problem
         map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = '*'; // 96, 117
         MapSearchProblem problem = (MapSearchProblem) dbaStarBW.getProblem();
-        problem.getMap().squares[map.getRow(14325)][map.getCol(14325)] = '*';
+        priorWall = priorWall && problem.getMap().isWall(wallLoc);
+        problem.getMap().squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = '*';
 
-        if (!priorWall && map.isWall(wallLoc)) {
+        if (!priorWall && map.isWall(wallLoc) && problem.getMap().isWall(wallLoc)) {
             System.out.println("Wall at " + wallLoc + " set successfully!");
         }
 
@@ -198,6 +199,7 @@ public class EvaluateDynamicScenario {
                 }
             }
 
+            // Perform abstraction (go over sector and recompute regions)
             int numRegionsInSector = map.sectorReAbstract2(GRID_SIZE, startRow, startCol, endRow, endCol, regionId, map);
 
             System.out.println("Num regions: " + numRegionsInSector);
@@ -261,8 +263,7 @@ public class EvaluateDynamicScenario {
         dbBW.recomputeBasePaths2(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(),
                 dbBW.getNeighbor(), neighborIds.size(), NUM_NEIGHBOUR_LEVELS, isElimination, isPartition);
 
-        // TODO: Update db (need to update node id to seed id mapping, potentially map?)
-
+        // Re-generate index database (TODO: optimize)
         dbBW.regenerateIndexDB(isPartition, isElimination, regionId, regionRepId, groups.size(), map, newRecs);
 
         // For checking recomputed database against AW database
@@ -275,8 +276,6 @@ public class EvaluateDynamicScenario {
 
         getDBAStarPath(startId, goalId, "BW_Recomp", dbaStarBW);
 
-//        System.out.println("Exporting map with areas.");
-//        map.outputImage(getImageName("BW_Recomp", false), null, null);
         System.out.println("Exporting map with areas and centroids.");
         map.computeCentroidMap().outputImage(getImageName("BW_Recomp", true), null, null);
 
