@@ -8,10 +8,10 @@ import map.GameMap;
 import map.GroupRecord;
 import search.*;
 import util.ExpandArray;
-import util.MapHelpers;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.TreeMap;
 
 import static util.MapHelpers.*;
 
@@ -30,6 +30,10 @@ public class EvaluateDynamicScenario {
 
 
     public static void main(String[] args) {
+        // set start and goal
+        int startId = 13411;
+        int goalId = 13901;
+
         // build DBAStar Database
         GameMap startingMap = new GameMap(PATH_TO_MAP);
         DBAStar dbaStarBW = computeDBAStarDatabase(startingMap, "BW"); // BW = before wall
@@ -41,23 +45,20 @@ public class EvaluateDynamicScenario {
         SearchState wall = new SearchState(wallLoc);
         wallLocation.add(wall);
 
-        // set start and goal
-        int startId = 13411;
-        int goalId = 13901;
-
+        // Use the map returned after the database is fully computed
         System.out.println();
         System.out.println();
         System.out.println();
 
         long startTimeRecomp = System.currentTimeMillis();
 
-        // Use the map returned after the database is fully computed
         GameMap map = dbaStarBW.getMap();
+        int regionId = map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)];
 
         boolean priorWall = map.isWall(wallLoc);
 
         // Add wall to existing map
-        map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = '*';
+        map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = '*'; // 96, 117
         // Make new MapSearchProblem (will use map with added wall)
         MapSearchProblem problem = new MapSearchProblem(map);
 
@@ -73,17 +74,8 @@ public class EvaluateDynamicScenario {
             System.out.println("Wall on region rep!");
         }
 
-        // Get the id of the region the wall was added in using its regionRepId
-        TreeMap<Integer, GroupRecord> groups = new MapSearchProblem(map).getGroups(); // stores number of states per region as well, may be useful later
+        TreeMap<Integer, GroupRecord> groups = new MapSearchProblem(map).getGroups();
 
-        Iterator<Map.Entry<Integer, GroupRecord>> it = groups.entrySet().iterator();
-        Map.Entry<Integer, GroupRecord> elem;
-        HashMap<Integer, Integer> regionRepIdToRegionId = new HashMap<>();
-        while (it.hasNext()) {
-            elem = it.next();
-            regionRepIdToRegionId.put(elem.getValue().groupRepId, elem.getKey());
-        }
-        int regionId = regionRepIdToRegionId.get(regionRepId);
         System.out.println("regionId: " + regionId);
 
         // get the neighbour ids regions using the region id
@@ -281,6 +273,13 @@ public class EvaluateDynamicScenario {
 
         System.out.println("Elapsed Time in milliseconds for partial recomputation: " + elapsedTime);
 
+        getDBAStarPath(startId, goalId, "BW_Recomp", dbaStarBW);
+
+//        System.out.println("Exporting map with areas.");
+//        map.outputImage(getImageName("BW_Recomp", false), null, null);
+        System.out.println("Exporting map with areas and centroids.");
+        map.computeCentroidMap().outputImage(getImageName("BW_Recomp", true), null, null);
+
         System.out.println();
         System.out.println();
         System.out.println();
@@ -295,7 +294,7 @@ public class EvaluateDynamicScenario {
         startingMap = new GameMap(PATH_TO_MAP);
 
         DBAStar dbaStarAW = computeDBAStarDatabase(startingMap, "AW"); // AW = after wall
-        // getDBAStarPath(startId, goalId, "AW", dbaStarAW);
+        getDBAStarPath(startId, goalId, "AW", dbaStarAW);
 
         long endTime = System.currentTimeMillis();
         elapsedTime = endTime - startTime;
@@ -360,10 +359,10 @@ public class EvaluateDynamicScenario {
         rec.addStat(7, map.states);
         dbStats.addRecord(rec);
 
-/*        System.out.println("Exporting map with areas.");
+        System.out.println("Exporting map with areas.");
         map.outputImage(getImageName(wallStatus, false), null, null);
         System.out.println("Exporting map with areas and centroids.");
-        map.computeCentroidMap().outputImage(getImageName(wallStatus, true), null, null);*/
+        map.computeCentroidMap().outputImage(getImageName(wallStatus, true), null, null);
 
         // QUESTION: Why are we passing this tmpProb?
         SearchProblem tmpProb = new MapSearchProblem(map);
@@ -399,10 +398,10 @@ public class EvaluateDynamicScenario {
     }
 
     private static void getDBAStarPath(int startId, int goalId, String wallStatus, DBAStar dbaStar) {
-        SearchProblem problem = dbaStar.getProblem();
+        SearchProblem problem = dbaStar.getProblem(); // this does not have the correct map info
         GameMap map = dbaStar.getMap();
 
-        AStar aStar = new AStar(problem);
+        AStar aStar = new AStar(new MapSearchProblem(map)); // fixes incorrect map, any downsides to this?
 
         StatsRecord dbaStats = new StatsRecord();
         ArrayList<SearchState> path = dbaStar.computePath(new SearchState(startId), new SearchState(goalId), dbaStats);

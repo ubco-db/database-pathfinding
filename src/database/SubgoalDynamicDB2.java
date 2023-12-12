@@ -171,22 +171,28 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
         //		neighbor matrix (numGroups x numGroups)
         // 		paths matrix (with paths). Each path on a line.  A path is a list of subgoals.  Just have 0 if no states.
         try (PrintWriter out = new PrintWriter(fileName)) {
+            // out.println("numGroups: ");
             out.println(numGroups);
             for (int i = 0; i < numGroups; i++) {    // Read each group which has # neighbors as N, neighborId[N], lowest cost[N], neighbor[] and paths on each line
                 int numNeighbors = neighborId[i].length;
+                // out.println("numNeighbours for " + i + ": ");
                 out.println(numNeighbors);
+                // out.println("neighbourIds: ");
                 for (int j = 0; j < numNeighbors; j++) {
                     out.print(neighborId[i][j] + "\t");
                 }
                 out.println();
+                // out.println("lowestCosts: ");
                 for (int j = 0; j < numNeighbors; j++) {
                     out.print(lowestCost[i][j] + "\t");
                 }
                 out.println();
+                // out.println("neighbours: ");
                 for (int j = 0; j < numNeighbors; j++) {
                     out.print(neighbor[i][j] + "\t");
                 }
                 out.println();
+                // out.println("paths: ");
                 for (int j = 0; j < numNeighbors; j++) {
                     out.print(paths[i][j].length + "\t");
                     for (int k = 0; k < paths[i][j].length; k++)
@@ -374,7 +380,6 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
             }
 
             // TODO: could probably simplify this code since we are not taking advantage of numLevels currently anyways
-            // TODO: this does not work for region 108
             neighbors = GameDB.getNeighbors(groups, startGroup, numLevels, isPartition);
             int numNeighbors = neighbors.size();
 

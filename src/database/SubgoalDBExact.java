@@ -174,9 +174,9 @@ public class SubgoalDBExact extends SubgoalDB {
         }
 
         db.setTotalCells(numStates);
+        db.setNumRegions(distinctStates.size()); // alternatively: db.setNumRegions(numRegions);
 
         // db.setTotalCells(db.getTotalCells() - 1); // TODO: change this to # of walls
-        db.setNumRegions(numRegions);
 
         // Do I need to shrink the array in the elimination case?
         // TODO: I think I will need to skip the wall here potentially
@@ -202,6 +202,7 @@ public class SubgoalDBExact extends SubgoalDB {
 
         // write groupsArr back to db
         db.setGroups(groupsMapping);
+        db.buildHT();
     }
 
     /**
