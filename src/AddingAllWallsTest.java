@@ -18,7 +18,6 @@ import static util.MapHelpers.*;
 public class AddingAllWallsTest {
     final static String DB_PATH = "dynamic/databases/";
     final static String DBA_STAR_DB_PATH = DB_PATH + "test/";
-
     final static String MAP_FILE_PATH = "maps/dMap/";
     final static String MAP_FILE_NAME = "012.map";
     final static String PATH_TO_MAP = MAP_FILE_PATH + MAP_FILE_NAME;
@@ -70,7 +69,7 @@ public class AddingAllWallsTest {
             // TODO: Copy map and database so I can use them here:
 
             long startTimePartialRecomputation = System.currentTimeMillis();
-            recomputeDBAStar(wallId, dbaStar.getMap(), (SubgoalDynamicDB2) dbaStar.getDatabase());
+            recomputeDBAStar(wallId, dbaStar.getMap(), (MapSearchProblem) dbaStar.getProblem(), (SubgoalDynamicDB2) dbaStar.getDatabase());
             long endTimePartialRecomputation = System.currentTimeMillis();
 
             elapsedTimePartialRecomputation += endTimePartialRecomputation - startTimePartialRecomputation;
@@ -122,19 +121,18 @@ public class AddingAllWallsTest {
         }
     }
 
-    private static void recomputeDBAStar(int wallLoc, GameMap map, SubgoalDynamicDB2 dbBW) {
-        long startTimeRecomp = System.currentTimeMillis();
-
+    private static void recomputeDBAStar(int wallLoc, GameMap map, MapSearchProblem problem, SubgoalDynamicDB2 dbBW) {
         SearchState wall = new SearchState(wallLoc);
+        int regionId = map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)];
 
         boolean priorWall = map.isWall(wallLoc);
 
-        // Add wall to existing map
-        map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = '*';
-        // Make new MapSearchProblem (will use map with added wall)
-        MapSearchProblem problem = new MapSearchProblem(map);
+        // Add wall to existing map and to map inside problem
+        map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = '*'; // 96, 117
+        priorWall = priorWall && problem.getMap().isWall(wallLoc);
+        problem.getMap().squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = '*';
 
-        if (!priorWall && map.isWall(wallLoc)) {
+        if (!priorWall && map.isWall(wallLoc) && problem.getMap().isWall(wallLoc)) {
             System.out.println("Wall at " + wallLoc + " set successfully!");
         }
 
@@ -146,17 +144,8 @@ public class AddingAllWallsTest {
             System.out.println("Wall on region rep!");
         }
 
-        // Get the id of the region the wall was added in using its regionRepId
-        TreeMap<Integer, GroupRecord> groups = new MapSearchProblem(map).getGroups(); // stores number of states per region as well, may be useful later
+        TreeMap<Integer, GroupRecord> groups = new MapSearchProblem(map).getGroups();
 
-        Iterator<Map.Entry<Integer, GroupRecord>> it = groups.entrySet().iterator();
-        Map.Entry<Integer, GroupRecord> elem;
-        HashMap<Integer, Integer> regionRepIdToRegionId = new HashMap<>();
-        while (it.hasNext()) {
-            elem = it.next();
-            regionRepIdToRegionId.put(elem.getValue().groupRepId, elem.getKey());
-        }
-        int regionId = regionRepIdToRegionId.get(regionRepId);
         System.out.println("regionId: " + regionId);
 
         // get the neighbour ids regions using the region id
@@ -279,6 +268,7 @@ public class AddingAllWallsTest {
                 }
             }
 
+            // Perform abstraction (go over sector and recompute regions)
             int numRegionsInSector = map.sectorReAbstract2(GRID_SIZE, startRow, startCol, endRow, endCol, regionId, map);
 
             System.out.println("Num regions: " + numRegionsInSector);
@@ -341,16 +331,11 @@ public class AddingAllWallsTest {
         dbBW.recomputeBasePaths2(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(),
                 dbBW.getNeighbor(), neighborIds.size(), NUM_NEIGHBOUR_LEVELS, isElimination, isPartition);
 
-        // Regenerate index database (.dati2 file)
+        // Re-generate index database (TODO: optimize)
         dbBW.regenerateIndexDB(isPartition, isElimination, regionId, regionRepId, groups.size(), map, newRecs);
 
         // For checking recomputed database against AW database
         dbBW.exportDB(DBA_STAR_DB_PATH + "BW_Recomp_" + MAP_FILE_NAME + "_DBA-STAR_G" + GRID_SIZE + "_N" + NUM_NEIGHBOUR_LEVELS + "_C" + CUTOFF + ".dat");
-
-        long endTimeRecomp = System.currentTimeMillis();
-        long elapsedTime = endTimeRecomp - startTimeRecomp;
-
-        System.out.println("Elapsed Time in milliseconds for partial recomputation: " + elapsedTime);
     }
 
     private static DBAStar computeDBAStar(GameMap map, int wallLoc, String wallStatus) {
