@@ -22,7 +22,7 @@ import java.util.*;
  *
  * @author rlawrenc
  */
-public class SubgoalDynamicDB2 extends SubgoalDBExact {
+public class SubgoalDynamicDB2 extends SubgoalDBExact implements Cloneable {
     private int numGroups;              // Number of abstract regions
     private int[][] neighborId;         // neighborId[i] stores list of neighbors for i. neighborId[i][j] is state id of jth neighbor of i.
     private int[][] lowestCost;         // Lowest cost for DP table. lowestCost[i][j] is the cost of the lowest path from region i to region neighborId[i][j]
@@ -428,5 +428,15 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
         System.out.println("Base neighbors generated paths: " + numBase + " Number of states: " + numStates);
 //        dbStats.addStat(9, numStates);        // Set number of subgoals.  Will be changed by a version that pre-computes all paths but will not be changed for the dynamic version.
 //        dbStats.addStat(8, numBase);          // # of records (only corresponds to base paths)
+    }
+
+    @Override
+    public SubgoalDynamicDB2 clone() {
+        SubgoalDynamicDB2 clone = (SubgoalDynamicDB2) super.clone();
+        clone.neighbor = neighbor.clone();
+        clone.lowestCost = lowestCost.clone();
+        clone.neighborId = neighborId.clone();
+        clone.paths = paths.clone();
+        return clone;
     }
 }

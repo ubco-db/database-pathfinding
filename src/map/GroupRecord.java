@@ -4,7 +4,7 @@ import util.ExpandArray;
 
 import java.util.HashSet;
 
-public class GroupRecord {
+public class GroupRecord implements Cloneable {
     public int groupId;
     public int groupRepId;
     public ExpandArray states;
@@ -83,5 +83,22 @@ public class GroupRecord {
         buf.append(" States: ").append(states.toString());
         if (neighborIds != null) buf.append(" Neighbors: ").append(neighborIds);
         return buf.toString();
+    }
+
+    @Override
+    public GroupRecord clone() {
+        try {
+            GroupRecord clone = (GroupRecord) super.clone();
+
+            // shallow copy should be sufficient since Integers are immutable
+            clone.computedNeighborIds = new HashSet<>(this.computedNeighborIds);
+            clone.neighborIds = new HashSet<>(this.neighborIds);
+
+            clone.states = states.clone();
+
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }

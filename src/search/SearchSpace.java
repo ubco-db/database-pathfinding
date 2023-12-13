@@ -20,7 +20,7 @@ import java.util.*;
  *
  * @author rlawrenc
  */
-public class SearchSpace {
+public class SearchSpace implements Cloneable {
     public static int EMPTY_CHAR = 0;
 
     private SearchProblem problem;
@@ -533,5 +533,29 @@ public class SearchSpace {
         }
         long endTime = System.currentTimeMillis();
         System.out.println("Time to compute neighbors: " + (endTime - currentTime));
+    }
+
+    @Override
+    public SearchSpace clone() {
+        try {
+            SearchSpace clone = (SearchSpace) super.clone();
+            // TODO: copy mutable state here, so the clone can't change the internals of the original
+            clone.problem = problem.clone();
+            clone.states = states.clone();
+
+            TreeMap<Integer, GroupRecord> clonedMap = new TreeMap<>();
+            for (Integer key : groups.keySet()) {
+                clonedMap.put(key, groups.get(key).clone());
+            }
+            clone.groups = clonedMap;
+
+            // TODO: Should these be deep-cloned?
+            clone.colors = colors;
+            clone.generator = generator;
+
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }

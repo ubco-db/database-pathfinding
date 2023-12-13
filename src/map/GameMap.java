@@ -25,7 +25,7 @@ import java.util.Map.Entry;
  * Maps can be read from files and saved back to disk.
  * Maps can also be displayed on the screen.
  */
-public class GameMap {
+public class GameMap implements Cloneable {
     public static final int EDGECOST_CARDINAL = 1; // TODO: Previously 10
     public static final int EDGECOST_DIAGONAL = 14;
     public static final char WALL_CHAR = '*';
@@ -1297,7 +1297,8 @@ public class GameMap {
         if (endRow > this.rows) endRow = rows;
 
         // If last col of the grid exceeds the map
-        if (endCol > this.cols) endCol = cols;;
+        if (endCol > this.cols) endCol = cols;
+        ;
 
         // Boolean flag
         boolean firstTime = true;
@@ -2518,5 +2519,43 @@ public class GameMap {
 
     public RegionSearchProblem getAbstractProblem() {
         return abstractProblem;
+    }
+
+    @Override
+    public GameMap clone() {
+        try {
+            GameMap clone = (GameMap) super.clone();
+
+            clone.squares = squares.clone();
+
+            clone.groups = new TreeMap<>();
+            for (Integer key : groups.keySet()) {
+                clone.groups.put(key, groups.get(key).clone());
+            }
+
+            clone.groupsArray = groupsArray.clone();
+            clone.numRegions = numRegions.clone();
+
+            if (this.path != null) {
+                clone.path = new ArrayList<>();
+                for (SearchState s : this.path) {
+                    clone.path.add(s.clone());
+                }
+            }
+
+            clone.abstractProblem = abstractProblem.clone();
+
+            // TODO: Should these be deep-cloned?
+            clone.startPoint = startPoint;
+            clone.goalPoint = goalPoint;
+            clone.colors = colors;
+            clone.masks = masks;
+            clone.regionReps = regionReps;
+            clone.generator = generator;
+
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }

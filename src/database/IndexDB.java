@@ -14,7 +14,7 @@ import java.util.Scanner;
  *
  * @author rlawrenc
  */
-public class IndexDB {
+public class IndexDB implements Cloneable {
     private int[] nodeIds;
     private int[] seedIds;
     private int count;
@@ -243,5 +243,19 @@ public class IndexDB {
 
     public int[][] getGroups() {
         return groups;
+    }
+
+    @Override
+    public IndexDB clone() {
+        try {
+            IndexDB clone = (IndexDB) super.clone();
+            clone.seedIds = seedIds.clone();
+            clone.groups = groups.clone();
+            clone.nodeIds = nodeIds.clone();
+            clone.hashTable = hashTable.clone();
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }

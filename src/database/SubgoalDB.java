@@ -17,7 +17,7 @@ import java.util.Scanner;
  *
  * @author rlawrenc
  */
-public class SubgoalDB {
+public class SubgoalDB implements Cloneable {
     protected ArrayList<SubgoalDBRecord> records;
     protected SearchProblem problem;
 
@@ -223,4 +223,21 @@ public class SubgoalDB {
         return success;
     }
 
+    @Override
+    public SubgoalDB clone() {
+        try {
+            SubgoalDB clone = (SubgoalDB) super.clone();
+
+            clone.records = new ArrayList<>();
+            for (SubgoalDBRecord record : this.records) {
+                clone.records.add(record.clone());
+            }
+
+            clone.problem = problem.clone();
+
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
 }

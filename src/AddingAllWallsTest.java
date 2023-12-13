@@ -65,11 +65,18 @@ public class AddingAllWallsTest {
 
         long elapsedTimePartialRecomputation = 0;
 
+        GameMap map = dbaStar.getMap();
+        MapSearchProblem problem = (MapSearchProblem) dbaStar.getProblem();
+        SubgoalDynamicDB2 dbBW = (SubgoalDynamicDB2) dbaStar.getDatabase();
+
         for (int wallId: goalIds) {
-            // TODO: Copy map and database so I can use them here:
+            // TODO: Copy map, problem, and db, so I can use them here:
+            GameMap copyMap = map.clone();
+            MapSearchProblem copyProblem = problem.clone();
+            SubgoalDynamicDB2 copyDbBW = dbBW.clone();
 
             long startTimePartialRecomputation = System.currentTimeMillis();
-            recomputeDBAStar(wallId, dbaStar.getMap(), (MapSearchProblem) dbaStar.getProblem(), (SubgoalDynamicDB2) dbaStar.getDatabase());
+            recomputeDBAStar(wallId, copyMap, copyProblem, copyDbBW);
             long endTimePartialRecomputation = System.currentTimeMillis();
 
             elapsedTimePartialRecomputation += endTimePartialRecomputation - startTimePartialRecomputation;

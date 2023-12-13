@@ -15,7 +15,7 @@ import java.util.StringTokenizer;
  *
  * @author rlawrenc
  */
-public class SubgoalDBRecord {
+public class SubgoalDBRecord implements Cloneable {
     private int id;
     private int startId;
     private int goalId;
@@ -142,5 +142,17 @@ public class SubgoalDBRecord {
         }
 
         return path;
+    }
+
+    @Override
+    public SubgoalDBRecord clone() {
+        try {
+            SubgoalDBRecord clone = (SubgoalDBRecord) super.clone();
+            // TODO: copy mutable state here, so the clone can't change the internals of the original
+            // clone.stateIds = stateIds.clone();
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }

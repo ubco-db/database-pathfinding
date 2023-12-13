@@ -12,12 +12,23 @@ import java.util.*;
  *
  * @author rlawrenc
  */
-public class RegionSearchProblem extends SearchProblem {
+public class RegionSearchProblem extends SearchProblem implements Cloneable {
     private int[] numRegions; // Number of regions in each sector
     private int[][] edges; // edges[i][j] is an edge from region i to region j
     private GameMap map;
     private int[] regionCenter; // The node id of each region representative
     private int gridSize;
+
+    @Override
+    public RegionSearchProblem clone() {
+        RegionSearchProblem clone = (RegionSearchProblem) super.clone();
+
+        clone.numRegions = numRegions.clone();
+        clone.edges = edges.clone();
+        clone.map = map.clone();
+        clone.regionCenter = regionCenter.clone();
+        return clone;
+    }
 
     private class Sector {
         public int number;

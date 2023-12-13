@@ -14,7 +14,7 @@ import java.util.TreeMap;
  *
  * @author rlawrenc
  */
-public class MapSearchProblem extends SearchProblem {
+public class MapSearchProblem extends SearchProblem implements Cloneable {
     private final GameMap map;
     private int row;
     private int col;
@@ -262,5 +262,20 @@ public class MapSearchProblem extends SearchProblem {
     {	// Is a neighbor if heuristic distance is <= 14 (one move)
         int dist = computeDistance(fromStateId, toStateId);
         return (dist < 14);
+    }
+
+    @Override
+    public MapSearchProblem clone() {
+        MapSearchProblem clone = (MapSearchProblem) super.clone();
+        // TODO: copy mutable state here, so the clone can't change the internals of the original
+
+        // TODO: make sure squares is correct
+        clone.map.squares = map.squares.clone();
+
+        if (searchSpace != null) {
+            clone.searchSpace = searchSpace.clone();
+        }
+
+        return clone;
     }
 }

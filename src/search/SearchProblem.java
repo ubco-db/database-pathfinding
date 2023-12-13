@@ -13,7 +13,7 @@ import java.util.TreeMap;
  *
  * @author rlawrenc
  */
-public abstract class SearchProblem {
+public abstract class SearchProblem implements Cloneable {
     protected SearchSpace searchSpace;
 
     public void setSearchSpace(SearchSpace space) {
@@ -51,4 +51,19 @@ public abstract class SearchProblem {
     public abstract void computeNeighbors();
 
     public abstract String idToString(int id);
+
+    @Override
+    public SearchProblem clone() {
+        try {
+            SearchProblem clone = (SearchProblem) super.clone();
+
+            if (searchSpace != null) {
+                clone.searchSpace = searchSpace.clone();
+            }
+
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
 }

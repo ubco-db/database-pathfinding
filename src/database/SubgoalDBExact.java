@@ -15,7 +15,7 @@ import java.util.Map.Entry;
  *
  * @author rlawrenc
  */
-public class SubgoalDBExact extends SubgoalDB {
+public class SubgoalDBExact extends SubgoalDB implements Cloneable {
     protected IndexDB db;                               // Store base to abstract state mapping
     protected SubgoalDBRecord[][] recordMatrix;         // Stores records to navigate between region representatives
 
@@ -217,4 +217,16 @@ public class SubgoalDBExact extends SubgoalDB {
         db.verify(problem);
     }
 
+    @Override
+    public SubgoalDBExact clone() {
+        SubgoalDBExact clone = (SubgoalDBExact) super.clone();
+
+        clone.db = db.clone();
+
+        if (recordMatrix != null) {
+            clone.recordMatrix = recordMatrix.clone();
+        }
+
+        return clone;
+    }
 }

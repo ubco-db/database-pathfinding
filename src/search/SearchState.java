@@ -1,7 +1,7 @@
 package search;
 
 
-public class SearchState implements Comparable<SearchState> {
+public class SearchState implements Comparable<SearchState>, Cloneable {
     public int id;
     public double cost;    // f
     public int g;
@@ -62,5 +62,20 @@ public class SearchState implements Comparable<SearchState> {
 
     public int getId() {
         return id;
+    }
+
+    @Override
+    public SearchState clone() {
+        try {
+            SearchState clone = (SearchState) super.clone();
+            clone.prev = prev.clone();
+
+            // TODO: How do I clone an Object?
+            clone.stateData = stateData;
+
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }

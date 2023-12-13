@@ -2,7 +2,7 @@ package util;
 
 import java.util.HashSet;
 
-public class ExpandArray {
+public class ExpandArray implements Cloneable {
     private int count;
     private int[] values;
 
@@ -76,5 +76,16 @@ public class ExpandArray {
             buf.append(", ").append(values[i]);
         buf.append("]");
         return buf.toString();
+    }
+
+    @Override
+    public ExpandArray clone() {
+        try {
+            ExpandArray clone = (ExpandArray) super.clone();
+            clone.values = values.clone();
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }
