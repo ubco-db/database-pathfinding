@@ -60,6 +60,15 @@ public class EvaluateWallRemoval {
             System.out.printf("No wall found at (%d, %d)%n", map.getRow(wallLoc), map.getCol(wallLoc));
         }
 
+        // Two cases? Wall encased by walls vs not
+        System.out.println(isSurroundedByWalls(map, map.getRow(wallLoc), map.getCol(wallLoc)));
+
+        // TODO: if a wall is encased by walls, we necessarily have a new, isolated region
+
+        // TODO: if the wall does not border a region in its sector, we also have a new region, but it needs to be connected to its neighbours
+
+        // TODO: else, if it is in the same sector as and borders on one or more regions, we need to assign it to the correct region and recompute the neighbourhood as it may have formed a path between two previously unreachable regions
+
         System.out.println();
         System.out.println();
         System.out.println();
@@ -182,5 +191,26 @@ public class EvaluateWallRemoval {
     private static String getImageName(String wallStatus, boolean hasCentroids) {
         String lastToken = hasCentroids ? "_DBA_Centroid.png" : "_DBA.png";
         return DBA_STAR_DB_PATH + wallStatus + MAP_FILE_NAME + lastToken;
+    }
+
+    private static boolean isSurroundedByWalls(GameMap map, int wallRowId, int wallColId) {
+        // Return true if all 8 neighbours of the cell are walls, else return false
+        // TODO: potentially return more specific info as to which cells are open
+
+        int neighborNorth = map.squares[wallRowId - 1][wallColId];
+        int neighborNorthEast = map.squares[wallRowId - 1][wallColId + 1];
+        int neighborEast = map.squares[wallRowId][wallColId + 1];
+        int neighborSouthEast = map.squares[wallRowId + 1][wallColId + 1];
+        int neighborSouth = map.squares[wallRowId + 1][wallColId];
+        int neighborSouthWest = map.squares[wallRowId + 1][wallColId - 1];
+        int neighborWest = map.squares[wallRowId][wallColId - 1];
+        int neighborNorthWest = map.squares[wallRowId - 1][wallColId - 1];
+        int[] neighbours = {neighborNorth, neighborNorthEast, neighborEast, neighborSouthEast, neighborSouth, neighborSouthWest, neighborWest, neighborNorthWest};
+
+        for (int neighbour : neighbours) {
+            if (!map.isWall(neighbour)) return false;
+        }
+
+        return true;
     }
 }
