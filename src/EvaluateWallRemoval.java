@@ -48,7 +48,7 @@ public class EvaluateWallRemoval {
 
         boolean priorWall = map.isWall(wallLoc);
 
-        // Add wall to existing map and to map inside problem
+        // Remove wall from existing map and map inside problem
         map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = ' '; // TODO: add correct region id here later
         MapSearchProblem problem = (MapSearchProblem) dbaStarBW.getProblem();
         priorWall = priorWall && problem.getMap().isWall(wallLoc);
