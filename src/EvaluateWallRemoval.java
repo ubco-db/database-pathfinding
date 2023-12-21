@@ -4,9 +4,13 @@ import database.GameDB;
 import database.SubgoalDynamicDB2;
 import dynamic.Walls;
 import map.GameMap;
+import map.GroupRecord;
 import search.*;
 
 import java.util.ArrayList;
+import java.util.TreeMap;
+
+import static map.GameMap.START_NUM;
 
 public class EvaluateWallRemoval {
     final static String DB_PATH = "dynamic/databases/";
@@ -44,7 +48,6 @@ public class EvaluateWallRemoval {
         long startTimeRecomp = System.currentTimeMillis();
 
         GameMap map = dbaStarBW.getMap();
-        int regionId = map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)];
 
         boolean priorWall = map.isWall(wallLoc);
 
@@ -60,14 +63,18 @@ public class EvaluateWallRemoval {
             System.out.printf("No wall found at (%d, %d)%n", map.getRow(wallLoc), map.getCol(wallLoc));
         }
 
-        // Two cases? Wall encased by walls vs not
-        System.out.println(isSurroundedByWalls(map, map.getRow(wallLoc), map.getCol(wallLoc)));
+        TreeMap<Integer, GroupRecord> groups = new MapSearchProblem(map).getGroups();
 
-        // TODO: if a wall is encased by walls, we necessarily have a new, isolated region
+        if (isSurroundedByWalls(map, map.getRow(wallLoc), map.getCol(wallLoc))) {
+            // If a wall is encased by walls, we necessarily have a new, isolated region
 
-        // TODO: if the wall does not border a region in its sector, we also have a new region, but it needs to be connected to its neighbours
-
-        // TODO: else, if it is in the same sector as and borders on one or more regions, we need to assign it to the correct region and recompute the neighbourhood as it may have formed a path between two previously unreachable regions
+            // Assign new region id to the location on the map
+            map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = groups.size() + START_NUM;
+            problem.getMap().squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = groups.size() + START_NUM;
+            // TODO: need to write this region to the end of the groups array and update .dati2
+        } else {
+            // TODO: check sector membership of open spaces and removed wall
+        }
 
         System.out.println();
         System.out.println();
