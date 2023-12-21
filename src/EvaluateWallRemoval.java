@@ -36,6 +36,34 @@ public class EvaluateWallRemoval {
         SearchState wall = new SearchState(wallLoc);
         wallLocation.add(wall);
 
+        // Use the map returned after the database is fully computed
+        System.out.println();
+        System.out.println();
+        System.out.println();
+
+        long startTimeRecomp = System.currentTimeMillis();
+
+        GameMap map = dbaStarBW.getMap();
+        int regionId = map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)];
+
+        boolean priorWall = map.isWall(wallLoc);
+
+        // Add wall to existing map and to map inside problem
+        map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = ' '; // TODO: add correct region id here later
+        MapSearchProblem problem = (MapSearchProblem) dbaStarBW.getProblem();
+        priorWall = priorWall && problem.getMap().isWall(wallLoc);
+        problem.getMap().squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = ' '; // TODO: add correct region id here later
+
+        if (priorWall && !map.isWall(wallLoc) && !problem.getMap().isWall(wallLoc)) {
+            System.out.println("Wall at " + wallLoc + " removed successfully!");
+        } else {
+            System.out.printf("No wall found at (%d, %d)%n", map.getRow(wallLoc), map.getCol(wallLoc));
+        }
+
+        System.out.println();
+        System.out.println();
+        System.out.println();
+
         // remove wall from starting map
         Walls.removeWall(PATH_TO_MAP, wallLocation, startingMap);
         startingMap = new GameMap(PATH_TO_MAP);
