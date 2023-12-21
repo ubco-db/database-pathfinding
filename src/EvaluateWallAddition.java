@@ -15,7 +15,7 @@ import java.util.TreeMap;
 
 import static util.MapHelpers.*;
 
-public class EvaluateDynamicScenario {
+public class EvaluateWallAddition {
     final static String DB_PATH = "dynamic/databases/";
     final static String DBA_STAR_DB_PATH = DB_PATH + "DBA/";
 
