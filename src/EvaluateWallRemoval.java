@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class EvaluateWallRemoval {
     final static String DB_PATH = "dynamic/databases/";
-    final static String DBA_STAR_DB_PATH = DB_PATH + "DBA/";
+    final static String DBA_STAR_DB_PATH = DB_PATH + "removal/";
 
     final static String MAP_FILE_PATH = "maps/dMap/";
     final static String MAP_FILE_NAME = "012.map";
