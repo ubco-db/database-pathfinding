@@ -98,7 +98,6 @@ public class EvaluateWallRemoval {
 
         currentTime = System.currentTimeMillis();
 
-        // TODO
         database.computeIndex(tmpProb, rec);
 
         rec.addStat(23, System.currentTimeMillis() - currentTime);
