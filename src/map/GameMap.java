@@ -1665,7 +1665,6 @@ public class GameMap {
 
         int[] regionCenter = new int[groups.size()];
         for (int i = 0; i < groups.size(); i++) {
-            // TODO: issue when i + START_NUM = 119
             GroupRecord rec = groups.get(i + START_NUM);
             regionCenter[i] = rec.groupRepId;
         }

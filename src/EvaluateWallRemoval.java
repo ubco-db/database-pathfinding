@@ -6,6 +6,7 @@ import dynamic.Walls;
 import map.GameMap;
 import map.GroupRecord;
 import search.*;
+import util.ExpandArray;
 
 import java.util.ArrayList;
 import java.util.TreeMap;
@@ -69,8 +70,25 @@ public class EvaluateWallRemoval {
             // If a wall is encased by walls, we necessarily have a new, isolated region
 
             // Assign new region id to the location on the map
-            map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = groups.size() + START_NUM;
-            problem.getMap().squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = groups.size() + START_NUM;
+            int groupId = groups.size() + START_NUM;
+
+            map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = groupId;
+            problem.getMap().squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = groupId;
+
+            // There should not be a group record with the new region id
+            GroupRecord rec = groups.get(groupId);
+            if (rec != null) System.out.println("Error! Record already exists!");
+
+            // Create a new group record for the new region
+            GroupRecord newRec = new GroupRecord();
+            newRec.setNumStates(1);
+            newRec.groupId = groupId;
+            // Group rep id does not need to be computed using compute centroids logic since it must be where the wall was removed
+            newRec.groupRepId = map.getId(map.getRow(wallLoc), map.getCol(wallLoc));
+            newRec.states = new ExpandArray(1);
+            newRec.states.add(newRec.groupRepId);
+            map.addGroup(groupId, newRec);
+
             // TODO: need to write this region to the end of the groups array and update .dati2
         } else {
             // TODO: check sector membership of open spaces and removed wall
