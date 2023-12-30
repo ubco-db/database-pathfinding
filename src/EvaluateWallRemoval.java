@@ -124,8 +124,12 @@ public class EvaluateWallRemoval {
             // Check if it matches sector membership of surrounding open spaces
             if (openStatesToSectors.containsValue(sectorId)) {
                 System.out.println("Removed wall in existing sector!");
+                // TODO: Wall touches region that is in same sector as wall -> add wall to region and recompute neighbourhood (may have formed path)
+                // will need to recompute centroids
             } else {
                 System.out.println("Removed wall in new sector!");
+                // TODO: Wall touches region but it is not in same sector as wall -> new, connected, region (recompute neighbourhood)
+                // basically like case 1, but need to recompute paths to neighbours
             }
         }
 
