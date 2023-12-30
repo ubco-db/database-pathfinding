@@ -90,27 +90,23 @@ public class EvaluateWallRemoval {
             map.addGroup(groupId, newRec);
             groups.put(groupId, newRec);
 
-            // new region search problem?
-
             // Get database and initialize pathCompressAlgDba
             SubgoalDynamicDB2 dbBW = (SubgoalDynamicDB2) dbaStarBW.getDatabase();
             HillClimbing pathCompressAlgDba = new HillClimbing(problem, 10000);
 
-            // Update regions for neighborIds in the database
-
+            // Update regions for neighborIds in the database (only region requiring updates is new region, since it has no neighbours)
             ArrayList<Integer> neighborIds = new ArrayList<>();
             neighborIds.add(newRec.groupId);
 
+            // Value of isPartition actually makes no difference here since that logic is skipped, set to true for consistency with code below
             dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(),
-                    dbBW.getPaths(), dbBW.getNeighbor(), neighborIds.size(), NUM_NEIGHBOUR_LEVELS, false, false);
+                    dbBW.getPaths(), dbBW.getNeighbor(), neighborIds.size(), NUM_NEIGHBOUR_LEVELS, false, true);
 
             // Re-generate index database (TODO: optimize)
-            // groupId and regionRepId are identical in this case
+            // groupId and regionRepId are identical in this case, isPartition because groupsMapping needs to be resized
             dbBW.regenerateIndexDB(true, false, groupId, groupId, groups.size(), map, new GroupRecord[]{newRec});
 
             dbBW.exportDB(DBA_STAR_DB_PATH + "BW_Recomp_" + MAP_FILE_NAME + "_DBA-STAR_G" + GRID_SIZE + "_N" + NUM_NEIGHBOUR_LEVELS + "_C" + CUTOFF + ".dat");
-
-            // TODO: need to write this region to the end of the groups array and update .dati2
         } else {
             // TODO: check sector membership of open spaces and removed wall
         }
