@@ -69,7 +69,10 @@ public class EvaluateWallRemoval {
 
         TreeMap<Integer, GroupRecord> groups = new MapSearchProblem(map).getGroups();
 
-        if (isSurroundedByWalls(map, wallRow, wallCol)) {
+        // Grab neighbouring states
+        ArrayList<SearchState> neighbours = map.getNeighbors(wallRow, wallCol);
+
+        if (isSurroundedByWalls(map, wallRow, wallCol, neighbours)) {
             // Case 1: If a wall is encased by walls, we necessarily have a new, isolated region
 
             // Assign new region id to the location on the map
@@ -112,11 +115,14 @@ public class EvaluateWallRemoval {
             dbBW.exportDB(DBA_STAR_DB_PATH + "BW_Recomp_" + MAP_FILE_NAME + "_DBA-STAR_G" + GRID_SIZE + "_N" + NUM_NEIGHBOUR_LEVELS + "_C" + CUTOFF + ".dat");
         } else {
             // Case 2: If a wall is not encased by walls, we need to check its sector membership, and the sector membership of the adjacent open spaces
-            // TODO: check sector membership of space where wall was
+
+            // Check sector membership of space where wall was
             int numSectorsPerRow = (int) Math.ceil(map.cols * 1.0 / GRID_SIZE);
             int sectorId = wallRow / GRID_SIZE * numSectorsPerRow + wallCol / GRID_SIZE;
             System.out.println("Wall was removed in sector: " + sectorId);
-            // TODO: check sector membership of surrounding open spaces (should put them in ArrayList in isSurroundedByWalls)
+
+            // TODO: check sector membership of surrounding open spaces
+
         }
 
         System.out.println();
@@ -243,22 +249,12 @@ public class EvaluateWallRemoval {
         return DBA_STAR_DB_PATH + wallStatus + MAP_FILE_NAME + lastToken;
     }
 
-    private static boolean isSurroundedByWalls(GameMap map, int wallRowId, int wallColId) {
+    private static boolean isSurroundedByWalls(GameMap map, int wallRowId, int wallColId, ArrayList<SearchState> neighbours) {
         // Return true if all 8 neighbours of the cell are walls, else return false
-        // TODO: potentially return more specific info as to which cells are open
 
-        int neighborNorth = map.squares[wallRowId - 1][wallColId];
-        int neighborNorthEast = map.squares[wallRowId - 1][wallColId + 1];
-        int neighborEast = map.squares[wallRowId][wallColId + 1];
-        int neighborSouthEast = map.squares[wallRowId + 1][wallColId + 1];
-        int neighborSouth = map.squares[wallRowId + 1][wallColId];
-        int neighborSouthWest = map.squares[wallRowId + 1][wallColId - 1];
-        int neighborWest = map.squares[wallRowId][wallColId - 1];
-        int neighborNorthWest = map.squares[wallRowId - 1][wallColId - 1];
-        int[] neighbours = {neighborNorth, neighborNorthEast, neighborEast, neighborSouthEast, neighborSouth, neighborSouthWest, neighborWest, neighborNorthWest};
-
-        for (int neighbour : neighbours) {
-            if (!map.isWall(neighbour)) return false;
+        for (SearchState neighbour : neighbours) {
+            // Need to use !isWall instead of isOpenCell, because the cells are not empty, they have their regions written into them
+            if (!map.isWall(neighbour.id)) return false;
         }
 
         return true;
