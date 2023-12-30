@@ -330,11 +330,11 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
      * @param searchAlg
      * @param numLevels
      */
-    public void recomputeBasePaths2(SearchProblem problem, TreeMap<Integer, GroupRecord> groups,
-                                    ArrayList<Integer> neighbourIndices, SearchAlgorithm searchAlg,
-                                    int[][] lowestCost, int[][][] paths, int[][] neighbor,
-                                    int numGroups, int numLevels,
-                                    boolean isElimination, boolean isPartition) {
+    public void recomputeBasePathsAfterWallChange(SearchProblem problem, TreeMap<Integer, GroupRecord> groups,
+                                                  ArrayList<Integer> neighbourIndices, SearchAlgorithm searchAlg,
+                                                  int[][] lowestCost, int[][][] paths, int[][] neighbor,
+                                                  int numGroups, int numLevels,
+                                                  boolean isElimination, boolean isPartition) {
         if (lowestCost.length < groups.size()) {
             int[][] resizedLowestCost = new int[groups.size()][];
             System.arraycopy(lowestCost, 0, resizedLowestCost, 0, lowestCost.length);
@@ -375,7 +375,12 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
             startGroup = groups.get(neighbourIndex); // will need to redo
             startGroupLoc = neighbourIndex - GameMap.START_NUM;
 
-            if (startGroup == null) {
+            if (startGroup == null || neighbourIndices.size() == 1) {
+                // Need to initialize arrays so singleton regions work in wall removal
+                this.lowestCost[startGroupLoc] = new int[0];
+                this.neighbor[startGroupLoc] = new int[0];
+                neighborId[startGroupLoc] = new int[0];
+                this.paths[startGroupLoc] = new int[0][];
                 continue;
             }
 
