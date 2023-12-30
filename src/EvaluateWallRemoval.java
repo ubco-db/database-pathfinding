@@ -8,8 +8,7 @@ import map.GroupRecord;
 import search.*;
 import util.ExpandArray;
 
-import java.util.ArrayList;
-import java.util.TreeMap;
+import java.util.*;
 
 import static map.GameMap.START_NUM;
 
@@ -37,7 +36,7 @@ public class EvaluateWallRemoval {
 
         // set wall(s)
         ArrayList<SearchState> wallLocation = new ArrayList<>();
-        int wallLoc = 12502;
+        int wallLoc = 12068;
         SearchState wall = new SearchState(wallLoc);
         wallLocation.add(wall);
 
@@ -71,8 +70,9 @@ public class EvaluateWallRemoval {
 
         // Grab neighbouring states
         ArrayList<SearchState> neighbours = map.getNeighbors(wallRow, wallCol);
+        Map<Integer, Integer> openStatesToSectors = new HashMap<>();
 
-        if (isSurroundedByWalls(map, wallRow, wallCol, neighbours)) {
+        if (isSurroundedByWalls(map, neighbours, openStatesToSectors)) {
             // Case 1: If a wall is encased by walls, we necessarily have a new, isolated region
 
             // Assign new region id to the location on the map
@@ -121,8 +121,12 @@ public class EvaluateWallRemoval {
             int sectorId = wallRow / GRID_SIZE * numSectorsPerRow + wallCol / GRID_SIZE;
             System.out.println("Wall was removed in sector: " + sectorId);
 
-            // TODO: check sector membership of surrounding open spaces
-
+            // Check if it matches sector membership of surrounding open spaces
+            if (openStatesToSectors.containsValue(sectorId)) {
+                System.out.println("Removed wall in existing sector!");
+            } else {
+                System.out.println("Removed wall in new sector!");
+            }
         }
 
         System.out.println();
@@ -249,14 +253,28 @@ public class EvaluateWallRemoval {
         return DBA_STAR_DB_PATH + wallStatus + MAP_FILE_NAME + lastToken;
     }
 
-    private static boolean isSurroundedByWalls(GameMap map, int wallRowId, int wallColId, ArrayList<SearchState> neighbours) {
+    private static boolean isSurroundedByWalls(GameMap map, ArrayList<SearchState> neighbours, Map<Integer, Integer> openStatesToSectors) {
         // Return true if all 8 neighbours of the cell are walls, else return false
 
         for (SearchState neighbour : neighbours) {
             // Need to use !isWall instead of isOpenCell, because the cells are not empty, they have their regions written into them
-            if (!map.isWall(neighbour.id)) return false;
+            if (!map.isWall(neighbour.id)) {
+                // Fill HashMap with state id to sector id mapping
+                openStatesToSectors.put(neighbour.id, getSectorId(map, neighbour.id));
+            }
         }
 
-        return true;
+        return openStatesToSectors.isEmpty();
+    }
+
+    private static int getSectorId(GameMap map, int row, int col) {
+        int numSectorsPerRow = (int) Math.ceil(map.cols * 1.0 / GRID_SIZE);
+        return row / GRID_SIZE * numSectorsPerRow + col / GRID_SIZE;
+    }
+
+    private static int getSectorId(GameMap map, int sid) {
+        int row = map.getRow(sid);
+        int col = map.getCol(sid);
+        return getSectorId(map, row, col);
     }
 }
