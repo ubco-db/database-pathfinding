@@ -52,28 +52,31 @@ public class EvaluateWallRemoval {
 
         boolean priorWall = map.isWall(wallLoc);
 
+        int wallRow = map.getRow(wallLoc);
+        int wallCol = map.getCol(wallLoc);
+
         // Remove wall from existing map and map inside problem
-        map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = ' '; // TODO: add correct region id here later
+        map.squares[wallRow][wallCol] = ' '; // TODO: add correct region id here later
         MapSearchProblem problem = (MapSearchProblem) dbaStarBW.getProblem();
         priorWall = priorWall && problem.getMap().isWall(wallLoc);
-        problem.getMap().squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = ' '; // TODO: add correct region id here later
+        problem.getMap().squares[wallRow][wallCol] = ' '; // TODO: add correct region id here later
 
         if (priorWall && !map.isWall(wallLoc) && !problem.getMap().isWall(wallLoc)) {
             System.out.println("Wall at " + wallLoc + " removed successfully!");
         } else {
-            System.out.printf("No wall found at (%d, %d)%n", map.getRow(wallLoc), map.getCol(wallLoc));
+            System.out.printf("No wall found at (%d, %d)%n", wallRow, wallCol);
         }
 
         TreeMap<Integer, GroupRecord> groups = new MapSearchProblem(map).getGroups();
 
-        if (isSurroundedByWalls(map, map.getRow(wallLoc), map.getCol(wallLoc))) {
-            // If a wall is encased by walls, we necessarily have a new, isolated region
+        if (isSurroundedByWalls(map, wallRow, wallCol)) {
+            // Case 1: If a wall is encased by walls, we necessarily have a new, isolated region
 
             // Assign new region id to the location on the map
             int groupId = groups.size() + START_NUM;
 
-            map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = groupId;
-            problem.getMap().squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = groupId;
+            map.squares[wallRow][wallCol] = groupId;
+            problem.getMap().squares[wallRow][wallCol] = groupId;
 
             // There should not be a group record with the new region id
             GroupRecord rec = groups.get(groupId);
@@ -84,7 +87,7 @@ public class EvaluateWallRemoval {
             newRec.setNumStates(1);
             newRec.groupId = groupId;
             // Group rep id does not need to be computed using compute centroids logic since it must be where the wall was removed
-            newRec.groupRepId = map.getId(map.getRow(wallLoc), map.getCol(wallLoc));
+            newRec.groupRepId = map.getId(wallRow, wallCol);
             newRec.states = new ExpandArray(1);
             newRec.states.add(newRec.groupRepId);
             map.addGroup(groupId, newRec);
@@ -108,7 +111,12 @@ public class EvaluateWallRemoval {
 
             dbBW.exportDB(DBA_STAR_DB_PATH + "BW_Recomp_" + MAP_FILE_NAME + "_DBA-STAR_G" + GRID_SIZE + "_N" + NUM_NEIGHBOUR_LEVELS + "_C" + CUTOFF + ".dat");
         } else {
-            // TODO: check sector membership of open spaces and removed wall
+            // Case 2: If a wall is not encased by walls, we need to check its sector membership, and the sector membership of the adjacent open spaces
+            // TODO: check sector membership of space where wall was
+            int numSectorsPerRow = (int) Math.ceil(map.cols * 1.0 / GRID_SIZE);
+            int sectorId = wallRow / GRID_SIZE * numSectorsPerRow + wallCol / GRID_SIZE;
+            System.out.println("Wall was removed in sector: " + sectorId);
+            // TODO: check sector membership of surrounding open spaces (should put them in ArrayList in isSurroundedByWalls)
         }
 
         System.out.println();
