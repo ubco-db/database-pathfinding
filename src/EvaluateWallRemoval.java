@@ -36,7 +36,7 @@ public class EvaluateWallRemoval {
 
         // set wall(s)
         ArrayList<SearchState> wallLocation = new ArrayList<>();
-        int wallLoc = 12068;
+        int wallLoc = 6137;
         SearchState wall = new SearchState(wallLoc);
         wallLocation.add(wall);
 
@@ -125,11 +125,59 @@ public class EvaluateWallRemoval {
             if (openStatesToSectors.containsValue(sectorId)) {
                 System.out.println("Removed wall in existing sector!");
                 // TODO: Wall touches region that is in same sector as wall -> add wall to region and recompute neighbourhood (may have formed path)
+
+                // can I just run findRegionRep to assign the state to a region?
+                int regionRepId = map.getAbstractProblem().findRegionRep(wall, map).getId();
+                System.out.println("Existing region, region rep id: " + regionRepId);
+
+                // what if the wall is in the same sector but a new region? would findRegionRep return null?
+
+                // should probably recompute the entire sector, since it may lead to two regions being merged
+                // though that could only happen if the wall touches two different regions
+
+                // TODO: reverse partition case, later: optimize by looking at openStatesToSectors, if same sector, different regions are touching wall
+
                 // will need to recompute centroids
             } else {
                 System.out.println("Removed wall in new sector!");
+                // Case 3: Basically like case 1, but need to recompute paths to neighbours
                 // TODO: Wall touches region but it is not in same sector as wall -> new, connected, region (recompute neighbourhood)
-                // basically like case 1, but need to recompute paths to neighbours
+                // Assign new region id to the location on the map
+
+                int groupId = groups.size() + START_NUM;
+
+                map.squares[wallRow][wallCol] = groupId;
+                problem.getMap().squares[wallRow][wallCol] = groupId;
+
+                // There should not be a group record with the new region id
+                GroupRecord rec = groups.get(groupId);
+                if (rec != null) System.out.println("Error! Record already exists!");
+
+                // Create a new group record for the new region
+                GroupRecord newRec = new GroupRecord();
+                newRec.setNumStates(1);
+                newRec.groupId = groupId;
+                // Group rep id does not need to be computed using compute centroids logic since it must be where the wall was removed
+                newRec.groupRepId = map.getId(wallRow, wallCol);
+                newRec.states = new ExpandArray(1);
+                newRec.states.add(newRec.groupRepId);
+                map.addGroup(groupId, newRec);
+                groups.put(groupId, newRec);
+
+                // Get database and initialize pathCompressAlgDba
+                SubgoalDynamicDB2 dbBW = (SubgoalDynamicDB2) dbaStarBW.getDatabase();
+                HillClimbing pathCompressAlgDba = new HillClimbing(problem, 10000);
+
+                /* TODO: Figure out neighbours, probably iterate over openStatesToSectors and check which region states
+                    belong to, throw that into a list, get the region reps, those should be neighbours
+
+                    Question: Could there be any neighbours I am missing by doing things this way? No, right?
+                */
+
+                // Update regions for neighborIds in the database
+                ArrayList<Integer> neighborIds = new ArrayList<>();
+                neighborIds.add(newRec.groupId);
+                // TODO: add other neighbourIds
             }
         }
 
