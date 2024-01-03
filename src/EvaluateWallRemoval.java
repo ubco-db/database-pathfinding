@@ -36,7 +36,7 @@ public class EvaluateWallRemoval {
 
         // set wall(s)
         ArrayList<SearchState> wallLocation = new ArrayList<>();
-        int wallLoc = 6137;
+        int wallLoc = 4632;
         SearchState wall = new SearchState(wallLoc);
         wallLocation.add(wall);
 
@@ -140,8 +140,10 @@ public class EvaluateWallRemoval {
                 // will need to recompute centroids
             } else {
                 System.out.println("Removed wall in new sector!");
-                // Case 3: Basically like case 1, but need to recompute paths to neighbours
-                // TODO: Wall touches region but it is not in same sector as wall -> new, connected, region (recompute neighbourhood)
+                /*
+                Case 3: Basically like case 1, but need to recompute paths to neighbours
+                TODO: Wall touches region but it is not in same sector as wall -> new, connected, region (recompute neighbourhood)
+                 */
                 // Assign new region id to the location on the map
 
                 int groupId = groups.size() + START_NUM;
@@ -168,16 +170,18 @@ public class EvaluateWallRemoval {
                 SubgoalDynamicDB2 dbBW = (SubgoalDynamicDB2) dbaStarBW.getDatabase();
                 HillClimbing pathCompressAlgDba = new HillClimbing(problem, 10000);
 
-                /* TODO: Figure out neighbours, probably iterate over openStatesToSectors and check which region states
-                    belong to, throw that into a list, get the region reps, those should be neighbours
+                // Grab neighbour states from openStatesToSectors, check which regions they belong to, get the reps for those regions, use set to ensure uniqueness
+                Set<Integer> neighbouringRegions = new HashSet<>();
 
-                    Question: Could there be any neighbours I am missing by doing things this way? No, right?
-                */
+                for (Integer stateId : openStatesToSectors.keySet()) {
+                    System.out.println(stateId + " - " + map.getAbstractProblem().findRegionRep(new SearchState(stateId), map).getId());
+                    // Add region rep for region
+                    neighbouringRegions.add(map.getAbstractProblem().findRegionRep(new SearchState(stateId), map).getId());
+                }
 
                 // Update regions for neighborIds in the database
-                ArrayList<Integer> neighborIds = new ArrayList<>();
+                ArrayList<Integer> neighborIds = new ArrayList<>(neighbouringRegions);
                 neighborIds.add(newRec.groupId);
-                // TODO: add other neighbourIds
             }
         }
 
