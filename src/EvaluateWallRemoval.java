@@ -174,14 +174,26 @@ public class EvaluateWallRemoval {
                 Set<Integer> neighbouringRegions = new HashSet<>();
 
                 for (Integer stateId : openStatesToSectors.keySet()) {
-                    System.out.println(stateId + " - " + map.getAbstractProblem().findRegionRep(new SearchState(stateId), map).getId());
-                    // Add region rep for region
-                    neighbouringRegions.add(map.getAbstractProblem().findRegionRep(new SearchState(stateId), map).getId());
+                    // state id - region id
+                    System.out.println(stateId + " - " + map.squares[map.getRow(stateId)][map.getCol(stateId)]);
+                    // Add region id for region
+                    neighbouringRegions.add(map.squares[map.getRow(stateId)][map.getCol(stateId)]);
                 }
 
                 // Update regions for neighborIds in the database
                 ArrayList<Integer> neighborIds = new ArrayList<>(neighbouringRegions);
                 neighborIds.add(newRec.groupId);
+
+                // TODO: Do I need to rebuild abstract problem and recompute neighbours?
+
+                dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(),
+                        dbBW.getNeighbor(), neighborIds.size(), NUM_NEIGHBOUR_LEVELS, false, false);
+
+                // Re-generate index database (TODO: optimize)
+                dbBW.regenerateIndexDB(false, false, groupId, groupId, groups.size(), map, new GroupRecord[]{newRec});
+
+                // For checking recomputed database against AW database
+                dbBW.exportDB(DBA_STAR_DB_PATH + "BW_Recomp_" + MAP_FILE_NAME + "_DBA-STAR_G" + GRID_SIZE + "_N" + NUM_NEIGHBOUR_LEVELS + "_C" + CUTOFF + ".dat");
             }
         }
 
