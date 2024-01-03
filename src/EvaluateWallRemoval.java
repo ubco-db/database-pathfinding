@@ -27,7 +27,7 @@ public class EvaluateWallRemoval {
     public static void main(String[] args) {
         // set start and goal
         int startId = 10219;
-        int goalId = 13905;
+        int goalId = 4632;
 
         // build DBAStar Database
         GameMap startingMap = new GameMap(PATH_TO_MAP);
@@ -210,6 +210,11 @@ public class EvaluateWallRemoval {
                 dbBW.exportDB(DBA_STAR_DB_PATH + "BW_Recomp_" + MAP_FILE_NAME + "_DBA-STAR_G" + GRID_SIZE + "_N" + NUM_NEIGHBOUR_LEVELS + "_C" + CUTOFF + ".dat");
             }
         }
+
+        getDBAStarPath(startId, goalId, "BW_Recomp", dbaStarBW);
+
+        System.out.println("Exporting map with areas and centroids.");
+        map.computeCentroidMap().outputImage(getImageName("BW_Recomp", true), null, null);
 
         System.out.println();
         System.out.println();
