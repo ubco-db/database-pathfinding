@@ -198,11 +198,13 @@ public class EvaluateWallRemoval {
                 // Set neighbours
                 map.recomputeNeighbors(GRID_SIZE, startRow, startCol, endRow, endCol, neighborIds);
 
+                // Value of isPartition actually makes no difference here since that logic is skipped, set to true for consistency with code below
                 dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(),
-                        dbBW.getNeighbor(), neighborIds.size(), NUM_NEIGHBOUR_LEVELS, false, false);
+                        dbBW.getNeighbor(), neighborIds.size(), NUM_NEIGHBOUR_LEVELS, false, true);
 
                 // Re-generate index database (TODO: optimize)
-                dbBW.regenerateIndexDB(false, false, groupId, groupId, groups.size(), map, new GroupRecord[]{newRec});
+                // groupId and regionRepId are identical in this case, isPartition because groupsMapping needs to be resized
+                dbBW.regenerateIndexDB(true, false, groupId, groupId, groups.size(), map, new GroupRecord[]{newRec});
 
                 // For checking recomputed database against AW database
                 dbBW.exportDB(DBA_STAR_DB_PATH + "BW_Recomp_" + MAP_FILE_NAME + "_DBA-STAR_G" + GRID_SIZE + "_N" + NUM_NEIGHBOUR_LEVELS + "_C" + CUTOFF + ".dat");
