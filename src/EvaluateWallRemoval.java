@@ -186,6 +186,18 @@ public class EvaluateWallRemoval {
 
                 // TODO: Do I need to rebuild abstract problem and recompute neighbours?
 
+                // Compute start and end of new sector
+                int startRow = (sectorId % numSectorsPerRow) * GRID_SIZE;
+                int startCol = (sectorId / numSectorsPerRow) * GRID_SIZE;
+                int endRow = startRow + GRID_SIZE;
+                int endCol = startCol + GRID_SIZE;
+
+                // Rebuild abstract problem
+                map.rebuildAbstractProblem(GRID_SIZE, startRow, startCol, groups);
+
+                // Set neighbours
+                map.recomputeNeighbors(GRID_SIZE, startRow, startCol, endRow, endCol, neighborIds);
+
                 dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(),
                         dbBW.getNeighbor(), neighborIds.size(), NUM_NEIGHBOUR_LEVELS, false, false);
 
