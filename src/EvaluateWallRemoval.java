@@ -26,8 +26,8 @@ public class EvaluateWallRemoval {
 
     public static void main(String[] args) {
         // set start and goal
-        int startId = 10219;
-        int goalId = 4632;
+        int startId = 15362;
+        int goalId = 14921;
 
         // build DBAStar Database
         GameMap startingMap = new GameMap(PATH_TO_MAP);
@@ -36,7 +36,7 @@ public class EvaluateWallRemoval {
 
         // set wall(s)
         ArrayList<SearchState> wallLocation = new ArrayList<>();
-        int wallLoc = 4632;
+        int wallLoc = 14325;
         SearchState wall = new SearchState(wallLoc);
         wallLocation.add(wall);
 
@@ -128,14 +128,35 @@ public class EvaluateWallRemoval {
 
                 // can I just run findRegionRep to assign the state to a region?
                 int regionRepId = map.getAbstractProblem().findRegionRep(wall, map).getId();
+                int regionId = map.squares[map.getRow(regionRepId)][map.getCol(regionRepId)];
                 System.out.println("Existing region, region rep id: " + regionRepId);
 
-                // what if the wall is in the same sector but a new region? would findRegionRep return null?
+                map.squares[wallRow][wallCol] = regionId;
+                problem.getMap().squares[wallRow][wallCol] = regionId;
 
-                // should probably recompute the entire sector, since it may lead to two regions being merged
-                // though that could only happen if the wall touches two different regions
+                // Compute start and end of current sector
+                int startRow = (sectorId % numSectorsPerRow) * GRID_SIZE;
+                int startCol = (sectorId / numSectorsPerRow) * GRID_SIZE;
+                int endRow = startRow + GRID_SIZE;
+                int endCol = startCol + GRID_SIZE;
+
+                // Nuking sector on map and keeping track of contained regions
+                Set<Integer> regionsInCurrentSector = new HashSet<>();
+                for (int r = 0; r < GRID_SIZE; r++) {
+                    for (int c = 0; c < GRID_SIZE; c++) {
+                        int row = startRow + r;
+                        int col = startCol + c;
+                        if (!map.isWall(row, col)) {
+                            regionsInCurrentSector.add(map.squares[row][col]);
+                            map.squares[row][col] = ' '; // 32
+                        }
+                    }
+                }
+
+                // TODO: delete old regions and recompute regions in sector
 
                 // TODO: reverse partition case, later: optimize by looking at openStatesToSectors, if same sector, different regions are touching wall
+
 
                 // will need to recompute centroids
             } else {
