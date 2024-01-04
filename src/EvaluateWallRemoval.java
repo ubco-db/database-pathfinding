@@ -208,6 +208,9 @@ public class EvaluateWallRemoval {
 
                 // For checking recomputed database against AW database
                 dbBW.exportDB(DBA_STAR_DB_PATH + "BW_Recomp_" + MAP_FILE_NAME + "_DBA-STAR_G" + GRID_SIZE + "_N" + NUM_NEIGHBOUR_LEVELS + "_C" + CUTOFF + ".dat");
+
+                // TODO: Figure out why I need to do this and where subgoals come from
+                dbaStarBW.getSubgoals().clear();
             }
         }
 
