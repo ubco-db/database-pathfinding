@@ -153,7 +153,65 @@ public class EvaluateWallRemoval {
                     }
                 }
 
-                // TODO: delete old regions and recompute regions in sector
+                System.out.println("Number of groups: " + groups.size());
+
+                // Put neighbours of old regions into set
+                HashSet<Integer> neighboursOfOldRegions = new HashSet<>();
+
+                // Delete old regions from groups array:
+                for (Integer region : regionsInCurrentSector) {
+                    neighboursOfOldRegions.addAll(groups.get(region).getNeighborIds());
+                    groups.remove(region);
+                }
+
+                // Remove regionsInCurrentSector from list of neighbours since we care about neighbours outside the sector
+                neighboursOfOldRegions.removeAll(regionsInCurrentSector);
+
+                System.out.println("Number of groups after removal: " + groups.size());
+
+                // TODO: Recompute regions in sector
+
+                // Perform abstraction (go over sector and recompute regions)
+                int numRegionsInSector = map.sectorReAbstract2(GRID_SIZE, startRow, startCol, endRow, endCol, regionId, map);
+
+                System.out.println("Num regions: " + numRegionsInSector);
+
+                int count = 0;
+                GroupRecord[] newRecs = new GroupRecord[numRegionsInSector];
+
+                // Traverse cells in sector to re-create the groups
+                for (int i = startRow; i < endRow; i++) {
+                    for (int j = startCol; j < endCol; j++) {
+                        int groupId = map.squares[i][j];
+
+                        if (groupId != GameMap.EMPTY_CHAR && groupId != GameMap.WALL_CHAR) {
+                            // See if group already exists
+                            GroupRecord rec = groups.get(groupId);
+                            if (rec == null) {    // New group
+                                GroupRecord newRec = new GroupRecord();
+                                newRec.setNumStates(1);
+                                newRec.groupId = groupId;
+                                newRec.groupRepId = map.getId(i, j);
+                                newRec.states = new ExpandArray(10);
+                                newRec.states.add(newRec.groupRepId);
+                                map.addGroup(groupId, newRec);
+                                newRecs[count++] = newRec;
+                            } else {    // Update group
+                                rec.setNumStates(rec.getSize() + 1);
+                                rec.states.add(map.getId(i, j));
+                            }
+                        }
+                    }
+                }
+
+                // Recompute region reps for newly added regions
+                for (GroupRecord newRec : newRecs) {
+                    map.recomputeCentroid2(newRec, wallLoc);
+                    // Add regions that didn't exist before to list
+                    neighboursOfOldRegions.add(newRec.groupId);
+                }
+
+                System.out.println("Group size after addition: " + groups.size());
 
                 // TODO: reverse partition case, later: optimize by looking at openStatesToSectors, if same sector, different regions are touching wall
 
