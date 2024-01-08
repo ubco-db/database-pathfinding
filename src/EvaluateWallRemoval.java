@@ -63,7 +63,7 @@ public class EvaluateWallRemoval {
         if (priorWall && !map.isWall(wallLoc) && !problem.getMap().isWall(wallLoc)) {
             System.out.println("Wall at " + wallLoc + " removed successfully!");
         } else {
-            System.out.printf("No wall found at (%d, %d)%n", wallRow, wallCol);
+            System.out.printf("ERROR: No wall found at (%d, %d)%n", wallRow, wallCol);
         }
 
         TreeMap<Integer, GroupRecord> groups = new MapSearchProblem(map).getGroups();
@@ -114,12 +114,19 @@ public class EvaluateWallRemoval {
 
             dbBW.exportDB(DBA_STAR_DB_PATH + "BW_Recomp_" + MAP_FILE_NAME + "_DBA-STAR_G" + GRID_SIZE + "_N" + NUM_NEIGHBOUR_LEVELS + "_C" + CUTOFF + ".dat");
         } else {
+            // TODO: reverse partition case, later: optimize by looking at openStatesToSectors, if same sector, different regions are touching wall
             // Case 2: If a wall is not encased by walls, we need to check its sector membership, and the sector membership of the adjacent open spaces
 
             // Check sector membership of space where wall was
             int numSectorsPerRow = (int) Math.ceil(map.cols * 1.0 / GRID_SIZE);
             int sectorId = wallRow / GRID_SIZE * numSectorsPerRow + wallCol / GRID_SIZE;
             System.out.println("Wall was removed in sector: " + sectorId);
+
+            /*
+            TODO: check if openStatesToSectors.size() == 1, in this case, we know the state is only surrounded by states
+             of the same region, and we don’t have to recompute that region. We can instead just assign it, then recompute
+             the region rep, check if it’s the same, if no, recompute neighbourhood
+             */
 
             // Check if it matches sector membership of surrounding open spaces
             if (openStatesToSectors.containsValue(sectorId)) {
@@ -134,11 +141,17 @@ public class EvaluateWallRemoval {
                 map.squares[wallRow][wallCol] = regionId;
                 problem.getMap().squares[wallRow][wallCol] = regionId;
 
+                System.out.println("regionId: " + regionId);
+                System.out.println("sectorId: " + sectorId);
+
                 // Compute start and end of current sector
-                int startRow = (sectorId % numSectorsPerRow) * GRID_SIZE;
-                int startCol = (sectorId / numSectorsPerRow) * GRID_SIZE;
+                int startRow = (sectorId / numSectorsPerRow) * GRID_SIZE;
+                int startCol = (sectorId % numSectorsPerRow) * GRID_SIZE;
                 int endRow = startRow + GRID_SIZE;
                 int endCol = startCol + GRID_SIZE;
+
+                System.out.println("Start of current sector: " + map.getId(startRow, startCol));
+                System.out.println("End of current sector: " + map.getId(endRow, endCol));
 
                 // Nuking sector on map and keeping track of contained regions
                 Set<Integer> regionsInCurrentSector = new HashSet<>();
@@ -156,20 +169,23 @@ public class EvaluateWallRemoval {
                 System.out.println("Number of groups: " + groups.size());
 
                 // Put neighbours of old regions into set
-                HashSet<Integer> neighboursOfOldRegions = new HashSet<>();
+                HashSet<Integer> neighbouringRegions = new HashSet<>();
 
                 // Delete old regions from groups array:
                 for (Integer region : regionsInCurrentSector) {
-                    neighboursOfOldRegions.addAll(groups.get(region).getNeighborIds());
+                    neighbouringRegions.addAll(groups.get(region).getNeighborIds());
                     groups.remove(region);
+                    System.out.println("Removed region " + region);
                 }
 
                 // Remove regionsInCurrentSector from list of neighbours since we care about neighbours outside the sector
-                neighboursOfOldRegions.removeAll(regionsInCurrentSector);
+                neighbouringRegions.removeAll(regionsInCurrentSector);
 
                 System.out.println("Number of groups after removal: " + groups.size());
 
                 // TODO: Recompute regions in sector
+
+//                printArray(map.squares);
 
                 // Perform abstraction (go over sector and recompute regions)
                 int numRegionsInSector = map.sectorReAbstract2(GRID_SIZE, startRow, startCol, endRow, endCol, regionId, map);
@@ -178,6 +194,8 @@ public class EvaluateWallRemoval {
 
                 int count = 0;
                 GroupRecord[] newRecs = new GroupRecord[numRegionsInSector];
+
+//                printArray(map.squares);
 
                 // Traverse cells in sector to re-create the groups
                 for (int i = startRow; i < endRow; i++) {
@@ -204,19 +222,41 @@ public class EvaluateWallRemoval {
                     }
                 }
 
+                // TODO: fix centroid re-computation
+
                 // Recompute region reps for newly added regions
                 for (GroupRecord newRec : newRecs) {
                     map.recomputeCentroid2(newRec, wallLoc);
                     // Add regions that didn't exist before to list
-                    neighboursOfOldRegions.add(newRec.groupId);
+                    neighbouringRegions.add(newRec.groupId);
                 }
 
                 System.out.println("Group size after addition: " + groups.size());
 
-                // TODO: reverse partition case, later: optimize by looking at openStatesToSectors, if same sector, different regions are touching wall
+                // VISUAL CHECK:
+                map.computeCentroidMap().outputImage(DBA_STAR_DB_PATH + "TEST" + MAP_FILE_NAME + ".png", null, null);
 
+                // Rebuild abstract problem
+                map.rebuildAbstractProblem(GRID_SIZE, startRow, startCol, groups);
 
-                // will need to recompute centroids
+                ArrayList<Integer> neighborIds = new ArrayList<>(neighbouringRegions);
+
+                // Set neighbours
+                map.recomputeNeighbors(GRID_SIZE, startRow, startCol, endRow, endCol, neighborIds);
+
+                // Get database and initialize pathCompressAlgDba
+                SubgoalDynamicDB2 dbBW = (SubgoalDynamicDB2) dbaStarBW.getDatabase();
+                HillClimbing pathCompressAlgDba = new HillClimbing(problem, 10000);
+
+                // Update regions for neighborIds in the database
+                dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(),
+                        dbBW.getNeighbor(), neighborIds.size(), NUM_NEIGHBOUR_LEVELS, false, true);
+
+                // Re-generate index database (TODO: optimize)
+                dbBW.regenerateIndexDB(false, true, regionId, regionRepId, groups.size(), map, newRecs);
+
+                // For checking recomputed database against AW database
+                dbBW.exportDB(DBA_STAR_DB_PATH + "BW_Recomp_" + MAP_FILE_NAME + "_DBA-STAR_G" + GRID_SIZE + "_N" + NUM_NEIGHBOUR_LEVELS + "_C" + CUTOFF + ".dat");
             } else {
                 System.out.println("Removed wall in new sector!");
                 /*
@@ -266,8 +306,8 @@ public class EvaluateWallRemoval {
                 // TODO: Do I need to rebuild abstract problem and recompute neighbours?
 
                 // Compute start and end of new sector
-                int startRow = (sectorId % numSectorsPerRow) * GRID_SIZE;
-                int startCol = (sectorId / numSectorsPerRow) * GRID_SIZE;
+                int startRow = (sectorId / numSectorsPerRow) * GRID_SIZE;
+                int startCol = (sectorId % numSectorsPerRow) * GRID_SIZE;
                 int endRow = startRow + GRID_SIZE;
                 int endCol = startCol + GRID_SIZE;
 
@@ -445,5 +485,14 @@ public class EvaluateWallRemoval {
         int row = map.getRow(sid);
         int col = map.getCol(sid);
         return getSectorId(map, row, col);
+    }
+
+    private static void printArray(int[][] squares) {
+        for (int[] square : squares) {
+            for (int j = 0; j < squares[0].length; j++) {
+                System.out.print(square[j] + " ");
+            }
+            System.out.println();
+        }
     }
 }
