@@ -973,6 +973,7 @@ public class GameMap {
         }
 
         // Need to recompute neighbours for original region and all its neighbours, so passing entire 3 sector x 3 sector area
+        // TODO: am I actually doing this correctly?
 
         long currentTime = System.currentTimeMillis();
 
@@ -1666,7 +1667,9 @@ public class GameMap {
         int[] regionCenter = new int[groups.size()];
         for (int i = 0; i < groups.size(); i++) {
             GroupRecord rec = groups.get(i + START_NUM);
-            regionCenter[i] = rec.groupRepId;
+            if (rec != null) {
+                regionCenter[i] = rec.groupRepId;
+            }
         }
 
         int[][] edges = new int[groups.size()][];
@@ -2121,6 +2124,36 @@ public class GameMap {
             color = Color.RED;
             ChangeRecord rec = new ChangeRecord(getRow(point.getId()), getCol(point.getId()), color, 1);
             currentMask.add(rec);
+
+            addMask(currentMask);
+            this.currentMask = this.masks.size() - 1;
+        }
+        // Create an image to save
+        RenderedImage rendImage = createImage();
+
+        // Write generated image to a file
+        try {
+            // Save as PNG
+            File file = new File(fileName);
+            ImageIO.write(rendImage, "png", file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void drawPoints(String fileName, SearchState[] points) {
+        if (points != null) {    // Make a mask for the map for the path
+            Color color;
+            SparseMask currentMask = new SparseMask();
+            HashMap<String, String> used = new HashMap<>();
+
+            // colour point in red
+            color = Color.RED;
+
+            for (SearchState point : points) {
+                ChangeRecord rec = new ChangeRecord(getRow(point.getId()), getCol(point.getId()), color, 1);
+                currentMask.add(rec);
+            }
 
             addMask(currentMask);
             this.currentMask = this.masks.size() - 1;
