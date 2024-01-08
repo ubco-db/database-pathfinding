@@ -48,8 +48,9 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
         // Passing startId and goalId that are the same breaks this (happens if start and goal are in same region)
         // If start and goal are in same region, running A* to find path instead of DBA*
         if (startGroupId == goalGroupId) {
-            HillClimbing hc = new HillClimbing(problem, 250);
-            ArrayList<SearchState> startRegionPath = hc.computePath(start, goal, stats);
+            // Tried HC before, but this doesn't work in all cases
+            AStar aStar = new AStar(problem);
+            ArrayList<SearchState> startRegionPath = aStar.computePath(start, goal, stats);
             pathSize = startRegionPath.size();
             for (int i = 0; i < pathSize; i++) {
                 path[i] = startRegionPath.get(i).getId();

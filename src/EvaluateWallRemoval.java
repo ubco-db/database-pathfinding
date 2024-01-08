@@ -222,8 +222,6 @@ public class EvaluateWallRemoval {
                     }
                 }
 
-                // TODO: fix centroid re-computation
-
                 // Recompute region reps for newly added regions
                 for (GroupRecord newRec : newRecs) {
                     map.recomputeCentroid2(newRec, wallLoc);
@@ -236,7 +234,8 @@ public class EvaluateWallRemoval {
                 // VISUAL CHECK:
                 map.computeCentroidMap().outputImage(DBA_STAR_DB_PATH + "TEST" + MAP_FILE_NAME + ".png", null, null);
 
-                // Rebuild abstract problem
+//                printArray(map.squares);
+
                 map.rebuildAbstractProblem(GRID_SIZE, startRow, startCol, groups);
 
                 ArrayList<Integer> neighborIds = new ArrayList<>(neighbouringRegions);
