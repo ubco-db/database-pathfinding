@@ -1350,7 +1350,8 @@ public class GameMap {
 
                     // After the first time, we want to assign region-ids at the end of the groups map
                     if (firstTime) {
-                        currentNum = groups.size() + START_NUM;
+                        // In removal case, groups.size() may not work (case where same number of regions before and after)
+                        currentNum = groups.lastKey() + 1;
                         firstTime = false;
                     }
                 }
@@ -1672,7 +1673,8 @@ public class GameMap {
             }
         }
 
-        int[][] edges = new int[groups.size()][];
+        // In removal case, groups.size() may not work (case where same number of regions before and after)
+        int[][] edges = new int[groups.lastKey() + 1][];
         int fromRegion, toRegion;
 
         // Examine up-left

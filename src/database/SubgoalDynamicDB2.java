@@ -336,23 +336,33 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
                                                   int[][] lowestCost, int[][][] paths, int[][] neighbor,
                                                   int numGroups, int numLevels,
                                                   boolean isElimination, boolean isPartition) {
-        if (lowestCost.length < groups.size()) {
-            int[][] resizedLowestCost = new int[groups.size()][];
+        /*
+        Currently, I am deleting all regions within a sector and recomputing the whole sector. In the case where the
+        regions do not merge, and the number of regions therefore stays the same, this leads to an off-by-one error when
+        re-assigning region. This is the case because after removing the regions, they are assigned new indices at the
+        end of the groups TreeMap. The indices in this map are in order, but its length plus the offset is not the same
+        as the index of its last element anymore.
+
+        Therefore, I need to use groups.lastKey() + 1 rather than groups.size() for this check or one of the removal
+        cases won't work.
+         */
+        if (lowestCost.length < groups.lastKey() + 1) {
+            int[][] resizedLowestCost = new int[groups.lastKey() + 1][];
             System.arraycopy(lowestCost, 0, resizedLowestCost, 0, lowestCost.length);
             this.lowestCost = resizedLowestCost;
         }
-        if (paths.length < groups.size()) {
-            int[][][] resizedPath = new int[groups.size()][][];
+        if (paths.length < groups.lastKey() + 1) {
+            int[][][] resizedPath = new int[groups.lastKey() + 1][][];
             System.arraycopy(paths, 0, resizedPath, 0, paths.length);
             this.paths = resizedPath;
         }
-        if (neighbor.length < groups.size()) {
-            int[][] resizedNeighbor = new int[groups.size()][];
+        if (neighbor.length < groups.lastKey() + 1) {
+            int[][] resizedNeighbor = new int[groups.lastKey() + 1][];
             System.arraycopy(neighbor, 0, resizedNeighbor, 0, neighbor.length);
             this.neighbor = resizedNeighbor;
         }
-        if (neighborId.length < groups.size()) {
-            int[][] resizedNeighborId = new int[groups.size()][];
+        if (neighborId.length < groups.lastKey() + 1) {
+            int[][] resizedNeighborId = new int[groups.lastKey() + 1][];
             System.arraycopy(neighborId, 0, resizedNeighborId, 0, neighborId.length);
             neighborId = resizedNeighborId;
         }

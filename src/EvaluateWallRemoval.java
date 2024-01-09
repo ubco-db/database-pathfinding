@@ -27,7 +27,7 @@ public class EvaluateWallRemoval {
     public static void main(String[] args) {
         // set start and goal
         int startId = 15362;
-        int goalId = 14921;
+        int goalId = 11671;
 
         // build DBAStar Database
         GameMap startingMap = new GameMap(PATH_TO_MAP);
@@ -36,7 +36,7 @@ public class EvaluateWallRemoval {
 
         // set wall(s)
         ArrayList<SearchState> wallLocation = new ArrayList<>();
-        int wallLoc = 14325;
+        int wallLoc = 11671;
         SearchState wall = new SearchState(wallLoc);
         wallLocation.add(wall);
 
@@ -136,13 +136,10 @@ public class EvaluateWallRemoval {
                 // can I just run findRegionRep to assign the state to a region?
                 int regionRepId = map.getAbstractProblem().findRegionRep(wall, map).getId();
                 int regionId = map.squares[map.getRow(regionRepId)][map.getCol(regionRepId)];
-                System.out.println("Existing region, region rep id: " + regionRepId);
+                System.out.println("Existing region, region rep id: " + regionRepId + " region id: " + regionId);
 
                 map.squares[wallRow][wallCol] = regionId;
                 problem.getMap().squares[wallRow][wallCol] = regionId;
-
-                System.out.println("regionId: " + regionId);
-                System.out.println("sectorId: " + sectorId);
 
                 // Compute start and end of current sector
                 int startRow = (sectorId / numSectorsPerRow) * GRID_SIZE;
@@ -154,6 +151,7 @@ public class EvaluateWallRemoval {
                 System.out.println("End of current sector: " + map.getId(endRow, endCol));
 
                 // Nuking sector on map and keeping track of contained regions
+                // TODO: Should I just nuke the parts touching the region of interest directly?
                 Set<Integer> regionsInCurrentSector = new HashSet<>();
                 for (int r = 0; r < GRID_SIZE; r++) {
                     for (int c = 0; c < GRID_SIZE; c++) {
