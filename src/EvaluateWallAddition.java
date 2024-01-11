@@ -40,7 +40,7 @@ public class EvaluateWallAddition {
 
         // set wall(s)
         ArrayList<SearchState> wallLocation = new ArrayList<>();
-        int wallLoc = 15347; // real region partition (14325) // fake partition (11928) // wall that partitions map (6157)
+        int wallLoc = 2431; // real region partition (14325) // fake partition (11928) // wall that partitions map (6157)
         SearchState wall = new SearchState(wallLoc);
         wallLocation.add(wall);
 
@@ -180,12 +180,20 @@ public class EvaluateWallAddition {
             System.out.println("Group size after removal: " + groups.size());
 
             // states in a groupRecord are in order, the first one is first in the region (top-left-most)
+            // but that does not mean we can always just recompute from there, e.g. wall @2431
             int stateId = groupRecord.states.get(0);
 
-            int startRow = map.getRow(stateId); // 96
-            int startCol = map.getCol(stateId); // 112
-            int endRow = startRow + GRID_SIZE; // 112
-            int endCol = startCol + GRID_SIZE; // 128
+            int wallRow = map.getRow(stateId);
+            int wallCol = map.getCol(stateId);
+
+            int numSectorsPerRow = (int) Math.ceil(map.cols * 1.0 / GRID_SIZE);
+            int sectorId = wallRow / GRID_SIZE * numSectorsPerRow + wallCol / GRID_SIZE;
+
+            // find start and end of sector to recompute
+            int startRow = (sectorId / numSectorsPerRow) * GRID_SIZE;
+            int startCol = (sectorId % numSectorsPerRow) * GRID_SIZE;
+            int endRow = startRow + GRID_SIZE;
+            int endCol = startCol + GRID_SIZE;
 
             // reset region (necessary in order for me to be able to reuse the regionId)
             for (int r = 0; r < GRID_SIZE; r++) {
@@ -198,8 +206,18 @@ public class EvaluateWallAddition {
                 }
             }
 
+            map.outputImage(DBA_STAR_DB_PATH + "TEST1" + MAP_FILE_NAME + ".png", null, null);
+
             // Perform abstraction (go over sector and recompute regions)
             int numRegionsInSector = map.sectorReAbstract2(GRID_SIZE, startRow, startCol, endRow, endCol, regionId, map);
+
+//            for (int i = 0; i < map.squares.length; i++) {
+//                for (int j = 0; j < map.squares[0].length; j++) {
+//                    System.out.print(map.squares[i][j] + " ");
+//                }
+//                System.out.println();
+//            }
+            map.outputImage(DBA_STAR_DB_PATH + "TEST2" + MAP_FILE_NAME + ".png", null, null);
 
             System.out.println("Num regions: " + numRegionsInSector);
 
