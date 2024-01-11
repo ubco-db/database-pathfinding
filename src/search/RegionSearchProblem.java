@@ -52,6 +52,7 @@ public class RegionSearchProblem extends SearchProblem {
             for (int j = 0; j < numRegions[i]; j++) {
                 Region r = new Region();
                 r.sectorId = i;
+                // FIXME: NullPointer
                 r.regionRepId = groups.get(count).groupRepId;
                 r.regionId = map.getCell(map.getRow(r.regionRepId), map.getCol(r.regionRepId)); // Equivalent to START_NUM
                 // r.edges = Arrays.copyOf(edges[i], edges[i].length);
@@ -308,14 +309,8 @@ public class RegionSearchProblem extends SearchProblem {
         for (SearchState searchState : neighborList) neighbors.add(searchState.id);
     }
 
-    public boolean isNeighbor(int fromStateId, int toStateId) { // TODO:
-        // Probably can
-        // do this
-        // faster
-        // without
-        // computing all
-        // the
-        // neighbors?
+    public boolean isNeighbor(int fromStateId, int toStateId) {
+        //  TODO: Probably can do this faster without computing all the neighbors?
         ArrayList<SearchState> neighborList = getNeighbors(new SearchState(
                 fromStateId));
         for (SearchState searchState : neighborList)
@@ -418,6 +413,10 @@ public class RegionSearchProblem extends SearchProblem {
             }
         }
         return null;
+    }
+
+    public int[][] getEdges() {
+        return edges;
     }
 
     @Override

@@ -234,7 +234,7 @@ public class EvaluateWallRemoval {
 
 //                printArray(map.squares);
 
-                map.rebuildAbstractProblem(GRID_SIZE, startRow, startCol, groups);
+                map.rebuildAbstractProblem(map, GRID_SIZE, startRow, startCol);
 
                 ArrayList<Integer> neighborIds = new ArrayList<>(neighbouringRegions);
 
@@ -309,7 +309,7 @@ public class EvaluateWallRemoval {
                 int endCol = startCol + GRID_SIZE;
 
                 // Rebuild abstract problem
-                map.rebuildAbstractProblem(GRID_SIZE, startRow, startCol, groups);
+                map.rebuildAbstractProblem(map, GRID_SIZE, startRow, startCol);
 
                 // Set neighbours
                 map.recomputeNeighbors(GRID_SIZE, startRow, startCol, endRow, endCol, neighborIds);

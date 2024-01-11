@@ -336,10 +336,10 @@ public class AddingAllWallsTest {
             // VISUAL CHECK:
             // map.computeCentroidMap().outputImage(DBA_STAR_DB_PATH + "TEST" + MAP_FILE_NAME + ".png", null, null);
 
-            // Rebuild abstract problem
-            map.rebuildAbstractProblem(GRID_SIZE, startRow, startCol, groups);
+            // Rebuild abstract problem - FIXME
+            map.rebuildAbstractProblem(map, GRID_SIZE, startRow, startCol);
 
-            // Set neighbours
+            // Set neighbours - TODO: check if this is working properly
             map.recomputeNeighbors(GRID_SIZE, startRow, startCol, endRow, endCol, neighborIds);
         }
 
@@ -449,6 +449,7 @@ public class AddingAllWallsTest {
                 // TODO: Wall touches region that is in same sector as wall -> add wall to region and recompute neighbourhood (may have formed path)
 
                 // can I just run findRegionRep to assign the state to a region?
+                // FIXME
                 int regionRepId = map.getAbstractProblem().findRegionRep(wall, map).getId();
                 int regionId = map.squares[map.getRow(regionRepId)][map.getCol(regionRepId)];
                 System.out.println("Existing region, region rep id: " + regionRepId + " region id: " + regionId);
@@ -498,8 +499,6 @@ public class AddingAllWallsTest {
 
                 // TODO: Recompute regions in sector
 
-//                printArray(map.squares);
-
                 // Perform abstraction (go over sector and recompute regions)
                 int numRegionsInSector = map.sectorReAbstract2(GRID_SIZE, startRow, startCol, endRow, endCol, regionId, map);
 
@@ -507,8 +506,6 @@ public class AddingAllWallsTest {
 
                 int count = 0;
                 GroupRecord[] newRecs = new GroupRecord[numRegionsInSector];
-
-//                printArray(map.squares);
 
                 // Traverse cells in sector to re-create the groups
                 for (int i = startRow; i < endRow; i++) {
@@ -545,11 +542,9 @@ public class AddingAllWallsTest {
                 System.out.println("Group size after addition: " + groups.size());
 
                 // VISUAL CHECK:
-                map.computeCentroidMap().outputImage(DBA_STAR_DB_PATH + "TEST" + MAP_FILE_NAME + ".png", null, null);
+//                map.computeCentroidMap().outputImage(DBA_STAR_DB_PATH + "TEST" + MAP_FILE_NAME + ".png", null, null);
 
-//                printArray(map.squares);
-
-                map.rebuildAbstractProblem(GRID_SIZE, startRow, startCol, groups);
+                map.rebuildAbstractProblem(map, GRID_SIZE, startRow, startCol);
 
                 ArrayList<Integer> neighborIds = new ArrayList<>(neighbouringRegions);
 
@@ -622,7 +617,7 @@ public class AddingAllWallsTest {
                 int endCol = startCol + GRID_SIZE;
 
                 // Rebuild abstract problem
-                map.rebuildAbstractProblem(GRID_SIZE, startRow, startCol, groups);
+                map.rebuildAbstractProblem(map, GRID_SIZE, startRow, startCol);
 
                 // Set neighbours
                 map.recomputeNeighbors(GRID_SIZE, startRow, startCol, endRow, endCol, neighborIds);

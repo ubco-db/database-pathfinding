@@ -40,7 +40,7 @@ public class EvaluateWallAddition {
 
         // set wall(s)
         ArrayList<SearchState> wallLocation = new ArrayList<>();
-        int wallLoc = 2431; // real region partition (14325) // fake partition (11928) // wall that partitions map (6157)
+        int wallLoc = 14325; // real region partition (14325) // fake partition (11928) // wall that partitions map (6157), 2431
         SearchState wall = new SearchState(wallLoc);
         wallLocation.add(wall);
 
@@ -206,18 +206,12 @@ public class EvaluateWallAddition {
                 }
             }
 
-            map.outputImage(DBA_STAR_DB_PATH + "TEST1" + MAP_FILE_NAME + ".png", null, null);
+//            map.outputImage(DBA_STAR_DB_PATH + "TEST1" + MAP_FILE_NAME + ".png", null, null);
 
             // Perform abstraction (go over sector and recompute regions)
             int numRegionsInSector = map.sectorReAbstract2(GRID_SIZE, startRow, startCol, endRow, endCol, regionId, map);
 
-//            for (int i = 0; i < map.squares.length; i++) {
-//                for (int j = 0; j < map.squares[0].length; j++) {
-//                    System.out.print(map.squares[i][j] + " ");
-//                }
-//                System.out.println();
-//            }
-            map.outputImage(DBA_STAR_DB_PATH + "TEST2" + MAP_FILE_NAME + ".png", null, null);
+//            map.outputImage(DBA_STAR_DB_PATH + "TEST2" + MAP_FILE_NAME + ".png", null, null);
 
             System.out.println("Num regions: " + numRegionsInSector);
 
@@ -262,7 +256,8 @@ public class EvaluateWallAddition {
             // map.computeCentroidMap().outputImage(DBA_STAR_DB_PATH + "TEST" + MAP_FILE_NAME + ".png", null, null);
 
             // Rebuild abstract problem
-            map.rebuildAbstractProblem(GRID_SIZE, startRow, startCol, groups);
+            // FIXME
+            map.rebuildAbstractProblem(map, GRID_SIZE, startRow, startCol);
 
             // Set neighbours
             map.recomputeNeighbors(GRID_SIZE, startRow, startCol, endRow, endCol, neighborIds);
