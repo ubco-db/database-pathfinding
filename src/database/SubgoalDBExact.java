@@ -2,14 +2,9 @@ package database;
 
 import map.GameMap;
 import map.GroupRecord;
-import search.SearchAlgorithm;
-import search.SearchProblem;
-import search.SearchState;
-import search.StatsRecord;
+import search.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 import java.util.Map.Entry;
 
 /**
@@ -142,7 +137,7 @@ public class SubgoalDBExact extends SubgoalDB {
         db.setNumRegions(distinctStates.size());
 
         // Also store group (abstract region) id to group seed id (base state id of region representative) mapping
-        HashMap<Integer, GroupRecord> groups = problem.getGroups();
+        TreeMap<Integer, GroupRecord> groups = problem.getGroups();
         Iterator<Entry<Integer, GroupRecord>> it = groups.entrySet().iterator();
         Entry<Integer, GroupRecord> e;
         int[][] groupsMapping = new int[groups.size()][2];
@@ -153,6 +148,61 @@ public class SubgoalDBExact extends SubgoalDB {
             groupsMapping[count++][1] = e.getValue().groupRepId;
         }
         db.setGroups(groupsMapping);
+    }
+
+    public void regenerateIndexDB(boolean isPartition, boolean isElimination, int regionId, int regionRepId, int numRegions, GameMap map, GroupRecord[] newRecs) {
+        // TODO: need to update state.id to state.cost mapping
+        int[][] groupsMapping = db.getGroups();
+        // TODO: this matches the .dati2 AW completely now, even though it shouldn't
+        setProblem(new MapSearchProblem(map));
+
+        db = new IndexDB();
+        HashMap<Integer, Integer> distinctStates = new HashMap<>(5000);
+        SearchState state = new SearchState();
+        int lastStateVal = -1;
+        int numStates = 0;
+        // IDEA: Scan cells in order of index number.  When hit new cell that is in a different state than last, add entry to the DB.
+        // NOTE: Using the state.cost variable to pass back the abstract state id.
+        problem.initIterator();
+        while (problem.nextState(state)) {
+            numStates++;
+            if (state.cost != lastStateVal) {
+                db.add(state.id, (int) state.cost);
+                lastStateVal = (int) state.cost;
+            }
+            if (!distinctStates.containsKey(lastStateVal)) distinctStates.put(lastStateVal, lastStateVal);
+        }
+
+        db.setTotalCells(numStates);
+        db.setNumRegions(distinctStates.size()); // alternatively: db.setNumRegions(numRegions);
+
+        // db.setTotalCells(db.getTotalCells() - 1); // TODO: change this to # of walls
+
+        // Do I need to shrink the array in the elimination case?
+        // TODO: I think I will need to skip the wall here potentially
+        if (isPartition) {
+            if (groupsMapping.length < numRegions) {
+                int[][] resizedGroupsMapping = new int[numRegions][];
+                System.arraycopy(groupsMapping, 0, resizedGroupsMapping, 0, groupsMapping.length);
+                groupsMapping = resizedGroupsMapping;
+                for (GroupRecord newRec: newRecs) {
+                    groupsMapping[newRec.groupId - GameMap.START_NUM]  = new int[]{newRec.groupId - GameMap.START_NUM, newRec.groupRepId};
+                }
+            }
+        }
+
+        if (isElimination) { // tombstone record
+            groupsMapping[regionId - GameMap.START_NUM] = null;
+            // db.setNumRegions(groupsMapping.length - 1);
+        }
+
+//        if (!(isElimination || isPartition)){ // update groupsMapping/groupsArr
+//            groupsMapping[regionId - GameMap.START_NUM] = new int[]{regionId - GameMap.START_NUM, regionRepId};
+//        }
+
+        // write groupsArr back to db
+        db.setGroups(groupsMapping);
+        db.buildHT();
     }
 
     /**
@@ -166,4 +216,5 @@ public class SubgoalDBExact extends SubgoalDB {
         super.verify(searchAlg);
         db.verify(problem);
     }
+
 }

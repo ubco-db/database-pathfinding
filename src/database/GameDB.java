@@ -10,16 +10,11 @@ import search.SearchState;
 import search.SearchUtil;
 import search.StatsRecord;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.BitSet;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Random;
+import java.util.*;
 
 public class GameDB {
     private final SearchProblem problem;
-    private HashMap<Integer, GroupRecord> groups;
+    private TreeMap<Integer, GroupRecord> groups;
 
     public GameDB(SearchProblem problem) {
         this.problem = problem;
@@ -545,10 +540,10 @@ public class GameDB {
         return db;
     }
 
-    public static HashSet<Integer> getNeighbors(HashMap<Integer, GroupRecord> groups, GroupRecord startGroup, int numLevels) {
+    public static HashSet<Integer> getNeighbors(TreeMap<Integer, GroupRecord> groups, GroupRecord startGroup, int numLevels, boolean isPartition) {
         HashSet<Integer> neighbors = startGroup.getComputedNeighborIds();
 
-        if (neighbors == null) {
+        if (neighbors == null || isPartition) {
             // This supports Level 1 (immediate neighbors)
             neighbors = new HashSet<Integer>(startGroup.getNeighborIds().size());
             neighbors.addAll(startGroup.getNeighborIds());
@@ -581,7 +576,7 @@ public class GameDB {
         return neighbors;
     }
 
-    public static long computeBasePaths(SearchProblem problem, HashMap<Integer, GroupRecord> groups, SearchAlgorithm searchAlg, int[][] lowestCost, int[][][] paths, int[][] neighbor, int numGroups, int numLevels, boolean asSubgoals, DBStatsRecord dbstats) {
+    public static long computeBasePaths(SearchProblem problem, TreeMap<Integer, GroupRecord> groups, SearchAlgorithm searchAlg, int[][] lowestCost, int[][][] paths, int[][] neighbor, int numGroups, int numLevels, boolean asSubgoals, DBStatsRecord dbstats) {
         int goalGroupLoc, startGroupLoc;
         GroupRecord startGroup, goalGroup;
         HashSet<Integer> neighbors;
@@ -604,7 +599,7 @@ public class GameDB {
         for (int i = 0; i < numGroups; i++) {
             startGroup = groups.get(i + GameMap.START_NUM);
 
-            neighbors = GameDB.getNeighbors(groups, startGroup, numLevels);
+            neighbors = GameDB.getNeighbors(groups, startGroup, numLevels, false);
             // System.out.println("Doing group: "+i+" Neighbors: "+neighbors.size());
             // Generate for each neighbor group
             for (int goalGroupId : neighbors) {

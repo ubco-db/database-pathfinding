@@ -6,8 +6,8 @@ import util.ExpandArray;
 import util.HeuristicFunction;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Random;
+import java.util.TreeMap;
 
 /**
  * Supports grid-based search problems (for game maps).
@@ -139,7 +139,7 @@ public class MapSearchProblem extends SearchProblem {
 	}
 	*/
 
-    public HashMap<Integer, GroupRecord> getGroups() {
+    public TreeMap<Integer, GroupRecord> getGroups() {
         return map.getGroups();
     }
 

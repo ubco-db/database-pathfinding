@@ -171,19 +171,28 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
         //		neighbor matrix (numGroups x numGroups)
         // 		paths matrix (with paths). Each path on a line.  A path is a list of subgoals.  Just have 0 if no states.
         try (PrintWriter out = new PrintWriter(fileName)) {
+            // out.println("numGroups: ");
             out.println(numGroups);
             for (int i = 0; i < numGroups; i++) {    // Read each group which has # neighbors as N, neighborId[N], lowest cost[N], neighbor[] and paths on each line
                 int numNeighbors = neighborId[i].length;
+                // out.println("numNeighbours for " + i + ": ");
                 out.println(numNeighbors);
-                for (int j = 0; j < numNeighbors; j++)
+                // out.println("neighbourIds: ");
+                for (int j = 0; j < numNeighbors; j++) {
                     out.print(neighborId[i][j] + "\t");
+                }
                 out.println();
-                for (int j = 0; j < numNeighbors; j++)
+                // out.println("lowestCosts: ");
+                for (int j = 0; j < numNeighbors; j++) {
                     out.print(lowestCost[i][j] + "\t");
+                }
                 out.println();
-                for (int j = 0; j < numNeighbors; j++)
+                // out.println("neighbours: ");
+                for (int j = 0; j < numNeighbors; j++) {
                     out.print(neighbor[i][j] + "\t");
+                }
                 out.println();
+                // out.println("paths: ");
                 for (int j = 0; j < numNeighbors; j++) {
                     out.print(paths[i][j].length + "\t");
                     for (int k = 0; k < paths[i][j].length; k++)
@@ -206,7 +215,7 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
         db.verify(problem);
     }
 
-    public void compute(SearchProblem problem, HashMap<Integer, GroupRecord> groups, SearchAlgorithm searchAlg, DBStatsRecord dbStats, int numLevels) {
+    public void compute(SearchProblem problem, TreeMap<Integer, GroupRecord> groups, SearchAlgorithm searchAlg, DBStatsRecord dbStats, int numLevels) {
         numGroups = groups.size();
         lowestCost = new int[numGroups][];
         paths = new int[numGroups][][];
@@ -234,7 +243,7 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
      * @param dbStats
      * @param numLevels
      */
-    public long computeBasePaths2(SearchProblem problem, HashMap<Integer, GroupRecord> groups, SearchAlgorithm searchAlg, int[][] lowestCost, int[][][] paths, int[][] neighbor, int numGroups, int numLevels, boolean asSubgoals, DBStatsRecord dbStats) {
+    public long computeBasePaths2(SearchProblem problem, TreeMap<Integer, GroupRecord> groups, SearchAlgorithm searchAlg, int[][] lowestCost, int[][][] paths, int[][] neighbor, int numGroups, int numLevels, boolean asSubgoals, DBStatsRecord dbStats) {
         int goalGroupLoc, startGroupLoc;
         GroupRecord startGroup, goalGroup;
         HashSet<Integer> neighbors;
@@ -253,7 +262,7 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
             startGroup = groups.get(i + GameMap.START_NUM);
             startGroupLoc = i;
 
-            neighbors = GameDB.getNeighbors(groups, startGroup, numLevels);
+            neighbors = GameDB.getNeighbors(groups, startGroup, numLevels, false);
             int numNeighbors = neighbors.size();
             lowestCost[startGroupLoc] = new int[numNeighbors];
             neighbor[startGroupLoc] = new int[numNeighbors];
@@ -296,7 +305,128 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
         System.out.println("Time to compute base paths: " + (baseTime));
         System.out.println("Base neighbors generated paths: " + numBase + " Number of states: " + numStates);
         dbStats.addStat(9, numStates);        // Set number of subgoals.  Will be changed by a version that pre-computes all paths but will not be changed for the dynamic version.
-        dbStats.addStat(8, numBase);        // # of records (only corresponds to base paths)
+        dbStats.addStat(8, numBase);          // # of records (only corresponds to base paths)
         return baseTime;
+    }
+
+    public int[][] getLowestCost() {
+        return lowestCost;
+    }
+
+    public int[][][] getPaths() {
+        return paths;
+    }
+
+    public int[][] getNeighbor() {
+        return neighbor;
+    }
+
+    /**
+     * Recomputes the dynamic programming table and base paths.
+     * DP table is stored as an adjacency list representation
+     *
+     * @param problem
+     * @param groups
+     * @param searchAlg
+     * @param numLevels
+     */
+    public void recomputeBasePaths2(SearchProblem problem, TreeMap<Integer, GroupRecord> groups,
+                                    ArrayList<Integer> neighbourIndices, SearchAlgorithm searchAlg,
+                                    int[][] lowestCost, int[][][] paths, int[][] neighbor,
+                                    int numGroups, int numLevels,
+                                    boolean isElimination, boolean isPartition) {
+        if (lowestCost.length < groups.size()) {
+            int[][] resizedLowestCost = new int[groups.size()][];
+            System.arraycopy(lowestCost, 0, resizedLowestCost, 0, lowestCost.length);
+            this.lowestCost = resizedLowestCost;
+        }
+        if (paths.length < groups.size()) {
+            int[][][] resizedPath = new int[groups.size()][][];
+            System.arraycopy(paths, 0, resizedPath, 0, paths.length);
+            this.paths = resizedPath;
+        }
+        if (neighbor.length < groups.size()) {
+            int[][] resizedNeighbor = new int[groups.size()][];
+            System.arraycopy(neighbor, 0, resizedNeighbor, 0, neighbor.length);
+            this.neighbor = resizedNeighbor;
+        }
+        if (neighborId.length < groups.size()) {
+            int[][] resizedNeighborId = new int[groups.size()][];
+            System.arraycopy(neighborId, 0, resizedNeighborId, 0, neighborId.length);
+            neighborId = resizedNeighborId;
+        }
+
+        int goalGroupLoc, startGroupLoc;
+        GroupRecord startGroup, goalGroup;
+        HashSet<Integer> neighbors;
+        AStar astar = new AStar(problem);
+        ArrayList<SearchState> path;
+        StatsRecord stats = new StatsRecord();
+        int numBase = 0;
+
+        System.out.println("Number of groups to recompute: " + numGroups);
+        long currentTime = System.currentTimeMillis();
+
+        int[] tmp = new int[5000];
+        System.out.println("Creating base paths to neighbors.");
+        int numStates = 0;
+
+        for (Integer neighbourIndex : neighbourIndices) {
+            startGroup = groups.get(neighbourIndex); // will need to redo
+            startGroupLoc = neighbourIndex - GameMap.START_NUM;
+
+            if (startGroup == null) {
+                continue;
+            }
+
+            // TODO: could probably simplify this code since we are not taking advantage of numLevels currently anyways
+            neighbors = GameDB.getNeighbors(groups, startGroup, numLevels, isPartition);
+            int numNeighbors = neighbors.size();
+
+            if (isElimination) {
+                numNeighbors -= 1;
+            }
+
+            this.lowestCost[startGroupLoc] = new int[numNeighbors];
+            this.neighbor[startGroupLoc] = new int[numNeighbors];
+            neighborId[startGroupLoc] = new int[numNeighbors];
+            this.paths[startGroupLoc] = new int[numNeighbors][];
+
+            Iterator<Integer> it = neighbors.iterator();
+            // Generate for each neighbor group
+            int count = 0;
+            while (it.hasNext()) {
+                // Compute the shortest path between center representative of both groups
+                int goalGroupId = it.next();
+                goalGroup = groups.get(goalGroupId);
+
+                if (goalGroup != null) {
+                    path = astar.computePath(new SearchState(startGroup.groupRepId), new SearchState(goalGroup.groupRepId), stats);
+                    numBase++;
+                    goalGroupLoc = goalGroupId - GameMap.START_NUM;
+
+                    // Save information
+                    SearchUtil.computePathCost(path, stats, problem);
+                    int pathCost = stats.getPathCost();
+
+                    neighborId[startGroupLoc][count] = goalGroupLoc;
+                    this.lowestCost[startGroupLoc][count] = pathCost;
+                    this.neighbor[startGroupLoc][count] = goalGroupLoc;
+                    this.paths[startGroupLoc][count] = SubgoalDB.convertPathToIds(path);
+                    this.paths[startGroupLoc][count] = SearchUtil.compressPath(this.paths[startGroupLoc][count], searchAlg, tmp, path.size());
+                    numStates += this.paths[startGroupLoc][count].length;
+                    count++;
+                }
+            }
+        }
+
+        this.numGroups = groups.size();
+
+        long endTime = System.currentTimeMillis();
+        long baseTime = endTime - currentTime;
+        System.out.println("Time to re-compute base paths: " + (baseTime));
+        System.out.println("Base neighbors generated paths: " + numBase + " Number of states: " + numStates);
+//        dbStats.addStat(9, numStates);        // Set number of subgoals.  Will be changed by a version that pre-computes all paths but will not be changed for the dynamic version.
+//        dbStats.addStat(8, numBase);          // # of records (only corresponds to base paths)
     }
 }

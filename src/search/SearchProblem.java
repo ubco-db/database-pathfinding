@@ -5,8 +5,8 @@ import util.ExpandArray;
 import util.HeuristicFunction;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Random;
+import java.util.TreeMap;
 
 /**
  * Generic class for search problems.
@@ -46,7 +46,7 @@ public abstract class SearchProblem {
 
     public abstract SearchState generateRandomState(Random generator);
 
-    public abstract HashMap<Integer, GroupRecord> getGroups();
+    public abstract TreeMap<Integer, GroupRecord> getGroups();
 
     public abstract void computeNeighbors();
 

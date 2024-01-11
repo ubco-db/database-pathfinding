@@ -50,7 +50,12 @@ public class DBAStar implements SearchAlgorithm {
 
         // Search the database for records
         startTime2 = System.nanoTime();
-        ArrayList<SubgoalDBRecord> records = database.findNearest(problem, startRegionCenter, goalRegionCenter, subgoalSearchAlg, 1, stats, null);
+        ArrayList<SubgoalDBRecord> records = null;
+
+        // Need this condition for complete separation case, not entirely sure why
+        if (startRegionCenter != null && goalRegionCenter != null) {
+            records = database.findNearest(problem, startRegionCenter, goalRegionCenter, subgoalSearchAlg, 1, stats, null);
+        }
         endTime = System.nanoTime();
 
         if (records != null && !records.isEmpty()) {
@@ -186,5 +191,21 @@ public class DBAStar implements SearchAlgorithm {
 
     public GameMap getDBAStarMap() {
         return map;
+    }
+
+    public SubgoalDB getDatabase() {
+        return database;
+    }
+
+    public SearchProblem getProblem() {
+        return problem;
+    }
+
+    public GameMap getMap() {
+        return map;
+    }
+
+    public RegionSearchProblem getAbstractProblem() {
+        return abstractProblem;
     }
 }

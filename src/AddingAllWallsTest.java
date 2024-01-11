@@ -1,4 +1,3 @@
-import comparison.DBDiff;
 import database.DBStats;
 import database.DBStatsRecord;
 import database.GameDB;
@@ -9,16 +8,16 @@ import map.GroupRecord;
 import search.*;
 import util.ExpandArray;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.TreeMap;
+import java.util.*;
 
 import static util.MapHelpers.*;
 
-public class EvaluateDynamicScenario {
+public class AddingAllWallsTest {
     final static String DB_PATH = "dynamic/databases/";
-    final static String DBA_STAR_DB_PATH = DB_PATH + "DBA/";
-
+    final static String DBA_STAR_DB_PATH = DB_PATH + "test/";
     final static String MAP_FILE_PATH = "maps/dMap/";
     final static String MAP_FILE_NAME = "012.map";
     final static String PATH_TO_MAP = MAP_FILE_PATH + MAP_FILE_NAME;
@@ -26,39 +25,110 @@ public class EvaluateDynamicScenario {
     final static int CUTOFF = 250; // The maximum # of moves for hill-climbing checks.
     final static int GRID_SIZE = 16;
     final static int NUM_NEIGHBOUR_LEVELS = 1; // # of neighbor levels for HCDPS
+    final static int START_NUM = 50;
 
-
+    // TODO: add path comparison logic to ensure paths are identical
     public static void main(String[] args) {
-        // set start and goal
-        int startId = 10219;
-        int goalId = 13905;
-
-        // build DBAStar Database
+        DBAStar dbaStar;
         GameMap startingMap = new GameMap(PATH_TO_MAP);
-        DBAStar dbaStarBW = computeDBAStarDatabase(startingMap, "BW"); // BW = before wall
-        getDBAStarPath(startId, goalId, "BW", dbaStarBW);
 
-        // set wall(s)
-        ArrayList<SearchState> wallLocation = new ArrayList<>();
-        int wallLoc = 15347; // real region partition (14325) // fake partition (11928) // wall that partitions map (6157)
+        // fix start
+        int startId = 13411;
+
+        ArrayList<Integer> goalIds = new ArrayList<>();
+        // iterate over all goals (open spots no wall)
+        for (int i = 16; i < startingMap.rows; i++) {
+            for (int j = 0; j < startingMap.cols; j++) {
+                if (!startingMap.isWall(i, j)) {
+                    goalIds.add(startingMap.getId(i, j));
+                }
+            }
+        }
+
+        // remove startId from list of goals
+        goalIds.remove((Integer) startId);
+
+        // print number of goals (6175 on 012.map)
+        System.out.println("Number of goals: " + goalIds.size());
+
+        // compute DBAStar database before adding wall
+        System.out.println();
+        dbaStar = computeDBAStar(startingMap, 0, "BW");
+
+        // compute paths to all goals, store in HashMap of arrays (goal state as key)
+        HashMap<Integer, ArrayList<SearchState>> paths = new HashMap<>();
+        for (int goalId : goalIds) {
+            paths.put(goalId, getDBAStarPath(startId, goalId, dbaStar));
+        }
+
+        /* partial recomputation */
+
+        long elapsedTimePartialRecomputation = 0;
+
+        for (int wallId: goalIds) {
+            // TODO: Copy map and database so I can use them here:
+
+            long startTimePartialRecomputation = System.currentTimeMillis();
+            recomputeDBAStar(wallId, dbaStar.getMap(), (MapSearchProblem) dbaStar.getProblem(), (SubgoalDynamicDB2) dbaStar.getDatabase());
+            long endTimePartialRecomputation = System.currentTimeMillis();
+
+            elapsedTimePartialRecomputation += endTimePartialRecomputation - startTimePartialRecomputation;
+
+            for (int goalId : goalIds) {
+                if (goalId != wallId) {
+                    getDBAStarPath(startId, goalId, dbaStar);
+                }
+            }
+        }
+
+        System.out.println("Elapsed Time in milliseconds for partial recomputation: " + elapsedTimePartialRecomputation);
+
+        /* complete recomputation */
+
+        long elapsedTimeCompleteRecomputation = 0;
+
+        for (int wallId : goalIds) {
+            // setting up walls
+            ArrayList<SearchState> wallLocation = new ArrayList<>();
+            SearchState wall = new SearchState(wallId);
+            wallLocation.add(wall); // adding wall for each open state
+            Walls.addWall(PATH_TO_MAP, wallLocation, startingMap);
+
+            startingMap = new GameMap(PATH_TO_MAP); // resetting map
+
+            long startTimeCompleteRecomputation = System.currentTimeMillis();
+            dbaStar = computeDBAStar(startingMap, wallId, "AW");
+            long endTimeCompleteRecomputation = System.currentTimeMillis();
+
+            elapsedTimeCompleteRecomputation += endTimeCompleteRecomputation - startTimeCompleteRecomputation;
+
+            Walls.removeWall(PATH_TO_MAP, wallLocation, startingMap);
+
+            for (int goalId : goalIds) {
+                if (goalId != wallId) {
+                    getDBAStarPath(startId, goalId, dbaStar);
+                }
+            }
+        }
+
+        System.out.println("Elapsed Time in milliseconds for complete recomputation: " + elapsedTimeCompleteRecomputation);
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(DBA_STAR_DB_PATH + "times.txt"))) {
+            writer.write("Elapsed Time in milliseconds for partial recomputation: " + elapsedTimePartialRecomputation);
+            writer.write("Elapsed Time in milliseconds for complete recomputation: " + elapsedTimeCompleteRecomputation);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void recomputeDBAStar(int wallLoc, GameMap map, MapSearchProblem problem, SubgoalDynamicDB2 dbBW) {
         SearchState wall = new SearchState(wallLoc);
-        wallLocation.add(wall);
-
-        // Use the map returned after the database is fully computed
-        System.out.println();
-        System.out.println();
-        System.out.println();
-
-        long startTimeRecomp = System.currentTimeMillis();
-
-        GameMap map = dbaStarBW.getMap();
         int regionId = map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)];
 
         boolean priorWall = map.isWall(wallLoc);
 
         // Add wall to existing map and to map inside problem
         map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = '*'; // 96, 117
-        MapSearchProblem problem = (MapSearchProblem) dbaStarBW.getProblem();
         priorWall = priorWall && problem.getMap().isWall(wallLoc);
         problem.getMap().squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = '*';
 
@@ -254,8 +324,7 @@ public class EvaluateDynamicScenario {
             neighborIds.add(groupRecord.groupId); // need to pass this so updates work both ways (for partition this is already added)
         }
 
-        // Get database and initialize pathCompressAlgDba
-        SubgoalDynamicDB2 dbBW = (SubgoalDynamicDB2) dbaStarBW.getDatabase();
+        // Initialize pathCompressAlgDba
         HillClimbing pathCompressAlgDba = new HillClimbing(problem, 10000);
 
         // Update regions for neighborIds in the database
@@ -267,57 +336,9 @@ public class EvaluateDynamicScenario {
 
         // For checking recomputed database against AW database
         dbBW.exportDB(DBA_STAR_DB_PATH + "BW_Recomp_" + MAP_FILE_NAME + "_DBA-STAR_G" + GRID_SIZE + "_N" + NUM_NEIGHBOUR_LEVELS + "_C" + CUTOFF + ".dat");
-
-        long endTimeRecomp = System.currentTimeMillis();
-        long elapsedTime = endTimeRecomp - startTimeRecomp;
-
-        System.out.println("Elapsed Time in milliseconds for partial recomputation: " + elapsedTime);
-
-        getDBAStarPath(startId, goalId, "BW_Recomp", dbaStarBW);
-
-        System.out.println("Exporting map with areas and centroids.");
-        map.computeCentroidMap().outputImage(getImageName("BW_Recomp", true), null, null);
-
-        System.out.println();
-        System.out.println();
-        System.out.println();
-
-        // try to only recompute changes, then recompute entire database to see if I matched it
-        // recompute database
-
-        long startTime = System.currentTimeMillis();
-
-        // add wall to starting map
-        Walls.addWall(PATH_TO_MAP, wallLocation, startingMap);
-        startingMap = new GameMap(PATH_TO_MAP);
-
-        DBAStar dbaStarAW = computeDBAStarDatabase(startingMap, "AW"); // AW = after wall
-        getDBAStarPath(startId, goalId, "AW", dbaStarAW);
-
-        long endTime = System.currentTimeMillis();
-        elapsedTime = endTime - startTime;
-
-        System.out.println("Elapsed Time in milliseconds for full recomputation: " + elapsedTime);
-
-        // remove wall
-        Walls.removeWall(PATH_TO_MAP, wallLocation, startingMap);
-
-        // compare databases
-        try {
-            String f1Name = "BW012.map_DBA-STAR_G16_N1_C250.";
-            String f2Name = "AW012.map_DBA-STAR_G16_N1_C250.";
-            String ext = "dati2";
-            DBDiff.getDBDiff(DBA_STAR_DB_PATH, wallLoc, f1Name, f2Name, ext);
-            f1Name = "BW012.map_DBA-STAR_G16_N1_C250.";
-            f2Name = "AW012.map_DBA-STAR_G16_N1_C250.";
-            ext = "dat";
-            DBDiff.getDBDiff(DBA_STAR_DB_PATH, wallLoc, f1Name, f2Name, ext);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
-    private static DBAStar computeDBAStarDatabase(GameMap map, String wallStatus) {
+    private static DBAStar computeDBAStar(GameMap map, int wallLoc, String wallStatus) {
         long currentTime;
 
         SearchProblem problem = new MapSearchProblem(map);
@@ -345,39 +366,32 @@ public class EvaluateDynamicScenario {
         rec.addStat(6, map.cols);
 
         currentTime = System.currentTimeMillis();
-
-        // This is where region reps and groups on the map are computed
         map = map.sectorAbstract2(GRID_SIZE);
 
         long resultTime = System.currentTimeMillis() - currentTime;
-
         rec.addStat(12, resultTime);
         rec.addStat(10, resultTime);
         rec.addStat(11, map.states);
         rec.addStat(7, map.states);
         dbStats.addRecord(rec);
 
-        System.out.println("Exporting map with areas.");
-        map.outputImage(getImageName(wallStatus, false), null, null);
-        System.out.println("Exporting map with areas and centroids.");
-        map.computeCentroidMap().outputImage(getImageName(wallStatus, true), null, null);
+        // System.out.println("Exporting map with areas.");
+        // map.outputImage(getImageName(wallStatus, false), null, null);
 
-        // QUESTION: Why are we passing this tmpProb?
+        // System.out.println("Exporting map with areas and centroids.");
+        // map.computeCentroidMap().outputImage(getImageName(wallStatus, true), null, null);
+
         SearchProblem tmpProb = new MapSearchProblem(map);
         GameDB gameDB = new GameDB(tmpProb);
 
         currentTime = System.currentTimeMillis();
-
-        // TODO
         database.computeIndex(tmpProb, rec);
-
         rec.addStat(23, System.currentTimeMillis() - currentTime);
 
         System.out.println("Generating gameDB.");
         currentTime = System.currentTimeMillis();
 
         database = gameDB.computeDynamicDB(database, pathCompressAlgDba, rec, NUM_NEIGHBOUR_LEVELS);
-
         System.out.println("Time to compute DBAStar gameDB: " + (System.currentTimeMillis() - currentTime));
 
         database.init();
@@ -391,40 +405,57 @@ public class EvaluateDynamicScenario {
         System.out.println("Database verification complete.");
         System.out.println("Databases loaded.");
 
-        // return database here to access and modify
         return new DBAStar(problem, map, database);
     }
 
-    private static void getDBAStarPath(int startId, int goalId, String wallStatus, DBAStar dbaStar) {
-        GameMap map = dbaStar.getMap();
+    private static ArrayList<SearchState> getDBAStarPath(int startId, int goalId, DBAStar dbaStar) {
+        StatsRecord stats = new StatsRecord();
+        SearchState start = new SearchState(startId);
+        SearchState goal = new SearchState(goalId);
 
-        AStar aStar = new AStar(dbaStar.getProblem());
-
-        StatsRecord dbaStats = new StatsRecord();
-        ArrayList<SearchState> path = dbaStar.computePath(new SearchState(startId), new SearchState(goalId), dbaStats);
-
-        StatsRecord aStarStats = new StatsRecord();
-        ArrayList<SearchState> optimalPath = aStar.computePath(new SearchState(startId), new SearchState(goalId), aStarStats);
-
-        System.out.println("AStar path cost: " + aStarStats.getPathCost() + " DBAStar path cost: " + dbaStats.getPathCost());
-        System.out.println("Suboptimality: " + ((((double) dbaStats.getPathCost()) / aStarStats.getPathCost()) - 1) * 100.0);
-
-        if (path == null || path.isEmpty()) {
-            System.out.printf("No path was found between %d and %d!%n", startId, goalId);
-        }
-        map.computeCentroidMap().outputImage(DBA_STAR_DB_PATH + wallStatus + MAP_FILE_NAME + "_path.png", path, null);
-        map.computeCentroidMap().outputImage(DBA_STAR_DB_PATH + wallStatus + MAP_FILE_NAME + "_optimal_path.png", optimalPath, null);
+        // ArrayList<SearchState> subgoals = dbaStar.getSubgoals();
+        return dbaStar.computePath(start, goal, stats);
     }
-
-    /* Helper methods */
 
     private static String getDBName(String wallStatus) {
         return DBA_STAR_DB_PATH + wallStatus + MAP_FILE_NAME + "_DBA-STAR_G" + GRID_SIZE + "_N" + NUM_NEIGHBOUR_LEVELS + "_C" + CUTOFF + ".dat";
     }
 
-    private static String getImageName(String wallStatus, boolean hasCentroids) {
-        String lastToken = hasCentroids ? "_DBA_Centroid.png" : "_DBA.png";
-        return DBA_STAR_DB_PATH + wallStatus + MAP_FILE_NAME + lastToken;
+    private static boolean isPathEqual(ArrayList<SearchState> newPath, ArrayList<SearchState> oldPath) {
+        // if path length differs, they are not equal
+        if (newPath == null)
+            return false; // QUESTION: can oldPath ever be null? No, because safe explorability is assumed
+        if (newPath.size() != oldPath.size()) return false;
+
+        for (int i = 0; i < newPath.size(); i++) {
+            // comparing SearchStates (have an equals-method)
+            if (!newPath.get(i).equals(oldPath.get(i))) return false;
+        }
+        return true;
+    }
+
+    private static double getPathDiff(ArrayList<SearchState> newPath, ArrayList<SearchState> oldPath) {
+        // Convert ArrayLists to sets
+        Set<Integer> set1 = new HashSet<>();
+        for (SearchState s : newPath) {
+            set1.add(s.getId());
+        }
+
+        Set<Integer> set2 = new HashSet<>();
+        for (SearchState s : oldPath) {
+            set2.add(s.getId());
+        }
+
+        // Calculate intersection and union
+        Set<Integer> intersection = new HashSet<>(set1);
+        intersection.retainAll(set2);
+        Set<Integer> union = new HashSet<>(set1);
+        union.addAll(set2);
+
+        // Calculate Jaccard similarity coefficient
+        double jaccardSimilarity = (double) intersection.size() / union.size();
+
+        // Return the percentage difference
+        return (1 - jaccardSimilarity) * 100;
     }
 }
-    
