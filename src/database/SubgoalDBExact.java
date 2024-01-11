@@ -179,7 +179,6 @@ public class SubgoalDBExact extends SubgoalDB {
         // db.setTotalCells(db.getTotalCells() - 1); // TODO: change this to # of walls
 
         // Do I need to shrink the array in the elimination case?
-        // TODO: I think I will need to skip the wall here potentially
         if (isPartition) {
             if (groupsMapping.length < numRegions) {
                 int[][] resizedGroupsMapping = new int[numRegions][];
