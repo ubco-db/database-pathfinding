@@ -17,7 +17,7 @@ public class RegionSearchProblem extends SearchProblem {
     private int[][] edges; // edges[i][j] is an edge from region i to region j
     private GameMap map;
     private int[] regionCenter; // The node id of each region representative
-    private int gridSize;
+    private final int gridSize;
 
     private class Sector {
         public int number;
@@ -74,6 +74,53 @@ public class RegionSearchProblem extends SearchProblem {
         this.map = map;
         this.regionCenter = regionCenter;
         this.gridSize = gridSize;
+    }
+
+    // FIXME
+    public void recomputeRegionSearchProblem(int[] numRegions, int[][] edges, GameMap map, int sectorId, int numRegionsInSector, int[] regionIds) {
+        this.numRegions = numRegions;
+        this.edges = edges;
+        this.map = map;
+
+        TreeMap<Integer, GroupRecord> groups = map.getGroups();
+
+        // TODO: need to work on sectors and regions here - deal with new sectors occurring through wall deletion
+        // how to go about it if the sector gains or looses regions?
+
+//        System.out.println(sectors);
+
+        Sector currentSector = sectors.get(sectorId);
+
+        // TODO: may be able to optimize here, don't always need to delete this
+        // remove old regions from regions list
+        for (int i = 0; i < currentSector.numRegions; i++) {
+            regions.remove(currentSector.regions.get(i).regionId);
+        }
+
+        // remove old regions from sector
+        currentSector.regions.clear();
+
+        // TODO: add a check here, if these are equal we may be able to optimize
+        currentSector.numRegions = numRegionsInSector;
+
+        // Add regions to sector, assign correct region id and region rep id
+        for (int i = 0; i < currentSector.numRegions; i++) {
+            Region r = new Region();
+
+            r.sectorId = currentSector.number;
+            r.regionId = regionIds[i];
+            r.regionRepId = groups.get(r.regionId).groupRepId; // can get by region id in groups
+
+            currentSector.regions.add(r);
+
+            regions.put(r.regionId, r);
+        }
+
+        System.out.println("Current sector after recomputation: " + currentSector);
+
+        // TODO: add region(s) to regions, need to delete any?
+        // FIXME: delete old region in partition case, how to?
+//        System.out.println(regions);
     }
 
     public int computeDistance(SearchState start, SearchState goal) {

@@ -104,11 +104,11 @@ public class EvaluateWallAddition {
         boolean potentialDiagonalPartition = false;
 
         // Need to check entire region to make sure it has not become partitioned by wall addition
-        // idea: get neighbours of wall
+        // idea: get neighbours (8) of wall
         int wallRowId = map.getRow(wallLoc);
         int wallColId = map.getCol(wallLoc);
         System.out.println(map.squares[wallRowId][wallColId]);
-        // it will have eight neighbours
+
         // TODO: having the regions marked on the map is not part of DBA*, should I use this?
         int neighborNorth = map.squares[wallRowId - 1][wallColId];
         int neighborNorthEast = map.squares[wallRowId - 1][wallColId + 1];
@@ -118,6 +118,7 @@ public class EvaluateWallAddition {
         int neighborSouthWest = map.squares[wallRowId + 1][wallColId - 1];
         int neighborWest = map.squares[wallRowId][wallColId - 1];
         int neighborNorthWest = map.squares[wallRowId - 1][wallColId - 1];
+
         // if the region has become partitioned, it would have to have neighbors that are across from each other be walls or in different regions
         // (this is a necessary condition, but not sufficient)
 
@@ -245,11 +246,15 @@ public class EvaluateWallAddition {
 
             System.out.println("Group size after addition: " + groups.size());
 
+            int[] regionIds = new int[numRegionsInSector];
+            count = 0;
+
             // Recompute region reps for newly added regions
             for (GroupRecord newRec : newRecs) {
                 map.recomputeCentroid2(newRec, wallLoc);
                 // Add regions that didn't exist before to list
                 neighborIds.add(newRec.groupId);
+                regionIds[count++] = newRec.groupId;
             }
 
             // VISUAL CHECK:
@@ -257,7 +262,7 @@ public class EvaluateWallAddition {
 
             // Rebuild abstract problem
             // FIXME
-            map.rebuildAbstractProblem(map, GRID_SIZE, startRow, startCol);
+            map.rebuildAbstractProblem(map, GRID_SIZE, startRow, startCol, numRegionsInSector, regionIds);
 
             // Set neighbours
             map.recomputeNeighbors(GRID_SIZE, startRow, startCol, endRow, endCol, neighborIds);

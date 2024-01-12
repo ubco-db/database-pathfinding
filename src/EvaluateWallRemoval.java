@@ -222,11 +222,15 @@ public class EvaluateWallRemoval {
                     }
                 }
 
+                int[] regionIds = new int[numRegionsInSector];
+                count = 0;
+
                 // Recompute region reps for newly added regions
                 for (GroupRecord newRec : newRecs) {
                     map.recomputeCentroid2(newRec, wallLoc);
                     // Add regions that didn't exist before to list
                     neighbouringRegions.add(newRec.groupId);
+                    regionIds[count++] = newRec.groupId;
                 }
 
                 System.out.println("Group size after addition: " + groups.size());
@@ -236,7 +240,7 @@ public class EvaluateWallRemoval {
 
 //                printArray(map.squares);
 
-                map.rebuildAbstractProblem(map, GRID_SIZE, startRow, startCol);
+                map.rebuildAbstractProblem(map, GRID_SIZE, startRow, startCol, numRegionsInSector, regionIds);
 
                 ArrayList<Integer> neighborIds = new ArrayList<>(neighbouringRegions);
 
@@ -311,7 +315,7 @@ public class EvaluateWallRemoval {
                 int endCol = startCol + GRID_SIZE;
 
                 // Rebuild abstract problem
-                map.rebuildAbstractProblem(map, GRID_SIZE, startRow, startCol);
+                map.rebuildAbstractProblem(map, GRID_SIZE, startRow, startCol, 1, new int[]{newRec.groupId});
 
                 // Set neighbours
                 map.recomputeNeighbors(GRID_SIZE, startRow, startCol, endRow, endCol, neighborIds);

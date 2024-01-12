@@ -1674,7 +1674,7 @@ public class GameMap {
         abstractProblem = new RegionSearchProblem(numRegions, edges, null, this, gridSize);
     }
 
-    public void rebuildAbstractProblem(GameMap map, int gridSize, int startRow, int startCol) {
+    public void rebuildAbstractProblem(GameMap map, int gridSize, int startRow, int startCol, int numRegionsInSector, int[] regionIds) {
         int[][] edges = Arrays.copyOf(abstractProblem.getEdges(), map.groups.lastKey() - START_NUM + 1);
         int fromRegion, toRegion;
 
@@ -1737,25 +1737,16 @@ public class GameMap {
             if (isValid(startRow + r, col) && !isWall(startRow + r, col) && isValid(startRow + r, col + 1) && !isWall(startRow + r, col + 1)) {
                 fromRegion = map.getCell(startRow + r, col) - START_NUM;
                 toRegion = map.getCell(startRow + r, col + 1) - START_NUM;
-                //build adjacency matrix
+                // build adjacency matrix
                 addEdge(fromRegion, toRegion, edges);
             }
         }
 
-//        System.out.println("Num regions in rebuildAbstractProblem: " + Arrays.toString(numRegions));
-//
-//        for (int[] edge : edges) {
-//            if (edge == null) {
-//                System.out.println("null");
-//                continue;
-//            }
-//            for (int i : edge) {
-//                System.out.print(i + " ");
-//            }
-//            System.out.println();
-//        }
+        int numSectorsPerRow = (int) Math.ceil(map.cols * 1.0 / gridSize);
+        int sectorId = startRow / gridSize * numSectorsPerRow + startCol / gridSize;
 
-        abstractProblem = new RegionSearchProblem(numRegions, edges, null, this, gridSize);
+        // FIXME
+        abstractProblem.recomputeRegionSearchProblem(numRegions, edges, map, sectorId, numRegionsInSector, regionIds);
     }
 
 

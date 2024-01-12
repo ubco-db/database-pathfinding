@@ -326,18 +326,22 @@ public class AddingAllWallsTest {
 
             System.out.println("Group size after addition: " + groups.size());
 
+            int[] regionIds = new int[numRegionsInSector];
+            count = 0;
+
             // Recompute region reps for newly added regions
             for (GroupRecord newRec : newRecs) {
                 map.recomputeCentroid2(newRec, wallLoc);
                 // Add regions that didn't exist before to list
                 neighborIds.add(newRec.groupId);
+                regionIds[count++] = newRec.groupId;
             }
 
             // VISUAL CHECK:
             // map.computeCentroidMap().outputImage(DBA_STAR_DB_PATH + "TEST" + MAP_FILE_NAME + ".png", null, null);
 
             // Rebuild abstract problem - FIXME
-            map.rebuildAbstractProblem(map, GRID_SIZE, startRow, startCol);
+            map.rebuildAbstractProblem(map, GRID_SIZE, startRow, startCol, numRegionsInSector, regionIds);
 
             // Set neighbours - TODO: check if this is working properly
             map.recomputeNeighbors(GRID_SIZE, startRow, startCol, endRow, endCol, neighborIds);
@@ -532,11 +536,15 @@ public class AddingAllWallsTest {
                     }
                 }
 
+                int[] regionIds = new int[numRegionsInSector];
+                count = 0;
+
                 // Recompute region reps for newly added regions
                 for (GroupRecord newRec : newRecs) {
                     map.recomputeCentroid2(newRec, wallLoc);
                     // Add regions that didn't exist before to list
                     neighbouringRegions.add(newRec.groupId);
+                    regionIds[count++] = newRec.groupId;
                 }
 
                 System.out.println("Group size after addition: " + groups.size());
@@ -544,7 +552,7 @@ public class AddingAllWallsTest {
                 // VISUAL CHECK:
 //                map.computeCentroidMap().outputImage(DBA_STAR_DB_PATH + "TEST" + MAP_FILE_NAME + ".png", null, null);
 
-                map.rebuildAbstractProblem(map, GRID_SIZE, startRow, startCol);
+                map.rebuildAbstractProblem(map, GRID_SIZE, startRow, startCol, numRegionsInSector, regionIds);
 
                 ArrayList<Integer> neighborIds = new ArrayList<>(neighbouringRegions);
 
@@ -617,7 +625,7 @@ public class AddingAllWallsTest {
                 int endCol = startCol + GRID_SIZE;
 
                 // Rebuild abstract problem
-                map.rebuildAbstractProblem(map, GRID_SIZE, startRow, startCol);
+                map.rebuildAbstractProblem(map, GRID_SIZE, startRow, startCol, 1, new int[]{newRec.groupId});
 
                 // Set neighbours
                 map.recomputeNeighbors(GRID_SIZE, startRow, startCol, endRow, endCol, neighborIds);
