@@ -50,20 +50,21 @@ public class RegionSearchProblem extends SearchProblem {
             sectors.add(s);
 
             for (int j = 0; j < numRegions[i]; j++) {
-                Region r = new Region();
-                r.sectorId = i;
-                // FIXME: NullPointer
-                r.regionRepId = groups.get(count).groupRepId;
-                r.regionId = map.getCell(map.getRow(r.regionRepId), map.getCol(r.regionRepId)); // Equivalent to START_NUM
-                // r.edges = Arrays.copyOf(edges[i], edges[i].length);
-                if (edges[count - 50] == null) r.edges = null;
-                else {
-                    r.edges = new int[edges[count - 50].length];
-                    for (int k = 0; k < r.edges.length; k++)
-                        r.edges[k] = edges[count - 50][k] + 50;
+                if (groups.get(count) != null) {
+                    Region r = new Region();
+                    r.sectorId = i;
+                    r.regionRepId = groups.get(count).groupRepId;
+                    r.regionId = map.getCell(map.getRow(r.regionRepId), map.getCol(r.regionRepId)); // Equivalent to START_NUM
+                    // r.edges = Arrays.copyOf(edges[i], edges[i].length);
+                    if (edges[count - 50] == null) r.edges = null;
+                    else {
+                        r.edges = new int[edges[count - 50].length];
+                        for (int k = 0; k < r.edges.length; k++)
+                            r.edges[k] = edges[count - 50][k] + 50;
+                    }
+                    regions.put(r.regionId, r);
+                    s.regions.add(r);
                 }
-                regions.put(r.regionId, r);
-                s.regions.add(r);
                 count++;
             }
         }

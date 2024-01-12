@@ -36,7 +36,7 @@ public class EvaluateWallRemoval {
 
         // set wall(s)
         ArrayList<SearchState> wallLocation = new ArrayList<>();
-        int wallLoc = 11671;
+        int wallLoc = 2577;
         SearchState wall = new SearchState(wallLoc);
         wallLocation.add(wall);
 
@@ -48,6 +48,8 @@ public class EvaluateWallRemoval {
         long startTimeRecomp = System.currentTimeMillis();
 
         GameMap map = dbaStarBW.getMap();
+
+        Walls.addWall(PATH_TO_MAP, wallLocation, map);
 
         boolean priorWall = map.isWall(wallLoc);
 
@@ -164,6 +166,8 @@ public class EvaluateWallRemoval {
                     }
                 }
 
+                map.outputImage(DBA_STAR_DB_PATH + "NukedSector" + MAP_FILE_NAME + ".png", null, null);
+
                 System.out.println("Number of groups: " + groups.size());
 
                 // Put neighbours of old regions into set
@@ -183,17 +187,15 @@ public class EvaluateWallRemoval {
 
                 // TODO: Recompute regions in sector
 
-//                printArray(map.squares);
-
                 // Perform abstraction (go over sector and recompute regions)
                 int numRegionsInSector = map.sectorReAbstract2(GRID_SIZE, startRow, startCol, endRow, endCol, regionId, map);
 
                 System.out.println("Num regions: " + numRegionsInSector);
 
+                map.outputImage(DBA_STAR_DB_PATH + "AfterRebuilding" + MAP_FILE_NAME + ".png", null, null);
+
                 int count = 0;
                 GroupRecord[] newRecs = new GroupRecord[numRegionsInSector];
-
-//                printArray(map.squares);
 
                 // Traverse cells in sector to re-create the groups
                 for (int i = startRow; i < endRow; i++) {

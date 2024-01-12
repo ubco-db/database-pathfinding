@@ -181,7 +181,7 @@ public class SubgoalDBExact extends SubgoalDB {
         // Do I need to shrink the array in the elimination case?
         if (isPartition) {
             if (groupsMapping.length < numRegions) {
-                int[][] resizedGroupsMapping = new int[numRegions][];
+                int[][] resizedGroupsMapping = new int[numRegions + 1][];
                 System.arraycopy(groupsMapping, 0, resizedGroupsMapping, 0, groupsMapping.length);
                 groupsMapping = resizedGroupsMapping;
                 for (GroupRecord newRec: newRecs) {

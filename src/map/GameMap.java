@@ -1644,32 +1644,32 @@ public class GameMap {
         }
 
         // Populate the edge data structure
-        int current = 0;
-        for (int i = 0; i < numSectors; i++) {
-            if (numRegions[i] > 0) {
-                //	System.out.println("Sector: "+i+" Num regions: "+numRegions[i]);
-                for (int j = 0; j < numRegions[i]; j++) {    // System.out.print("  Region: "+(current)+" Region edges: ");
-                    for (int k = 0; edges[current] != null && k < edges[current].length; k++) {//	System.out.print(edges[current][k]+"\t");
+//        int current = 0;
+//        for (int i = 0; i < numSectors; i++) {
+//            if (numRegions[i] > 0) {
+//                //	System.out.println("Sector: "+i+" Num regions: "+numRegions[i]);
+//                for (int j = 0; j < numRegions[i]; j++) {    // System.out.print("  Region: "+(current)+" Region edges: ");
+//                    for (int k = 0; edges[current] != null && k < edges[current].length; k++) {//	System.out.print(edges[current][k]+"\t");
+//
+//                    }
+//                    current++;
+//                    // System.out.println();
+//                }
+//            }
+//        }
 
-                    }
-                    current++;
-                    // System.out.println();
-                }
-            }
-        }
-
-        System.out.println("Num regions in buildAbstractProblem: " + Arrays.toString(numRegions));
-
-        for (int[] edge : edges) {
-            if (edge == null) {
-                System.out.println("null");
-                continue;
-            }
-            for (int i : edge) {
-                System.out.print(i + " ");
-            }
-            System.out.println();
-        }
+//        System.out.println("Num regions in buildAbstractProblem: " + Arrays.toString(numRegions));
+//
+//        for (int[] edge : edges) {
+//            if (edge == null) {
+//                System.out.println("null");
+//                continue;
+//            }
+//            for (int i : edge) {
+//                System.out.print(i + " ");
+//            }
+//            System.out.println();
+//        }
 
         abstractProblem = new RegionSearchProblem(numRegions, edges, null, this, gridSize);
     }
@@ -1742,18 +1742,18 @@ public class GameMap {
             }
         }
 
-        System.out.println("Num regions in rebuildAbstractProblem: " + Arrays.toString(numRegions));
-
-        for (int[] edge : edges) {
-            if (edge == null) {
-                System.out.println("null");
-                continue;
-            }
-            for (int i : edge) {
-                System.out.print(i + " ");
-            }
-            System.out.println();
-        }
+//        System.out.println("Num regions in rebuildAbstractProblem: " + Arrays.toString(numRegions));
+//
+//        for (int[] edge : edges) {
+//            if (edge == null) {
+//                System.out.println("null");
+//                continue;
+//            }
+//            for (int i : edge) {
+//                System.out.print(i + " ");
+//            }
+//            System.out.println();
+//        }
 
         abstractProblem = new RegionSearchProblem(numRegions, edges, null, this, gridSize);
     }

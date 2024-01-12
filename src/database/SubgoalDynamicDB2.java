@@ -175,30 +175,32 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
             // out.println("numGroups: ");
             out.println(numGroups);
             for (int i = 0; i < numGroups; i++) {    // Read each group which has # neighbors as N, neighborId[N], lowest cost[N], neighbor[] and paths on each line
-                int numNeighbors = neighborId[i].length;
-                // out.println("numNeighbours for " + i + ": ");
-                out.println(numNeighbors);
-                // out.println("neighbourIds: ");
-                for (int j = 0; j < numNeighbors; j++) {
-                    out.print(neighborId[i][j] + "\t");
-                }
-                out.println();
-                // out.println("lowestCosts: ");
-                for (int j = 0; j < numNeighbors; j++) {
-                    out.print(lowestCost[i][j] + "\t");
-                }
-                out.println();
-                // out.println("neighbours: ");
-                for (int j = 0; j < numNeighbors; j++) {
-                    out.print(neighbor[i][j] + "\t");
-                }
-                out.println();
-                // out.println("paths: ");
-                for (int j = 0; j < numNeighbors; j++) {
-                    out.print(paths[i][j].length + "\t");
-                    for (int k = 0; k < paths[i][j].length; k++)
-                        out.print("\t" + paths[i][j][k]);
+                if (neighbor[i] != null) {
+                    int numNeighbors = neighborId[i].length;
+                    // out.println("numNeighbours for " + i + ": ");
+                    out.println(numNeighbors);
+                    // out.println("neighbourIds: ");
+                    for (int j = 0; j < numNeighbors; j++) {
+                        out.print(neighborId[i][j] + "\t");
+                    }
                     out.println();
+                    // out.println("lowestCosts: ");
+                    for (int j = 0; j < numNeighbors; j++) {
+                        out.print(lowestCost[i][j] + "\t");
+                    }
+                    out.println();
+                    // out.println("neighbours: ");
+                    for (int j = 0; j < numNeighbors; j++) {
+                        out.print(neighbor[i][j] + "\t");
+                    }
+                    out.println();
+                    // out.println("paths: ");
+                    for (int j = 0; j < numNeighbors; j++) {
+                        out.print(paths[i][j].length + "\t");
+                        for (int k = 0; k < paths[i][j].length; k++)
+                            out.print("\t" + paths[i][j][k]);
+                        out.println();
+                    }
                 }
             }
         } catch (FileNotFoundException e) {
