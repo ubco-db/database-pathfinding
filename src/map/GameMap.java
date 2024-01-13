@@ -1674,7 +1674,7 @@ public class GameMap {
         abstractProblem = new RegionSearchProblem(numRegions, edges, null, this, gridSize);
     }
 
-    public void rebuildAbstractProblem(GameMap map, int gridSize, int startRow, int startCol, int numRegionsInSector, int[] regionIds) {
+    public void rebuildAbstractProblem(GameMap map, int gridSize, int startRow, int startCol, int[] regionIds) {
         int[][] edges = Arrays.copyOf(abstractProblem.getEdges(), map.groups.lastKey() - START_NUM + 1);
         int fromRegion, toRegion;
 
@@ -1746,7 +1746,7 @@ public class GameMap {
         int sectorId = startRow / gridSize * numSectorsPerRow + startCol / gridSize;
 
         // FIXME
-        abstractProblem.recomputeRegionSearchProblem(numRegions, edges, map, sectorId, numRegionsInSector, regionIds);
+        abstractProblem.recomputeRegionSearchProblem(numRegions, edges, map, sectorId, regionIds);
     }
 
 

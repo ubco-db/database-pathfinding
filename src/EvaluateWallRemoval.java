@@ -240,7 +240,7 @@ public class EvaluateWallRemoval {
 
 //                printArray(map.squares);
 
-                map.rebuildAbstractProblem(map, GRID_SIZE, startRow, startCol, numRegionsInSector, regionIds);
+                map.rebuildAbstractProblem(map, GRID_SIZE, startRow, startCol, regionIds);
 
                 ArrayList<Integer> neighborIds = new ArrayList<>(neighbouringRegions);
 
@@ -315,7 +315,8 @@ public class EvaluateWallRemoval {
                 int endCol = startCol + GRID_SIZE;
 
                 // Rebuild abstract problem
-                map.rebuildAbstractProblem(map, GRID_SIZE, startRow, startCol, 1, new int[]{newRec.groupId});
+                // FIXME
+                map.rebuildAbstractProblem(map, GRID_SIZE, startRow, startCol, new int[]{newRec.groupId});
 
                 // Set neighbours
                 map.recomputeNeighbors(GRID_SIZE, startRow, startCol, endRow, endCol, neighborIds);

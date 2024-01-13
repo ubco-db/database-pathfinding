@@ -341,7 +341,7 @@ public class AddingAllWallsTest {
             // map.computeCentroidMap().outputImage(DBA_STAR_DB_PATH + "TEST" + MAP_FILE_NAME + ".png", null, null);
 
             // Rebuild abstract problem - FIXME
-            map.rebuildAbstractProblem(map, GRID_SIZE, startRow, startCol, numRegionsInSector, regionIds);
+            map.rebuildAbstractProblem(map, GRID_SIZE, startRow, startCol, regionIds);
 
             // Set neighbours - TODO: check if this is working properly
             map.recomputeNeighbors(GRID_SIZE, startRow, startCol, endRow, endCol, neighborIds);
@@ -552,7 +552,7 @@ public class AddingAllWallsTest {
                 // VISUAL CHECK:
 //                map.computeCentroidMap().outputImage(DBA_STAR_DB_PATH + "TEST" + MAP_FILE_NAME + ".png", null, null);
 
-                map.rebuildAbstractProblem(map, GRID_SIZE, startRow, startCol, numRegionsInSector, regionIds);
+                map.rebuildAbstractProblem(map, GRID_SIZE, startRow, startCol, regionIds);
 
                 ArrayList<Integer> neighborIds = new ArrayList<>(neighbouringRegions);
 
@@ -625,7 +625,7 @@ public class AddingAllWallsTest {
                 int endCol = startCol + GRID_SIZE;
 
                 // Rebuild abstract problem
-                map.rebuildAbstractProblem(map, GRID_SIZE, startRow, startCol, 1, new int[]{newRec.groupId});
+                map.rebuildAbstractProblem(map, GRID_SIZE, startRow, startCol, new int[]{newRec.groupId});
 
                 // Set neighbours
                 map.recomputeNeighbors(GRID_SIZE, startRow, startCol, endRow, endCol, neighborIds);

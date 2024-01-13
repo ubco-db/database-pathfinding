@@ -262,7 +262,7 @@ public class EvaluateWallAddition {
 
             // Rebuild abstract problem
             // FIXME
-            map.rebuildAbstractProblem(map, GRID_SIZE, startRow, startCol, numRegionsInSector, regionIds);
+            map.rebuildAbstractProblem(map, GRID_SIZE, startRow, startCol, regionIds);
 
             // Set neighbours
             map.recomputeNeighbors(GRID_SIZE, startRow, startCol, endRow, endCol, neighborIds);

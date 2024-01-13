@@ -77,7 +77,7 @@ public class RegionSearchProblem extends SearchProblem {
     }
 
     // FIXME
-    public void recomputeRegionSearchProblem(int[] numRegions, int[][] edges, GameMap map, int sectorId, int numRegionsInSector, int[] regionIds) {
+    public void recomputeRegionSearchProblem(int[] numRegions, int[][] edges, GameMap map, int sectorId, int[] regionIds) {
         this.numRegions = numRegions;
         this.edges = edges;
         this.map = map;
@@ -101,7 +101,7 @@ public class RegionSearchProblem extends SearchProblem {
         currentSector.regions.clear();
 
         // TODO: add a check here, if these are equal we may be able to optimize
-        currentSector.numRegions = numRegionsInSector;
+        currentSector.numRegions = regionIds.length;
 
         // Add regions to sector, assign correct region id and region rep id
         for (int i = 0; i < currentSector.numRegions; i++) {
