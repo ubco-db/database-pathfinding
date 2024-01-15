@@ -246,15 +246,14 @@ public class EvaluateWallAddition {
 
             System.out.println("Group size after addition: " + groups.size());
 
-            int[] regionIds = new int[numRegionsInSector];
-            count = 0;
+            ArrayList<Integer> regionIds = new ArrayList<>();
 
             // Recompute region reps for newly added regions
             for (GroupRecord newRec : newRecs) {
                 map.recomputeCentroid2(newRec, wallLoc);
                 // Add regions that didn't exist before to list
                 neighborIds.add(newRec.groupId);
-                regionIds[count++] = newRec.groupId;
+                regionIds.add(newRec.groupId);
             }
 
             // VISUAL CHECK:

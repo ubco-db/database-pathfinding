@@ -326,15 +326,14 @@ public class AddingAllWallsTest {
 
             System.out.println("Group size after addition: " + groups.size());
 
-            int[] regionIds = new int[numRegionsInSector];
-            count = 0;
+            ArrayList<Integer> regionIds = new ArrayList<>();
 
             // Recompute region reps for newly added regions
             for (GroupRecord newRec : newRecs) {
                 map.recomputeCentroid2(newRec, wallLoc);
                 // Add regions that didn't exist before to list
                 neighborIds.add(newRec.groupId);
-                regionIds[count++] = newRec.groupId;
+                regionIds.add(newRec.groupId);
             }
 
             // VISUAL CHECK:
@@ -536,15 +535,14 @@ public class AddingAllWallsTest {
                     }
                 }
 
-                int[] regionIds = new int[numRegionsInSector];
-                count = 0;
+                ArrayList<Integer> regionIds = new ArrayList<>();
 
                 // Recompute region reps for newly added regions
                 for (GroupRecord newRec : newRecs) {
                     map.recomputeCentroid2(newRec, wallLoc);
                     // Add regions that didn't exist before to list
                     neighbouringRegions.add(newRec.groupId);
-                    regionIds[count++] = newRec.groupId;
+                    regionIds.add(newRec.groupId);
                 }
 
                 System.out.println("Group size after addition: " + groups.size());
@@ -625,7 +623,7 @@ public class AddingAllWallsTest {
                 int endCol = startCol + GRID_SIZE;
 
                 // Rebuild abstract problem
-                map.rebuildAbstractProblem(map, GRID_SIZE, startRow, startCol, new int[]{newRec.groupId});
+                map.rebuildAbstractProblem(map, GRID_SIZE, startRow, startCol, new ArrayList<>(List.of(newRec.groupId)));
 
                 // Set neighbours
                 map.recomputeNeighbors(GRID_SIZE, startRow, startCol, endRow, endCol, neighborIds);

@@ -1674,7 +1674,7 @@ public class GameMap {
         abstractProblem = new RegionSearchProblem(numRegions, edges, null, this, gridSize);
     }
 
-    public void rebuildAbstractProblem(GameMap map, int gridSize, int startRow, int startCol, int[] regionIds) {
+    public void rebuildAbstractProblem(GameMap map, int gridSize, int startRow, int startCol, ArrayList<Integer> regionIds) {
         int[][] edges = Arrays.copyOf(abstractProblem.getEdges(), map.groups.lastKey() - START_NUM + 1);
         int fromRegion, toRegion;
 

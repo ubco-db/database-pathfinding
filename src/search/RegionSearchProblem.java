@@ -92,23 +92,23 @@ public class RegionSearchProblem extends SearchProblem {
         Sector currentSector = sectors.get(sectorId);
 
         // TODO: may be able to optimize here, don't always need to delete this
-        // remove old regions from regions list
-        for (int i = 0; i < currentSector.numRegions; i++) {
-            regions.remove(currentSector.regions.get(i).regionId);
+        // remove old region from regions list
+        for (int regionId : regionIds) {
+            regions.remove(regionId);
         }
 
         // remove old regions from sector
         currentSector.regions.clear();
 
         // TODO: add a check here, if these are equal we may be able to optimize
-        currentSector.numRegions = regionIds.length;
+        currentSector.numRegions = regionIds.size();
 
         // Add regions to sector, assign correct region id and region rep id
         for (int i = 0; i < currentSector.numRegions; i++) {
             Region r = new Region();
 
             r.sectorId = currentSector.number;
-            r.regionId = regionIds[i];
+            r.regionId = regionIds.get(i);
             r.regionRepId = groups.get(r.regionId).groupRepId; // can get by region id in groups
 
             currentSector.regions.add(r);
@@ -478,5 +478,4 @@ public class RegionSearchProblem extends SearchProblem {
         // TODO Auto-generated method stub
         return 0;
     }
-
 }
