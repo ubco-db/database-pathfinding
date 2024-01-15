@@ -104,12 +104,22 @@ public class RegionSearchProblem extends SearchProblem {
         currentSector.numRegions = regionIds.size() + currentSector.regions.size();
 
         // Add regions to sector, assign correct region id and region rep id
-        for (int i = 0; i < regionIds.size(); i++) {
+        for (Integer regionId : regionIds) {
             Region r = new Region();
 
             r.sectorId = currentSector.number;
-            r.regionId = regionIds.get(i);
+            r.regionId = regionId;
             r.regionRepId = groups.get(r.regionId).groupRepId; // can get by region id in groups
+
+            // add edges
+            if (edges[r.regionId - 50] == null) {
+                r.edges = null;
+            } else {
+                r.edges = new int[edges[r.regionId - 50].length];
+                for (int k = 0; k < r.edges.length; k++) {
+                    r.edges[k] = edges[r.regionId - 50][k] + 50;
+                }
+            }
 
             currentSector.regions.add(r);
 
