@@ -131,7 +131,7 @@ public class EvaluateWallRemoval {
             // Check if it matches sector membership of surrounding open spaces
             if (openStatesToSectors.containsValue(sectorId)) {
                 System.out.println("Removed wall in existing sector!");
-                // TODO: Wall touches region that is in same sector as wall -> add wall to region and recompute neighbourhood (may have formed path)
+                // Wall touches region that is in same sector as wall -> add wall to region and recompute neighbourhood (may have formed path)
 
                 // can I just run findRegionRep to assign the state to a region?
                 int regionRepId = map.getAbstractProblem().findRegionRep(wall, map).getId();
@@ -183,7 +183,7 @@ public class EvaluateWallRemoval {
 
                 System.out.println("Number of groups after removal: " + groups.size());
 
-                // TODO: Recompute regions in sector
+                // Recompute regions in sector
 
                 // Perform abstraction (go over sector and recompute regions)
                 int numRegionsInSector = map.sectorReAbstract2(GRID_SIZE, startRow, startCol, endRow, endCol, regionId, map);
@@ -261,7 +261,7 @@ public class EvaluateWallRemoval {
                 System.out.println("Removed wall in new sector!");
                 /*
                 Case 3: Basically like case 1, but need to recompute paths to neighbours
-                TODO: Wall touches region but it is not in same sector as wall -> new, connected, region (recompute neighbourhood)
+                Wall touches region, but it is not in same sector as wall -> new, connected, region (recompute neighbourhood)
                  */
                 // Assign new region id to the location on the map
 

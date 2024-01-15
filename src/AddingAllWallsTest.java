@@ -390,8 +390,9 @@ public class AddingAllWallsTest {
         // Grab neighbouring states
         ArrayList<SearchState> neighbours = map.getNeighbors(wallRow, wallCol);
         Map<Integer, Integer> openStatesToSectors = new HashMap<>();
+        Set<Integer> regionsTouchingWall = new HashSet<>();
 
-        if (isSurroundedByWalls(map, neighbours, openStatesToSectors)) {
+        if (isSurroundedByWalls(map, neighbours, openStatesToSectors, regionsTouchingWall)) {
             // Case 1: If a wall is encased by walls, we necessarily have a new, isolated region
 
             // Assign new region id to the location on the map
@@ -476,7 +477,8 @@ public class AddingAllWallsTest {
                     for (int c = 0; c < GRID_SIZE; c++) {
                         int row = startRow + r;
                         int col = startCol + c;
-                        if (!map.isWall(row, col)) {
+                        // Only nuke regions that touch where the wall was
+                        if (!map.isWall(row, col) && regionsTouchingWall.contains(map.squares[row][col])) {
                             regionsInCurrentSector.add(map.squares[row][col]);
                             map.squares[row][col] = ' '; // 32
                         }
@@ -774,7 +776,7 @@ public class AddingAllWallsTest {
         return (1 - jaccardSimilarity) * 100;
     }
 
-    private static boolean isSurroundedByWalls(GameMap map, ArrayList<SearchState> neighbours, Map<Integer, Integer> openStatesToSectors) {
+    private static boolean isSurroundedByWalls(GameMap map, ArrayList<SearchState> neighbours, Map<Integer, Integer> openStatesToSectors, Set<Integer> regionsTouchingWall) {
         // Return true if all 8 neighbours of the cell are walls, else return false
 
         for (SearchState neighbour : neighbours) {
@@ -782,6 +784,8 @@ public class AddingAllWallsTest {
             if (!map.isWall(neighbour.id)) {
                 // Fill HashMap with state id to sector id mapping
                 openStatesToSectors.put(neighbour.id, getSectorId(map, neighbour.id));
+                // TODO: do this somewhere else, doesn't have much to do with this method
+                regionsTouchingWall.add(map.squares[map.getRow(neighbour.id)][map.getCol(neighbour.id)]);
             }
         }
 
