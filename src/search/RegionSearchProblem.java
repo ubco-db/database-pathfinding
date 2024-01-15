@@ -77,7 +77,7 @@ public class RegionSearchProblem extends SearchProblem {
     }
 
     // FIXME
-    public void recomputeRegionSearchProblem(int[] numRegions, int[][] edges, GameMap map, int sectorId, int[] regionIds) {
+    public void recomputeRegionSearchProblem(int[] numRegions, int[][] edges, GameMap map, int sectorId, ArrayList<Integer> regionIds) {
         this.numRegions = numRegions;
         this.edges = edges;
         this.map = map;
@@ -97,14 +97,14 @@ public class RegionSearchProblem extends SearchProblem {
             regions.remove(regionId);
         }
 
-        // remove old regions from sector
-        currentSector.regions.clear();
+        // remove old region from sector
+        currentSector.regions.removeIf(region -> regionIds.contains(region.regionId));
 
         // TODO: add a check here, if these are equal we may be able to optimize
-        currentSector.numRegions = regionIds.size();
+        currentSector.numRegions = regionIds.size() + currentSector.regions.size();
 
         // Add regions to sector, assign correct region id and region rep id
-        for (int i = 0; i < currentSector.numRegions; i++) {
+        for (int i = 0; i < regionIds.size(); i++) {
             Region r = new Region();
 
             r.sectorId = currentSector.number;
@@ -118,8 +118,6 @@ public class RegionSearchProblem extends SearchProblem {
 
         System.out.println("Current sector after recomputation: " + currentSector);
 
-        // TODO: add region(s) to regions, need to delete any?
-        // FIXME: delete old region in partition case, how to?
 //        System.out.println(regions);
     }
 
