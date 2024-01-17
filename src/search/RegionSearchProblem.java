@@ -85,7 +85,6 @@ public class RegionSearchProblem extends SearchProblem {
         TreeMap<Integer, GroupRecord> groups = map.getGroups();
 
         // TODO: need to work on sectors and regions here - deal with new sectors occurring through wall deletion
-        // how to go about it if the sector gains or looses regions?
 
 //        System.out.println(sectors);
 

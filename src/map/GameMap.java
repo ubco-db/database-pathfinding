@@ -1282,7 +1282,9 @@ public class GameMap {
         return baseMap;
     }
 
-    public int sectorReAbstract2(int gridSize, int startRow, int startCol, int endRow, int endCol, int regionId, GameMap map) {
+    public int sectorReAbstract2(int gridSize, int startRow, int startCol, int endRow, int endCol, int regionId, GameMap map) throws Exception {
+
+        if (regionId == 32) throw new Exception("Error in sectorReAbstract2: Region id must not equal 32 (empty space)");
 
         int currentNum = -1;
         int numSectors = (int) (Math.ceil(rows * 1.0 / gridSize) * Math.ceil(cols * 1.0 / gridSize));

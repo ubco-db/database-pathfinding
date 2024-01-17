@@ -24,7 +24,7 @@ public class EvaluateWallRemoval {
     final static int GRID_SIZE = 16;
     final static int NUM_NEIGHBOUR_LEVELS = 1; // # of neighbor levels for HCDPS
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         // set start and goal
         int startId = 15362;
         int goalId = 11671;

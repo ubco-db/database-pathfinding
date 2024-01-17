@@ -28,7 +28,7 @@ public class EvaluateWallAddition {
     final static int NUM_NEIGHBOUR_LEVELS = 1; // # of neighbor levels for HCDPS
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         // set start and goal
         int startId = 10219;
         int goalId = 13905;

@@ -65,11 +65,12 @@ public class AddingAllWallsTest {
 
         long elapsedTimePartialRecomputation = 0;
 
-        for (int wallId: goalIds) {
+        for (int wallId : goalIds) {
             // TODO: Remove wall after this to ensure I can reuse map, database, etc.
 
             long startTimePartialRecomputation = System.currentTimeMillis();
             // add wall & recompute database
+            System.out.println("\nRecompute wall addition: ");
             recomputeDBAStar(true, wallId, dbaStar.getMap(), (MapSearchProblem) dbaStar.getProblem(), (SubgoalDynamicDB2) dbaStar.getDatabase());
             long endTimePartialRecomputation = System.currentTimeMillis();
 
@@ -83,6 +84,7 @@ public class AddingAllWallsTest {
             }
 
             // remove wall
+            System.out.println("\nRecompute wall removal: ");
             recomputeDBAStar(false, wallId, dbaStar.getMap(), (MapSearchProblem) dbaStar.getProblem(), (SubgoalDynamicDB2) dbaStar.getDatabase());
         }
 
@@ -129,15 +131,15 @@ public class AddingAllWallsTest {
         }
     }
 
-    private static void recomputeDBAStar(boolean isAddition, int wallLoc, GameMap map, MapSearchProblem problem, SubgoalDynamicDB2 dbBW) {
+    private static void recomputeDBAStar(boolean isAddition, int wallLoc, GameMap map, MapSearchProblem problem, SubgoalDynamicDB2 dbBW) throws Exception {
         if (isAddition) {
             recomputeWallAddition(wallLoc, map, problem, dbBW);
         } else {
             recomputeWallRemoval(wallLoc, map, problem, dbBW);
         }
     }
-    
-    private static void recomputeWallAddition(int wallLoc, GameMap map, MapSearchProblem problem, SubgoalDynamicDB2 dbBW) {
+
+    private static void recomputeWallAddition(int wallLoc, GameMap map, MapSearchProblem problem, SubgoalDynamicDB2 dbBW) throws Exception {
         SearchState wall = new SearchState(wallLoc);
         int regionId = map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)];
 
@@ -364,9 +366,9 @@ public class AddingAllWallsTest {
         dbBW.exportDB(DBA_STAR_DB_PATH + "BW_Recomp_" + MAP_FILE_NAME + "_DBA-STAR_G" + GRID_SIZE + "_N" + NUM_NEIGHBOUR_LEVELS + "_C" + CUTOFF + ".dat");
     }
 
-    private static void recomputeWallRemoval(int wallLoc, GameMap map, MapSearchProblem problem, SubgoalDynamicDB2 dbBW) {
+    private static void recomputeWallRemoval(int wallLoc, GameMap map, MapSearchProblem problem, SubgoalDynamicDB2 dbBW) throws Exception {
         long startTimeRecomp = System.currentTimeMillis();
-        
+
         SearchState wall = new SearchState(wallLoc);
 
         boolean priorWall = map.isWall(wallLoc);
@@ -452,10 +454,12 @@ public class AddingAllWallsTest {
                 System.out.println("Removed wall in existing sector!");
                 // TODO: Wall touches region that is in same sector as wall -> add wall to region and recompute neighbourhood (may have formed path)
 
-                // can I just run findRegionRep to assign the state to a region?
-                // FIXME
                 int regionRepId = map.getAbstractProblem().findRegionRep(wall, map).getId();
-                int regionId = map.squares[map.getRow(regionRepId)][map.getCol(regionRepId)];
+
+                // We cannot find the region id through the region rep, because the region rep may have been removed and
+                // added back, in which case the square is blank, so we find it through its neighbours in the same sector
+                int regionId = getRegionIdFromNeighbourStates(map, neighbours, sectorId);
+
                 System.out.println("Existing region, region rep id: " + regionRepId + " region id: " + regionId);
 
                 map.squares[wallRow][wallCol] = regionId;
@@ -803,4 +807,13 @@ public class AddingAllWallsTest {
         return getSectorId(map, row, col);
     }
 
+    private static int getRegionIdFromNeighbourStates(GameMap map, ArrayList<SearchState> neighbours, int sectorId) throws Exception {
+        for (SearchState neighbour : neighbours) {
+            // Need to use !isWall instead of isOpenCell, because the cells are not empty, they have their regions written into them
+            if (!map.isWall(neighbour.id) && getSectorId(map, neighbour.id) == sectorId) {
+                return map.squares[map.getRow(neighbour.id)][map.getCol(neighbour.id)];
+            }
+        }
+        throw new Exception("No neighbours to extrapolate region id from!");
+    }
 }
