@@ -28,7 +28,7 @@ public class AddingAllWallsTest {
     final static int START_NUM = 50;
 
     // TODO: add path comparison logic to ensure paths are identical
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         DBAStar dbaStar;
         GameMap startingMap = new GameMap(PATH_TO_MAP);
 
@@ -228,12 +228,10 @@ public class AddingAllWallsTest {
             potentialDiagonalPartition = true;
         }
 
-        System.out.println();
         System.out.println("WALL IS PARTITIONING MAP: " + (potentialHorizontalPartition || potentialVerticalPartition || potentialDiagonalPartition));
         if (potentialHorizontalPartition) System.out.println("HORIZONTALLY");
         if (potentialVerticalPartition) System.out.println("VERTICALLY");
         if (potentialDiagonalPartition) System.out.println("DIAGONALLY");
-        System.out.println();
 
         // potentialPartition because the wall was added such that it is either surrounded by a wall on either side or
         // a wall on one and a different region on the other
@@ -583,7 +581,7 @@ public class AddingAllWallsTest {
                  */
                 // Assign new region id to the location on the map
 
-                int groupId = groups.size() + START_NUM;
+                int groupId = groups.lastKey() + 1;
 
                 map.squares[wallRow][wallCol] = groupId;
                 problem.getMap().squares[wallRow][wallCol] = groupId;

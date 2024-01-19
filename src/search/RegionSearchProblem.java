@@ -105,24 +105,30 @@ public class RegionSearchProblem extends SearchProblem {
         // Add regions to sector, assign correct region id and region rep id
         for (Integer regionId : regionIds) {
             Region r = new Region();
-
             r.sectorId = currentSector.number;
             r.regionId = regionId;
-            r.regionRepId = groups.get(r.regionId).groupRepId; // can get by region id in groups
 
-            // add edges
-            if (edges[r.regionId - 50] == null) {
-                r.edges = null;
-            } else {
-                r.edges = new int[edges[r.regionId - 50].length];
-                for (int k = 0; k < r.edges.length; k++) {
-                    r.edges[k] = edges[r.regionId - 50][k] + 50;
+            // The group may not exist anymore for regions that consisted of a single rep (e.g. 9487)
+            if (groups.get(r.regionId) != null) {
+                r.regionRepId = groups.get(r.regionId).groupRepId; // can get by region id in groups
+
+                // add edges
+                if (edges[r.regionId - 50] == null) {
+                    r.edges = null;
+                } else {
+                    r.edges = new int[edges[r.regionId - 50].length];
+                    for (int k = 0; k < r.edges.length; k++) {
+                        r.edges[k] = edges[r.regionId - 50][k] + 50;
+                    }
                 }
+
+                currentSector.regions.add(r);
+
+                regions.put(r.regionId, r);
+            } else {
+                // Decrement num regions in that case
+                currentSector.numRegions--;
             }
-
-            currentSector.regions.add(r);
-
-            regions.put(r.regionId, r);
         }
 
         System.out.println("Current sector after recomputation: " + currentSector);
@@ -392,6 +398,8 @@ public class RegionSearchProblem extends SearchProblem {
             return regionState;
         } else { // Have to search for which region representative this node is in (BFS)
             // Check if state itself is a region representative
+            System.out.println("Num regions in sector: " + sec.numRegions);
+            System.out.println("Regions in sector " + sec.number + ": " + sec.regions);
             for (int j = 0; j < sec.numRegions; j++) {
                 if (s.id == sec.regions.get(j).regionRepId) {
                     regionState.id = sec.regions.get(j).regionRepId;
