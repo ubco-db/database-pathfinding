@@ -554,11 +554,15 @@ public class AddingAllWallsTest {
                 // VISUAL CHECK:
 //                map.computeCentroidMap().outputImage(DBA_STAR_DB_PATH + "TEST" + MAP_FILE_NAME + ".png", null, null);
 
-                map.rebuildAbstractProblem(map, GRID_SIZE, startRow, startCol, regionIds);
+                // add regions touching wall not contained in regionIds
+//                for (Integer regionTouchingWall: regionsTouchingWall) {
+//                    if (!regionIds.contains(regionTouchingWall)) regionIds.add(regionTouchingWall);
+//                }
 
-                ArrayList<Integer> neighborIds = new ArrayList<>(neighbouringRegions);
+                map.rebuildAbstractProblem(map, GRID_SIZE, startRow, startCol, regionsInCurrentSectorList);
 
                 // Set neighbours
+                ArrayList<Integer> neighborIds = new ArrayList<>(neighbouringRegions);
                 map.recomputeNeighbors(GRID_SIZE, startRow, startCol, endRow, endCol, neighborIds);
 
                 // Get database and initialize pathCompressAlgDba
