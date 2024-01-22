@@ -23,6 +23,15 @@ public class RegionSearchProblem extends SearchProblem {
         public int number;
         public int numRegions;
         public ArrayList<Region> regions;
+
+        @Override
+        public String toString() {
+            return "Sector{" +
+                    "number=" + number +
+                    ", numRegions=" + numRegions +
+                    ", regions=" + regions +
+                    '}';
+        }
     }
 
     private class Region {
@@ -30,6 +39,16 @@ public class RegionSearchProblem extends SearchProblem {
         public int regionRepId;
         public int sectorId;
         public int[] edges;
+
+        @Override
+        public String toString() {
+            return "Region{" +
+                    "regionId=" + regionId +
+                    ", regionRepId=" + regionRepId +
+                    ", sectorId=" + sectorId +
+                    ", edges=" + Arrays.toString(edges) +
+                    '}';
+        }
     }
 
     private ArrayList<Sector> sectors;

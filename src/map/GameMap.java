@@ -2250,7 +2250,7 @@ public class GameMap {
 
     public RenderedImage createImage() {
 
-        BufferedImage bufferedImage = new BufferedImage(this.cols * cellHeight, this.rows * cellHeight, BufferedImage.TYPE_INT_RGB);
+        BufferedImage bufferedImage = new BufferedImage((this.cols) * cellHeight, (this.rows  + 10) * cellHeight, BufferedImage.TYPE_INT_RGB);
 
         Graphics2D g2d = bufferedImage.createGraphics();
 

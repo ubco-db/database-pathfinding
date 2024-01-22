@@ -285,7 +285,7 @@ public class AddingAllWallsTest {
                 for (int c = 0; c < GRID_SIZE; c++) {
                     int row = startRow + r;
                     int col = startCol + c;
-                    if (!map.isWall(row, col) && map.squares[row][col] == regionId) {
+                    if (map.isValid(row, col) && !map.isWall(row, col) && map.squares[row][col] == regionId) {
                         map.squares[row][col] = ' '; // 32
                     }
                 }
