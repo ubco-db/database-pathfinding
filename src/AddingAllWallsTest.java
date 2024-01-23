@@ -53,7 +53,7 @@ public class AddingAllWallsTest {
 
         // compute DBAStar database before adding wall
         System.out.println();
-        dbaStar = computeDBAStar(startingMap, 0, "BW");
+        dbaStar = computeDBAStar(startingMap, "BW");
 
         // compute paths to all goals, store in HashMap of arrays (goal state as key)
         HashMap<Integer, ArrayList<SearchState>> paths = new HashMap<>();
@@ -123,12 +123,7 @@ public class AddingAllWallsTest {
 
         System.out.println("Elapsed Time in milliseconds for complete recomputation: " + elapsedTimeCompleteRecomputation);
 
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(DBA_STAR_DB_PATH + "times.txt"))) {
-            writer.write("Elapsed Time in milliseconds for partial recomputation: " + elapsedTimePartialRecomputation);
-            writer.write("Elapsed Time in milliseconds for complete recomputation: " + elapsedTimeCompleteRecomputation);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        writeResultToFile(DBA_STAR_DB_PATH + "results.txt", "Total time partial recomputation: " + (System.currentTimeMillis() - totalTimeStart) + "ms\n");
     }
 
     private static void recomputeDBAStar(boolean isAddition, int wallLoc, GameMap map, MapSearchProblem problem, SubgoalDynamicDB2 dbBW) throws Exception {
@@ -152,6 +147,8 @@ public class AddingAllWallsTest {
 
         if (!priorWall && map.isWall(wallLoc) && problem.getMap().isWall(wallLoc)) {
             System.out.println("Wall at " + wallLoc + " set successfully!");
+        } else {
+            throw new Exception("Wall addition failed! There is a wall at " + wallLoc + " already");
         }
 
         // Get the id of the region rep of the region the wall was added in
@@ -198,12 +195,16 @@ public class AddingAllWallsTest {
         System.out.println(map.squares[wallRowId][wallColId]);
         // it will have eight neighbours
         // TODO: having the regions marked on the map is not part of DBA*, should I use this?
+
         int neighborNorth = map.squares[wallRowId - 1][wallColId];
-        int neighborNorthEast = map.squares[wallRowId - 1][wallColId + 1];
-        int neighborEast = map.squares[wallRowId][wallColId + 1];
-        int neighborSouthEast = map.squares[wallRowId + 1][wallColId + 1];
-        int neighborSouth = map.squares[wallRowId + 1][wallColId];
-        int neighborSouthWest = map.squares[wallRowId + 1][wallColId - 1];
+
+        // Need to check boundaries for bottom row of map (if not on map, treat square as wall)
+        int neighborNorthEast = map.isValid(wallRowId - 1, wallColId + 1) ? map.squares[wallRowId - 1][wallColId + 1] : 42;
+        int neighborEast = map.isValid(wallRowId, wallColId + 1) ? map.squares[wallRowId][wallColId + 1] : 42;
+        int neighborSouthEast = map.isValid(wallRowId + 1, wallColId + 1) ? map.squares[wallRowId + 1][wallColId + 1] : 42;
+        int neighborSouth = map.isValid(wallRowId + 1, wallColId) ? map.squares[wallRowId + 1][wallColId] : 42;
+        int neighborSouthWest = map.isValid(wallRowId + 1, wallColId - 1) ? map.squares[wallRowId + 1][wallColId - 1] : 42;
+
         int neighborWest = map.squares[wallRowId][wallColId - 1];
         int neighborNorthWest = map.squares[wallRowId - 1][wallColId - 1];
         // if the region has become partitioned, it would have to have neighbors that are across from each other be walls or in different regions
@@ -277,8 +278,8 @@ public class AddingAllWallsTest {
 
             int startRow = (sectorId / numSectorsPerRow) * GRID_SIZE;
             int startCol = (sectorId % numSectorsPerRow) * GRID_SIZE;
-            int endRow = startRow + GRID_SIZE;
-            int endCol = startCol + GRID_SIZE;
+            int endRow = Math.min(startRow + GRID_SIZE, map.rows);
+            int endCol = Math.min(startCol + GRID_SIZE, map.cols);
 
             // reset region (necessary in order for me to be able to reuse the regionId)
             for (int r = 0; r < GRID_SIZE; r++) {
@@ -466,8 +467,8 @@ public class AddingAllWallsTest {
                 // Compute start and end of current sector
                 int startRow = (sectorId / numSectorsPerRow) * GRID_SIZE;
                 int startCol = (sectorId % numSectorsPerRow) * GRID_SIZE;
-                int endRow = startRow + GRID_SIZE;
-                int endCol = startCol + GRID_SIZE;
+                int endRow = Math.min(startRow + GRID_SIZE, map.rows);
+                int endCol = Math.min(startCol + GRID_SIZE, map.cols);
 
                 System.out.println("Start of current sector: " + map.getId(startRow, startCol));
                 System.out.println("End of current sector: " + map.getId(endRow, endCol));
@@ -627,8 +628,8 @@ public class AddingAllWallsTest {
                 // Compute start and end of new sector
                 int startRow = (sectorId / numSectorsPerRow) * GRID_SIZE;
                 int startCol = (sectorId % numSectorsPerRow) * GRID_SIZE;
-                int endRow = startRow + GRID_SIZE;
-                int endCol = startCol + GRID_SIZE;
+                int endRow = Math.min(startRow + GRID_SIZE, map.rows);
+                int endCol = Math.min(startCol + GRID_SIZE, map.cols);
 
                 // Rebuild abstract problem
                 map.rebuildAbstractProblem(map, GRID_SIZE, startRow, startCol, new ArrayList<>(List.of(newRec.groupId)));
@@ -661,7 +662,7 @@ public class AddingAllWallsTest {
 
     }
 
-    private static DBAStar computeDBAStar(GameMap map, int wallLoc, String wallStatus) {
+    private static DBAStar computeDBAStar(GameMap map, String wallStatus) {
         long currentTime;
 
         SearchProblem problem = new MapSearchProblem(map);
@@ -817,5 +818,25 @@ public class AddingAllWallsTest {
             }
         }
         throw new Exception("No neighbours to extrapolate region id from!");
+    }
+
+    private static void writeResultToFile(String filePath, String result) {
+        try {
+            // Create a FileWriter object to write to the file
+            FileWriter fileWriter = new FileWriter(filePath, true);
+
+            // Wrap the FileWriter with BufferedWriter for efficient writing
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+
+            // Write the number to the file
+            bufferedWriter.write(result);
+
+            // Close the BufferedWriter to flush and close the underlying FileWriter
+            bufferedWriter.close();
+
+            System.out.println("Result has been written to " + filePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
