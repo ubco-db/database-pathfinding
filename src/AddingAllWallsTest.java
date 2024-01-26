@@ -37,9 +37,19 @@ public class AddingAllWallsTest {
 
         ArrayList<Integer> goalIds = new ArrayList<>();
         // iterate over all goals (open spots no wall)
+//        for (int i = 16; i < startingMap.rows; i++) {
+//            for (int j = 0; j < startingMap.cols; j++) {
+//                if (!startingMap.isWall(i, j)) {
+//                    goalIds.add(startingMap.getId(i, j));
+//                }
+//            }
+//        }
+
+        int sectorNum = 12;
+        // start in sector 12 and add all goal ids:
         for (int i = 16; i < startingMap.rows; i++) {
             for (int j = 0; j < startingMap.cols; j++) {
-                if (!startingMap.isWall(i, j)) {
+                if (!startingMap.isWall(i, j) && (getSectorId(startingMap, startingMap.getId(i, j)) == sectorNum)) {
                     goalIds.add(startingMap.getId(i, j));
                 }
             }
@@ -50,6 +60,7 @@ public class AddingAllWallsTest {
 
         // print number of goals (6175 on 012.map)
         System.out.println("Number of goals: " + goalIds.size());
+        System.out.println("Goals in sector " + sectorNum + ": " + goalIds);
 
         // compute DBAStar database before adding wall
         System.out.println();
@@ -66,6 +77,10 @@ public class AddingAllWallsTest {
         long elapsedTimePartialRecomputation = 0;
 
         long totalTimeStart = System.currentTimeMillis();
+
+        @SuppressWarnings("unchecked")
+        ArrayList<SearchState>[][] pathsAfterPartialRecomputation = new ArrayList[goalIds.size()][goalIds.size()];
+        int wallNumber = 0;
         for (int wallId : goalIds) {
             // TODO: Remove wall after this to ensure I can reuse map, database, etc.
 
@@ -78,19 +93,20 @@ public class AddingAllWallsTest {
             elapsedTimePartialRecomputation += endTimePartialRecomputation - startTimePartialRecomputation;
 
             // TODO: store paths somewhere for comparison (2D array?)
-/*            for (int goalId : goalIds) {
+            int goalNum = 0;
+            for (int goalId : goalIds) {
                 if (goalId != wallId) {
-                    getDBAStarPath(startId, goalId, dbaStar);
+                    pathsAfterPartialRecomputation[wallNumber][goalNum] = getDBAStarPath(startId, goalId, dbaStar);
                 }
-            }*/
+                goalNum++;
+            }
+
+            wallNumber++;
 
             // remove wall
             System.out.println("\nRecompute wall removal: ");
             recomputeDBAStar(false, wallId, dbaStar.getMap(), (MapSearchProblem) dbaStar.getProblem(), (SubgoalDynamicDB2) dbaStar.getDatabase());
         }
-
-//        System.out.println("Elapsed Time in milliseconds for partial recomputation: " + elapsedTimePartialRecomputation);
-//        System.out.println("Total time: " + (System.currentTimeMillis() - totalTimeStart) + "ms");
 
         writeResultToFile(DBA_STAR_DB_PATH + "results.txt", "Total time partial recomputation: " + (System.currentTimeMillis() - totalTimeStart) + "ms\n");
 
@@ -98,6 +114,9 @@ public class AddingAllWallsTest {
 
         long elapsedTimeCompleteRecomputation = 0;
 
+        @SuppressWarnings("unchecked")
+        ArrayList<SearchState>[][] pathsAfterFullRecomputation = new ArrayList[goalIds.size()][goalIds.size()];
+        wallNumber = 0;
         for (int wallId : goalIds) {
             long startTimeCompleteRecomputation = System.currentTimeMillis();
 
@@ -118,14 +137,31 @@ public class AddingAllWallsTest {
 
             Walls.removeWall(PATH_TO_MAP, wallLocation, startingMap);
 
-/*            for (int goalId : goalIds) {
+            int goalNum = 0;
+            for (int goalId : goalIds) {
                 if (goalId != wallId) {
-                    getDBAStarPath(startId, goalId, dbaStar);
+                    pathsAfterFullRecomputation[wallNumber][goalNum] = getDBAStarPath(startId, goalId, dbaStar);
                 }
-            }*/
+                goalNum++;
+            }
+
+            wallNumber++;
         }
 
-        System.out.println("Elapsed Time in milliseconds for complete recomputation: " + elapsedTimeCompleteRecomputation);
+        for (int i = 0; i < pathsAfterFullRecomputation.length; i++) {
+            for (int j = 0; j < pathsAfterFullRecomputation[i].length; j++) {
+                if (i != j) {
+                    System.out.println("Path after full recomp: " + pathsAfterFullRecomputation[i][j]);
+                    System.out.println("Path after partial recomp: " + pathsAfterPartialRecomputation[i][j]);
+                    System.out.println();
+                    boolean equal = isPathEqual(pathsAfterFullRecomputation[i][j], pathsAfterPartialRecomputation[i][j]);
+                    if (!equal) {
+                        // TODO: actually print id of wall here
+                        System.out.println("\nERROR! Paths to " + j + " for wall at " + i + " not equal.\n");
+                    }
+                }
+            }
+        }
 
         writeResultToFile(DBA_STAR_DB_PATH + "results.txt", "Total time  complete recomputation: " + (System.currentTimeMillis() - totalTimeStart) + "ms\n");
     }
