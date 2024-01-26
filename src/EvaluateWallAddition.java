@@ -28,7 +28,7 @@ public class EvaluateWallAddition {
     final static int NUM_NEIGHBOUR_LEVELS = 1; // # of neighbor levels for HCDPS
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         // set start and goal
         int startId = 10219;
         int goalId = 13905;
@@ -40,7 +40,7 @@ public class EvaluateWallAddition {
 
         // set wall(s)
         ArrayList<SearchState> wallLocation = new ArrayList<>();
-        int wallLoc = 15347; // real region partition (14325) // fake partition (11928) // wall that partitions map (6157)
+        int wallLoc = 14325; // real region partition (14325) // fake partition (11928) // wall that partitions map (6157), 2431
         SearchState wall = new SearchState(wallLoc);
         wallLocation.add(wall);
 
@@ -104,11 +104,11 @@ public class EvaluateWallAddition {
         boolean potentialDiagonalPartition = false;
 
         // Need to check entire region to make sure it has not become partitioned by wall addition
-        // idea: get neighbours of wall
+        // idea: get neighbours (8) of wall
         int wallRowId = map.getRow(wallLoc);
         int wallColId = map.getCol(wallLoc);
         System.out.println(map.squares[wallRowId][wallColId]);
-        // it will have eight neighbours
+
         // TODO: having the regions marked on the map is not part of DBA*, should I use this?
         int neighborNorth = map.squares[wallRowId - 1][wallColId];
         int neighborNorthEast = map.squares[wallRowId - 1][wallColId + 1];
@@ -118,6 +118,7 @@ public class EvaluateWallAddition {
         int neighborSouthWest = map.squares[wallRowId + 1][wallColId - 1];
         int neighborWest = map.squares[wallRowId][wallColId - 1];
         int neighborNorthWest = map.squares[wallRowId - 1][wallColId - 1];
+
         // if the region has become partitioned, it would have to have neighbors that are across from each other be walls or in different regions
         // (this is a necessary condition, but not sufficient)
 
@@ -180,12 +181,20 @@ public class EvaluateWallAddition {
             System.out.println("Group size after removal: " + groups.size());
 
             // states in a groupRecord are in order, the first one is first in the region (top-left-most)
+            // but that does not mean we can always just recompute from there, e.g. wall @2431
             int stateId = groupRecord.states.get(0);
 
-            int startRow = map.getRow(stateId); // 96
-            int startCol = map.getCol(stateId); // 112
-            int endRow = startRow + GRID_SIZE; // 112
-            int endCol = startCol + GRID_SIZE; // 128
+            int wallRow = map.getRow(stateId);
+            int wallCol = map.getCol(stateId);
+
+            int numSectorsPerRow = (int) Math.ceil(map.cols * 1.0 / GRID_SIZE);
+            int sectorId = wallRow / GRID_SIZE * numSectorsPerRow + wallCol / GRID_SIZE;
+
+            // find start and end of sector to recompute
+            int startRow = (sectorId / numSectorsPerRow) * GRID_SIZE;
+            int startCol = (sectorId % numSectorsPerRow) * GRID_SIZE;
+            int endRow = startRow + GRID_SIZE;
+            int endCol = startCol + GRID_SIZE;
 
             // reset region (necessary in order for me to be able to reuse the regionId)
             for (int r = 0; r < GRID_SIZE; r++) {
@@ -198,8 +207,12 @@ public class EvaluateWallAddition {
                 }
             }
 
+//            map.outputImage(DBA_STAR_DB_PATH + "TEST1" + MAP_FILE_NAME + ".png", null, null);
+
             // Perform abstraction (go over sector and recompute regions)
             int numRegionsInSector = map.sectorReAbstract2(GRID_SIZE, startRow, startCol, endRow, endCol, regionId, map);
+
+//            map.outputImage(DBA_STAR_DB_PATH + "TEST2" + MAP_FILE_NAME + ".png", null, null);
 
             System.out.println("Num regions: " + numRegionsInSector);
 
@@ -233,18 +246,22 @@ public class EvaluateWallAddition {
 
             System.out.println("Group size after addition: " + groups.size());
 
+            ArrayList<Integer> regionIds = new ArrayList<>();
+
             // Recompute region reps for newly added regions
             for (GroupRecord newRec : newRecs) {
                 map.recomputeCentroid2(newRec, wallLoc);
                 // Add regions that didn't exist before to list
                 neighborIds.add(newRec.groupId);
+                regionIds.add(newRec.groupId);
             }
 
             // VISUAL CHECK:
             // map.computeCentroidMap().outputImage(DBA_STAR_DB_PATH + "TEST" + MAP_FILE_NAME + ".png", null, null);
 
             // Rebuild abstract problem
-            map.rebuildAbstractProblem(GRID_SIZE, startRow, startCol, groups);
+            // FIXME
+            map.rebuildAbstractProblem(map, GRID_SIZE, startRow, startCol, regionIds);
 
             // Set neighbours
             map.recomputeNeighbors(GRID_SIZE, startRow, startCol, endRow, endCol, neighborIds);

@@ -24,7 +24,7 @@ public class EvaluateWallRemoval {
     final static int GRID_SIZE = 16;
     final static int NUM_NEIGHBOUR_LEVELS = 1; // # of neighbor levels for HCDPS
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         // set start and goal
         int startId = 15362;
         int goalId = 11671;
@@ -36,7 +36,7 @@ public class EvaluateWallRemoval {
 
         // set wall(s)
         ArrayList<SearchState> wallLocation = new ArrayList<>();
-        int wallLoc = 11671;
+        int wallLoc = 2577;
         SearchState wall = new SearchState(wallLoc);
         wallLocation.add(wall);
 
@@ -131,7 +131,7 @@ public class EvaluateWallRemoval {
             // Check if it matches sector membership of surrounding open spaces
             if (openStatesToSectors.containsValue(sectorId)) {
                 System.out.println("Removed wall in existing sector!");
-                // TODO: Wall touches region that is in same sector as wall -> add wall to region and recompute neighbourhood (may have formed path)
+                // Wall touches region that is in same sector as wall -> add wall to region and recompute neighbourhood (may have formed path)
 
                 // can I just run findRegionRep to assign the state to a region?
                 int regionRepId = map.getAbstractProblem().findRegionRep(wall, map).getId();
@@ -164,6 +164,8 @@ public class EvaluateWallRemoval {
                     }
                 }
 
+                map.outputImage(DBA_STAR_DB_PATH + "NukedSector" + MAP_FILE_NAME + ".png", null, null);
+
                 System.out.println("Number of groups: " + groups.size());
 
                 // Put neighbours of old regions into set
@@ -181,19 +183,17 @@ public class EvaluateWallRemoval {
 
                 System.out.println("Number of groups after removal: " + groups.size());
 
-                // TODO: Recompute regions in sector
-
-//                printArray(map.squares);
+                // Recompute regions in sector
 
                 // Perform abstraction (go over sector and recompute regions)
                 int numRegionsInSector = map.sectorReAbstract2(GRID_SIZE, startRow, startCol, endRow, endCol, regionId, map);
 
                 System.out.println("Num regions: " + numRegionsInSector);
 
+                map.outputImage(DBA_STAR_DB_PATH + "AfterRebuilding" + MAP_FILE_NAME + ".png", null, null);
+
                 int count = 0;
                 GroupRecord[] newRecs = new GroupRecord[numRegionsInSector];
-
-//                printArray(map.squares);
 
                 // Traverse cells in sector to re-create the groups
                 for (int i = startRow; i < endRow; i++) {
@@ -220,11 +220,14 @@ public class EvaluateWallRemoval {
                     }
                 }
 
+                ArrayList<Integer> regionIds = new ArrayList<>();
+
                 // Recompute region reps for newly added regions
                 for (GroupRecord newRec : newRecs) {
                     map.recomputeCentroid2(newRec, wallLoc);
                     // Add regions that didn't exist before to list
                     neighbouringRegions.add(newRec.groupId);
+                    regionIds.add(newRec.groupId);
                 }
 
                 System.out.println("Group size after addition: " + groups.size());
@@ -234,7 +237,7 @@ public class EvaluateWallRemoval {
 
 //                printArray(map.squares);
 
-                map.rebuildAbstractProblem(GRID_SIZE, startRow, startCol, groups);
+                map.rebuildAbstractProblem(map, GRID_SIZE, startRow, startCol, regionIds);
 
                 ArrayList<Integer> neighborIds = new ArrayList<>(neighbouringRegions);
 
@@ -258,7 +261,7 @@ public class EvaluateWallRemoval {
                 System.out.println("Removed wall in new sector!");
                 /*
                 Case 3: Basically like case 1, but need to recompute paths to neighbours
-                TODO: Wall touches region but it is not in same sector as wall -> new, connected, region (recompute neighbourhood)
+                Wall touches region, but it is not in same sector as wall -> new, connected, region (recompute neighbourhood)
                  */
                 // Assign new region id to the location on the map
 
@@ -309,7 +312,8 @@ public class EvaluateWallRemoval {
                 int endCol = startCol + GRID_SIZE;
 
                 // Rebuild abstract problem
-                map.rebuildAbstractProblem(GRID_SIZE, startRow, startCol, groups);
+                // FIXME
+                map.rebuildAbstractProblem(map, GRID_SIZE, startRow, startCol, new ArrayList<>(List.of(newRec.groupId)));
 
                 // Set neighbours
                 map.recomputeNeighbors(GRID_SIZE, startRow, startCol, endRow, endCol, neighborIds);

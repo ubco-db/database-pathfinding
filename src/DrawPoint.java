@@ -7,7 +7,7 @@ public class DrawPoint {
     final static String PATH_TO_MAP = MAP_FILE_PATH + MAP_FILE_NAME;
     public static void main(String[] args) {
         GameMap map = new GameMap(PATH_TO_MAP);
-        int point = 4651;
+        int point = 2431;
         map.drawPoint("myPoint.png", new SearchState(point));
     }
 }

@@ -1,0 +1,2 @@
+Total time partial recomputation: 14350ms
+Total time full recomputation: 63379ms

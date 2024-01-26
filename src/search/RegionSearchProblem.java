@@ -17,12 +17,21 @@ public class RegionSearchProblem extends SearchProblem {
     private int[][] edges; // edges[i][j] is an edge from region i to region j
     private GameMap map;
     private int[] regionCenter; // The node id of each region representative
-    private int gridSize;
+    private final int gridSize;
 
     private class Sector {
         public int number;
         public int numRegions;
         public ArrayList<Region> regions;
+
+        @Override
+        public String toString() {
+            return "Sector{" +
+                    "number=" + number +
+                    ", numRegions=" + numRegions +
+                    ", regions=" + regions +
+                    '}';
+        }
     }
 
     private class Region {
@@ -30,6 +39,16 @@ public class RegionSearchProblem extends SearchProblem {
         public int regionRepId;
         public int sectorId;
         public int[] edges;
+
+        @Override
+        public String toString() {
+            return "Region{" +
+                    "regionId=" + regionId +
+                    ", regionRepId=" + regionRepId +
+                    ", sectorId=" + sectorId +
+                    ", edges=" + Arrays.toString(edges) +
+                    '}';
+        }
     }
 
     private ArrayList<Sector> sectors;
@@ -50,19 +69,21 @@ public class RegionSearchProblem extends SearchProblem {
             sectors.add(s);
 
             for (int j = 0; j < numRegions[i]; j++) {
-                Region r = new Region();
-                r.sectorId = i;
-                r.regionRepId = groups.get(count).groupRepId;
-                r.regionId = map.getCell(map.getRow(r.regionRepId), map.getCol(r.regionRepId)); // Equivalent to START_NUM
-                // r.edges = Arrays.copyOf(edges[i], edges[i].length);
-                if (edges[count - 50] == null) r.edges = null;
-                else {
-                    r.edges = new int[edges[count - 50].length];
-                    for (int k = 0; k < r.edges.length; k++)
-                        r.edges[k] = edges[count - 50][k] + 50;
+                if (groups.get(count) != null) {
+                    Region r = new Region();
+                    r.sectorId = i;
+                    r.regionRepId = groups.get(count).groupRepId;
+                    r.regionId = map.getCell(map.getRow(r.regionRepId), map.getCol(r.regionRepId)); // Equivalent to START_NUM
+                    // r.edges = Arrays.copyOf(edges[i], edges[i].length);
+                    if (edges[count - 50] == null) r.edges = null;
+                    else {
+                        r.edges = new int[edges[count - 50].length];
+                        for (int k = 0; k < r.edges.length; k++)
+                            r.edges[k] = edges[count - 50][k] + 50;
+                    }
+                    regions.put(r.regionId, r);
+                    s.regions.add(r);
                 }
-                regions.put(r.regionId, r);
-                s.regions.add(r);
                 count++;
             }
         }
@@ -72,6 +93,66 @@ public class RegionSearchProblem extends SearchProblem {
         this.map = map;
         this.regionCenter = regionCenter;
         this.gridSize = gridSize;
+    }
+
+    // FIXME
+    public void recomputeRegionSearchProblem(int[] numRegions, int[][] edges, GameMap map, int sectorId, ArrayList<Integer> regionIds) {
+        this.numRegions = numRegions;
+        this.edges = edges;
+        this.map = map;
+
+        TreeMap<Integer, GroupRecord> groups = map.getGroups();
+
+        // TODO: need to work on sectors and regions here - deal with new sectors occurring through wall deletion
+
+//        System.out.println(sectors);
+
+        Sector currentSector = sectors.get(sectorId);
+
+        // TODO: may be able to optimize here, don't always need to delete this
+        // remove old region from regions list
+        for (int regionId : regionIds) {
+            regions.remove(regionId);
+        }
+
+        // remove old region from sector
+        currentSector.regions.removeIf(region -> regionIds.contains(region.regionId));
+
+        // TODO: add a check here, if these are equal we may be able to optimize
+        currentSector.numRegions = regionIds.size() + currentSector.regions.size();
+
+        // Add regions to sector, assign correct region id and region rep id
+        for (Integer regionId : regionIds) {
+            Region r = new Region();
+            r.sectorId = currentSector.number;
+            r.regionId = regionId;
+
+            // The group may not exist anymore for regions that consisted of a single rep (e.g. 9487)
+            if (groups.get(r.regionId) != null) {
+                r.regionRepId = groups.get(r.regionId).groupRepId; // can get by region id in groups
+
+                // add edges
+                if (edges[r.regionId - 50] == null) {
+                    r.edges = null;
+                } else {
+                    r.edges = new int[edges[r.regionId - 50].length];
+                    for (int k = 0; k < r.edges.length; k++) {
+                        r.edges[k] = edges[r.regionId - 50][k] + 50;
+                    }
+                }
+
+                currentSector.regions.add(r);
+
+                regions.put(r.regionId, r);
+            } else {
+                // Decrement num regions in that case
+                currentSector.numRegions--;
+            }
+        }
+
+        System.out.println("Current sector after recomputation: " + currentSector);
+
+//        System.out.println(regions);
     }
 
     public int computeDistance(SearchState start, SearchState goal) {
@@ -308,14 +389,8 @@ public class RegionSearchProblem extends SearchProblem {
         for (SearchState searchState : neighborList) neighbors.add(searchState.id);
     }
 
-    public boolean isNeighbor(int fromStateId, int toStateId) { // TODO:
-        // Probably can
-        // do this
-        // faster
-        // without
-        // computing all
-        // the
-        // neighbors?
+    public boolean isNeighbor(int fromStateId, int toStateId) {
+        //  TODO: Probably can do this faster without computing all the neighbors?
         ArrayList<SearchState> neighborList = getNeighbors(new SearchState(
                 fromStateId));
         for (SearchState searchState : neighborList)
@@ -342,6 +417,8 @@ public class RegionSearchProblem extends SearchProblem {
             return regionState;
         } else { // Have to search for which region representative this node is in (BFS)
             // Check if state itself is a region representative
+            System.out.println("Num regions in sector: " + sec.numRegions);
+            System.out.println("Regions in sector " + sec.number + ": " + sec.regions);
             for (int j = 0; j < sec.numRegions; j++) {
                 if (s.id == sec.regions.get(j).regionRepId) {
                     regionState.id = sec.regions.get(j).regionRepId;
@@ -420,6 +497,10 @@ public class RegionSearchProblem extends SearchProblem {
         return null;
     }
 
+    public int[][] getEdges() {
+        return edges;
+    }
+
     @Override
     public int computeDistance(SearchState start, SearchState goal, HeuristicFunction heuristic) {
         // TODO Auto-generated method stub
@@ -431,5 +512,4 @@ public class RegionSearchProblem extends SearchProblem {
         // TODO Auto-generated method stub
         return 0;
     }
-
 }
