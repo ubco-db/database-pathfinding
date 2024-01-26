@@ -189,13 +189,12 @@ public class SubgoalDBExact extends SubgoalDB {
             }
         }
 
-        if (isElimination) { // tombstone record
-            groupsMapping[regionId - GameMap.START_NUM] = null;
-            // db.setNumRegions(groupsMapping.length - 1);
-        }
-
-//        if (!(isElimination || isPartition)){ // update groupsMapping/groupsArr
-//            groupsMapping[regionId - GameMap.START_NUM] = new int[]{regionId - GameMap.START_NUM, regionRepId};
+//        if (isElimination) { // tombstone record
+//            // TODO: Is this needed?
+//            System.out.println("groupsMapping elimination: " + Arrays.deepToString(groupsMapping));
+//            System.out.println(groupsMapping.length);
+//            groupsMapping[regionId - GameMap.START_NUM] = null;
+//            // db.setNumRegions(groupsMapping.length - 1);
 //        }
 
         // write groupsArr back to db
