@@ -1,4 +1,3 @@
-import comparison.DBDiff;
 import database.DBStats;
 import database.DBStatsRecord;
 import database.GameDB;
@@ -9,7 +8,6 @@ import map.GroupRecord;
 import search.*;
 import util.ExpandArray;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
@@ -446,8 +444,8 @@ public class EvaluateWallAddition {
         if (path == null || path.isEmpty()) {
             System.out.printf("No path was found between %d and %d!%n", startId, goalId);
         }
-        map.computeCentroidMap().outputImage(DBA_STAR_DB_PATH + wallStatus + MAP_FILE_NAME + "_path.png", path, null);
-        map.computeCentroidMap().outputImage(DBA_STAR_DB_PATH + wallStatus + MAP_FILE_NAME + "_optimal_path.png", optimalPath, null);
+        map.computeCentroidMap().outputImage(DBA_STAR_DB_PATH + wallStatus + MAP_FILE_NAME + "_path.png", path, dbaStar.getSubgoals());
+        map.computeCentroidMap().outputImage(DBA_STAR_DB_PATH + wallStatus + MAP_FILE_NAME + "_optimal_path.png", optimalPath, dbaStar.getSubgoals());
     }
 
     /* Helper methods */
