@@ -32,7 +32,7 @@ public class EvaluateWallAddition {
     public static void main(String[] args) throws Exception {
         // set start and goal
         int startId = 13411;
-        int goalId = 4634;
+        int goalId = 4339;
 
         // build DBAStar Database
         GameMap startingMap = new GameMap(PATH_TO_MAP);
@@ -41,7 +41,7 @@ public class EvaluateWallAddition {
 
         // set wall(s)
         ArrayList<SearchState> wallLocation = new ArrayList<>();
-        int wallLoc = 4486;
+        int wallLoc = 4635;
         SearchState wall = new SearchState(wallLoc);
         wallLocation.add(wall);
 
