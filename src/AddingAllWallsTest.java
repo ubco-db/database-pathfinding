@@ -127,7 +127,7 @@ public class AddingAllWallsTest {
 
         System.out.println("Elapsed Time in milliseconds for complete recomputation: " + elapsedTimeCompleteRecomputation);
 
-        writeResultToFile(DBA_STAR_DB_PATH + "results.txt", "Total time partial recomputation: " + (System.currentTimeMillis() - totalTimeStart) + "ms\n");
+        writeResultToFile(DBA_STAR_DB_PATH + "results.txt", "Total time  complete recomputation: " + (System.currentTimeMillis() - totalTimeStart) + "ms\n");
     }
 
     private static void recomputeDBAStar(boolean isAddition, int wallLoc, GameMap map, MapSearchProblem problem, SubgoalDynamicDB2 dbBW) throws Exception {
