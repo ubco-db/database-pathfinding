@@ -96,7 +96,9 @@ public class AddingAllWallsTest {
             int goalNum = 0;
             for (int goalId : goalIds) {
                 if (goalId != wallId) {
+                    System.out.println("Path from " + startId + " to " + goalId + ": ");
                     pathsAfterPartialRecomputation[wallNumber][goalNum] = getDBAStarPath(startId, goalId, dbaStar);
+                    System.out.println(pathsAfterPartialRecomputation[wallNumber][goalNum]);
                 }
                 goalNum++;
             }
@@ -108,7 +110,7 @@ public class AddingAllWallsTest {
             recomputeDBAStar(false, wallId, dbaStar.getMap(), (MapSearchProblem) dbaStar.getProblem(), (SubgoalDynamicDB2) dbaStar.getDatabase());
         }
 
-        writeResultToFile(DBA_STAR_DB_PATH + "results.txt", "Total time partial recomputation: " + (System.currentTimeMillis() - totalTimeStart) + "ms\n");
+        writeResultToFile(DBA_STAR_DB_PATH + "results.txt", "Total time partial recomputation for sector " + sectorNum + " : \": " + (System.currentTimeMillis() - totalTimeStart) + "ms\n");
 
         /* complete recomputation */
 
@@ -140,7 +142,9 @@ public class AddingAllWallsTest {
             int goalNum = 0;
             for (int goalId : goalIds) {
                 if (goalId != wallId) {
+                    System.out.println("Path from " + startId + " to " + goalId + ": ");
                     pathsAfterFullRecomputation[wallNumber][goalNum] = getDBAStarPath(startId, goalId, dbaStar);
+                    System.out.println(pathsAfterFullRecomputation[wallNumber][goalNum]);
                 }
                 goalNum++;
             }
@@ -148,22 +152,22 @@ public class AddingAllWallsTest {
             wallNumber++;
         }
 
+        writeResultToFile(DBA_STAR_DB_PATH + "results.txt", "Total time  complete recomputation for sector " + sectorNum + " : " + (System.currentTimeMillis() - totalTimeStart) + "ms\n");
+
         for (int i = 0; i < pathsAfterFullRecomputation.length; i++) {
             for (int j = 0; j < pathsAfterFullRecomputation[i].length; j++) {
                 if (i != j) {
-                    System.out.println("Path after full recomp: " + pathsAfterFullRecomputation[i][j]);
-                    System.out.println("Path after partial recomp: " + pathsAfterPartialRecomputation[i][j]);
-                    System.out.println();
                     boolean equal = isPathEqual(pathsAfterFullRecomputation[i][j], pathsAfterPartialRecomputation[i][j]);
                     if (!equal) {
                         // TODO: actually print id of wall here
-                        System.out.println("\nERROR! Paths to " + j + " for wall at " + i + " not equal.\n");
+                        System.out.println("\nERROR! Paths to " + goalIds.get(j) + " for wall at " + goalIds.get(i) + " not equal.\n");
+                        System.out.println("Path after full recomp: " + pathsAfterFullRecomputation[i][j]);
+                        System.out.println("Path after partial recomp: " + pathsAfterPartialRecomputation[i][j]);
+                        System.out.println();
                     }
                 }
             }
         }
-
-        writeResultToFile(DBA_STAR_DB_PATH + "results.txt", "Total time  complete recomputation: " + (System.currentTimeMillis() - totalTimeStart) + "ms\n");
     }
 
     private static void recomputeDBAStar(boolean isAddition, int wallLoc, GameMap map, MapSearchProblem problem, SubgoalDynamicDB2 dbBW) throws Exception {
@@ -830,8 +834,8 @@ public class AddingAllWallsTest {
 
     private static boolean isPathEqual(ArrayList<SearchState> newPath, ArrayList<SearchState> oldPath) {
         // if path length differs, they are not equal
-        if (newPath == null)
-            return false; // QUESTION: can oldPath ever be null? No, because safe explorability is assumed
+        if (newPath == null || oldPath == null)
+            return false;
         if (newPath.size() != oldPath.size()) return false;
 
         for (int i = 0; i < newPath.size(); i++) {
