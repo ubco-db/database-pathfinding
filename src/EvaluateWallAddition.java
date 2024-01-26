@@ -107,14 +107,13 @@ public class EvaluateWallAddition {
             // get back new region rep and change the record
             groupRecord.setGroupRepId(newRegionRep);
             groups.replace(regionId, groupRecord);
-            // TODO: is this needed?
-//            int wallRow = map.getRow(wallLoc);
-//            int wallCol = map.getCol(wallLoc);
-//            int numSectorsPerRow = (int) Math.ceil(map.cols * 1.0 / GRID_SIZE);
-//            int sectorId = wallRow / GRID_SIZE * numSectorsPerRow + wallCol / GRID_SIZE;
-//            int startRow = (sectorId / numSectorsPerRow) * GRID_SIZE;
-//            int startCol = (sectorId % numSectorsPerRow) * GRID_SIZE;
-//            map.rebuildAbstractProblem(map, GRID_SIZE, startRow, startCol, new ArrayList<>(List.of(regionId)));
+            int wallRow = map.getRow(wallLoc);
+            int wallCol = map.getCol(wallLoc);
+            int numSectorsPerRow = (int) Math.ceil(map.cols * 1.0 / GRID_SIZE);
+            int sectorId = wallRow / GRID_SIZE * numSectorsPerRow + wallCol / GRID_SIZE;
+            int startRow = (sectorId / numSectorsPerRow) * GRID_SIZE;
+            int startCol = (sectorId % numSectorsPerRow) * GRID_SIZE;
+            map.rebuildAbstractProblem(map, GRID_SIZE, startRow, startCol, new ArrayList<>(List.of(regionId)));
             isElimination = false;
         }
 

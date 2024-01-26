@@ -110,7 +110,7 @@ public class AddingAllWallsTest {
             recomputeDBAStar(false, wallId, dbaStar.getMap(), (MapSearchProblem) dbaStar.getProblem(), (SubgoalDynamicDB2) dbaStar.getDatabase());
         }
 
-        writeResultToFile(DBA_STAR_DB_PATH + "results.txt", "Total time partial recomputation for sector " + sectorNum + " : \": " + (System.currentTimeMillis() - totalTimeStart) + "ms\n");
+        writeResultToFile(DBA_STAR_DB_PATH + "results.txt", "Total time partial recomputation for sector " + sectorNum + ": " + (System.currentTimeMillis() - totalTimeStart) + "ms\n");
 
         /* complete recomputation */
 
@@ -152,7 +152,7 @@ public class AddingAllWallsTest {
             wallNumber++;
         }
 
-        writeResultToFile(DBA_STAR_DB_PATH + "results.txt", "Total time  complete recomputation for sector " + sectorNum + " : " + (System.currentTimeMillis() - totalTimeStart) + "ms\n");
+        writeResultToFile(DBA_STAR_DB_PATH + "results.txt", "Total time  complete recomputation for sector " + sectorNum + ": " + (System.currentTimeMillis() - totalTimeStart) + "ms\n");
 
         for (int i = 0; i < pathsAfterFullRecomputation.length; i++) {
             for (int j = 0; j < pathsAfterFullRecomputation[i].length; j++) {
@@ -234,13 +234,13 @@ public class AddingAllWallsTest {
             groupRecord.setGroupRepId(newRegionRep);
             groups.replace(regionId, groupRecord);
             // TODO: is this needed?
-//            int wallRow = map.getRow(wallLoc);
-//            int wallCol = map.getCol(wallLoc);
-//            int numSectorsPerRow = (int) Math.ceil(map.cols * 1.0 / GRID_SIZE);
-//            int sectorId = wallRow / GRID_SIZE * numSectorsPerRow + wallCol / GRID_SIZE;
-//            int startRow = (sectorId / numSectorsPerRow) * GRID_SIZE;
-//            int startCol = (sectorId % numSectorsPerRow) * GRID_SIZE;
-//            map.rebuildAbstractProblem(map, GRID_SIZE, startRow, startCol, new ArrayList<>(List.of(regionId)));
+            int wallRow = map.getRow(wallLoc);
+            int wallCol = map.getCol(wallLoc);
+            int numSectorsPerRow = (int) Math.ceil(map.cols * 1.0 / GRID_SIZE);
+            int sectorId = wallRow / GRID_SIZE * numSectorsPerRow + wallCol / GRID_SIZE;
+            int startRow = (sectorId / numSectorsPerRow) * GRID_SIZE;
+            int startCol = (sectorId % numSectorsPerRow) * GRID_SIZE;
+            map.rebuildAbstractProblem(map, GRID_SIZE, startRow, startCol, new ArrayList<>(List.of(regionId)));
             isElimination = false;
         }
 
