@@ -13,35 +13,36 @@ public class DBAStar implements SearchAlgorithm {
     private final RegionSearchProblem abstractProblem;
     private final ArrayList<SearchState> subgoals;
 
-    public DBAStar(SearchProblem problem, GameMap abstractmap, SubgoalDB database) {
+    public DBAStar(SearchProblem problem, GameMap abstractMap, SubgoalDB database) {
         this.database = database;
         this.problem = problem;
-        this.map = abstractmap;
-        abstractProblem = abstractmap.getAbstractProblem();
+        this.map = abstractMap;
+        abstractProblem = abstractMap.getAbstractProblem();
         this.subgoals = new ArrayList<SearchState>();
     }
 
     public ArrayList<SearchState> computePath(SearchState start, SearchState goal, StatsRecord stats) {
         ArrayList<SubgoalDBRecord> used = new ArrayList<>();
         ArrayList<SearchState> newPath;
+
         SearchState currentStart = start;
         SearchState currentGoal;
+
         SubgoalDBRecord currentRecord;
+
         int currentIndex;
         int[] subgoalList;
         int cutoff = 10000;
+
         HillClimbing subgoalSearchAlg = new HillClimbing(problem, cutoff);
         AStar astar = new AStar(problem);
         subgoals.clear();
 
-        long startTime, endTime, startTime2;
-
-        //TODO check if start or goal is still valid
+        long startTime, endTime;
 
         ArrayList<SearchState> path = new ArrayList<>();
 
         ArrayList<SearchState> pathStart = new ArrayList<>();
-
         ArrayList<SearchState> pathEnd = new ArrayList<>();
 
         startTime = System.nanoTime();
@@ -49,7 +50,6 @@ public class DBAStar implements SearchAlgorithm {
         SearchState goalRegionCenter = abstractProblem.findRegion2(goal, pathEnd, 1);
 
         // Search the database for records
-        startTime2 = System.nanoTime();
         ArrayList<SubgoalDBRecord> records = null;
 
         // Need this condition for complete separation case, not entirely sure why
@@ -59,7 +59,7 @@ public class DBAStar implements SearchAlgorithm {
         endTime = System.nanoTime();
 
         if (records != null && !records.isEmpty()) {
-            currentRecord = records.get(0);
+            currentRecord = records.getFirst();
             used.add(currentRecord);
             // System.out.println("Using subgoal record from database: "+currentRecord.toString(problem));
             // System.out.println("Using subgoal record from database: "+currentRecord.getId());
@@ -68,21 +68,12 @@ public class DBAStar implements SearchAlgorithm {
 
             currentGoal = new SearchState(currentRecord.getStartId());
             subgoals.add(currentGoal);
-            //endTime = System.nanoTime();
+            // endTime = System.nanoTime();
             stats.updateMaxTime(endTime - startTime);
-            SearchUtil.computePathCost(path, stats, problem); // Compute path
-            // costs up to
-            // this point
+            SearchUtil.computePathCost(path, stats, problem); // Compute path costs up to this point
 
             while (true) {
-                //FIXME? check if cell is non-empty
-                if (map.isWall(currentGoal.id) && !map.isValid(currentGoal.id)) {
-                    //TODO Recompute centeroid
-
-
-                }
                 if (currentStart == start) {
-
                     if (subgoalList == null || subgoalList.length == 0) {
                         newPath = subgoalSearchAlg.computePath(currentStart, currentGoal, stats);
                     } else {
@@ -93,29 +84,21 @@ public class DBAStar implements SearchAlgorithm {
                             currentIndex++;
                         }
                     }
-
                     if (newPath == null) {
                         if (!pathStart.isEmpty()) {
                             newPath = pathStart;
                         } else newPath = astar.computePath(currentStart, currentGoal, stats);
-						/*if (newPath == null){
-							//TODO: recompute centeroid OR check if subgoal is wall first
-							
-						}*/
                     }
-
                 } else if (currentGoal == goal) {
                     newPath = subgoalSearchAlg.computePath(currentStart, currentGoal, stats);
                     if (newPath == null && currentStart != goalRegionCenter) {
                         currentGoal = goalRegionCenter;
                         newPath = subgoalSearchAlg.computePath(currentStart, currentGoal, stats);
                     } else if (newPath == null) {
-
                         if (!pathEnd.isEmpty()) {
                             newPath = pathEnd;
                         } else newPath = astar.computePath(currentStart, currentGoal, stats);
                     }
-
                 } else {
                     newPath = subgoalSearchAlg.computePath(currentStart, currentGoal, stats);
                 }
@@ -141,7 +124,7 @@ public class DBAStar implements SearchAlgorithm {
                     System.out.println("Length of path at interrupt: " + path.size());
                     records = database.findNearest(problem, currentStart, goal, subgoalSearchAlg, 1, stats, null);
                     if (!records.isEmpty()) {
-                        currentRecord = records.get(0);
+                        currentRecord = records.getFirst();
                         subgoalList = currentRecord.getSubgoalList();
                         used.add(currentRecord);
                         // System.out.println("Using subgoal record from database: "+currentRecord.toString());
@@ -203,9 +186,5 @@ public class DBAStar implements SearchAlgorithm {
 
     public GameMap getMap() {
         return map;
-    }
-
-    public RegionSearchProblem getAbstractProblem() {
-        return abstractProblem;
     }
 }
