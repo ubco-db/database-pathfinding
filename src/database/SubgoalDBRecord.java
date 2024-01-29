@@ -89,7 +89,7 @@ public class SubgoalDBRecord {
         buf.append(problem.idToString(goalId));
         buf.append(" Subgoals: ");
         if (stateIds != null) {
-            for (int stateId : stateIds) buf.append(problem.idToString(stateId)).append(" ; ");
+            for (int stateId : stateIds) buf.append(problem.idToString(stateId)).append("; ");
         }
         return buf.toString();
     }
