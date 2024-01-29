@@ -66,7 +66,6 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
         int startId = path[0];
         int goalId = path[pathSize - 1];
 
-        // Does not include start and goal
         subgoals = SearchUtil.computeSubgoalsBinaryByIds(path, searchAlg, tmp, pathSize);
 
         SubgoalDBRecord rec = new SubgoalDBRecord(startId, goalId, subgoals, 0);
@@ -291,7 +290,8 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
                 neighborId[startGroupLoc][count] = goalGroupLoc;
                 lowestCost[startGroupLoc][count] = pathCost;
                 neighbor[startGroupLoc][count] = goalGroupLoc;
-                if (asSubgoals) {
+
+                if (asSubgoals) { // This is always true?
                     paths[startGroupLoc][count] = SubgoalDB.convertPathToIds(path);
                     paths[startGroupLoc][count] = SearchUtil.compressPath(paths[startGroupLoc][count], searchAlg, tmp, path.size());
                     numStates += paths[startGroupLoc][count].length;
@@ -348,23 +348,24 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
         Therefore, I need to use groups.lastKey() + 1 rather than groups.size() for this check or one of the removal
         cases won't work.
          */
-        if (lowestCost.length < groups.lastKey() + 1) {
-            int[][] resizedLowestCost = new int[groups.lastKey() + 1][];
+        int startNum = 50;
+        if (lowestCost.length < groups.lastKey() + 1 - startNum) {
+            int[][] resizedLowestCost = new int[groups.lastKey() + 1 - startNum][];
             System.arraycopy(lowestCost, 0, resizedLowestCost, 0, lowestCost.length);
             this.lowestCost = resizedLowestCost;
         }
-        if (paths.length < groups.lastKey() + 1) {
-            int[][][] resizedPath = new int[groups.lastKey() + 1][][];
+        if (paths.length < groups.lastKey() + 1 - startNum) {
+            int[][][] resizedPath = new int[groups.lastKey() + 1 - startNum][][];
             System.arraycopy(paths, 0, resizedPath, 0, paths.length);
             this.paths = resizedPath;
         }
-        if (neighbor.length < groups.lastKey() + 1) {
-            int[][] resizedNeighbor = new int[groups.lastKey() + 1][];
+        if (neighbor.length < groups.lastKey() + 1 - startNum) {
+            int[][] resizedNeighbor = new int[groups.lastKey() + 1 - startNum][];
             System.arraycopy(neighbor, 0, resizedNeighbor, 0, neighbor.length);
             this.neighbor = resizedNeighbor;
         }
-        if (neighborId.length < groups.lastKey() + 1) {
-            int[][] resizedNeighborId = new int[groups.lastKey() + 1][];
+        if (neighborId.length < groups.lastKey() + 1 - startNum) {
+            int[][] resizedNeighborId = new int[groups.lastKey() + 1 - startNum][];
             System.arraycopy(neighborId, 0, resizedNeighborId, 0, neighborId.length);
             neighborId = resizedNeighborId;
         }
