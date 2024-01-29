@@ -39,7 +39,7 @@ public class AddingAllWallsTest {
         // iterate over all goals (open spots no wall)
         for (int i = 16; i < startingMap.rows; i++) {
             for (int j = 0; j < startingMap.cols; j++) {
-                if (!startingMap.isWall(i, j)) {
+                if (!startingMap.isWall(i, j) && (getSectorId(startingMap, startingMap.getId(i, j)) == sectorNum)) {
                     goalIds.add(startingMap.getId(i, j));
                 }
             }
@@ -50,6 +50,7 @@ public class AddingAllWallsTest {
 
         // print number of goals (6175 on 012.map)
         System.out.println("Number of goals: " + goalIds.size());
+        System.out.println("Goals in sector " + sectorNum + ": " + goalIds);
 
         // compute DBAStar database before adding wall
         System.out.println();
@@ -66,6 +67,10 @@ public class AddingAllWallsTest {
         long elapsedTimePartialRecomputation = 0;
 
         long totalTimeStart = System.currentTimeMillis();
+
+        @SuppressWarnings("unchecked")
+        ArrayList<SearchState>[][] pathsAfterPartialRecomputation = new ArrayList[goalIds.size()][goalIds.size()];
+        int wallNumber = 0;
         for (int wallId : goalIds) {
             // TODO: Remove wall after this to ensure I can reuse map, database, etc.
 
@@ -78,26 +83,32 @@ public class AddingAllWallsTest {
             elapsedTimePartialRecomputation += endTimePartialRecomputation - startTimePartialRecomputation;
 
             // TODO: store paths somewhere for comparison (2D array?)
-/*            for (int goalId : goalIds) {
+            int goalNum = 0;
+            for (int goalId : goalIds) {
                 if (goalId != wallId) {
-                    getDBAStarPath(startId, goalId, dbaStar);
+                    System.out.println("Path from " + startId + " to " + goalId + ": ");
+                    pathsAfterPartialRecomputation[wallNumber][goalNum] = getDBAStarPath(startId, goalId, dbaStar);
+                    System.out.println(pathsAfterPartialRecomputation[wallNumber][goalNum]);
                 }
-            }*/
+                goalNum++;
+            }
+
+            wallNumber++;
 
             // remove wall
             System.out.println("\nRecompute wall removal: ");
             recomputeDBAStar(false, wallId, dbaStar.getMap(), (MapSearchProblem) dbaStar.getProblem(), (SubgoalDynamicDB2) dbaStar.getDatabase());
         }
 
-//        System.out.println("Elapsed Time in milliseconds for partial recomputation: " + elapsedTimePartialRecomputation);
-//        System.out.println("Total time: " + (System.currentTimeMillis() - totalTimeStart) + "ms");
-
-        writeResultToFile(DBA_STAR_DB_PATH + "results.txt", "Total time partial recomputation: " + (System.currentTimeMillis() - totalTimeStart) + "ms\n");
+        writeResultToFile(DBA_STAR_DB_PATH + "results.txt", "Total time partial recomputation for sector " + sectorNum + ": " + (System.currentTimeMillis() - totalTimeStart) + "ms\n");
 
         /* complete recomputation */
 
         long elapsedTimeCompleteRecomputation = 0;
 
+        @SuppressWarnings("unchecked")
+        ArrayList<SearchState>[][] pathsAfterFullRecomputation = new ArrayList[goalIds.size()][goalIds.size()];
+        wallNumber = 0;
         for (int wallId : goalIds) {
             long startTimeCompleteRecomputation = System.currentTimeMillis();
 
@@ -118,16 +129,35 @@ public class AddingAllWallsTest {
 
             Walls.removeWall(PATH_TO_MAP, wallLocation, startingMap);
 
-/*            for (int goalId : goalIds) {
+            int goalNum = 0;
+            for (int goalId : goalIds) {
                 if (goalId != wallId) {
-                    getDBAStarPath(startId, goalId, dbaStar);
+                    System.out.println("Path from " + startId + " to " + goalId + ": ");
+                    pathsAfterFullRecomputation[wallNumber][goalNum] = getDBAStarPath(startId, goalId, dbaStar);
+                    System.out.println(pathsAfterFullRecomputation[wallNumber][goalNum]);
                 }
-            }*/
+                goalNum++;
+            }
+
+            wallNumber++;
         }
 
-        System.out.println("Elapsed Time in milliseconds for complete recomputation: " + elapsedTimeCompleteRecomputation);
+        writeResultToFile(DBA_STAR_DB_PATH + "results.txt", "Total time  complete recomputation for sector " + sectorNum + ": " + (System.currentTimeMillis() - totalTimeStart) + "ms\n");
 
-        writeResultToFile(DBA_STAR_DB_PATH + "results.txt", "Total time partial recomputation: " + (System.currentTimeMillis() - totalTimeStart) + "ms\n");
+        for (int i = 0; i < pathsAfterFullRecomputation.length; i++) {
+            for (int j = 0; j < pathsAfterFullRecomputation[i].length; j++) {
+                if (i != j) {
+                    boolean equal = isPathEqual(pathsAfterFullRecomputation[i][j], pathsAfterPartialRecomputation[i][j]);
+                    if (!equal) {
+                        // TODO: actually print id of wall here
+                        System.out.println("\nERROR! Paths to " + goalIds.get(j) + " for wall at " + goalIds.get(i) + " not equal.\n");
+                        System.out.println("Path after full recomp: " + pathsAfterFullRecomputation[i][j]);
+                        System.out.println("Path after partial recomp: " + pathsAfterPartialRecomputation[i][j]);
+                        System.out.println();
+                    }
+                }
+            }
+        }
     }
 
     private static void recomputeDBAStar(boolean isAddition, int wallLoc, GameMap map, MapSearchProblem problem, SubgoalDynamicDB2 dbBW) throws Exception {
@@ -194,13 +224,13 @@ public class AddingAllWallsTest {
             groupRecord.setGroupRepId(newRegionRep);
             groups.replace(regionId, groupRecord);
             // TODO: is this needed?
-//            int wallRow = map.getRow(wallLoc);
-//            int wallCol = map.getCol(wallLoc);
-//            int numSectorsPerRow = (int) Math.ceil(map.cols * 1.0 / GRID_SIZE);
-//            int sectorId = wallRow / GRID_SIZE * numSectorsPerRow + wallCol / GRID_SIZE;
-//            int startRow = (sectorId / numSectorsPerRow) * GRID_SIZE;
-//            int startCol = (sectorId % numSectorsPerRow) * GRID_SIZE;
-//            map.rebuildAbstractProblem(map, GRID_SIZE, startRow, startCol, new ArrayList<>(List.of(regionId)));
+            int wallRow = map.getRow(wallLoc);
+            int wallCol = map.getCol(wallLoc);
+            int numSectorsPerRow = (int) Math.ceil(map.cols * 1.0 / GRID_SIZE);
+            int sectorId = wallRow / GRID_SIZE * numSectorsPerRow + wallCol / GRID_SIZE;
+            int startRow = (sectorId / numSectorsPerRow) * GRID_SIZE;
+            int startCol = (sectorId % numSectorsPerRow) * GRID_SIZE;
+            map.rebuildAbstractProblem(map, GRID_SIZE, startRow, startCol, new ArrayList<>(List.of(regionId)));
             isElimination = false;
         }
 
@@ -794,8 +824,8 @@ public class AddingAllWallsTest {
 
     private static boolean isPathEqual(ArrayList<SearchState> newPath, ArrayList<SearchState> oldPath) {
         // if path length differs, they are not equal
-        if (newPath == null)
-            return false; // QUESTION: can oldPath ever be null? No, because safe explorability is assumed
+        if (newPath == null || oldPath == null)
+            return false;
         if (newPath.size() != oldPath.size()) return false;
 
         for (int i = 0; i < newPath.size(); i++) {
