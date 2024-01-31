@@ -1,10 +1,17 @@
 package util;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.Queue;
+import map.GameMap;
+import search.SearchState;
 
-public class MapHelpers {
+import java.util.*;
+
+public final class MapHelpers {
+    final static int GRID_SIZE = 16;
+
+    private MapHelpers() throws Exception {
+        throw new Exception("This is a utility class and should not be instantiated.");
+    }
+
     public static boolean isContinuousWall(int n1, int n2) {
         // if n1 and n2 is are walls, adding a wall between them leads to a continuous wall segment
         // this assumes n1 and n2 are across from each other
@@ -62,5 +69,110 @@ public class MapHelpers {
         }
 
         return false;  // No path exists
+    }
+
+    /**
+     * @param map GameMap object
+     * @param row row number of state on map
+     * @param col column number of state on map
+     * @return number of sector the state is part of
+     */
+    public static int getSectorId(GameMap map, int row, int col) {
+        int numSectorsPerRow = (int) Math.ceil(map.cols * 1.0 / GRID_SIZE);
+        return row / GRID_SIZE * numSectorsPerRow + col / GRID_SIZE;
+    }
+
+    /**
+     * @param map GameMap object
+     * @param sid state id of state on map
+     * @return number of sector the state is part of
+     */
+    public static int getSectorId(GameMap map, int sid) {
+        int row = map.getRow(sid);
+        int col = map.getCol(sid);
+        return getSectorId(map, row, col);
+    }
+
+    /**
+     * @param map        GameMap object
+     * @param neighbours the eight squares touching the state to find region id for
+     * @param sectorId   sector number of state to find region id for
+     * @return region id
+     * @throws Exception if no neighbours are found
+     */
+    public static int getRegionIdFromNeighbourStates(GameMap map, ArrayList<SearchState> neighbours, int sectorId) throws Exception {
+        for (SearchState neighbour : neighbours) {
+            // Need to use !isWall instead of isOpenCell, because the cells are not empty, they have their regions written into them
+            if (!map.isWall(neighbour.id) && getSectorId(map, neighbour.id) == sectorId) {
+                return map.squares[map.getRow(neighbour.id)][map.getCol(neighbour.id)];
+            }
+        }
+        throw new Exception("No neighbours to extrapolate region id from!");
+    }
+
+    /**
+     * @param map                 GameMap object
+     * @param neighbours          the eight squares touching the state
+     * @param openStatesToSectors empty HashMap
+     * @return true if all 8 neighbours of a state are walls, otherwise false
+     */
+    public static boolean isSurroundedByWalls(GameMap map, ArrayList<SearchState> neighbours, Map<Integer, Integer> openStatesToSectors) {
+        // Return true if all 8 neighbours of the cell are walls, else return false
+
+        for (SearchState neighbour : neighbours) {
+            // Need to use !isWall instead of isOpenCell, because the cells are not empty, they have their regions written into them
+            if (!map.isWall(neighbour.id)) {
+                // Fill HashMap with state id to sector id mapping
+                openStatesToSectors.put(neighbour.id, getSectorId(map, neighbour.id));
+            }
+        }
+
+        return openStatesToSectors.isEmpty();
+    }
+
+    public static Set<Integer> getRegionsTouchingWall(GameMap map, ArrayList<SearchState> neighbours) {
+        Set<Integer> regionsTouchingWall = new HashSet<>();
+        for (SearchState neighbour : neighbours) {
+            regionsTouchingWall.add(map.squares[map.getRow(neighbour.id)][map.getCol(neighbour.id)]);
+        }
+        return regionsTouchingWall;
+    }
+
+    public static boolean isPathEqual(ArrayList<SearchState> newPath, ArrayList<SearchState> oldPath) {
+        // if path length differs, they are not equal
+        if (newPath == null || oldPath == null)
+            return false;
+        if (newPath.size() != oldPath.size()) return false;
+
+        for (int i = 0; i < newPath.size(); i++) {
+            // comparing SearchStates (have an equals-method)
+            if (!newPath.get(i).equals(oldPath.get(i))) return false;
+        }
+        return true;
+    }
+
+    public static double getPathDiff(ArrayList<SearchState> newPath, ArrayList<SearchState> oldPath) {
+        // Convert ArrayLists to sets
+        Set<Integer> set1 = new HashSet<>();
+        for (SearchState s : newPath) {
+            set1.add(s.getId());
+        }
+
+        Set<Integer> set2 = new HashSet<>();
+        for (SearchState s : oldPath) {
+            set2.add(s.getId());
+        }
+
+        // Calculate intersection and union
+        Set<Integer> intersection = new HashSet<>(set1);
+        intersection.retainAll(set2);
+        Set<Integer> union = new HashSet<>(set1);
+        union.addAll(set2);
+
+        // Calculate Jaccard similarity coefficient
+        double jaccardSimilarity = (double) intersection.size() / union.size();
+
+        // Return the percentage difference
+        return (1 - jaccardSimilarity) * 100;
     }
 }
