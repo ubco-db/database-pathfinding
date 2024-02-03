@@ -13,9 +13,7 @@ import java.util.*;
 import static util.MapHelpers.*;
 
 public final class DBAStarUtil {
-
     private final int startNum;
-
     private final int gridSize;
     private final int numNeighbourLevels;
     private final int cutoff;
@@ -23,12 +21,11 @@ public final class DBAStarUtil {
     private final String dbaStarDbPath;
 
     /**
-     *
-     * @param gridSize sectors on the map will be gridSize by gridSize
+     * @param gridSize           sectors on the map will be gridSize by gridSize
      * @param numNeighbourLevels compute base path to regions up to numNeighbourLevels away
-     * @param cutoff for HillClimbing algorithm
-     * @param mapFileName name of the .map file to use
-     * @param dbaStarDbPath location where the database and other output will be generated
+     * @param cutoff             for HillClimbing algorithm
+     * @param mapFileName        name of the .map file to use
+     * @param dbaStarDbPath      location where the database and other output will be generated
      */
     public DBAStarUtil(int gridSize, int numNeighbourLevels, int cutoff, String mapFileName, String dbaStarDbPath) {
         // startNum is used as an offset for values in the squares array, region indexing in the array starts at startNum
@@ -111,9 +108,8 @@ public final class DBAStarUtil {
     }
 
     /**
-     *
      * @param startId state id for start of path
-     * @param goalId state id for goal
+     * @param goalId  state id for goal
      * @param dbaStar DBAStar object
      * @return path as ArrayList of SearchStates
      */
@@ -246,10 +242,7 @@ public final class DBAStarUtil {
             potentialHorizontalPartition = true;
         }
         // TODO: address diagonal partition (maybe split into two cases?)
-        if (!isElimination && (isOpenDiagonal(neighborNorth, neighborNorthEast, neighborEast)
-                || isOpenDiagonal(neighborEast, neighborSouthEast, neighborSouth)
-                || isOpenDiagonal(neighborSouth, neighborSouthWest, neighborWest)
-                || isOpenDiagonal(neighborWest, neighborNorthWest, neighborNorth))) {
+        if (!isElimination && (isOpenDiagonal(neighborNorth, neighborNorthEast, neighborEast) || isOpenDiagonal(neighborEast, neighborSouthEast, neighborSouth) || isOpenDiagonal(neighborSouth, neighborSouthWest, neighborWest) || isOpenDiagonal(neighborWest, neighborNorthWest, neighborNorth))) {
             potentialDiagonalPartition = true;
         }
 
@@ -369,8 +362,7 @@ public final class DBAStarUtil {
         HillClimbing pathCompressAlgDba = new HillClimbing(problem, 10000);
 
         // Update regions for neighborIds in the database
-        dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(),
-                dbBW.getNeighbor(), neighborIds.size(), numNeighbourLevels, isElimination, isPartition);
+        dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(), dbBW.getNeighbor(), neighborIds.size(), numNeighbourLevels, isElimination, isPartition);
 
         // Re-generate index database (TODO: optimize)
         dbBW.regenerateIndexDB(isPartition, isElimination, regionId, regionRepId, groups.size(), map, newRecs);
@@ -437,8 +429,7 @@ public final class DBAStarUtil {
             neighborIds.add(newRec.groupId);
 
             // Value of isPartition actually makes no difference here since that logic is skipped, set to true for consistency with code below
-            dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(),
-                    dbBW.getPaths(), dbBW.getNeighbor(), neighborIds.size(), numNeighbourLevels, false, true);
+            dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(), dbBW.getNeighbor(), neighborIds.size(), numNeighbourLevels, false, true);
 
             // Re-generate index database (TODO: optimize)
             // groupId and regionRepId are identical in this case, isPartition because groupsMapping needs to be resized
@@ -593,8 +584,7 @@ public final class DBAStarUtil {
                 HillClimbing pathCompressAlgDba = new HillClimbing(problem, 10000);
 
                 // Update regions for neighborIds in the database
-                dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(),
-                        dbBW.getNeighbor(), neighborIds.size(), numNeighbourLevels, false, true);
+                dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(), dbBW.getNeighbor(), neighborIds.size(), numNeighbourLevels, false, true);
 
                 // Re-generate index database (TODO: optimize)
                 dbBW.regenerateIndexDB(false, true, regionId, regionRepId, groups.size(), map, newRecs);
@@ -661,8 +651,7 @@ public final class DBAStarUtil {
                 map.recomputeNeighbors(gridSize, startRow, startCol, endRow, endCol, neighborIds);
 
                 // Value of isPartition actually makes no difference here since that logic is skipped, set to true for consistency with code below
-                dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(),
-                        dbBW.getNeighbor(), neighborIds.size(), numNeighbourLevels, false, true);
+                dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(), dbBW.getNeighbor(), neighborIds.size(), numNeighbourLevels, false, true);
 
                 // Re-generate index database (TODO: optimize)
                 // groupId and regionRepId are identical in this case, isPartition because groupsMapping needs to be resized
