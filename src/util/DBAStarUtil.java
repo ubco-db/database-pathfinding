@@ -127,6 +127,27 @@ public final class DBAStarUtil {
         return dbaStar.computePath(start, goal, stats);
     }
 
+    public void getDBAStarPath(int startId, int goalId, String wallStatus, DBAStar dbaStar) {
+        GameMap map = dbaStar.getMap();
+
+        AStar aStar = new AStar(dbaStar.getProblem());
+
+        StatsRecord dbaStats = new StatsRecord();
+        ArrayList<SearchState> path = dbaStar.computePath(new SearchState(startId), new SearchState(goalId), dbaStats);
+
+        StatsRecord aStarStats = new StatsRecord();
+        ArrayList<SearchState> optimalPath = aStar.computePath(new SearchState(startId), new SearchState(goalId), aStarStats);
+
+        System.out.println("AStar path cost: " + aStarStats.getPathCost() + " DBAStar path cost: " + dbaStats.getPathCost());
+        System.out.println("Suboptimality: " + ((((double) dbaStats.getPathCost()) / aStarStats.getPathCost()) - 1) * 100.0);
+
+        if (path == null || path.isEmpty()) {
+            System.out.printf("No path was found between %d and %d!%n", startId, goalId);
+        }
+        map.computeCentroidMap().outputImage(dbaStarDbPath + wallStatus + mapFileName + "_path.png", path, dbaStar.getSubgoals());
+        map.computeCentroidMap().outputImage(dbaStarDbPath + wallStatus + mapFileName + "_optimal_path.png", optimalPath, dbaStar.getSubgoals());
+    }
+
     public void recomputeWallAddition(int wallLoc, GameMap map, MapSearchProblem problem, SubgoalDynamicDB2 dbBW) throws Exception {
         SearchState wall = new SearchState(wallLoc);
         int regionId = map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)];
@@ -134,7 +155,7 @@ public final class DBAStarUtil {
         boolean priorWall = map.isWall(wallLoc);
 
         // Add wall to existing map and to map inside problem
-        map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = '*'; // 96, 117
+        map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = '*';
         priorWall = priorWall && problem.getMap().isWall(wallLoc);
         problem.getMap().squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = '*';
 
