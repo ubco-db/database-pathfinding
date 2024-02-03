@@ -15,7 +15,6 @@ public class EvaluateWallAddition {
     final static String MAP_FILE_NAME = "012.map";
     final static String PATH_TO_MAP = MAP_FILE_PATH + MAP_FILE_NAME;
 
-
     public static void main(String[] args) throws Exception {
         // Set start and goal
         int startId = 13411;
@@ -38,6 +37,7 @@ public class EvaluateWallAddition {
         wallLocation.add(wall);
 
         long startTime, endTime, elapsedTime;
+
 
         /* PARTIAL RECOMPUTATION */
         System.out.println();
@@ -73,7 +73,7 @@ public class EvaluateWallAddition {
         // Remove wall
         Walls.removeWall(PATH_TO_MAP, wallLocation, startingMap);
 
-        // compare databases
+        // Compare databases
 //        try {
 //            String f1Name = "BW012.map_DBA-STAR_G16_N1_C250.";
 //            String f2Name = "AW012.map_DBA-STAR_G16_N1_C250.";
