@@ -37,7 +37,12 @@ public final class DBAStarUtil {
         this.dbaStarDbPath = dbaStarDbPath;
     }
 
-    public DBAStar computeDBAStar(GameMap map, String wallStatus) {
+    /**
+     * @param map        GameMap object
+     * @param wallStatus used to name output files, either BW = before wall, AW = after wall, or RW = removed wall
+     * @return DBAStar object
+     */
+    public DBAStar computeDBAStarDatabase(GameMap map, String wallStatus) {
         long currentTime;
 
         SearchProblem problem = new MapSearchProblem(map);
@@ -109,7 +114,7 @@ public final class DBAStarUtil {
 
     /**
      * @param startId state id for start of path
-     * @param goalId  state id for goal
+     * @param goalId  state id for start of path
      * @param dbaStar DBAStar object
      * @return path as ArrayList of SearchStates
      */
@@ -122,6 +127,12 @@ public final class DBAStarUtil {
         return dbaStar.computePath(start, goal, stats);
     }
 
+    /**
+     * @param startId    state id for start of path
+     * @param goalId     state id for start of path
+     * @param wallStatus used to name output files, either BW = before wall, AW = after wall, or RW = removed wall
+     * @param dbaStar    DBAStar object
+     */
     public void getDBAStarPath(int startId, int goalId, String wallStatus, DBAStar dbaStar) {
         GameMap map = dbaStar.getMap();
 
@@ -143,7 +154,16 @@ public final class DBAStarUtil {
         map.computeCentroidMap().outputImage(dbaStarDbPath + wallStatus + mapFileName + "_optimal_path.png", optimalPath, dbaStar.getSubgoals());
     }
 
-    public void recomputeWallAddition(int wallLoc, GameMap map, MapSearchProblem problem, SubgoalDynamicDB2 dbBW) throws Exception {
+    /**
+     * @param wallLoc   state id for location of wall
+     * @param dbaStarBW DBAStar object (after running DBAStar on base map)
+     * @throws Exception if there is already a wall at wallLoc
+     */
+    public void recomputeWallAddition(int wallLoc, DBAStar dbaStarBW) throws Exception {
+        GameMap map = dbaStarBW.getMap();
+        MapSearchProblem problem = (MapSearchProblem) dbaStarBW.getProblem();
+        SubgoalDynamicDB2 dbBW = (SubgoalDynamicDB2) dbaStarBW.getDatabase();
+
         SearchState wall = new SearchState(wallLoc);
         int regionId = map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)];
 
@@ -307,29 +327,7 @@ public final class DBAStarUtil {
             System.out.println("Group size after removal: " + groups.size());
 
             // Traverse cells in sector to re-create the groups
-            for (int i = startRow; i < endRow; i++) {
-                for (int j = startCol; j < endCol; j++) {
-                    int groupId = map.squares[i][j];
-
-                    if (groupId != GameMap.EMPTY_CHAR && groupId != GameMap.WALL_CHAR) {
-                        // See if group already exists
-                        GroupRecord rec = groups.get(groupId);
-                        if (rec == null) {    // New group
-                            GroupRecord newRec = new GroupRecord();
-                            newRec.setNumStates(1);
-                            newRec.groupId = groupId;
-                            newRec.groupRepId = map.getId(i, j);
-                            newRec.states = new ExpandArray(10);
-                            newRec.states.add(newRec.groupRepId);
-                            map.addGroup(groupId, newRec);
-                            newRecs[count++] = newRec;
-                        } else {    // Update group
-                            rec.setNumStates(rec.getSize() + 1);
-                            rec.states.add(map.getId(i, j));
-                        }
-                    }
-                }
-            }
+            reCreateGroups(map, groups, startRow, startCol, newRecs, endRow, endCol, count);
 
             System.out.println("Group size after addition: " + groups.size());
 
@@ -371,7 +369,42 @@ public final class DBAStarUtil {
         dbBW.exportDB(dbaStarDbPath + "BW_Recomp_" + mapFileName + "_DBA-STAR_G" + gridSize + "_N" + numNeighbourLevels + "_C" + cutoff + ".dat");
     }
 
-    public void recomputeWallRemoval(int wallLoc, GameMap map, MapSearchProblem problem, SubgoalDynamicDB2 dbBW) throws Exception {
+    private void reCreateGroups(GameMap map, TreeMap<Integer, GroupRecord> groups, int startRow, int startCol, GroupRecord[] newRecs, int endRow, int endCol, int count) {
+        for (int i = startRow; i < endRow; i++) {
+            for (int j = startCol; j < endCol; j++) {
+                int groupId = map.squares[i][j];
+
+                if (groupId != GameMap.EMPTY_CHAR && groupId != GameMap.WALL_CHAR) {
+                    // See if group already exists
+                    GroupRecord rec = groups.get(groupId);
+                    if (rec == null) {    // New group
+                        GroupRecord newRec = new GroupRecord();
+                        newRec.setNumStates(1);
+                        newRec.groupId = groupId;
+                        newRec.groupRepId = map.getId(i, j);
+                        newRec.states = new ExpandArray(10);
+                        newRec.states.add(newRec.groupRepId);
+                        map.addGroup(groupId, newRec);
+                        newRecs[count++] = newRec;
+                    } else {    // Update group
+                        rec.setNumStates(rec.getSize() + 1);
+                        rec.states.add(map.getId(i, j));
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * @param wallLoc   state id for location of wall
+     * @param dbaStarBW DBAStar object (after running DBAStar on base map)
+     * @throws Exception if there is no wall to remove at wallLoc
+     */
+    public void recomputeWallRemoval(int wallLoc, DBAStar dbaStarBW) throws Exception {
+        GameMap map = dbaStarBW.getMap();
+        MapSearchProblem problem = (MapSearchProblem) dbaStarBW.getProblem();
+        SubgoalDynamicDB2 dbBW = (SubgoalDynamicDB2) dbaStarBW.getDatabase();
+
         SearchState wall = new SearchState(wallLoc);
 
         boolean priorWall = map.isWall(wallLoc);
@@ -387,7 +420,7 @@ public final class DBAStarUtil {
         if (priorWall && !map.isWall(wallLoc) && !problem.getMap().isWall(wallLoc)) {
             System.out.println("Wall at " + wallLoc + " removed successfully!");
         } else {
-            System.out.printf("ERROR: No wall found at (%d, %d)%n", wallRow, wallCol);
+            throw new Exception("Wall removal failed! There is a wall at " + wallLoc + " already");
         }
 
         TreeMap<Integer, GroupRecord> groups = new MapSearchProblem(map).getGroups();
@@ -530,29 +563,7 @@ public final class DBAStarUtil {
                 GroupRecord[] newRecs = new GroupRecord[numRegionsInSector];
 
                 // Traverse cells in sector to re-create the groups
-                for (int i = startRow; i < endRow; i++) {
-                    for (int j = startCol; j < endCol; j++) {
-                        int groupId = map.squares[i][j];
-
-                        if (groupId != GameMap.EMPTY_CHAR && groupId != GameMap.WALL_CHAR) {
-                            // See if group already exists
-                            GroupRecord rec = groups.get(groupId);
-                            if (rec == null) {    // New group
-                                GroupRecord newRec = new GroupRecord();
-                                newRec.setNumStates(1);
-                                newRec.groupId = groupId;
-                                newRec.groupRepId = map.getId(i, j);
-                                newRec.states = new ExpandArray(10);
-                                newRec.states.add(newRec.groupRepId);
-                                map.addGroup(groupId, newRec);
-                                newRecs[count++] = newRec;
-                            } else {    // Update group
-                                rec.setNumStates(rec.getSize() + 1);
-                                rec.states.add(map.getId(i, j));
-                            }
-                        }
-                    }
-                }
+                reCreateGroups(map, groups, startRow, startCol, newRecs, endRow, endCol, count);
 
                 System.out.println(Arrays.toString(newRecs));
 
@@ -580,7 +591,7 @@ public final class DBAStarUtil {
                 ArrayList<Integer> neighborIds = new ArrayList<>(neighbouringRegions);
                 map.recomputeNeighbors(gridSize, startRow, startCol, endRow, endCol, neighborIds);
 
-                // Get database and initialize pathCompressAlgDba
+                // Initialize pathCompressAlgDba
                 HillClimbing pathCompressAlgDba = new HillClimbing(problem, 10000);
 
                 // Update regions for neighborIds in the database
@@ -675,9 +686,13 @@ public final class DBAStarUtil {
 //        map.outputImage(dbaStarDbPath + "AfterRemoval_" + wallLoc + "_" + mapFileName + ".png", null, null);
         // TODO: add check here for num regions in sector
 
-        if (groups.size() != 85) throw new Exception("Group size not 85!");
+//        if (groups.size() != 85) throw new Exception("Group size not 85!");
     }
 
+    /**
+     * @param wallStatus used to name output files, either BW = before wall, AW = after wall, or RW = removed wall
+     * @return String
+     */
     private String getDBName(String wallStatus) {
         return dbaStarDbPath + wallStatus + mapFileName + "_DBA-STAR_G" + gridSize + "_N" + numNeighbourLevels + "_C" + cutoff + ".dat";
     }

@@ -1,8 +1,6 @@
-import database.SubgoalDynamicDB2;
 import dynamic.Walls;
 import map.GameMap;
 import search.DBAStar;
-import search.MapSearchProblem;
 import search.SearchState;
 import util.DBAStarUtil;
 
@@ -59,7 +57,7 @@ public class AddingAllWallsTest {
 
         // compute DBAStar database before adding wall
         System.out.println();
-        dbaStar = dbaStarUtil.computeDBAStar(startingMap, "BW");
+        dbaStar = dbaStarUtil.computeDBAStarDatabase(startingMap, "BW");
 
         // compute paths to all goals, store in HashMap of arrays (goal state as key)
         HashMap<Integer, ArrayList<SearchState>> paths = new HashMap<>();
@@ -82,7 +80,7 @@ public class AddingAllWallsTest {
             long startTimePartialRecomputation = System.currentTimeMillis();
             // add wall & recompute database
             System.out.println("\nRecompute wall addition: ");
-            dbaStarUtil.recomputeWallAddition(wallId, dbaStar.getMap(), (MapSearchProblem) dbaStar.getProblem(), (SubgoalDynamicDB2) dbaStar.getDatabase());
+            dbaStarUtil.recomputeWallAddition(wallId, dbaStar);
             long endTimePartialRecomputation = System.currentTimeMillis();
 
             elapsedTimePartialRecomputation += endTimePartialRecomputation - startTimePartialRecomputation;
@@ -102,7 +100,7 @@ public class AddingAllWallsTest {
 
             // remove wall
             System.out.println("\nRecompute wall removal: ");
-            dbaStarUtil.recomputeWallRemoval(wallId, dbaStar.getMap(), (MapSearchProblem) dbaStar.getProblem(), (SubgoalDynamicDB2) dbaStar.getDatabase());
+            dbaStarUtil.recomputeWallRemoval(wallId, dbaStar);
         }
 
         writeResultToFile(DBA_STAR_DB_PATH + "results.txt", "Total time partial recomputation for sector " + sectorNum + ": " + (System.currentTimeMillis() - totalTimeStart) + "ms\n");
@@ -126,7 +124,7 @@ public class AddingAllWallsTest {
             startingMap = new GameMap(PATH_TO_MAP); // resetting map
 
             // computing database
-            dbaStar = dbaStarUtil.computeDBAStar(startingMap, "AW");
+            dbaStar = dbaStarUtil.computeDBAStarDatabase(startingMap, "AW");
 
             long endTimeCompleteRecomputation = System.currentTimeMillis();
 
