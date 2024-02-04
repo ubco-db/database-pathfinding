@@ -2,6 +2,8 @@ package database;
 
 import map.GameMap;
 import map.GroupRecord;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import search.*;
 
 import java.util.*;
@@ -18,6 +20,8 @@ import java.util.Map.Entry;
 public class SubgoalDBExact extends SubgoalDB {
     protected IndexDB db;                               // Store base to abstract state mapping
     protected SubgoalDBRecord[][] recordMatrix;         // Stores records to navigate between region representatives
+
+    private static final Logger logger = LogManager.getLogger(SubgoalDBExact.class);
 
     public SubgoalDBExact() {
         super();
@@ -40,7 +44,7 @@ public class SubgoalDBExact extends SubgoalDB {
         rec.addStat(25, db.getHTSize());
 
         int maxSize = problem.getMaxSize();
-        System.out.println("Problem states: " + maxSize + "\nNumber of DB states: " + db.getTotalCells() + " Number of records in index DB:  " + db.getCount() + "\n % of problem size: " + (db.getCount() * 100.0 / db.getTotalCells()) + "\n % of problem total size: " + (db.getCount() * 100.0 / (maxSize)));
+        logger.debug("Problem states: " + maxSize + "\nNumber of DB states: " + db.getTotalCells() + " Number of records in index DB: " + db.getCount() + "\n % of problem size: " + (db.getCount() * 100.0 / db.getTotalCells()) + "\n % of problem total size: " + (db.getCount() * 100.0 / (maxSize)));
     }
 
     /**
@@ -68,7 +72,7 @@ public class SubgoalDBExact extends SubgoalDB {
                 result.add(rec);
                 return result;
             }
-            System.out.println("ERROR in findNearest.  Start seed: " + startSeedId + " Goal seed: " + goalSeedId);
+            logger.error("ERROR in findNearest.  Start seed: " + startSeedId + " Goal seed: " + goalSeedId);
             rec = recordMatrix[startSeedId][goalSeedId];
         } else result.add(recordMatrix[startSeedId][goalSeedId]);
         return result;
@@ -82,7 +86,7 @@ public class SubgoalDBExact extends SubgoalDB {
     public void init() {
         int numRegions = db.getNumRegions();
         // Fill in the record matrix to look up a record based on startSeedId, goalSeedId
-        System.out.println("Creating lookup matrix of size: " + numRegions + " x " + numRegions + " = " + numRegions * numRegions);
+        logger.info("Creating lookup matrix of size: " + numRegions + " x " + numRegions + " = " + numRegions * numRegions);
         recordMatrix = new SubgoalDBRecord[numRegions][numRegions];
         for (SubgoalDBRecord rec : records) {
             int compositeGroupId = rec.getSearchDepth();

@@ -1,5 +1,7 @@
 package database;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import search.SearchProblem;
 import search.SearchState;
 
@@ -25,6 +27,8 @@ public class IndexDB {
 
     private static final int MAX_SIZE = 1000000;
     private static final int HT_STEP_SIZE = 1000;
+
+    private static final Logger logger = LogManager.getLogger(IndexDB.class);
 
     public IndexDB() {
         count = 0;
@@ -60,7 +64,7 @@ public class IndexDB {
         for (int i = 1; i < maxId / HT_STEP_SIZE; i++) {
             hashTable[i] = findLoc(i * HT_STEP_SIZE);
         }
-        System.out.println("Hash table size: " + hashTable.length);
+        logger.debug("Hash table size: " + hashTable.length);
     }
 
     // Section 5.2 hcdps.pdf
@@ -116,7 +120,7 @@ public class IndexDB {
      * @return boolean
      */
     public boolean verify(SearchProblem problem) {
-        System.out.println("Verifying base RLE compression of mapping.");
+        logger.debug("Verifying base RLE compression of mapping.");
         // Check if all problem entries make sense
         // Do it brute force - search for each one
         int mistakes = 0, mistakesHT = 0;
@@ -130,7 +134,7 @@ public class IndexDB {
             foundVal = findHT(state.id);
             if (state.cost != foundVal) mistakesHT++;
         }
-        System.out.println("States in error: " + mistakes + " Hash table errors: " + mistakesHT);
+        logger.warn("States in error: " + mistakes + " Hash table errors: " + mistakesHT);
         return (mistakes == 0) && (mistakesHT == 0);
     }
 
@@ -158,7 +162,7 @@ public class IndexDB {
                 out.print(seedIds[i] + " ");
             out.println();
         } catch (FileNotFoundException e) {
-            System.out.println("Error with output file: " + e);
+            logger.error("Error with output file: " + e);
         }
     }
 
@@ -214,9 +218,9 @@ public class IndexDB {
             for (int i = 0; i < count; i++)
                 seedIds[i] = sc.nextInt();
 
-            System.out.println("Loaded " + count + " records in " + (System.currentTimeMillis() - currentTime));
+            logger.info("Loaded " + count + " records in " + (System.currentTimeMillis() - currentTime));
         } catch (FileNotFoundException e) {
-            System.out.println("Did not find input file: " + e);
+            logger.error("Did not find input file: " + e);
             success = false;
         } finally {
             if (sc != null) sc.close();
