@@ -1,5 +1,7 @@
 import dynamic.Walls;
 import map.GameMap;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import search.DBAStar;
 import search.SearchState;
 import util.DBAStarUtil;
@@ -16,6 +18,9 @@ public class AddingAllWallsTest {
     final static String MAP_FILE_PATH = "maps/dMap/";
     final static String MAP_FILE_NAME = "012.map";
     final static String PATH_TO_MAP = MAP_FILE_PATH + MAP_FILE_NAME;
+
+
+    private static final Logger logger = LogManager.getLogger(AddingAllWallsTest.class);
 
     // TODO: add path comparison logic to ensure paths are identical
     public static void main(String[] args) throws Exception {
@@ -52,11 +57,10 @@ public class AddingAllWallsTest {
         goalIds.remove((Integer) startId);
 
         // print number of goals (6175 on 012.map)
-        System.out.println("Number of goals: " + goalIds.size());
-        System.out.println("Goals in sector " + sectorNum + ": " + goalIds);
+        logger.info("Number of goals: " + goalIds.size());
+        logger.info("Goals in sector " + sectorNum + ": " + goalIds);
 
         // compute DBAStar database before adding wall
-        System.out.println();
         dbaStar = dbaStarUtil.computeDBAStarDatabase(startingMap, "BW");
 
         // compute paths to all goals, store in HashMap of arrays (goal state as key)
@@ -79,7 +83,7 @@ public class AddingAllWallsTest {
 
             long startTimePartialRecomputation = System.currentTimeMillis();
             // add wall & recompute database
-            System.out.println("\nRecompute wall addition: ");
+            logger.info("\nRecompute wall addition: ");
             dbaStarUtil.recomputeWallAddition(wallId, dbaStar);
             long endTimePartialRecomputation = System.currentTimeMillis();
 
@@ -99,7 +103,7 @@ public class AddingAllWallsTest {
             wallNumber++;
 
             // remove wall
-            System.out.println("\nRecompute wall removal: ");
+            logger.debug("\nRecompute wall removal: ");
             dbaStarUtil.recomputeWallRemoval(wallId, dbaStar);
         }
 
@@ -177,7 +181,7 @@ public class AddingAllWallsTest {
             // Close the BufferedWriter to flush and close the underlying FileWriter
             bufferedWriter.close();
 
-            System.out.println("Result has been written to " + filePath);
+            logger.info("Result has been written to " + filePath);
         } catch (IOException e) {
             e.printStackTrace();
         }
