@@ -1,2 +1,0 @@
-Total time partial recomputation for sector 12: 9339ms
-Total time  complete recomputation for sector 12: 106460ms

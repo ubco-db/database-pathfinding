@@ -376,6 +376,124 @@ public final class DBAStarUtil {
         dbBW.exportDB(dbaStarDbPath + "BW_Recomp_" + mapFileName + "_DBA-STAR_G" + gridSize + "_N" + numNeighbourLevels + "_C" + cutoff + ".dat");
     }
 
+    /**
+     * @param wallLoc   state id for location of wall
+     * @param dbaStarBW DBAStar object (after running DBAStar on base map)
+     * @throws Exception if there is already a wall at wallLoc
+     */
+    public void recomputeWallAdditionNoChecks(int wallLoc, DBAStar dbaStarBW) throws Exception {
+        GameMap map = dbaStarBW.getMap();
+        MapSearchProblem problem = (MapSearchProblem) dbaStarBW.getProblem();
+        SubgoalDynamicDB2 dbBW = (SubgoalDynamicDB2) dbaStarBW.getDatabase();
+
+        SearchState wall = new SearchState(wallLoc);
+        int regionId = map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)];
+
+        boolean priorWall = map.isWall(wallLoc);
+
+        // Add wall to existing map and to map inside problem
+        map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = '*';
+        priorWall = priorWall && problem.getMap().isWall(wallLoc);
+        problem.getMap().squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = '*';
+
+        if (!priorWall && map.isWall(wallLoc) && problem.getMap().isWall(wallLoc)) {
+            logger.info("Wall at " + wallLoc + " set successfully!");
+        } else {
+            logger.error("Wall addition failed! There is a wall at " + wallLoc + " already");
+            throw new Exception("Wall addition failed! There is a wall at " + wallLoc + " already");
+        }
+
+        // Get the id of the region rep of the region the wall was added in
+        int regionRepId = map.getAbstractProblem().findRegionRep(wall, map).getId();
+        logger.debug("regionRepId: " + regionRepId);
+
+        TreeMap<Integer, GroupRecord> groups = new MapSearchProblem(map).getGroups();
+
+        logger.info("regionId: " + regionId);
+
+        // get the neighbour ids regions using the region id
+        GroupRecord groupRecord = groups.get(regionId);
+
+        int wallRow = map.getRow(wallLoc);
+        int wallCol = map.getCol(wallLoc);
+        int numSectorsPerRow = (int) Math.ceil(map.cols * 1.0 / gridSize);
+        int sectorId = wallRow / gridSize * numSectorsPerRow + wallCol / gridSize;
+        int startRow = (sectorId / numSectorsPerRow) * gridSize;
+        int startCol = (sectorId % numSectorsPerRow) * gridSize;
+
+        ArrayList<Integer> neighborIds = new ArrayList<>(groupRecord.getNeighborIds());
+
+        GroupRecord[] newRecs;
+
+        logger.debug("Group size before removal: " + groups.size());
+        // TODO: set neighbours of new regions using this
+
+        int endRow = Math.min(startRow + gridSize, map.rows);
+        int endCol = Math.min(startCol + gridSize, map.cols);
+
+        // reset region (necessary in order for me to be able to reuse the regionId)
+        // TODO: could bypass validity check if use values calculated above for loop
+        for (int r = 0; r < gridSize; r++) {
+            for (int c = 0; c < gridSize; c++) {
+                int row = startRow + r;
+                int col = startCol + c;
+                if (map.isValid(row, col) && !map.isWall(row, col) && map.squares[row][col] == regionId) {
+                    map.squares[row][col] = ' '; // 32
+                }
+            }
+        }
+
+        // Perform abstraction (go over sector and recompute regions)
+        int numRegionsInSector = map.sectorReAbstract2(gridSize, startRow, startCol, endRow, endCol, regionId, map);
+
+        logger.debug("Number of regions in sector after re-abstraction: " + numRegionsInSector);
+
+        int count = 0;
+        newRecs = new GroupRecord[numRegionsInSector];
+
+        groups.remove(regionId); // remove region from groups and recreate it later
+        logger.debug("Group size after removal: " + groups.size());
+
+        // Traverse cells in sector to re-create the groups
+        reCreateGroups(map, groups, startRow, startCol, newRecs, endRow, endCol, count);
+
+        logger.debug("Group size after addition: " + groups.size());
+
+        ArrayList<Integer> regionIds = new ArrayList<>();
+
+        // Recompute region reps for newly added regions
+        // a newRec should never be null, if it is, something went wrong with the group generation in sectorReAbstract2
+        for (GroupRecord newRec : newRecs) {
+            map.recomputeCentroid2(newRec, wallLoc);
+            // Add regions that didn't exist before to list
+            neighborIds.add(newRec.groupId);
+            regionIds.add(newRec.groupId);
+        }
+
+        // VISUAL CHECK:
+//            map.computeCentroidMap().outputImage(dbaStarDbPath + "TEST" + mapFileName + ".png", null, null);
+
+        // Rebuild abstract problem
+        map.rebuildAbstractProblem(map, gridSize, startRow, startCol, regionIds);
+
+        // Set neighbours - TODO: check if this is working properly
+        map.recomputeNeighbors(gridSize, startRow, startCol, endRow, endCol, neighborIds);
+
+        neighborIds.add(groupRecord.groupId); // need to pass this so updates work both ways (for partition this is already added)
+
+        // Initialize pathCompressAlgDba
+        HillClimbing pathCompressAlgDba = new HillClimbing(problem, 10000);
+
+        // Update regions for neighborIds in the database
+        dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(), dbBW.getNeighbor(), neighborIds.size(), numNeighbourLevels, false, true);
+
+        // Re-generate index database (TODO: optimize)
+        dbBW.regenerateIndexDB(true, false, regionId, regionRepId, groups.size(), map, newRecs);
+
+        // For checking recomputed database against AW database
+        dbBW.exportDB(dbaStarDbPath + "BW_Recomp_" + mapFileName + "_DBA-STAR_G" + gridSize + "_N" + numNeighbourLevels + "_C" + cutoff + ".dat");
+    }
+
     private void reCreateGroups(GameMap map, TreeMap<Integer, GroupRecord> groups, int startRow, int startCol, GroupRecord[] newRecs, int endRow, int endCol, int count) {
         for (int i = startRow; i < endRow; i++) {
             for (int j = startCol; j < endCol; j++) {
