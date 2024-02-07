@@ -494,6 +494,203 @@ public final class DBAStarUtil {
         dbBW.exportDB(dbaStarDbPath + "BW_Recomp_" + mapFileName + "_DBA-STAR_G" + gridSize + "_N" + numNeighbourLevels + "_C" + cutoff + ".dat");
     }
 
+    /**
+     * @param wallLoc   state id for location of wall
+     * @param dbaStarBW DBAStar object (after running DBAStar on base map)
+     * @throws Exception if there is already a wall at wallLoc
+     */
+    public void recomputeWallAdditionSimpleChecks(int wallLoc, DBAStar dbaStarBW) throws Exception {
+        GameMap map = dbaStarBW.getMap();
+        MapSearchProblem problem = (MapSearchProblem) dbaStarBW.getProblem();
+        SubgoalDynamicDB2 dbBW = (SubgoalDynamicDB2) dbaStarBW.getDatabase();
+
+        SearchState wall = new SearchState(wallLoc);
+        int regionId = map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)];
+
+        boolean priorWall = map.isWall(wallLoc);
+
+        // Add wall to existing map and to map inside problem
+        map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = '*';
+        priorWall = priorWall && problem.getMap().isWall(wallLoc);
+        problem.getMap().squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = '*';
+
+        if (!priorWall && map.isWall(wallLoc) && problem.getMap().isWall(wallLoc)) {
+            logger.info("Wall at " + wallLoc + " set successfully!");
+        } else {
+            logger.error("Wall addition failed! There is a wall at " + wallLoc + " already");
+            throw new Exception("Wall addition failed! There is a wall at " + wallLoc + " already");
+        }
+
+        // Get the id of the region rep of the region the wall was added in
+        int regionRepId = map.getAbstractProblem().findRegionRep(wall, map).getId();
+        logger.debug("regionRepId: " + regionRepId);
+
+        if (regionRepId == wallLoc) {
+            logger.debug("Wall on region rep!");
+        }
+
+        TreeMap<Integer, GroupRecord> groups = new MapSearchProblem(map).getGroups();
+
+        logger.info("regionId: " + regionId);
+
+        // get the neighbour ids regions using the region id
+        GroupRecord groupRecord = groups.get(regionId);
+
+        boolean isElimination;
+
+        int wallRow = map.getRow(wallLoc);
+        int wallCol = map.getCol(wallLoc);
+
+        int numSectorsPerRow = (int) Math.ceil(map.cols * 1.0 / gridSize);
+        int sectorId = wallRow / gridSize * numSectorsPerRow + wallCol / gridSize;
+
+        int startRow = (sectorId / numSectorsPerRow) * gridSize;
+        int startCol = (sectorId % numSectorsPerRow) * gridSize;
+
+        if (groupRecord.getNumStates() == 1) { // scenario when there is only one state in the region
+            // need to tombstone region, and make sure it doesn't have neighbours or shortest paths anymore
+            groups.remove(regionId);
+            map.rebuildAbstractProblem(map, gridSize, startRow, startCol, new ArrayList<>(List.of(regionId)));
+            isElimination = true;
+        } else {
+            // scenario when the regioning doesn't change significantly (region id stays the same)
+            int newRegionRep = map.recomputeCentroid(groupRecord, wallLoc);
+            regionRepId = newRegionRep;
+            logger.debug("New rep at: " + newRegionRep);
+            // get back new region rep and change the record
+            groupRecord.setGroupRepId(newRegionRep);
+            groups.replace(regionId, groupRecord);
+            map.rebuildAbstractProblem(map, gridSize, startRow, startCol, new ArrayList<>(List.of(regionId)));
+            isElimination = false;
+        }
+
+        // scenario where map is partitioned by wall addition
+        boolean potentialHorizontalPartition = false;
+        boolean potentialVerticalPartition = false;
+        boolean potentialDiagonalPartition = false;
+
+        // Need to check entire region to make sure it has not become partitioned by wall addition
+        // idea: get neighbours of wall
+        int wallRowId = map.getRow(wallLoc);
+        int wallColId = map.getCol(wallLoc);
+        logger.debug(map.squares[wallRowId][wallColId]);
+        // it will have eight neighbours
+        // TODO: having the regions marked on the map is not part of DBA*, should I use this?
+
+        int neighborNorth = map.squares[wallRowId - 1][wallColId];
+
+        // Need to check boundaries for bottom row of map (if not on map, treat square as wall)
+        int neighborNorthEast = map.isValid(wallRowId - 1, wallColId + 1) ? map.squares[wallRowId - 1][wallColId + 1] : 42;
+        int neighborEast = map.isValid(wallRowId, wallColId + 1) ? map.squares[wallRowId][wallColId + 1] : 42;
+        int neighborSouthEast = map.isValid(wallRowId + 1, wallColId + 1) ? map.squares[wallRowId + 1][wallColId + 1] : 42;
+        int neighborSouth = map.isValid(wallRowId + 1, wallColId) ? map.squares[wallRowId + 1][wallColId] : 42;
+        int neighborSouthWest = map.isValid(wallRowId + 1, wallColId - 1) ? map.squares[wallRowId + 1][wallColId - 1] : 42;
+
+        int neighborWest = map.squares[wallRowId][wallColId - 1];
+        int neighborNorthWest = map.squares[wallRowId - 1][wallColId - 1];
+        // if the region has become partitioned, it would have to have neighbors that are across from each other be walls or in different regions
+        // (this is a necessary condition, but not sufficient)
+
+        // In order for a partition to happen, either the newly placed wall touches two walls, or it touches a wall and
+        // a state that is not in the region the wall was placed in (this is a necessary condition, but not sufficient)
+        // TODO: is there an exception to this?
+
+        // need to check !isElimination, because the algorithm sees the elimination case as a partition
+        if (!isElimination && (isContinuousWall(neighborNorth, neighborSouth) || isBetweenWallAndOtherRegion(neighborNorth, neighborSouth, regionId))) {
+            potentialVerticalPartition = true;
+        }
+        if (!isElimination && (isContinuousWall(neighborWest, neighborEast) || isBetweenWallAndOtherRegion(neighborWest, neighborEast, regionId))) {
+            potentialHorizontalPartition = true;
+        }
+        // TODO: address diagonal partition (maybe split into two cases?)
+        if (!isElimination && (isOpenDiagonal(neighborNorth, neighborNorthEast, neighborEast) || isOpenDiagonal(neighborEast, neighborSouthEast, neighborSouth) || isOpenDiagonal(neighborSouth, neighborSouthWest, neighborWest) || isOpenDiagonal(neighborWest, neighborNorthWest, neighborNorth))) {
+            potentialDiagonalPartition = true;
+        }
+
+        logger.debug("WALL IS PARTITIONING MAP: " + (potentialHorizontalPartition || potentialVerticalPartition || potentialDiagonalPartition));
+        if (potentialHorizontalPartition) logger.debug("HORIZONTALLY");
+        if (potentialVerticalPartition) logger.debug("VERTICALLY");
+        if (potentialDiagonalPartition) logger.debug("DIAGONALLY");
+
+        boolean isPartition = potentialVerticalPartition || potentialHorizontalPartition || potentialDiagonalPartition;
+
+        ArrayList<Integer> neighborIds = new ArrayList<>(groupRecord.getNeighborIds());
+
+        GroupRecord[] newRecs = null;
+
+        if (isPartition) {
+            logger.debug("Group size before removal: " + groups.size());
+            // TODO: set neighbours of new regions using this
+
+            int endRow = Math.min(startRow + gridSize, map.rows);
+            int endCol = Math.min(startCol + gridSize, map.cols);
+
+            // reset region (necessary in order for me to be able to reuse the regionId)
+            // TODO: could bypass validity check if use values calculated above for loop
+            for (int r = 0; r < gridSize; r++) {
+                for (int c = 0; c < gridSize; c++) {
+                    int row = startRow + r;
+                    int col = startCol + c;
+                    if (map.isValid(row, col) && !map.isWall(row, col) && map.squares[row][col] == regionId) {
+                        map.squares[row][col] = ' '; // 32
+                    }
+                }
+            }
+
+            // Perform abstraction (go over sector and recompute regions)
+            int numRegionsInSector = map.sectorReAbstract2(gridSize, startRow, startCol, endRow, endCol, regionId, map);
+
+            logger.debug("Number of regions in sector after re-abstraction: " + numRegionsInSector);
+
+            int count = 0;
+            newRecs = new GroupRecord[numRegionsInSector];
+
+            groups.remove(regionId); // remove region from groups and recreate it later
+            logger.debug("Group size after removal: " + groups.size());
+
+            // Traverse cells in sector to re-create the groups
+            reCreateGroups(map, groups, startRow, startCol, newRecs, endRow, endCol, count);
+
+            logger.debug("Group size after addition: " + groups.size());
+
+            ArrayList<Integer> regionIds = new ArrayList<>();
+
+            // Recompute region reps for newly added regions
+            // a newRec should never be null, if it is, something went wrong with the group generation in sectorReAbstract2
+            for (GroupRecord newRec : newRecs) {
+                map.recomputeCentroid2(newRec, wallLoc);
+                // Add regions that didn't exist before to list
+                neighborIds.add(newRec.groupId);
+                regionIds.add(newRec.groupId);
+            }
+
+            // VISUAL CHECK:
+//            map.computeCentroidMap().outputImage(dbaStarDbPath + "TEST" + mapFileName + ".png", null, null);
+
+            // Rebuild abstract problem
+            map.rebuildAbstractProblem(map, gridSize, startRow, startCol, regionIds);
+
+            // Set neighbours - TODO: check if this is working properly
+            map.recomputeNeighbors(gridSize, startRow, startCol, endRow, endCol, neighborIds);
+        }
+
+        if (!isPartition) {
+            neighborIds.add(groupRecord.groupId); // need to pass this so updates work both ways (for partition this is already added)
+        }
+
+        // Initialize pathCompressAlgDba
+        HillClimbing pathCompressAlgDba = new HillClimbing(problem, 10000);
+
+        // Update regions for neighborIds in the database
+        dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(), dbBW.getNeighbor(), neighborIds.size(), numNeighbourLevels, isElimination, isPartition);
+
+        // Re-generate index database (TODO: optimize)
+        dbBW.regenerateIndexDB(isPartition, isElimination, regionId, regionRepId, groups.size(), map, newRecs);
+
+        // For checking recomputed database against AW database
+        dbBW.exportDB(dbaStarDbPath + "BW_Recomp_" + mapFileName + "_DBA-STAR_G" + gridSize + "_N" + numNeighbourLevels + "_C" + cutoff + ".dat");
+    }
+
     private void reCreateGroups(GameMap map, TreeMap<Integer, GroupRecord> groups, int startRow, int startCol, GroupRecord[] newRecs, int endRow, int endCol, int count) {
         for (int i = startRow; i < endRow; i++) {
             for (int j = startCol; j < endCol; j++) {
