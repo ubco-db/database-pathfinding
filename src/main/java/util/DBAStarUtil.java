@@ -740,7 +740,7 @@ public final class DBAStarUtil {
             // Get back new region rep and change the record
             groupRecord.setGroupRepId(newRegionRep);
             groups.replace(regionId, groupRecord);
-            map.rebuildAbstractProblem(map, gridSize, startRow, startCol, new ArrayList<>(List.of(regionId))); // 10ms
+            map.rebuildAbstractProblem(map, gridSize, startRow, startCol, new ArrayList<>(List.of(regionId))); // 20ms
             isElimination = false;
         }
 
@@ -850,16 +850,16 @@ public final class DBAStarUtil {
         }
 
         // Initialize pathCompressAlgDba
-        HillClimbing pathCompressAlgDba = new HillClimbing(problem, 10000); // 10ms
+        HillClimbing pathCompressAlgDba = new HillClimbing(problem, 10000);
 
         // Update regions for neighborIds in the database
-        dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(), dbBW.getNeighbor(), neighborIds.size(), numNeighbourLevels, isElimination, isPartition); // 1,722ms
+        dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(), dbBW.getNeighbor(), neighborIds.size(), numNeighbourLevels, isElimination, isPartition); // 1,813ms
 
         // Re-generate index database (TODO: optimize)
-        dbBW.regenerateIndexDB(isPartition, isElimination, regionId, regionRepId, groups.size(), map, newRecs); // 760ms
+        dbBW.regenerateIndexDB(isPartition, isElimination, regionId, regionRepId, groups.size(), map, newRecs); // 662ms
 
         // For checking recomputed database against AW database
-        dbBW.exportDB(dbaStarDbPath + "BW_Recomp_" + mapFileName + "_DBA-STAR_G" + gridSize + "_N" + numNeighbourLevels + "_C" + cutoff + ".dat"); // 1,180ms
+        dbBW.exportDB(dbaStarDbPath + "BW_Recomp_" + mapFileName + "_DBA-STAR_G" + gridSize + "_N" + numNeighbourLevels + "_C" + cutoff + ".dat"); // 1,2522ms
     }
 
     private void reCreateGroups(GameMap map, TreeMap<Integer, GroupRecord> groups, int startRow, int startCol, GroupRecord[] newRecs, int endRow, int endCol, int count) {
@@ -922,7 +922,7 @@ public final class DBAStarUtil {
         // Grab neighbouring states
         ArrayList<SearchState> neighbours = map.getNeighbors(wallRow, wallCol);
         Map<Integer, Integer> openStatesToSectors = new HashMap<>();
-        Set<Integer> regionsTouchingWall = getRegionsTouchingWall(map, neighbours);
+        Set<Integer> regionsTouchingWall = getRegionsTouchingWall(map, neighbours); // 10ms
 
         if (isSurroundedByWalls(map, neighbours, openStatesToSectors)) {
             // Case 1: If a wall is encased by walls, we necessarily have a new, isolated region
@@ -986,7 +986,7 @@ public final class DBAStarUtil {
                 logger.debug("Removed wall in existing sector!");
                 // Wall touches region that is in same sector as wall -> add wall to region and recompute neighbourhood (may have formed path)
 
-                int regionRepId = map.getAbstractProblem().findRegionRep(wall, map).getId();
+                int regionRepId = map.getAbstractProblem().findRegionRep(wall, map).getId(); // 20ms
 
                 // We cannot find the region id through the region rep, because the region rep may have been removed and
                 // added back, in which case the square is blank, so we find it through its neighbours in the same sector
@@ -1015,7 +1015,7 @@ public final class DBAStarUtil {
                         int row = startRow + r;
                         int col = startCol + c;
                         // Only nuke regions that touch where the wall was
-                        if (map.isValid(row, col) && !map.isWall(row, col) && regionsTouchingWall.contains(map.squares[row][col])) {
+                        if (map.isValid(row, col) && !map.isWall(row, col) && regionsTouchingWall.contains(map.squares[row][col])) { // 10ms
                             regionsInCurrentSector.add(map.squares[row][col]);
                             map.squares[row][col] = ' '; // 32
                         }
@@ -1031,8 +1031,8 @@ public final class DBAStarUtil {
                 // Delete old regions from groups array:
                 for (Integer region : regionsInCurrentSector) {
                     regionsInCurrentSectorList.add(region);
-                    neighbouringRegions.addAll(groups.get(region).getNeighborIds());
-                    groups.remove(region);
+                    neighbouringRegions.addAll(groups.get(region).getNeighborIds()); // 10ms
+                    groups.remove(region); // 10ms
                     logger.debug("Removed region " + region);
                 }
 
@@ -1044,7 +1044,7 @@ public final class DBAStarUtil {
                 // Recompute regions in sector
 
                 // Perform abstraction (go over sector and recompute regions)
-                int numRegionsInSector = map.sectorReAbstract2(gridSize, startRow, startCol, endRow, endCol, regionId, map);
+                int numRegionsInSector = map.sectorReAbstract2(gridSize, startRow, startCol, endRow, endCol, regionId, map); // 30ms
 
 //                logger.debug("After sectorReAbstract");
 //                for (int i = startRow; i < endRow; i++) {
@@ -1062,7 +1062,7 @@ public final class DBAStarUtil {
                 // Traverse cells in sector to re-create the groups
                 reCreateGroups(map, groups, startRow, startCol, newRecs, endRow, endCol, count);
 
-                logger.debug(Arrays.toString(newRecs));
+//                logger.debug(Arrays.toString(newRecs));
 
                 // Recompute region reps for newly added regions
                 for (GroupRecord newRec : newRecs) {
@@ -1086,19 +1086,21 @@ public final class DBAStarUtil {
 
                 // Set neighbours
                 ArrayList<Integer> neighborIds = new ArrayList<>(neighbouringRegions);
-                map.recomputeNeighbors(gridSize, startRow, startCol, endRow, endCol, neighborIds);
+                map.recomputeNeighbors(gridSize, startRow, startCol, endRow, endCol, neighborIds); // 180ms
 
                 // Initialize pathCompressAlgDba
                 HillClimbing pathCompressAlgDba = new HillClimbing(problem, 10000);
 
                 // Update regions for neighborIds in the database
-                dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(), dbBW.getNeighbor(), neighborIds.size(), numNeighbourLevels, false, true);
+                // TODO: optimize
+                dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(), dbBW.getNeighbor(), neighborIds.size(), numNeighbourLevels, false, true); // 1,861ms
 
-                // Re-generate index database (TODO: optimize)
-                dbBW.regenerateIndexDB(false, true, regionId, regionRepId, groups.size(), map, newRecs);
+                // Re-generate index database
+                // TODO: optimize
+                dbBW.regenerateIndexDB(false, true, regionId, regionRepId, groups.size(), map, newRecs); // 660ms
 
                 // For checking recomputed database against AW database
-                dbBW.exportDB(dbaStarDbPath + "BW_Recomp_" + mapFileName + "_DBA-STAR_G" + gridSize + "_N" + numNeighbourLevels + "_C" + cutoff + ".dat");
+                dbBW.exportDB(dbaStarDbPath + "BW_Recomp_" + mapFileName + "_DBA-STAR_G" + gridSize + "_N" + numNeighbourLevels + "_C" + cutoff + ".dat"); // 1270ms
             } else {
                 logger.debug("Removed wall in new sector!");
                 /*
@@ -1201,7 +1203,7 @@ public final class DBAStarUtil {
 
         SearchState wall = new SearchState(wallLoc);
 
-        int wallRow = map.getRow(wallLoc);
+        int wallRow = map.getRow(wallLoc); // 10ms
         int wallCol = map.getCol(wallLoc);
 
         // Remove wall from existing map and map inside problem
@@ -1213,7 +1215,7 @@ public final class DBAStarUtil {
         // Grab neighbouring states
         ArrayList<SearchState> neighbours = map.getNeighbors(wallRow, wallCol);
         Map<Integer, Integer> openStatesToSectors = new HashMap<>();
-        Set<Integer> regionsTouchingWall = getRegionsTouchingWall(map, neighbours); // 10ms
+        Set<Integer> regionsTouchingWall = getRegionsTouchingWall(map, neighbours); // 20ms
 
         if (isSurroundedByWalls(map, neighbours, openStatesToSectors)) {
             // Case 1: If a wall is encased by walls, we necessarily have a new, isolated region
@@ -1274,7 +1276,7 @@ public final class DBAStarUtil {
             if (openStatesToSectors.containsValue(sectorId)) {
                 // Wall touches region that is in same sector as wall -> add wall to region and recompute neighbourhood (may have formed path)
 
-                int regionRepId = map.getAbstractProblem().findRegionRep(wall, map).getId(); // 10ms
+                int regionRepId = map.getAbstractProblem().findRegionRep(wall, map).getId(); // 40ms
 
                 // We cannot find the region id through the region rep, because the region rep may have been removed and
                 // added back, in which case the square is blank, so we find it through its neighbours in the same sector
@@ -1321,13 +1323,13 @@ public final class DBAStarUtil {
                 // Recompute regions in sector
 
                 // Perform abstraction (go over sector and recompute regions)
-                int numRegionsInSector = map.sectorReAbstract2(gridSize, startRow, startCol, endRow, endCol, regionId, map); // 60ms
+                int numRegionsInSector = map.sectorReAbstract2(gridSize, startRow, startCol, endRow, endCol, regionId, map); // 30ms
 
                 int count = 0;
                 GroupRecord[] newRecs = new GroupRecord[numRegionsInSector];
 
                 // Traverse cells in sector to re-create the groups
-                reCreateGroups(map, groups, startRow, startCol, newRecs, endRow, endCol, count); // 10ms
+                reCreateGroups(map, groups, startRow, startCol, newRecs, endRow, endCol, count); // 50ms
 
                 // Recompute region reps for newly added regions
                 for (GroupRecord newRec : newRecs) {
@@ -1341,21 +1343,21 @@ public final class DBAStarUtil {
 
                 // Set neighbours
                 ArrayList<Integer> neighborIds = new ArrayList<>(neighbouringRegions);
-                map.recomputeNeighbors(gridSize, startRow, startCol, endRow, endCol, neighborIds); // 260ms
+                map.recomputeNeighbors(gridSize, startRow, startCol, endRow, endCol, neighborIds); // 280ms
 
                 // Initialize pathCompressAlgDba
                 HillClimbing pathCompressAlgDba = new HillClimbing(problem, 10000);
 
                 // Update regions for neighborIds in the database
                 // TODO: optimize
-                dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(), dbBW.getNeighbor(), neighborIds.size(), numNeighbourLevels, false, true); // 1,791ms
+                dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(), dbBW.getNeighbor(), neighborIds.size(), numNeighbourLevels, false, true); // 1,832ms
 
                 // Re-generate index database
                 // TODO: optimize
-                dbBW.regenerateIndexDB(false, true, regionId, regionRepId, groups.size(), map, newRecs); // 720ms
+                dbBW.regenerateIndexDB(false, true, regionId, regionRepId, groups.size(), map, newRecs); // 853ms
 
                 // For checking recomputed database against AW database
-                dbBW.exportDB(dbaStarDbPath + "BW_Recomp_" + mapFileName + "_DBA-STAR_G" + gridSize + "_N" + numNeighbourLevels + "_C" + cutoff + ".dat"); // 1,431ms
+                dbBW.exportDB(dbaStarDbPath + "BW_Recomp_" + mapFileName + "_DBA-STAR_G" + gridSize + "_N" + numNeighbourLevels + "_C" + cutoff + ".dat"); // 1,452ms
             } else {
                 /*
                 Case 3: Basically like case 1, but need to recompute paths to neighbours

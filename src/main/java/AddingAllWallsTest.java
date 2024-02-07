@@ -56,14 +56,14 @@ public class AddingAllWallsTest {
         for (int wallId : goalIds) {
             // Add wall & recompute database
             logger.debug("\nRecompute wall addition: ");
-            dbaStarUtil.recomputeWallAdditionSimpleChecks(wallId, dbaStar);
+            dbaStarUtil.recomputeWallAdditionSimpleChecksNoLogging(wallId, dbaStar); // 3722ms
 
             // Remove wall
             logger.debug("\nRecompute wall removal: ");
-            dbaStarUtil.recomputeWallRemoval(wallId, dbaStar);
+            dbaStarUtil.recomputeWallRemovalNoLogging(wallId, dbaStar); // 4322ms
         }
 
-        writeResultToFile(DBA_STAR_DB_PATH + "results.txt", "Total time partial recomputation (simple addition checks): " + (System.currentTimeMillis() - startTimePartial) + "ms\n");
+        writeResultToFile(DBA_STAR_DB_PATH + "figureOutWhereTimeGoes.txt", "Total time partial recomputation: " + (System.currentTimeMillis() - startTimePartial) + "ms\n");
 
         /* complete recomputation */
 
