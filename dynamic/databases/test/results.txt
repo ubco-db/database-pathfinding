@@ -4,3 +4,9 @@ Total time partial recomputation: 9670ms
 Total time complete recomputation: 98896ms
 Total time partial recomputation: 9494ms
 Total time complete recomputation: 96970ms
+Total time partial recomputation (no addition checks): 10377ms
+Total time complete recomputation: 97289ms
+Total time partial recomputation (no addition checks): 9891ms
+Total time complete recomputation: 97235ms
+Total time partial recomputation (no addition checks): 10210ms
+Total time complete recomputation: 97305ms
