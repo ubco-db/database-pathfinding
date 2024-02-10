@@ -1548,35 +1548,29 @@ public final class DBAStarUtil {
             isElimination = false;
         }
 
-        // scenario where map is partitioned by wall addition
+        // Scenario where map is partitioned by wall addition
+
         boolean potentialHorizontalPartition = false;
         boolean potentialVerticalPartition = false;
         boolean potentialDiagonalPartition = false;
 
-        // Need to check entire region to make sure it has not become partitioned by wall addition
-        // idea: get neighbours of wall
+        // Need to check entire region to make sure it has not become partitioned by wall addition, so get neighbours of wall
         int wallRowId = map.getRow(wallLoc);
         int wallColId = map.getCol(wallLoc);
-        // it will have eight neighbours
-        // TODO: having the regions marked on the map is not part of DBA*, should I use this?
 
+        // Eight neighbours (states touching wall state)
         int neighborNorth = map.squares[wallRowId - 1][wallColId];
-
         // Need to check boundaries for bottom row of map (if not on map, treat square as wall)
         int neighborNorthEast = map.isValid(wallRowId - 1, wallColId + 1) ? map.squares[wallRowId - 1][wallColId + 1] : 42;
         int neighborEast = map.isValid(wallRowId, wallColId + 1) ? map.squares[wallRowId][wallColId + 1] : 42;
         int neighborSouthEast = map.isValid(wallRowId + 1, wallColId + 1) ? map.squares[wallRowId + 1][wallColId + 1] : 42;
         int neighborSouth = map.isValid(wallRowId + 1, wallColId) ? map.squares[wallRowId + 1][wallColId] : 42;
         int neighborSouthWest = map.isValid(wallRowId + 1, wallColId - 1) ? map.squares[wallRowId + 1][wallColId - 1] : 42;
-
         int neighborWest = map.squares[wallRowId][wallColId - 1];
         int neighborNorthWest = map.squares[wallRowId - 1][wallColId - 1];
-        // if the region has become partitioned, it would have to have neighbors that are across from each other be walls or in different regions
-        // (this is a necessary condition, but not sufficient)
 
         // In order for a partition to happen, either the newly placed wall touches two walls, or it touches a wall and
         // a state that is not in the region the wall was placed in (this is a necessary condition, but not sufficient)
-        // TODO: is there an exception to this?
 
         // need to check !isElimination, because the algorithm sees the elimination case as a partition
         if (!isElimination && (isContinuousWall(neighborNorth, neighborSouth) || isBetweenWallAndOtherRegion(neighborNorth, neighborSouth, regionId))) {
@@ -1585,7 +1579,6 @@ public final class DBAStarUtil {
         if (!isElimination && (isContinuousWall(neighborWest, neighborEast) || isBetweenWallAndOtherRegion(neighborWest, neighborEast, regionId))) {
             potentialHorizontalPartition = true;
         }
-        // TODO: address diagonal partition (maybe split into two cases?)
         if (!isElimination && (isOpenDiagonal(neighborNorth, neighborNorthEast, neighborEast) || isOpenDiagonal(neighborEast, neighborSouthEast, neighborSouth) || isOpenDiagonal(neighborSouth, neighborSouthWest, neighborWest) || isOpenDiagonal(neighborWest, neighborNorthWest, neighborNorth))) {
             potentialDiagonalPartition = true;
         }
@@ -1597,13 +1590,11 @@ public final class DBAStarUtil {
         GroupRecord[] newRecs;
 
         if (isPartition) {
-            // TODO: set neighbours of new regions using this
             int endRow = Math.min(startRow + gridSize, map.rows);
             int endCol = Math.min(startCol + gridSize, map.cols);
 
             // reset region (necessary in order for me to be able to reuse the regionId)
             // TODO: could bypass validity check if use values calculated above for loop
-
             for (int r = 0; r < gridSize; r++) {
                 for (int c = 0; c < gridSize; c++) {
                     int row = startRow + r;
@@ -1629,7 +1620,7 @@ public final class DBAStarUtil {
             ArrayList<Integer> regionIds = new ArrayList<>();
 
             // Recompute region reps for newly added regions
-            // a newRec should never be null, if it is, something went wrong with the group generation in sectorReAbstract2
+            // A newRec should never be null, if it is, something went wrong with the group generation in sectorReAbstract2
             for (GroupRecord newRec : newRecs) {
                 map.recomputeCentroid2(newRec, wallLoc);
                 // Add regions that didn't exist before to list
@@ -1637,18 +1628,15 @@ public final class DBAStarUtil {
                 regionIds.add(newRec.groupId);
             }
 
-            // VISUAL CHECK:
-//            map.computeCentroidMap().outputImage(dbaStarDbPath + "TEST" + mapFileName + ".png", null, null);
-
             // Rebuild abstract problem
             map.rebuildAbstractProblem(map, gridSize, startRow, startCol, regionIds);
 
-            // Set neighbours - TODO: check if this is working properly
+            // Set neighbours - TODO: There is likely a more efficient way to recompute neighbours since we have the old neighbours
             map.recomputeNeighbors(gridSize, startRow, startCol, endRow, endCol, neighborIds);
         }
 
         if (!isPartition) {
-            neighborIds.add(groupRecord.groupId); // need to pass this so updates work both ways (for partition this is already added)
+            neighborIds.add(groupRecord.groupId); // Need to pass this so updates work both ways (for partition this is already added)
         }
 
         // Initialize pathCompressAlgDba
