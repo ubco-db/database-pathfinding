@@ -19,7 +19,6 @@ public class AddingAllWallsTest {
 
     private static final Logger logger = LogManager.getLogger(AddingAllWallsTest.class);
 
-    // TODO: add path comparison logic to ensure paths are identical
     public static void main(String[] args) throws Exception {
         DBAStar dbaStar;
         GameMap startingMap = new GameMap(PATH_TO_MAP);
