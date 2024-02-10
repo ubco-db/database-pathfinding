@@ -1,9 +1,6 @@
 package util;
 
-import database.DBStats;
-import database.DBStatsRecord;
-import database.GameDB;
-import database.SubgoalDynamicDB2;
+import database.*;
 import map.GameMap;
 import map.GroupRecord;
 import search.*;
@@ -108,6 +105,83 @@ public final class DBAStarUtil {
 
         database.exportDB(fileName);
         map.computeComplexity(rec);
+        dbStats.addRecord(rec);
+        database.setProblem(problem);
+        logger.debug("Verifying database.");
+        database.verify(pathCompressAlgDba);
+        logger.debug("Database verification complete.");
+        logger.debug("Databases loaded.");
+
+        return new DBAStar(problem, map, database);
+    }
+
+    /**
+     * @param map        GameMap object
+     * @param wallStatus used to name output files, either BW = before wall, AW = after wall, or RW = removed wall
+     * @return DBAStar object
+     */
+    public DBAStar computeDBAStarDatabaseUsingSubgoalDynamicDB3(GameMap map, String wallStatus) {
+        long currentTime;
+
+        SearchProblem problem = new MapSearchProblem(map);
+        HillClimbing pathCompressAlgDba = new HillClimbing(problem, 10000);
+
+        // Load abstract map and database
+        logger.debug("Loading database.");
+
+        SubgoalDynamicDB3 database = new SubgoalDynamicDB3(); // DP matrix in adjacency list representation (computed at run-time)
+
+        String fileName = getDBName(wallStatus);
+
+        logger.debug("Loading map and performing abstraction...");
+
+        // GreedyHC map abstraction
+        DBStats dbStats = new DBStats();
+        DBStats.init(dbStats);
+
+        DBStatsRecord rec = new DBStatsRecord(dbStats.getSize());
+        rec.addStat(0, "dbaStar (" + numNeighbourLevels + ")");
+        rec.addStat(1, gridSize);
+        rec.addStat(3, cutoff);
+        rec.addStat(4, mapFileName);
+        rec.addStat(5, map.rows);
+        rec.addStat(6, map.cols);
+
+        currentTime = System.currentTimeMillis();
+        map = map.sectorAbstract2(gridSize);
+
+        long resultTime = System.currentTimeMillis() - currentTime;
+        rec.addStat(12, resultTime);
+        rec.addStat(10, resultTime);
+        rec.addStat(11, map.states);
+        rec.addStat(7, map.states);
+        dbStats.addRecord(rec);
+
+        // logger.debug("Exporting map with areas.");
+        // map.outputImage(getImageName(wallStatus, false), null, null);
+
+        // logger.debug("Exporting map with areas and centroids.");
+        // map.computeCentroidMap().outputImage(getImageName(wallStatus, true), null, null);
+
+        SearchProblem tmpProb = new MapSearchProblem(map);
+        GameDB gameDB = new GameDB(tmpProb);
+
+        currentTime = System.currentTimeMillis();
+
+        // Commented out because this is where RLE compression and hashtable initialization happens and we want to get rid of that
+//        database.computeIndex(tmpProb, rec);
+        rec.addStat(23, System.currentTimeMillis() - currentTime);
+
+        logger.debug("Generating gameDB.");
+        currentTime = System.currentTimeMillis();
+
+        database = gameDB.computeDynamicDBUsingSubgoalDynamicDB3(database, pathCompressAlgDba, rec, numNeighbourLevels);
+        logger.debug("Time to compute DBAStar gameDB: " + (System.currentTimeMillis() - currentTime));
+
+//        database.init();
+
+        database.exportDB(fileName);
+//        map.computeComplexity(rec);
         dbStats.addRecord(rec);
         database.setProblem(problem);
         logger.debug("Verifying database.");
@@ -731,7 +805,6 @@ public final class DBAStarUtil {
             // Need to tombstone region, and make sure it doesn't have neighbours or shortest paths anymore
             groups.remove(regionId);
             map.rebuildAbstractProblem(map, gridSize, startRow, startCol, new ArrayList<>(List.of(regionId)));
-            eliminationCount++;
             isElimination = true;
         } else {
             // Scenario when the regioning doesn't change significantly (region id stays the same)
@@ -841,8 +914,6 @@ public final class DBAStarUtil {
 
             // Set neighbours - TODO: check if this is working properly
             map.recomputeNeighbors(gridSize, startRow, startCol, endRow, endCol, neighborIds);
-
-            partitionCount++;
         }
 
         if (!isPartition) {
