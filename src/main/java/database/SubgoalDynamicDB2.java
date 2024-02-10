@@ -2,7 +2,10 @@ package database;
 
 import map.GameMap;
 import map.GroupRecord;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import search.*;
+import util.DBAStarUtil;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -29,6 +32,7 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
     private int[][][] paths;            // paths[i][j] is array representing a compressed path of state ids from region i to region neighborId[i][j] of lowest cost path
     private int[][] neighbor;           // neighbor[i][j] is region id of next region to visit on lowest cost path from region i to region neighborId[i][j] (the next hop)
 
+    private static final Logger logger = LogManager.getLogger(SubgoalDynamicDB2.class);
 
     /**
      * Returns record for start and goal for search problem between two regions.
@@ -137,9 +141,9 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
                         paths[i][j][k] = sc.nextInt();
                 }
             }
-            System.out.println("Loaded in " + (System.currentTimeMillis() - currentTime));
+            logger.info("Loaded in " + (System.currentTimeMillis() - currentTime));
         } catch (FileNotFoundException e) {
-            System.out.println("Did not find input file: " + e);
+            logger.error("Did not find input file: " + e);
             success = false;
         } finally {
             if (sc != null) sc.close();
@@ -203,7 +207,7 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
                 }
             }
         } catch (FileNotFoundException e) {
-            System.out.println("Error with output file: " + e);
+            logger.error("Error with output file: " + e);
         }
     }
 
@@ -231,7 +235,7 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
 
         dbStats.addStat(16, baseTime);
         long overallTime = endTime - startTime;
-        System.out.println("Total DB compute time: " + overallTime);
+        logger.info("Total DB compute time: " + overallTime);
         dbStats.addStat(10, overallTime);
     }
 
@@ -254,11 +258,11 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
         StatsRecord stats = new StatsRecord();
         int numBase = 0;
 
-        System.out.println("Number of groups: " + numGroups);
+        logger.info("Number of groups: " + numGroups);
         long currentTime = System.currentTimeMillis();
 
         int[] tmp = new int[5000];
-        System.out.println("Creating base paths to neighbors.");
+        logger.debug("Creating base paths to neighbors.");
         int numStates = 0;
         for (int i = 0; i < numGroups; i++) {
             startGroup = groups.get(i + GameMap.START_NUM);
@@ -305,8 +309,8 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
 
         long endTime = System.currentTimeMillis();
         long baseTime = endTime - currentTime;
-        System.out.println("Time to compute base paths: " + (baseTime));
-        System.out.println("Base neighbors generated paths: " + numBase + " Number of states: " + numStates);
+        logger.info("Time to compute base paths: " + (baseTime));
+        logger.info("Base neighbors generated paths: " + numBase + " Number of states: " + numStates);
         dbStats.addStat(9, numStates);        // Set number of subgoals.  Will be changed by a version that pre-computes all paths but will not be changed for the dynamic version.
         dbStats.addStat(8, numBase);          // # of records (only corresponds to base paths)
         return baseTime;
@@ -378,11 +382,11 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
         StatsRecord stats = new StatsRecord();
         int numBase = 0;
 
-        System.out.println("Number of groups to recompute: " + numGroups);
+        logger.debug("Number of groups to recompute: " + numGroups);
         long currentTime = System.currentTimeMillis();
 
         int[] tmp = new int[5000];
-        System.out.println("Creating base paths to neighbors.");
+        logger.debug("Creating base paths to neighbors.");
         int numStates = 0;
 
         for (Integer neighbourIndex : neighbourIndices) {
@@ -443,8 +447,8 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
 
         long endTime = System.currentTimeMillis();
         long baseTime = endTime - currentTime;
-        System.out.println("Time to re-compute base paths: " + (baseTime));
-        System.out.println("Base neighbors generated paths: " + numBase + " Number of states: " + numStates);
+        logger.info("Time to re-compute base paths: " + (baseTime));
+        logger.info("Base neighbors generated paths: " + numBase + " Number of states: " + numStates);
 //        dbStats.addStat(9, numStates);        // Set number of subgoals.  Will be changed by a version that pre-computes all paths but will not be changed for the dynamic version.
 //        dbStats.addStat(8, numBase);          // # of records (only corresponds to base paths)
     }

@@ -4,9 +4,12 @@ import java.util.ArrayList;
 
 
 import database.SubgoalDB;
+import database.SubgoalDBExact;
 import database.SubgoalDBRecord;
 
 import map.GameMap;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class DBAStar implements SearchAlgorithm {
     private final SubgoalDB database;
@@ -14,6 +17,8 @@ public class DBAStar implements SearchAlgorithm {
     private final GameMap map;
     private final RegionSearchProblem abstractProblem;
     private final ArrayList<SearchState> subgoals;
+
+    private static final Logger logger = LogManager.getLogger(DBAStar.class);
 
     public DBAStar(SearchProblem problem, GameMap abstractMap, SubgoalDB database) {
         this.database = database;
@@ -65,9 +70,9 @@ public class DBAStar implements SearchAlgorithm {
 
         if (records != null && !records.isEmpty()) {
             currentRecord = records.getFirst();
-            System.out.println(currentRecord);
+            logger.debug(currentRecord);
             used.add(currentRecord);
-            System.out.println("Using subgoal record from database: " + currentRecord.toString());
+            logger.debug("Using subgoal record from database: " + currentRecord.toString());
             subgoalList = currentRecord.getSubgoalList();
             currentIndex = -1;
 
@@ -110,7 +115,7 @@ public class DBAStar implements SearchAlgorithm {
                 }
 
                 if (newPath == null) {
-                    System.out.println("DBAStar: Unable to find subgoal path between " + problem.idToString(currentStart.id) + " and " + problem.idToString(currentGoal.id));
+                    logger.warn("DBAStar: Unable to find subgoal path between " + problem.idToString(currentStart.id) + " and " + problem.idToString(currentGoal.id));
                     return null;
                 }
 
@@ -122,8 +127,8 @@ public class DBAStar implements SearchAlgorithm {
 
                 if (!curr.equals(currentGoal)) { // Must have been interrupted
                     currentStart = newPath.getLast();
-                    System.out.println("Detect interruption.  Trying database lookup at: " + currentStart);
-                    System.out.println("Length of path at interrupt: " + path.size());
+                    logger.warn("Detect interruption.  Trying database lookup at: " + currentStart);
+                    logger.info("Length of path at interrupt: " + path.size());
                     records = database.findNearest(problem, currentStart, goal, subgoalSearchAlg, 1, stats, null);
                     if (!records.isEmpty()) {
                         currentRecord = records.getFirst();

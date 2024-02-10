@@ -1,9 +1,12 @@
 package map;
 
 import database.DBStatsRecord;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import search.*;
 import comparison.ChangedPath;
 import util.CircularQueue;
+import util.DBAStarUtil;
 import util.ExpandArray;
 import util.HeuristicFunction;
 
@@ -65,6 +68,8 @@ public class GameMap {
         return regionReps;
     }
 
+    private static final Logger logger = LogManager.getLogger(GameMap.class);
+
     public GameMap() {
     }
 
@@ -104,7 +109,7 @@ public class GameMap {
         }
         int step = max / 10;
         if (step == 0) step = 1;
-        System.out.println("Number of states visited: " + num + " # empty states: " + numEmpty + " Total visits: " + count + " Max visits: " + max + " Step size: " + step);
+        logger.debug("Number of states visited: " + num + " # empty states: " + numEmpty + " Total visits: " + count + " Max visits: " + max + " Step size: " + step);
 
         // Now copy over values for the visited states to map (base is 100)
         it = visitedStates.entrySet().iterator();
@@ -308,7 +313,7 @@ public class GameMap {
                 }
             }
         } catch (FileNotFoundException e) {
-            System.out.println("Did not find input file: " + e);
+            logger.error("Did not find input file: " + e);
         }
     }
 
@@ -334,9 +339,9 @@ public class GameMap {
                 }
             }
         } catch (FileNotFoundException e) {
-            System.out.println("Did not find input file: " + e);
+            logger.error("Did not find input file: " + e);
         } catch (Exception e) {
-            System.out.println("IO Error: " + e);
+            logger.error("IO Error: " + e);
         }
     }
 
@@ -369,7 +374,7 @@ public class GameMap {
                 out.println();
             }
         } catch (FileNotFoundException e) {
-            System.out.println("Error with output file: " + e);
+            logger.error("Error with output file: " + e);
         }
     }
 
@@ -937,7 +942,7 @@ public class GameMap {
                     int val = squares[r][c];
                     GroupRecord rec = groups.get(val);
                     if (rec == null) {
-                        System.out.println("Unable to find group: " + val + " for row: " + r + " col: " + c + " id: " + getId(r, c));
+                        logger.warn("Unable to find group: " + val + " for row: " + r + " col: " + c + " id: " + getId(r, c));
                         continue;
                     }
                     if (isValid(r - 1, c) && !isWall(r - 1, c) && squares[r - 1][c] != val)    // Above
@@ -960,7 +965,7 @@ public class GameMap {
             }
         }
         long endTime = System.currentTimeMillis();
-        System.out.println("Time to compute neighbors: " + (endTime - currentTime));
+        logger.info("Time to compute neighbors: " + (endTime - currentTime));
     }
 
     // TODO: recompute neighbours in more efficient way, should be possible since I know neighbours of original region and ids of new regions
@@ -989,7 +994,7 @@ public class GameMap {
                     int val = squares[r][c];
                     GroupRecord rec = groups.get(val);
                     if (rec == null) {
-                        System.out.println("Unable to find group: " + val + " for row: " + r + " col: " + c + " id: " + getId(r, c));
+                        logger.warn("Unable to find group: " + val + " for row: " + r + " col: " + c + " id: " + getId(r, c));
                         continue;
                     }
                     if (isValid(r - 1, c) && !isWall(r - 1, c) && squares[r - 1][c] != val)    // Above
@@ -1012,7 +1017,7 @@ public class GameMap {
             }
         }
         long endTime = System.currentTimeMillis();
-        System.out.println("Time to recompute neighbors: " + (endTime - currentTime));
+        logger.info("Time to recompute neighbors: " + (endTime - currentTime));
     }
 
     public int generateRandomState() {
@@ -1093,9 +1098,9 @@ public class GameMap {
         }
 
         baseMap.states = currentNum;
-        System.out.println("Number of areas: " + currentNum + " Average area size: " + (totalSize * 1.0 / currentNum));
+        logger.debug("Number of areas: " + currentNum + " Average area size: " + (totalSize * 1.0 / currentNum));
         long endTime = System.currentTimeMillis();
-        System.out.println("Time to compute map abstraction: " + (endTime - currentTime));
+        logger.info("Time to compute map abstraction: " + (endTime - currentTime));
         dbstat.addStat(12, endTime - currentTime);
         dbstat.addStat(11, currentNum);
         dbstat.addStat(7, currentNum);
@@ -1146,9 +1151,9 @@ public class GameMap {
         }
 
         baseMap.states = currentNum;
-        System.out.println("Number of areas: " + currentNum + " Average area size: " + (totalSize * 1.0 / currentNum));
+        logger.debug("Number of areas: " + currentNum + " Average area size: " + (totalSize * 1.0 / currentNum));
         long endTime = System.currentTimeMillis();
-        System.out.println("Time to compute map abstraction: " + (endTime - currentTime));
+        logger.debug("Time to compute map abstraction: " + (endTime - currentTime));
         dbstat.addStat(12, endTime - currentTime);
         dbstat.addStat(11, currentNum);
         dbstat.addStat(7, currentNum);
@@ -1273,7 +1278,7 @@ public class GameMap {
         }
 
         baseMap.states = totalRegions;
-        System.out.println("Number of areas: " + (baseMap.states));
+        logger.debug("Number of areas: " + (baseMap.states));
 
         baseMap.buildAbstractProblem(gridSize);
         //	dbstat.addStat(12, endTime-currentTime);
@@ -1370,7 +1375,7 @@ public class GameMap {
         map.numRegions[(startRow / gridSize) * (int) Math.ceil(cols * 1.0 / gridSize) + (endRow / gridSize)] = numRegionsInSector;
 
         map.states = totalRegions;
-        System.out.println("Number of areas: " + (map.states));
+        logger.debug("Number of areas: " + (map.states));
 
         return numRegionsInSector;
     }
@@ -1489,7 +1494,7 @@ public class GameMap {
                 if (bestCoverage == null) break;            // No more trailheads needed as everything covered
 
                 currentNum++;
-                System.out.println("Computed trail head: " + (i + 1) + " Id: " + maxCoverageStateId + " Row: " + this.getRow(maxCoverageStateId) + " Col: " + this.getCol(maxCoverageStateId) + " New states covered: " + bestCoverCount + " Group: " + currentNum);
+                logger.debug("Computed trail head: " + (i + 1) + " Id: " + maxCoverageStateId + " Row: " + this.getRow(maxCoverageStateId) + " Col: " + this.getCol(maxCoverageStateId) + " New states covered: " + bestCoverCount + " Group: " + currentNum);
 
                 coveredStates.set(maxCoverageStateId);
                 // Set all newly covered states and update in map
@@ -1532,7 +1537,7 @@ public class GameMap {
 
                 if (bestCoverage == null) break;            // No more trailheads needed as everything covered
 
-                System.out.println("Computed trail head: " + (i + 1) + " Id: " + maxCoverageStateId + " Row: " + this.getRow(maxCoverageStateId) + " Col: " + this.getCol(maxCoverageStateId) + " New states covered: " + bestCoverCount);
+                logger.debug("Computed trail head: " + (i + 1) + " Id: " + maxCoverageStateId + " Row: " + this.getRow(maxCoverageStateId) + " Col: " + this.getCol(maxCoverageStateId) + " New states covered: " + bestCoverCount);
 
                 coveredStates.set(maxCoverageStateId);
                 // Set all newly covered states
@@ -1547,7 +1552,7 @@ public class GameMap {
         }
 
         baseMap.states = currentNum - (START_NUM - 1);
-        System.out.println("Number of areas: " + (baseMap.states));
+        logger.debug("Number of areas: " + (baseMap.states));
 
         return baseMap;
     }
@@ -2075,9 +2080,9 @@ public class GameMap {
             HashMap<String, String> used = new HashMap<>();
 
             double maxDat = wallsThatChangeDat.values().stream().max(Double::compare).get();
-            System.out.println("Max dat: " + maxDat);
+            logger.debug("Max dat: " + maxDat);
             double maxDati2 = wallsThatChangeDati2.values().stream().max(Double::compare).get();
-            System.out.println("Max dati2: " + maxDati2);
+            logger.debug("Max dati2: " + maxDati2);
 
             for (SearchState current : wallsThatChangeDat.keySet()) {
                 int row = getRow(current.getId());
@@ -2250,7 +2255,7 @@ public class GameMap {
 
     public RenderedImage createImage() {
 
-        BufferedImage bufferedImage = new BufferedImage((this.cols) * cellHeight, (this.rows  + 10) * cellHeight, BufferedImage.TYPE_INT_RGB);
+        BufferedImage bufferedImage = new BufferedImage((this.cols) * cellHeight, (this.rows + 10) * cellHeight, BufferedImage.TYPE_INT_RGB);
 
         Graphics2D g2d = bufferedImage.createGraphics();
 
@@ -2287,10 +2292,10 @@ public class GameMap {
             sum = sum + val;
         }
 
-        System.out.println("Statistics: ");
-        System.out.println("Number of regions: " + groups.size());
+        logger.debug("Statistics: ");
+        logger.debug("Number of regions: " + groups.size());
         double avg = sum / groups.size();
-        System.out.println("Minimum region: " + min + " Maximum region: " + max + " Total states: " + sum + " Avg. region: " + avg);
+        logger.debug("Minimum region: " + min + " Maximum region: " + max + " Total states: " + sum + " Avg. region: " + avg);
         stats.addStat(19, 1.0 / avg);    // Map complexity
         stats.addStat(20, max);        // Max state size
         stats.addStat(21, min);        // Min state size
@@ -2412,7 +2417,7 @@ public class GameMap {
             }
         }
         long endTime = System.currentTimeMillis();
-        System.out.println("Time to compute groups: " + (endTime - currentTime) + " Groups: " + groups.size());
+        logger.info("Time to compute groups: " + (endTime - currentTime) + " Groups: " + groups.size());
 
         // Compute centroids
         computeCentroids();
@@ -2459,7 +2464,7 @@ public class GameMap {
             // buf.append(rec.getGroupRepId()).append(", ");
         }
         long endTime = System.currentTimeMillis();
-        // System.out.println("Time to compute centroids: " + (endTime - currentTime));
+        logger.info("Time to compute centroids: " + (endTime - currentTime));
 
 //        buf.append(System.lineSeparator()).append(System.lineSeparator());
 //
