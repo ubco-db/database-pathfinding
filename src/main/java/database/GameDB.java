@@ -652,6 +652,20 @@ public class GameDB {
         return db;
     }
 
+    public SubgoalDynamicDB3 computeDynamicDBUsingSubgoalDynamicDB3(SubgoalDynamicDB3 db, SearchAbstractAlgorithm searchAlg, DBStatsRecord dbstats, int numLevels) {
+        groups = problem.getGroups();
+
+        long current = System.currentTimeMillis();
+        problem.computeNeighbors();
+        long neighborTime = System.currentTimeMillis() - current;
+        dbstats.addStat(18, neighborTime);
+
+        // Generate subgoal databases using the groups
+        db.compute(problem, groups, searchAlg, dbstats, numLevels);
+
+        return db;
+    }
+
     /**
      * Creates a databases combining all pairs of groups in map using dynamic programming instead of generating all combinations.
      *
@@ -987,6 +1001,148 @@ public class GameDB {
 				path[k] = paths[currentGroupId][minLoc][k];
 			lastOffset += paths[currentGroupId][minLoc].length-start;
 	
+			if (goalGroupId == neighbor[currentGroupId][minLoc])
+			{	// Found it
+				return lastOffset;
+			}
+			currentGroupId = neighbor[currentGroupId][minLoc];	// Advance to neighbor and continue
+		}
+*/
+    }
+
+    public static int mergePaths4(int startGroupId, int goalGroupId, int[][][] paths, int[][] lowestCost, int[][] neighborId, int[] path) {
+        // Find if this is a neighbor
+        int neighborLoc = findInArray(neighborId[startGroupId], goalGroupId);
+        if (neighborLoc != -1) { // Direct neighbor with path stored - just return the path
+            System.arraycopy(paths[startGroupId][neighborLoc], 0, path, 0, paths[startGroupId][neighborLoc].length);
+            return paths[startGroupId][neighborLoc].length;
+        }
+
+        // Otherwise we need to search to find it
+        // Quick implementation using Dijkstra's algorithm but could use A* as well
+        int numGroups = neighborId.length;
+        int[] distance = new int[numGroups];
+        int[] previous = new int[numGroups];
+        boolean[] visited = new boolean[numGroups];
+        int[] nodes = new int[numGroups];
+        int count = 0;
+        Arrays.fill(distance, Integer.MAX_VALUE);
+        // Initialize distance and previous with neighbors
+        for (int i = 0; i < neighborId[startGroupId].length; i++) {
+            neighborLoc = neighborId[startGroupId][i];
+            previous[neighborLoc] = startGroupId;
+            distance[neighborLoc] = lowestCost[startGroupId][i];
+            nodes[count++] = neighborLoc;
+        }
+
+        // Using basic unsorted array.  Not great for performance.
+        while (count > 0) {    // Find lowest distance (linear search)
+            int minCost = Integer.MAX_VALUE, minLoc = -1;
+            for (int k = 0; k < count; k++) {
+                int neighborid = nodes[k];
+                int cost = distance[neighborid];
+                if (cost < minCost) {
+                    minCost = cost;
+                    minLoc = k;
+                }
+            }
+
+            if (minLoc == -1) return -1;            // Unreachable
+
+            int neighborid = nodes[minLoc];
+
+            if (neighborid == goalGroupId)          // Goal node found - stop algorithm so do not expand to all nodes
+                break;
+
+            // Remove this node from the queue
+            nodes[minLoc] = nodes[--count];
+            visited[neighborid] = true;
+
+            // Process all neighbors of this node
+            for (int i = 0; i < neighborId[neighborid].length; i++) {
+                neighborLoc = neighborId[neighborid][i];
+                if (!visited[neighborLoc]) {
+                    int dist = lowestCost[neighborid][i] + distance[neighborid];
+                    if (dist < distance[neighborLoc]) {
+                        distance[neighborLoc] = dist;
+                        previous[neighborLoc] = neighborid;
+                    }
+                    // TODO: Inefficient. Only add node if not currently on list. Do so by searching for it.
+                    boolean found = false;
+                    for (int k = 0; k < count; k++)
+                        if (nodes[k] == neighborLoc) {
+                            found = true;
+                            break;
+                        }
+
+                    if (!found) nodes[count++] = neighborLoc;
+                }
+            }
+        }
+
+        // Print path
+        count = 0;
+        int currentId = goalGroupId;
+        while (currentId != startGroupId) { // backtrack from goalGroupId to startGroupId
+            distance[count++] = currentId;
+            currentId = previous[currentId];
+        }
+        distance[count++] = startGroupId; // reverse path is in distance array
+
+        // Now produce the actual path
+        int pathLen = 0;
+
+        // Add first segment of the path
+        // nextId is group id.  nextLoc is location of that id is adjacency list (array)
+        int nextId = distance[count - 2], lastId = startGroupId;
+        int nextLoc = findInArray(neighborId[lastId], nextId);
+        // Copy (but do not include duplicate start node - start from 1 instead of 0).
+        System.arraycopy(paths[lastId][nextLoc], 0, path, 0, paths[lastId][nextLoc].length);
+        pathLen += paths[lastId][nextLoc].length;
+        lastId = nextId;
+        for (int i = count - 3; i >= 0; i--) {
+            nextId = distance[i];
+            nextLoc = findInArray(neighborId[lastId], nextId);
+            // Copy (but do not include duplicate start node - start from 1 instead of 0).
+            if (nextLoc < 0) { // if nextLoc < 0, path cannot be found
+                return 0;
+            }
+            if (paths[lastId][nextLoc].length >= 1)
+                System.arraycopy(paths[lastId][nextLoc], 1, path, pathLen - 1 + 1, paths[lastId][nextLoc].length - 1);
+            pathLen += paths[lastId][nextLoc].length - 1;
+            lastId = nextId;
+        }
+        return pathLen;
+			 /*
+
+		int currentGroupId = startGroupId;
+		int goalGroupSeedId = db.getSeedId(goalGroupId);
+
+		while (true)
+		{
+			// Select minimum neighbor
+			int minCost = 100000, minLoc = -1;
+			for (int k=0; k < neighborId[currentGroupId].length; k++)
+			{	int neighborSeedId = db.getSeedId(neighbor[currentGroupId][k]);
+				int cost = lowestCost[currentGroupId][k] + problem.computeDistance(neighborSeedId, goalGroupSeedId);
+				if (cost < minCost)
+				{	minCost = cost;
+					minLoc = k;
+				}
+			}
+
+			if (minLoc == -1)
+				// No neighbor - failure
+				return 0;
+
+			// Copy path to get to this neighbor
+			int start = 0;
+			if (lastOffset > 0)
+				start = 1;
+			for (int k=start; k < paths[currentGroupId][minLoc].length; k++)		// Copy (but do not include duplicate start node - start from 1 instead of 0).
+				path[k] = paths[currentGroupId][minLoc][k];
+			lastOffset += paths[currentGroupId][minLoc].length-start;
+
 			if (goalGroupId == neighbor[currentGroupId][minLoc])
 			{	// Found it
 				return lastOffset;
