@@ -123,14 +123,15 @@ public class HillClimbing implements SearchAbstractAlgorithm {
 
     public ArrayList<SearchState> computePath(SearchState start, SearchState goal, StatsRecord stats) {    // Now create objects for path
         ExpandArray path = computeIdPath(start.id, goal.id);
-        if (path == null)
+        if (path == null) {
             return null;
+        }
         ArrayList<SearchState> result = new ArrayList<>(path.num());
-        for (int i = 0; i < path.num(); i++)
+        for (int i = 0; i < path.num(); i++) {
             result.add(new SearchState(path.get(i)));
+        }
         SearchUtil.computePathCost(result, stats, problem);
         return result;
-
     }
 
     public boolean isPath(SearchState start, SearchState goal, StatsRecord stats) {

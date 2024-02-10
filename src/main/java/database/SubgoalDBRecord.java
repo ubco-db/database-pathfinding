@@ -75,7 +75,7 @@ public class SubgoalDBRecord {
         buf.append("\t Goal id: (");
         buf.append(goalId);
         buf.append(") Subgoals: ");
-        if (stateIds != null) for (int stateId : stateIds) buf.append(stateId).append(" ; ");
+        if (stateIds != null) for (int stateId : stateIds) buf.append(stateId).append("; ");
         return buf.toString();
     }
 
@@ -89,7 +89,7 @@ public class SubgoalDBRecord {
         buf.append(problem.idToString(goalId));
         buf.append(" Subgoals: ");
         if (stateIds != null) {
-            for (int stateId : stateIds) buf.append(problem.idToString(stateId)).append(" ; ");
+            for (int stateId : stateIds) buf.append(problem.idToString(stateId)).append("; ");
         }
         return buf.toString();
     }

@@ -2,6 +2,9 @@ package search;
 
 import map.GameMap;
 import map.GroupRecord;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import util.DBAStarUtil;
 import util.ExpandArray;
 import util.HeuristicFunction;
 
@@ -18,6 +21,7 @@ public class RegionSearchProblem extends SearchProblem {
     private GameMap map;
     private int[] regionCenter; // The node id of each region representative
     private final int gridSize;
+    private static final Logger logger = LogManager.getLogger(RegionSearchProblem.class);
 
     private class Sector {
         public int number;
@@ -105,7 +109,7 @@ public class RegionSearchProblem extends SearchProblem {
 
         // TODO: need to work on sectors and regions here - deal with new sectors occurring through wall deletion
 
-//        System.out.println(sectors);
+        logger.trace(sectors);
 
         Sector currentSector = sectors.get(sectorId);
 
@@ -150,9 +154,9 @@ public class RegionSearchProblem extends SearchProblem {
             }
         }
 
-        System.out.println("Current sector after recomputation: " + currentSector);
+        logger.trace("Current sector after recomputation: " + currentSector);
 
-//        System.out.println(regions);
+        logger.trace(regions);
     }
 
     public int computeDistance(SearchState start, SearchState goal) {
@@ -417,8 +421,8 @@ public class RegionSearchProblem extends SearchProblem {
             return regionState;
         } else { // Have to search for which region representative this node is in (BFS)
             // Check if state itself is a region representative
-            System.out.println("Num regions in sector: " + sec.numRegions);
-            System.out.println("Regions in sector " + sec.number + ": " + sec.regions);
+            logger.debug("Num regions in sector: " + sec.numRegions);
+            logger.debug("Regions in sector " + sec.number + ": " + sec.regions);
             for (int j = 0; j < sec.numRegions; j++) {
                 if (s.id == sec.regions.get(j).regionRepId) {
                     regionState.id = sec.regions.get(j).regionRepId;
