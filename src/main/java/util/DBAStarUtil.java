@@ -1511,15 +1511,11 @@ public final class DBAStarUtil {
         MapSearchProblem problem = (MapSearchProblem) dbaStarBW.getProblem();
         SubgoalDynamicDB3 dbBW = (SubgoalDynamicDB3) dbaStarBW.getDatabase();
 
-        SearchState wall = new SearchState(wallLoc);
         int regionId = map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)];
 
         // Add wall to existing map and to map inside problem
         map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = '*';
         problem.getMap().squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = '*';
-
-        // Get the id of the region rep of the region the wall was added in
-        int regionRepId = map.getAbstractProblem().findRegionRep(wall, map).getId(); // 30ms
 
         TreeMap<Integer, GroupRecord> groups = new MapSearchProblem(map).getGroups();
 
@@ -1545,7 +1541,6 @@ public final class DBAStarUtil {
         } else {
             // Scenario when the regioning doesn't change significantly (region id stays the same)
             int newRegionRep = map.recomputeCentroid(groupRecord, wallLoc); // 10ms
-            regionRepId = newRegionRep;
             // Get back new region rep and change the record
             groupRecord.setGroupRepId(newRegionRep);
             groups.replace(regionId, groupRecord);
@@ -1599,7 +1594,7 @@ public final class DBAStarUtil {
 
         ArrayList<Integer> neighborIds = new ArrayList<>(groupRecord.getNeighborIds());
 
-        GroupRecord[] newRecs = null;
+        GroupRecord[] newRecs;
 
         if (isPartition) {
             // TODO: set neighbours of new regions using this
@@ -1674,9 +1669,7 @@ public final class DBAStarUtil {
         MapSearchProblem problem = (MapSearchProblem) dbaStarBW.getProblem();
         SubgoalDynamicDB3 dbBW = (SubgoalDynamicDB3) dbaStarBW.getDatabase();
 
-        SearchState wall = new SearchState(wallLoc);
-
-        int wallRow = map.getRow(wallLoc); // 10ms
+        int wallRow = map.getRow(wallLoc);
         int wallCol = map.getCol(wallLoc);
 
         // Remove wall from existing map and map inside problem
@@ -1747,8 +1740,6 @@ public final class DBAStarUtil {
             // Check if it matches sector membership of surrounding open spaces
             if (openStatesToSectors.containsValue(sectorId)) {
                 // Wall touches region that is in same sector as wall -> add wall to region and recompute neighbourhood (may have formed path)
-
-                int regionRepId = map.getAbstractProblem().findRegionRep(wall, map).getId(); // 40ms
 
                 // We cannot find the region id through the region rep, because the region rep may have been removed and
                 // added back, in which case the square is blank, so we find it through its neighbours in the same sector
