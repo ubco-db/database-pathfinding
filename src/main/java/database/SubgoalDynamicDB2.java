@@ -353,23 +353,24 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
         cases won't work.
          */
         int startNum = 50;
-        if (lowestCost.length < groups.lastKey() + 1 - startNum) {
-            int[][] resizedLowestCost = new int[groups.lastKey() + 1 - startNum][];
+        int targetLength = groups.lastKey() + 1 - startNum;
+        if (lowestCost.length < targetLength) {
+            int[][] resizedLowestCost = new int[targetLength][];
             System.arraycopy(lowestCost, 0, resizedLowestCost, 0, lowestCost.length);
             this.lowestCost = resizedLowestCost;
         }
-        if (paths.length < groups.lastKey() + 1 - startNum) {
-            int[][][] resizedPath = new int[groups.lastKey() + 1 - startNum][][];
+        if (paths.length < targetLength) {
+            int[][][] resizedPath = new int[targetLength][][];
             System.arraycopy(paths, 0, resizedPath, 0, paths.length);
             this.paths = resizedPath;
         }
-        if (neighbor.length < groups.lastKey() + 1 - startNum) {
-            int[][] resizedNeighbor = new int[groups.lastKey() + 1 - startNum][];
+        if (neighbor.length < targetLength) {
+            int[][] resizedNeighbor = new int[targetLength][];
             System.arraycopy(neighbor, 0, resizedNeighbor, 0, neighbor.length);
             this.neighbor = resizedNeighbor;
         }
-        if (neighborId.length < groups.lastKey() + 1 - startNum) {
-            int[][] resizedNeighborId = new int[groups.lastKey() + 1 - startNum][];
+        if (neighborId.length < targetLength) {
+            int[][] resizedNeighborId = new int[targetLength][];
             System.arraycopy(neighborId, 0, resizedNeighborId, 0, neighborId.length);
             neighborId = resizedNeighborId;
         }
