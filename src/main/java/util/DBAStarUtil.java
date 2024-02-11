@@ -1643,7 +1643,7 @@ public final class DBAStarUtil {
         HillClimbing pathCompressAlgDba = new HillClimbing(problem, 10000);
 
         // Update regions for neighborIds in the database
-        dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(), neighborIds.size(), numNeighbourLevels, isElimination, isPartition); // 1,813ms
+        dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, neighborIds.size(), numNeighbourLevels, isElimination, isPartition); // 1,813ms
 
         // Commented out because this is where RLE compression and hashtable initialization happens, and we want to get rid of that
 //        dbBW.regenerateIndexDB(isPartition, isElimination, regionId, regionRepId, groups.size(), map, newRecs);
@@ -1705,7 +1705,7 @@ public final class DBAStarUtil {
             neighborIds.add(newRec.groupId);
 
             // Value of isPartition actually makes no difference here since that logic is skipped, set to true for consistency with code below
-            dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(), neighborIds.size(), numNeighbourLevels, false, true);
+            dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, neighborIds.size(), numNeighbourLevels, false, true);
 
             // Commented out because this is where RLE compression and hashtable initialization happens, and we want to get rid of that
 //            dbBW.regenerateIndexDB(true, false, groupId, groupId, groups.size(), map, new GroupRecord[]{newRec});
@@ -1801,7 +1801,7 @@ public final class DBAStarUtil {
 
                 // Update regions for neighborIds in the database
                 // TODO: optimize
-                dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(), neighborIds.size(), numNeighbourLevels, false, true); // 1,832ms
+                dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, neighborIds.size(), numNeighbourLevels, false, true); // 1,832ms
 
                 // Commented out because this is where RLE compression and hashtable initialization happens, and we want to get rid of that
 //                dbBW.regenerateIndexDB(false, true, regionId, regionRepId, groups.size(), map, newRecs);
@@ -1865,7 +1865,7 @@ public final class DBAStarUtil {
                 map.recomputeNeighbors(gridSize, startRow, startCol, endRow, endCol, neighborIds);
 
                 // Value of isPartition actually makes no difference here since that logic is skipped, set to true for consistency with code below
-                dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(), neighborIds.size(), numNeighbourLevels, false, true);
+                dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, neighborIds.size(), numNeighbourLevels, false, true);
 
                 // Commented out because this is where RLE compression and hashtable initialization happens, and we want to get rid of that
 //                dbBW.regenerateIndexDB(true, false, groupId, groupId, groups.size(), map, new GroupRecord[]{newRec});

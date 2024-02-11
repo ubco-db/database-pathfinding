@@ -11,20 +11,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.*;
 
-
-/**
- * Database where dynamic programming table is not computed offline only the base paths between adjacency neighbors are (and their associated costs).
- * Online, a record is produced by searching the partial complete DP table for the lowest cost path between regions i and j.
- * This path consists of a series of hops between neighbors and each hop's path is combined into a path to solve the entire problem.
- * In effect, this is performing another search on the abstract region space. The algorithm is currently using Dijkstra's but A* may be possible as well.
- * This search is no longer real-time (as number of regions cannot be bounded a priori), so any search using this database cannot also be considered real-time.
- * The savings are that no DP computation needs to be performed which speeds up things when there are a large number of regions and potentially can be useful when
- * the state space is changing.
- * DP table only stores direct neighbors (not entire matrix).
- *
- * @author rlawrenc
- */
-public class SubgoalDynamicDB3 extends SubgoalDBExact {
+public class SubgoalDynamicDB3 extends SubgoalDB {
     private int numGroups;              // Number of abstract regions
     private int[][] neighborId;         // neighborId[i] stores list of neighbors for i. neighborId[i][j] is state id of jth neighbor of i.
     private int[][] lowestCost;         // Lowest cost for DP table. lowestCost[i][j] is the cost of the lowest path from region i to region neighborId[i][j]
@@ -34,13 +21,16 @@ public class SubgoalDynamicDB3 extends SubgoalDBExact {
 
     private static final Logger logger = LogManager.getLogger(SubgoalDynamicDB2.class);
 
+    // TODO: How to do this without DP table?
+
     /**
      * Returns record for start and goal for search problem between two regions.
      * Record produced dynamically from data in DP table by combining base paths between regions (non-real-time).
      */
     public ArrayList<SubgoalDBRecord> findNearest(SearchProblem problem, SearchState start, SearchState goal, SearchAlgorithm searchAlg, int max, StatsRecord stats, ArrayList<SubgoalDBRecord> used) {
-        int startGroupId = db.findHT(start.id);
-        int goalGroupId = db.findHT(goal.id);
+        // FIXME: This is broken right now, need to make this work without DP table
+        int startGroupId = -1;
+        int goalGroupId = -1;
 
         ArrayList<SubgoalDBRecord> result = new ArrayList<>(1);
 
@@ -66,7 +56,7 @@ public class SubgoalDynamicDB3 extends SubgoalDBExact {
 
         // System.out.println(Arrays.toString(path));
 
-        if (pathSize == 0) return null;            // No path between two states
+        if (pathSize == 0) return null; // No path between two states
         int startId = path[0];
         int goalId = path[pathSize - 1];
 
@@ -148,19 +138,6 @@ public class SubgoalDynamicDB3 extends SubgoalDBExact {
     }
 
     /**
-     * Writes out the abstraction mapping and the DP table and base paths.
-     * Cannot use exportDB() in SubgoalDBExact which writes out already computed records.
-     */
-    @Override
-    public void exportDB(String fileName) {
-        // Export the index mapping part of the database
-        db.export(fileName + "i2");    // A bad file name - I know
-
-        // Export the base "database" of record fragments and dynamic programming table
-        saveDB(fileName);
-    }
-
-    /**
      * Saves the DP table as several adjacency lists (uses less space as DP table gets large).
      *
      * @param fileName
@@ -174,40 +151,30 @@ public class SubgoalDynamicDB3 extends SubgoalDBExact {
             // out.println("numGroups: ");
             out.println(numGroups);
             for (int i = 0; i < numGroups; i++) {    // Read each group which has # neighbors as N, neighborId[N], lowest cost[N], neighbor[] and paths on each line
-                    int numNeighbors = neighborId[i].length;
-                    // out.println("numNeighbours for " + i + ": ");
-                    out.println(numNeighbors);
-                    // out.println("neighbourIds: ");
-                    for (int j = 0; j < numNeighbors; j++) {
-                        out.print(neighborId[i][j] + "\t");
-                    }
-                    out.println();
-                    // out.println("lowestCosts: ");
-                    for (int j = 0; j < numNeighbors; j++) {
-                        out.print(lowestCost[i][j] + "\t");
-                    }
-                    out.println();
-                    // out.println("paths: ");
-                    for (int j = 0; j < numNeighbors; j++) {
-                        out.print(paths[i][j].length + "\t");
-                        for (int k = 0; k < paths[i][j].length; k++)
-                            out.print("\t" + paths[i][j][k]);
-                        out.println();
-                    }
+                int numNeighbors = neighborId[i].length;
+                // out.println("numNeighbours for " + i + ": ");
+                out.println(numNeighbors);
+                // out.println("neighbourIds: ");
+                for (int j = 0; j < numNeighbors; j++) {
+                    out.print(neighborId[i][j] + "\t");
                 }
+                out.println();
+                // out.println("lowestCosts: ");
+                for (int j = 0; j < numNeighbors; j++) {
+                    out.print(lowestCost[i][j] + "\t");
+                }
+                out.println();
+                // out.println("paths: ");
+                for (int j = 0; j < numNeighbors; j++) {
+                    out.print(paths[i][j].length + "\t");
+                    for (int k = 0; k < paths[i][j].length; k++)
+                        out.print("\t" + paths[i][j][k]);
+                    out.println();
+                }
+            }
         } catch (FileNotFoundException e) {
             logger.error("Error with output file: " + e);
         }
-    }
-
-    /**
-     * Verifies only the index mapping.
-     * Does not currently dynamically compute all records then verifies if they are correct.
-     *
-     * @param searchAlg
-     */
-    public void verify(SearchAlgorithm searchAlg) {
-        db.verify(problem);
     }
 
     public void compute(SearchProblem problem, TreeMap<Integer, GroupRecord> groups, SearchAlgorithm searchAlg, DBStatsRecord dbStats, int numLevels) {
@@ -218,8 +185,8 @@ public class SubgoalDynamicDB3 extends SubgoalDBExact {
         paths = new int[arraySize][][];
         neighborId = new int[arraySize][];
 
-        // How big should I make this?
-        freeSpace = new int[numGroups];
+        // How big should I make this? Technically, we could wipe out all regions, in which case freeSpace would be filled up to arraySize
+        freeSpace = new int[arraySize];
         freeSpaceCount = arraySize - numGroups;
         // Initialize free space to contain indices of final 10% for arrays of length arraySize
         for (int i = 0; i < freeSpaceCount; i++) {
@@ -230,7 +197,7 @@ public class SubgoalDynamicDB3 extends SubgoalDBExact {
 
         long startTime = System.currentTimeMillis();
 
-        long baseTime = computeBasePaths2(problem, groups, searchAlg, lowestCost, paths, numGroups, numLevels, true, dbStats);
+        long baseTime = computeBasePaths2(problem, groups, searchAlg, numGroups, numLevels, true, dbStats);
 
         long endTime = System.currentTimeMillis();
 
@@ -250,7 +217,7 @@ public class SubgoalDynamicDB3 extends SubgoalDBExact {
      * @param dbStats
      * @param numLevels
      */
-    public long computeBasePaths2(SearchProblem problem, TreeMap<Integer, GroupRecord> groups, SearchAlgorithm searchAlg, int[][] lowestCost, int[][][] paths, int numGroups, int numLevels, boolean asSubgoals, DBStatsRecord dbStats) {
+    public long computeBasePaths2(SearchProblem problem, TreeMap<Integer, GroupRecord> groups, SearchAlgorithm searchAlg, int numGroups, int numLevels, boolean asSubgoals, DBStatsRecord dbStats) {
         int goalGroupLoc, startGroupLoc;
         GroupRecord startGroup, goalGroup;
         HashSet<Integer> neighbors;
@@ -265,11 +232,13 @@ public class SubgoalDynamicDB3 extends SubgoalDBExact {
         int[] tmp = new int[5000];
         logger.debug("Creating base paths to neighbors.");
         int numStates = 0;
+
         for (int i = 0; i < numGroups; i++) {
             startGroup = groups.get(i + GameMap.START_NUM);
             startGroupLoc = i;
 
             neighbors = GameDB.getNeighbors(groups, startGroup, numLevels, false);
+
             int numNeighbors = neighbors.size();
             lowestCost[startGroupLoc] = new int[numNeighbors];
             neighborId[startGroupLoc] = new int[numNeighbors];
@@ -278,13 +247,15 @@ public class SubgoalDynamicDB3 extends SubgoalDBExact {
             Iterator<Integer> it = neighbors.iterator();
             // Generate for each neighbor group
             int count = 0;
+
+            // Iterate over neighbours of current region
             while (it.hasNext()) {
                 // Compute the shortest path between center representative of both groups
                 int goalGroupId = it.next();
                 goalGroup = groups.get(goalGroupId);
 
                 path = astar.computePath(new SearchState(startGroup.groupRepId), new SearchState(goalGroup.groupRepId), stats);
-                numBase++;
+                numBase++; // Is this the number of paths?
 
                 goalGroupLoc = goalGroupId - GameMap.START_NUM;
 
@@ -315,15 +286,6 @@ public class SubgoalDynamicDB3 extends SubgoalDBExact {
         return baseTime;
     }
 
-    public int[][] getLowestCost() {
-        return lowestCost;
-    }
-
-    public int[][][] getPaths() {
-        return paths;
-    }
-
-
     /**
      * Recomputes the dynamic programming table and base paths.
      * DP table is stored as an adjacency list representation
@@ -335,35 +297,31 @@ public class SubgoalDynamicDB3 extends SubgoalDBExact {
      */
     public void recomputeBasePathsAfterWallChange(SearchProblem problem, TreeMap<Integer, GroupRecord> groups,
                                                   ArrayList<Integer> neighbourIndices, SearchAlgorithm searchAlg,
-                                                  int[][] lowestCost, int[][][] paths,
                                                   int numGroups, int numLevels,
                                                   boolean isElimination, boolean isPartition) {
-        /*
-        Currently, I am deleting all regions within a sector and recomputing the whole sector. In the case where the
-        regions do not merge, and the number of regions therefore stays the same, this leads to an off-by-one error when
-        re-assigning region. This is the case because after removing the regions, they are assigned new indices at the
-        end of the groups TreeMap. The indices in this map are in order, but its length plus the offset is not the same
-        as the index of its last element anymore.
+        // If we have run out of free space, increase the size of the arrays
+        if (freeSpaceCount == 0) {
+            // Allocate arrays 10% larger than the current numRegions
+            int arraySize = (int) (numGroups * 1.1);
 
-        Therefore, I need to use groups.lastKey() + 1 rather than groups.size() for this check or one of the removal
-        cases won't work.
-         */
-        int startNum = 50;
-        int targetLength = groups.lastKey() + 1 - startNum;
-        if (lowestCost.length < targetLength) {
-            int[][] resizedLowestCost = new int[targetLength][];
-            System.arraycopy(lowestCost, 0, resizedLowestCost, 0, lowestCost.length);
+            int[][] resizedLowestCost = new int[arraySize][];
+            System.arraycopy(this.lowestCost, 0, resizedLowestCost, 0, this.lowestCost.length);
             this.lowestCost = resizedLowestCost;
-        }
-        if (paths.length < targetLength) {
-            int[][][] resizedPath = new int[targetLength][][];
-            System.arraycopy(paths, 0, resizedPath, 0, paths.length);
+
+            int[][][] resizedPath = new int[arraySize][][];
+            System.arraycopy(this.paths, 0, resizedPath, 0, this.paths.length);
             this.paths = resizedPath;
-        }
-        if (neighborId.length < targetLength) {
-            int[][] resizedNeighborId = new int[targetLength][];
-            System.arraycopy(neighborId, 0, resizedNeighborId, 0, neighborId.length);
-            neighborId = resizedNeighborId;
+
+            int[][] resizedNeighborId = new int[arraySize][];
+            System.arraycopy(this.neighborId, 0, resizedNeighborId, 0, this.neighborId.length);
+            this.neighborId = resizedNeighborId;
+
+            logger.warn("Arrays have been resized since there was no more free space.");
+
+            this.freeSpaceCount = arraySize - numGroups;
+            int[] resizedFreeSpace = new int[arraySize];
+            System.arraycopy(this.freeSpace, 0, resizedFreeSpace, 0, this.freeSpace.length);
+            this.freeSpace = resizedFreeSpace;
         }
 
         int goalGroupLoc, startGroupLoc;
@@ -382,7 +340,7 @@ public class SubgoalDynamicDB3 extends SubgoalDBExact {
         int numStates = 0;
 
         for (Integer neighbourIndex : neighbourIndices) {
-            startGroup = groups.get(neighbourIndex); // will need to redo
+            startGroup = groups.get(neighbourIndex);
             startGroupLoc = neighbourIndex - GameMap.START_NUM;
 
             if (startGroup == null || neighbourIndices.size() == 1) {
