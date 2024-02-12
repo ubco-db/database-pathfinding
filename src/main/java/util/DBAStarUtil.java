@@ -98,7 +98,7 @@ public final class DBAStarUtil {
         logger.debug("Generating gameDB.");
         currentTime = System.currentTimeMillis();
 
-        database = gameDB.computeDynamicDB(database, pathCompressAlgDba, rec, numNeighbourLevels);
+        database = gameDB.computeDynamicDB(database, pathCompressAlgDba, rec, numNeighbourLevels); // 18035ms
         logger.debug("Time to compute DBAStar gameDB: " + (System.currentTimeMillis() - currentTime));
 
         database.init();
@@ -441,7 +441,7 @@ public final class DBAStarUtil {
         HillClimbing pathCompressAlgDba = new HillClimbing(problem, 10000);
 
         // Update regions for neighborIds in the database
-        dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(), dbBW.getNeighbor(), neighborIds.size(), numNeighbourLevels, isElimination, isPartition);
+        dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, numNeighbourLevels, isElimination, isPartition);
 
         // Re-generate index database (TODO: optimize)
         dbBW.regenerateIndexDB(isPartition, isElimination, regionId, regionRepId, groups.size(), map, newRecs);
@@ -559,7 +559,7 @@ public final class DBAStarUtil {
         HillClimbing pathCompressAlgDba = new HillClimbing(problem, 10000);
 
         // Update regions for neighborIds in the database
-        dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(), dbBW.getNeighbor(), neighborIds.size(), numNeighbourLevels, false, true);
+        dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, numNeighbourLevels, false, true);
 
         // Re-generate index database (TODO: optimize)
         dbBW.regenerateIndexDB(true, false, regionId, regionRepId, groups.size(), map, newRecs);
@@ -756,7 +756,7 @@ public final class DBAStarUtil {
         HillClimbing pathCompressAlgDba = new HillClimbing(problem, 10000);
 
         // Update regions for neighborIds in the database
-        dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(), dbBW.getNeighbor(), neighborIds.size(), numNeighbourLevels, isElimination, isPartition);
+        dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, numNeighbourLevels, isElimination, isPartition);
 
         // Re-generate index database (TODO: optimize)
         dbBW.regenerateIndexDB(isPartition, isElimination, regionId, regionRepId, groups.size(), map, newRecs);
@@ -924,7 +924,7 @@ public final class DBAStarUtil {
         HillClimbing pathCompressAlgDba = new HillClimbing(problem, 10000);
 
         // Update regions for neighborIds in the database
-        dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(), dbBW.getNeighbor(), neighborIds.size(), numNeighbourLevels, isElimination, isPartition); // 1,813ms
+        dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, numNeighbourLevels, isElimination, isPartition); // 1,813ms
 
         // Re-generate index database (TODO: optimize)
         dbBW.regenerateIndexDB(isPartition, isElimination, regionId, regionRepId, groups.size(), map, newRecs); // 662ms
@@ -1030,7 +1030,7 @@ public final class DBAStarUtil {
             neighborIds.add(newRec.groupId);
 
             // Value of isPartition actually makes no difference here since that logic is skipped, set to true for consistency with code below
-            dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(), dbBW.getNeighbor(), neighborIds.size(), numNeighbourLevels, false, true);
+            dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, numNeighbourLevels, false, true);
 
             // Re-generate index database (TODO: optimize)
             // groupId and regionRepId are identical in this case, isPartition because groupsMapping needs to be resized
@@ -1164,7 +1164,7 @@ public final class DBAStarUtil {
 
                 // Update regions for neighborIds in the database
                 // TODO: optimize
-                dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(), dbBW.getNeighbor(), neighborIds.size(), numNeighbourLevels, false, true); // 1,861ms
+                dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, numNeighbourLevels, false, true); // 1,861ms
 
                 // Re-generate index database
                 // TODO: optimize
@@ -1235,7 +1235,7 @@ public final class DBAStarUtil {
                 map.recomputeNeighbors(gridSize, startRow, startCol, endRow, endCol, neighborIds);
 
                 // Value of isPartition actually makes no difference here since that logic is skipped, set to true for consistency with code below
-                dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(), dbBW.getNeighbor(), neighborIds.size(), numNeighbourLevels, false, true);
+                dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, numNeighbourLevels, false, true);
 
                 // Re-generate index database (TODO: optimize)
                 // groupId and regionRepId are identical in this case, isPartition because groupsMapping needs to be resized
@@ -1322,7 +1322,7 @@ public final class DBAStarUtil {
             neighborIds.add(newRec.groupId);
 
             // Value of isPartition actually makes no difference here since that logic is skipped, set to true for consistency with code below
-            dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(), dbBW.getNeighbor(), neighborIds.size(), numNeighbourLevels, false, true);
+            dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, numNeighbourLevels, false, true);
 
             // Re-generate index database (TODO: optimize)
             // groupId and regionRepId are identical in this case, isPartition because groupsMapping needs to be resized
@@ -1421,7 +1421,7 @@ public final class DBAStarUtil {
 
                 // Update regions for neighborIds in the database
                 // TODO: optimize
-                dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(), dbBW.getNeighbor(), neighborIds.size(), numNeighbourLevels, false, true); // 1,832ms
+                dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, numNeighbourLevels, false, true); // 1,832ms
 
                 // Re-generate index database
                 // TODO: optimize
@@ -1486,7 +1486,7 @@ public final class DBAStarUtil {
                 map.recomputeNeighbors(gridSize, startRow, startCol, endRow, endCol, neighborIds);
 
                 // Value of isPartition actually makes no difference here since that logic is skipped, set to true for consistency with code below
-                dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, dbBW.getLowestCost(), dbBW.getPaths(), dbBW.getNeighbor(), neighborIds.size(), numNeighbourLevels, false, true);
+                dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, numNeighbourLevels, false, true);
 
                 // Re-generate index database (TODO: optimize)
                 // groupId and regionRepId are identical in this case, isPartition because groupsMapping needs to be resized

@@ -1,15 +1,12 @@
 package search;
 
-import java.util.ArrayList;
-
-
 import database.SubgoalDB;
-import database.SubgoalDBExact;
 import database.SubgoalDBRecord;
-
 import map.GameMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.ArrayList;
 
 public class DBAStar implements SearchAlgorithm {
     private final SubgoalDB database;
@@ -61,12 +58,6 @@ public class DBAStar implements SearchAlgorithm {
 
         // Search the database for records
         ArrayList<SubgoalDBRecord> records = database.findNearest(problem, startRegionCenter, goalRegionCenter, subgoalSearchAlg, 1, stats, null);
-
-        // Need this condition for complete separation case, not entirely sure why
-        if (startRegionCenter != null && goalRegionCenter != null) {
-            records = database.findNearest(problem, startRegionCenter, goalRegionCenter, subgoalSearchAlg, 1, stats, null);
-        }
-        endTime = System.nanoTime();
 
         if (records != null && !records.isEmpty()) {
             currentRecord = records.getFirst();
