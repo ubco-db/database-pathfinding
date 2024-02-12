@@ -27,10 +27,8 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
      * Returns record for start and goal for search problem between two regions.
      * Record produced dynamically from data in DP table by combining base paths between regions (non-real-time).
      */
-    public ArrayList<SubgoalDBRecord> findNearest(SearchProblem problem, SearchState start, SearchState goal, SearchAlgorithm searchAlg, int max, StatsRecord stats, ArrayList<SubgoalDBRecord> used) {
+    public ArrayList<SubgoalDBRecord> findNearest(SearchProblem problem, int startGroupId, int goalGroupId, SearchAlgorithm searchAlg, int max, StatsRecord stats, ArrayList<SubgoalDBRecord> used) {
         // FIXME: This is broken right now, need to make this work without DP table
-        int startGroupId = -1;
-        int goalGroupId = -1;
 
         ArrayList<SubgoalDBRecord> result = new ArrayList<>(1);
 
@@ -44,7 +42,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         if (startGroupId == goalGroupId) {
             // Tried HC before, but this doesn't work in all cases
             AStar aStar = new AStar(problem);
-            ArrayList<SearchState> startRegionPath = aStar.computePath(start, goal, stats);
+            ArrayList<SearchState> startRegionPath = aStar.computePath(new SearchState(startGroupId), new SearchState(goalGroupId), stats);
             pathSize = startRegionPath.size();
             for (int i = 0; i < pathSize; i++) {
                 path[i] = startRegionPath.get(i).getId();
@@ -75,22 +73,6 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
     public void init() {
     }
 
-    /**
-     * Loads DP table and mapping index from file to memory.
-     */
-    @Override
-    public boolean load(String fileName) {
-        // Load index first
-        db = new IndexDB();
-        boolean success = db.load(fileName + "i2");
-        if (!success) return false;
-        db.buildHT();
-
-        if (!loadDB(fileName)) return false;
-
-        init();
-        return true;
-    }
 
     /**
      * Loads DP table from file to memory.  DP table stored in adjacency list form to save space.
@@ -318,6 +300,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
 
             logger.warn("Arrays have been resized since there was no more free space.");
 
+            // TODO: Test whether resizing here works as expected and whether it's necessary
             this.freeSpaceCount = arraySize - numGroups;
             int[] resizedFreeSpace = new int[arraySize];
             System.arraycopy(this.freeSpace, 0, resizedFreeSpace, 0, this.freeSpace.length);
@@ -336,7 +319,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         long currentTime = System.currentTimeMillis();
 
         int[] tmp = new int[5000];
-        logger.debug("Creating base paths to neighbors.");
+        logger.debug("Re-creating base paths to neighbors.");
         int numStates = 0;
 
         for (Integer neighbourIndex : neighbourIndices) {
@@ -392,10 +375,10 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
 
         this.numGroups = groups.size();
 
-        long endTime = System.currentTimeMillis();
-        long baseTime = endTime - currentTime;
-        logger.info("Time to re-compute base paths: " + (baseTime));
-        logger.info("Base neighbors generated paths: " + numBase + " Number of states: " + numStates);
+//        long endTime = System.currentTimeMillis();
+//        long baseTime = endTime - currentTime;
+//        logger.info("Time to re-compute base paths: " + (baseTime));
+//        logger.info("Base neighbors generated paths: " + numBase + " Number of states: " + numStates);
 //        dbStats.addStat(9, numStates);        // Set number of subgoals.  Will be changed by a version that pre-computes all paths but will not be changed for the dynamic version.
 //        dbStats.addStat(8, numBase);          // # of records (only corresponds to base paths)
     }
