@@ -353,7 +353,7 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
         cases won't work.
          */
         int startNum = 50;
-        int targetLength = groups.lastKey() + 1 - startNum;
+        int targetLength = groups.lastKey() + 1 - startNum; // 10ms
         if (lowestCost.length < targetLength) {
             int[][] resizedLowestCost = new int[targetLength][];
             System.arraycopy(lowestCost, 0, resizedLowestCost, 0, lowestCost.length);
@@ -383,11 +383,11 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
         StatsRecord stats = new StatsRecord();
         int numBase = 0;
 
-        logger.debug("Number of groups to recompute: " + numGroups);
-        long currentTime = System.currentTimeMillis();
+//        logger.debug("Number of groups to recompute: " + numGroups);
+//        long currentTime = System.currentTimeMillis();
 
         int[] tmp = new int[5000];
-        logger.debug("Creating base paths to neighbors.");
+//        logger.debug("Creating base paths to neighbors.");
         int numStates = 0;
 
         for (Integer neighbourIndex : neighbourIndices) {
@@ -404,7 +404,7 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
             }
 
             // TODO: could probably simplify this code since we are not taking advantage of numLevels currently anyways
-            neighbors = GameDB.getNeighbors(groups, startGroup, numLevels, isPartition);
+            neighbors = GameDB.getNeighbors(groups, startGroup, numLevels, isPartition); // 20ms
             int numNeighbors = neighbors.size();
 
             if (isElimination) {
@@ -422,22 +422,22 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
             while (it.hasNext()) {
                 // Compute the shortest path between center representative of both groups
                 int goalGroupId = it.next();
-                goalGroup = groups.get(goalGroupId);
+                goalGroup = groups.get(goalGroupId); // 40ms
 
-                if (goalGroup != null) {
-                    path = astar.computePath(new SearchState(startGroup.groupRepId), new SearchState(goalGroup.groupRepId), stats);
+                if (goalGroup != null) { // 10ms
+                    path = astar.computePath(new SearchState(startGroup.groupRepId), new SearchState(goalGroup.groupRepId), stats); // 2680ms
                     numBase++;
                     goalGroupLoc = goalGroupId - GameMap.START_NUM;
 
                     // Save information
-                    SearchUtil.computePathCost(path, stats, problem);
+                    SearchUtil.computePathCost(path, stats, problem); // 20ms
                     int pathCost = stats.getPathCost();
 
                     neighborId[startGroupLoc][count] = goalGroupLoc;
                     this.lowestCost[startGroupLoc][count] = pathCost;
                     this.neighbor[startGroupLoc][count] = goalGroupLoc;
-                    this.paths[startGroupLoc][count] = SubgoalDB.convertPathToIds(path);
-                    this.paths[startGroupLoc][count] = SearchUtil.compressPath(this.paths[startGroupLoc][count], searchAlg, tmp, path.size());
+                    this.paths[startGroupLoc][count] = SubgoalDB.convertPathToIds(path); // 10ms
+                    this.paths[startGroupLoc][count] = SearchUtil.compressPath(this.paths[startGroupLoc][count], searchAlg, tmp, path.size()); // 340ms
                     numStates += this.paths[startGroupLoc][count].length;
                     count++;
                 }
@@ -446,10 +446,10 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
 
         this.numGroups = groups.size();
 
-        long endTime = System.currentTimeMillis();
-        long baseTime = endTime - currentTime;
-        logger.info("Time to re-compute base paths: " + (baseTime));
-        logger.info("Base neighbors generated paths: " + numBase + " Number of states: " + numStates);
+//        long endTime = System.currentTimeMillis();
+//        long baseTime = endTime - currentTime;
+//        logger.info("Time to re-compute base paths: " + (baseTime));
+//        logger.info("Base neighbors generated paths: " + numBase + " Number of states: " + numStates);
 //        dbStats.addStat(9, numStates);        // Set number of subgoals.  Will be changed by a version that pre-computes all paths but will not be changed for the dynamic version.
 //        dbStats.addStat(8, numBase);          // # of records (only corresponds to base paths)
     }
