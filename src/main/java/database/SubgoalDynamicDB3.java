@@ -510,9 +510,9 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
                         throw new Exception("There is an issue with the neighbours of region: " + regionId);
                     }
                     this.lowestCost[neighbourLoc][indexToUpdate] = pathCost;
-                    this.paths[neighbourLoc][indexToUpdate] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());;
+                    // this.paths[neighbourLoc][indexToUpdate] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());;
                 }
-                this.paths[groupLoc][i] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
+                // this.paths[groupLoc][i] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
             }
         }
 
