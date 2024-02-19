@@ -491,7 +491,27 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
                 int pathCost = stats.getPathCost();
 
                 // Check where they are not identical, then go to that neighbour and update there too
-                this.lowestCost[groupLoc][i] = pathCost;
+                pathCosts[i] = pathCost;
+                if (lowestCost[groupLoc][i] != pathCost) {
+                    logger.debug("Lowest cost of path between " + regionId + " and " + (neighbourLoc + GameMap.START_NUM) + " has changed from " + lowestCost[groupLoc][i] + " to " + pathCost);
+                    this.lowestCost[groupLoc][i] = pathCost;
+                    int indexToUpdate = -1;
+                    for (int j = 0; j < this.neighborId[neighbourLoc].length; j++) {
+                        if (this.neighborId[neighbourLoc][j] == groupLoc) {
+                            indexToUpdate = j;
+                            break;
+                        }
+                    }
+                    // If the region to update was not stored as a neighbour of its neighbour
+                    if (indexToUpdate == -1) {
+                        // If we get here, then the neighbour lists must be messed up, because one of the neighbours
+                        // of the region were eliminating did not have said region set as a neighbour
+                        logger.error("There is an issue with the neighbours of region: " + regionId);
+                        throw new Exception("There is an issue with the neighbours of region: " + regionId);
+                    }
+                    this.lowestCost[neighbourLoc][indexToUpdate] = pathCost;
+                    this.paths[neighbourLoc][indexToUpdate] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());;
+                }
                 this.paths[groupLoc][i] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
             }
         }
