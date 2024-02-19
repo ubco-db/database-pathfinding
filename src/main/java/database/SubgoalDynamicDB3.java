@@ -473,7 +473,27 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             freeSpace[freeSpaceCount] = 0;
             freeSpaceCount--;
         } else {
+            // Recompute paths between regions (adding the wall may have changed the lowest cost or removed a path)
+            // Number of neighbours should stay consistent (no need to update numGroups, freeSpace, freeSpaceCount)
+            AStar astar = new AStar(problem);
+            StatsRecord stats = new StatsRecord();
+            int[] tmp = new int[5000];
+            // Find array location of region to update using offset
+            int groupLoc = regionId - GameMap.START_NUM;
+            // Iterate over neighbours of the region
+            ArrayList<SearchState> path;
+            for (int i = 0; i < this.neighborId[groupLoc].length; i++) {
+                // Grab location of neighbour
+                int neighbourLoc = this.neighborId[groupLoc][i];
+                // TODO: Update lowestCost and paths where necessary
+                path = astar.computePath(new SearchState(groups.get(groupLoc + GameMap.START_NUM).groupRepId), new SearchState(groups.get(neighbourLoc + GameMap.START_NUM).groupRepId), stats);
+                SearchUtil.computePathCost(path, stats, problem);
+                int pathCost = stats.getPathCost();
 
+                // Check where they are not identical, then go to that neighbour and update there too
+                this.lowestCost[groupLoc][i] = pathCost;
+                this.paths[groupLoc][i] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
+            }
         }
 
         int goalGroupLoc, startGroupLoc;
