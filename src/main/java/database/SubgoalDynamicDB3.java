@@ -449,7 +449,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
                     logger.error("There is an issue with the neighbours of region: " + regionId);
                     throw new Exception("There is an issue with the neighbours of region: " + regionId);
                 }
-                // TODO: Find a way to move up regions to overwrite the remove one
+                // FIXME: Find a way to move up regions to overwrite the remove one
                 // Alternatively: could copy into smaller arrays here
                 this.neighborId[neighbourLoc][indexOfRegionToEliminate] = -1;
                 this.lowestCost[neighbourLoc][indexOfRegionToEliminate] = -1;
@@ -465,16 +465,22 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             freeSpace[freeSpaceCount] = groupLoc;
             freeSpaceCount++;
         } else if (isPartition) {
-            // Region will be split in two (or more)
+            // TODO: Region will be split in two (or more)
             int newRegionId = freeSpace[freeSpaceCount];
             // Compute everything for the new regions and their neighbours
 
-            // Update freeSpace, decrement counter and overwrite last index
+            // Will need to use map since it should have regionId stored, may have to change that logic a bit, take from freeSpace?
+
+            // Increment numGroups
+            this.numGroups += 1; // or more
+            // Update freeSpace, decrement counter and overwrite last index (deal with multi-region issue)
             freeSpace[freeSpaceCount] = 0;
             freeSpaceCount--;
         } else {
             // Recompute paths between regions (adding the wall may have changed the lowest cost or removed a path)
             // Number of neighbours should stay consistent (no need to update numGroups, freeSpace, freeSpaceCount)
+            // Recompute paths between regions (adding the wall may have changed the lowest cost or removed a path/neighbour)
+            // Number of regions should stay consistent (no need to update numGroups, freeSpace, freeSpaceCount)
             AStar astar = new AStar(problem);
             StatsRecord stats = new StatsRecord();
             int[] tmp = new int[5000];
@@ -482,16 +488,63 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             int groupLoc = regionId - GameMap.START_NUM;
             // Iterate over neighbours of the region
             ArrayList<SearchState> path;
+            logger.info(groups.get(regionId).getNeighborIds());
+
+            // neighborsFromGroups should contain the true neighbours of any group since it gets updated in map.recomputeNeighbors
+            HashSet<Integer> neighborsFromGroups = groups.get(regionId).getNeighborIds();
+
+            if (neighborsFromGroups.size() != this.neighborId[groupLoc].length) {
+                // This is the "Blocker" case, e.g. wall @14288, where the addition of the wall leads to two regions no
+                // longer being neighbours without a partition taking place
+                logger.warn("NeighborId array length is incorrect!");
+            }
+
             for (int i = 0; i < this.neighborId[groupLoc].length; i++) {
                 // Grab location of neighbour
                 int neighbourLoc = this.neighborId[groupLoc][i];
+
+                // Check whether groups has the same neighbours as neighborId (groups is most up-to-date)
+                if (!neighborsFromGroups.contains(neighbourLoc + GameMap.START_NUM)) {
+                    logger.info("Removing region: " + (neighbourLoc + GameMap.START_NUM) + " from neighbour array of " + regionId);
+                    // FIXME: Find a way to move up regions to overwrite the removed one
+                    // Alternatively: could copy into smaller arrays here
+
+                    // Tombstone neighbor that no longer is one in neighbors of region
+                    this.neighborId[regionId - GameMap.START_NUM][i] = -1;
+                    this.lowestCost[regionId - GameMap.START_NUM][i] = -1;
+                    this.paths[regionId - GameMap.START_NUM][i] = null;
+
+                    // Iterate over neighbours of neighbour to find region to eliminate
+                    int indexOfRegionToEliminate = -1;
+                    for (int j = 0; j < this.neighborId[neighbourLoc].length; j++) {
+                        if (this.neighborId[neighbourLoc][j] == (regionId - GameMap.START_NUM)) {
+                            indexOfRegionToEliminate = j;
+                            break;
+                        }
+                    }
+                    // If the region to eliminate was not stored as a neighbour of its neighbour
+                    if (indexOfRegionToEliminate == -1) {
+                        // If we get here, then the neighbour lists must be messed up, because one of the neighbours
+                        // of the region were eliminating did not have said region set as a neighbour
+                        logger.error("There is an issue with the neighbours of region: " + regionId);
+                        throw new Exception("There is an issue with the neighbours of region: " + regionId);
+                    }
+                    // FIXME: Find a way to move up regions to overwrite the remove one
+                    // Alternatively: could copy into smaller arrays here
+                    this.neighborId[neighbourLoc][indexOfRegionToEliminate] = -1;
+                    this.lowestCost[neighbourLoc][indexOfRegionToEliminate] = -1;
+                    this.paths[neighbourLoc][indexOfRegionToEliminate] = null;
+                }
+
                 // TODO: Update lowestCost and paths where necessary
+                // This will find a path regardless of whether they are neighbours anymore (which is why we are doing all of the above)
                 path = astar.computePath(new SearchState(groups.get(groupLoc + GameMap.START_NUM).groupRepId), new SearchState(groups.get(neighbourLoc + GameMap.START_NUM).groupRepId), stats);
                 SearchUtil.computePathCost(path, stats, problem);
                 int pathCost = stats.getPathCost();
 
+                // if (groupLoc == 66 && neighbourLoc == 53) ((MapSearchProblem) problem).getMap().outputImage("PathFrom66To53.png", path, null);
+
                 // Check where they are not identical, then go to that neighbour and update there too
-                pathCosts[i] = pathCost;
                 if (lowestCost[groupLoc][i] != pathCost) {
                     logger.debug("Lowest cost of path between " + regionId + " and " + (neighbourLoc + GameMap.START_NUM) + " has changed from " + lowestCost[groupLoc][i] + " to " + pathCost);
                     this.lowestCost[groupLoc][i] = pathCost;
@@ -510,9 +563,15 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
                         throw new Exception("There is an issue with the neighbours of region: " + regionId);
                     }
                     this.lowestCost[neighbourLoc][indexToUpdate] = pathCost;
-                    // this.paths[neighbourLoc][indexToUpdate] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());;
+                    // TODO: Figure out how and when to update paths?
+
+                    this.paths[neighbourLoc][indexToUpdate] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
+
+                    // Computing path in the other direction, needed? TODO: Could I just reverse the ArrayList
+                    path = astar.computePath(new SearchState(groups.get(neighbourLoc + GameMap.START_NUM).groupRepId), new SearchState(groups.get(groupLoc + GameMap.START_NUM).groupRepId), stats);
+                    // Can I reuse tmp here?
+                    this.paths[groupLoc][i] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
                 }
-                // this.paths[groupLoc][i] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
             }
         }
 

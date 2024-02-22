@@ -1522,7 +1522,7 @@ public final class DBAStarUtil {
         // Get the neighbour ids regions using the region id
         GroupRecord groupRecord = groups.get(regionId); // 10ms
 
-        boolean isElimination;
+        boolean isElimination = false;
 
         int wallRow = map.getRow(wallLoc);
         int wallCol = map.getCol(wallLoc);
@@ -1545,7 +1545,7 @@ public final class DBAStarUtil {
             groupRecord.setGroupRepId(newRegionRep);
             groups.replace(regionId, groupRecord);
             map.rebuildAbstractProblem(map, gridSize, startRow, startCol, new ArrayList<>(List.of(regionId))); // 20ms
-            isElimination = false;
+//            isElimination = false;
         }
 
         // Scenario where map is partitioned by wall addition
@@ -1553,6 +1553,7 @@ public final class DBAStarUtil {
         boolean potentialHorizontalPartition = false;
         boolean potentialVerticalPartition = false;
         boolean potentialDiagonalPartition = false;
+        boolean potentialBlocker = false;
 
         // Need to check entire region to make sure it has not become partitioned by wall addition, so get neighbours of wall
         int wallRowId = map.getRow(wallLoc);
@@ -1583,10 +1584,26 @@ public final class DBAStarUtil {
             potentialDiagonalPartition = true;
         }
 
+        if (!isElimination && !potentialDiagonalPartition && (isUniqueTouchPoint(neighborNorth, neighborNorthEast, neighborEast) || isUniqueTouchPoint(neighborEast, neighborSouthEast, neighborSouth) || isUniqueTouchPoint(neighborSouth, neighborSouthWest, neighborWest) || isUniqueTouchPoint(neighborWest, neighborNorthWest, neighborNorth))) {
+            potentialBlocker = true;
+        }
+
         boolean isPartition = potentialVerticalPartition || potentialHorizontalPartition || potentialDiagonalPartition;
 
         ArrayList<Integer> neighborIds = new ArrayList<>(groupRecord.getNeighborIds());
 
+        if (potentialBlocker) {
+            int endRow = Math.min(startRow + gridSize, map.rows);
+            int endCol = Math.min(startCol + gridSize, map.cols);
+            map.rebuildAbstractProblem(map, gridSize, startRow, startCol, new ArrayList<>(List.of(regionId)));
+            // Need to add a neighbour of itself
+            neighborIds.add(regionId);
+            System.out.println("NeighbourIds before recompute: " + groups.get(regionId).getNeighborIds());
+            map.recomputeNeighbors(gridSize, startRow, startCol, endRow, endCol, neighborIds);
+            System.out.println("NeighbourIds after recompute: " + groups.get(regionId).getNeighborIds());
+        }
+
+        neighborIds = new ArrayList<>(groupRecord.getNeighborIds());
         GroupRecord[] newRecs;
 
         if (isPartition) {
@@ -1643,7 +1660,7 @@ public final class DBAStarUtil {
         HillClimbing pathCompressAlgDba = new HillClimbing(problem, 10000);
 
         // Update regions for neighborIds in the database
-        dbBW.recomputeBasePathsAfterWallChange(problem, groups, neighborIds, pathCompressAlgDba, neighborIds.size(), numNeighbourLevels, isElimination, isPartition); // 1,813ms
+        dbBW.recomputeBasePathsAfterWallAddition(regionId, problem, groups, neighborIds, pathCompressAlgDba, neighborIds.size(), numNeighbourLevels, isElimination, isPartition); // 1,813ms
 
         // Commented out because this is where RLE compression and hashtable initialization happens, and we want to get rid of that
 //        dbBW.regenerateIndexDB(isPartition, isElimination, regionId, regionRepId, groups.size(), map, newRecs);
