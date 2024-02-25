@@ -390,13 +390,9 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
      *
      * @param problem
      * @param groups
-     * @param searchAlg
-     * @param numLevels
      */
     public void recomputeBasePathsAfterWallAddition(int regionId, SearchProblem problem, TreeMap<Integer, GroupRecord> groups,
-                                                    ArrayList<Integer> neighbourIndices, SearchAlgorithm searchAlg,
-                                                    int numGroups, int numLevels,
-                                                    boolean isElimination, boolean isPartition) throws Exception {
+                                                    int numGroups, boolean isElimination, boolean isPartition, ArrayList<Integer> regionIds) throws Exception {
         // If a wall is added, a region may have been removed (partition/elimination case)
         // Even if a region has not been removed, the wall addition may change paths or lowest costs, so we
         // will need to check for updates there either way
@@ -573,73 +569,18 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             }
         }
 
-        int goalGroupLoc, startGroupLoc;
-        GroupRecord startGroup, goalGroup;
-        HashSet<Integer> neighbors;
-        AStar astar = new AStar(problem);
-        ArrayList<SearchState> path;
-        StatsRecord stats = new StatsRecord();
-
-        int[] tmp = new int[5000];
-        logger.debug("Re-creating base paths to neighbors.");
-
-        // Iterate over neighbours of region with wall change
-        // TODO: always check lowest cost and paths to see if updates are necessary
-        // TODO: if partition or elimination: may have to tombstone region (and remove paths to it stored in other regions)
-        for (Integer neighbourIndex : neighbourIndices) {
-            // get Region id
-            startGroup = groups.get(neighbourIndex);
-            // get array location using region id and offset
-            startGroupLoc = neighbourIndex - GameMap.START_NUM;
-
-            if (startGroup == null || neighbourIndices.size() == 1) {
-                // Need to initialize arrays so singleton regions work in wall removal
-                this.lowestCost[startGroupLoc] = new int[0];
-                this.neighborId[startGroupLoc] = new int[0];
-                this.paths[startGroupLoc] = new int[0][];
-                continue;
-            }
-
-            // TODO: could probably simplify this code since we are not taking advantage of numLevels currently anyways
-            // get neighbours of neighbour we are currently considering
-            neighbors = GameDB.getNeighbors(groups, startGroup, numLevels, isPartition);
-            int numNeighbors = neighbors.size();
-
-            if (isElimination) {
-                numNeighbors -= 1;
-            }
-
-            // Overwrite arrays storing neighbour info (this is probably more aggressive than needed)
-            this.lowestCost[startGroupLoc] = new int[numNeighbors];
-            this.neighborId[startGroupLoc] = new int[numNeighbors];
-            this.paths[startGroupLoc] = new int[numNeighbors][];
-
-            Iterator<Integer> it = neighbors.iterator();
-            // Generate for each neighbor group
-            int count = 0;
-            while (it.hasNext()) {
-                // Compute the shortest path between center representative of both groups
-                int goalGroupId = it.next();
-                goalGroup = groups.get(goalGroupId);
-
-                if (goalGroup != null) {
-                    path = astar.computePath(new SearchState(startGroup.groupRepId), new SearchState(goalGroup.groupRepId), stats);
-                    goalGroupLoc = goalGroupId - GameMap.START_NUM;
-
-                    // Save information
-                    SearchUtil.computePathCost(path, stats, problem);
-                    int pathCost = stats.getPathCost();
-
-                    neighborId[startGroupLoc][count] = goalGroupLoc;
-                    this.lowestCost[startGroupLoc][count] = pathCost;
-                    this.paths[startGroupLoc][count] = SubgoalDB.convertPathToIds(path);
-                    // TODO: What are we doing here?
-                    this.paths[startGroupLoc][count] = SearchUtil.compressPath(this.paths[startGroupLoc][count], searchAlg, tmp, path.size());
-                    count++;
-                }
-            }
-        }
-
         this.numGroups = groups.size();
+    }
+
+    public int popFreeSpace() {
+        // Return lowest freeSpace index from the end of the array
+        return freeSpace[freeSpaceCount--];
+    }
+
+    public void pushFreeSpace(int regionId) throws Exception {
+        if (freeSpace[freeSpaceCount] != 0) {
+            throw new Exception("Overwriting existing free space!");
+        }
+        freeSpace[freeSpaceCount++] = regionId;
     }
 }

@@ -1606,6 +1606,8 @@ public final class DBAStarUtil {
         neighborIds = new ArrayList<>(groupRecord.getNeighborIds());
         GroupRecord[] newRecs;
 
+        ArrayList<Integer> regionIds = new ArrayList<>();
+
         if (isPartition) {
             int endRow = Math.min(startRow + gridSize, map.rows);
             int endCol = Math.min(startCol + gridSize, map.cols);
@@ -1622,9 +1624,11 @@ public final class DBAStarUtil {
                 }
             }
 
-            // Perform abstraction (go over sector and recompute regions)
+            // Adding the regionId to the freeSpace array in the database
+            dbBW.pushFreeSpace(regionId);
 
-            int numRegionsInSector = map.sectorReAbstract2(gridSize, startRow, startCol, endRow, endCol, regionId, map);
+            // Perform abstraction (go over sector and recompute regions), accessing freeSpace to assign new regionIds
+            int numRegionsInSector = map.sectorReAbstractWithFreeSpace(gridSize, startRow, startCol, endRow, endCol, regionId, map, dbBW);
 
             int count = 0;
             newRecs = new GroupRecord[numRegionsInSector];
@@ -1633,8 +1637,6 @@ public final class DBAStarUtil {
 
             // Traverse cells in sector to re-create the groups
             reCreateGroups(map, groups, startRow, startCol, newRecs, endRow, endCol, count);
-
-            ArrayList<Integer> regionIds = new ArrayList<>();
 
             // Recompute region reps for newly added regions
             // A newRec should never be null, if it is, something went wrong with the group generation in sectorReAbstract2
@@ -1657,10 +1659,12 @@ public final class DBAStarUtil {
         }
 
         // Initialize pathCompressAlgDba
-        HillClimbing pathCompressAlgDba = new HillClimbing(problem, 10000);
+        // HillClimbing pathCompressAlgDba = new HillClimbing(problem, 10000);
+
+        map.computeCentroidMap().outputImage(dbaStarDbPath + "WhereDidWallGo" + mapFileName + ".png", null, null);
 
         // Update regions for neighborIds in the database
-        dbBW.recomputeBasePathsAfterWallAddition(regionId, problem, groups, neighborIds, pathCompressAlgDba, neighborIds.size(), numNeighbourLevels, isElimination, isPartition); // 1,813ms
+        dbBW.recomputeBasePathsAfterWallAddition(regionId, problem, groups, neighborIds.size(), isElimination, isPartition, regionIds); // 1,813ms
 
         // Commented out because this is where RLE compression and hashtable initialization happens, and we want to get rid of that
 //        dbBW.regenerateIndexDB(isPartition, isElimination, regionId, regionRepId, groups.size(), map, newRecs);
