@@ -572,15 +572,18 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         this.numGroups = groups.size();
     }
 
-    public int popFreeSpace() {
+    public int popFreeSpace() throws Exception {
         // Return lowest freeSpace index from the end of the array
-        return freeSpace[freeSpaceCount--];
+        if (freeSpace[freeSpaceCount - 1] == 0) {
+            throw new Exception("Indexing is off");
+        }
+        return freeSpace[freeSpaceCount-- - 1] + GameMap.START_NUM;
     }
 
     public void pushFreeSpace(int regionId) throws Exception {
         if (freeSpace[freeSpaceCount] != 0) {
             throw new Exception("Overwriting existing free space!");
         }
-        freeSpace[freeSpaceCount++] = regionId;
+        freeSpace[freeSpaceCount++] = regionId - GameMap.START_NUM;
     }
 }
