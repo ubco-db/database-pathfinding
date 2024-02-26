@@ -392,7 +392,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
      * @param groups
      */
     public void recomputeBasePathsAfterWallAddition(int regionId, SearchProblem problem, TreeMap<Integer, GroupRecord> groups,
-                                                    int numGroups, boolean isElimination, boolean isPartition, ArrayList<Integer> regionIds) throws Exception {
+                                                    boolean isElimination, boolean isPartition, ArrayList<Integer> regionIds) throws Exception {
         // If a wall is added, a region may have been removed (partition/elimination case)
         // Even if a region has not been removed, the wall addition may change paths or lowest costs, so we
         // will need to check for updates there either way
@@ -400,7 +400,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         // If we have run out of free space, increase the size of the arrays
         if (freeSpaceCount == 0) {
             // Allocate arrays 10% larger than the current numRegions
-            int arraySize = (int) (numGroups * 1.1);
+            int arraySize = (int) (this.numGroups * 1.1);
 
             int[][] resizedLowestCost = new int[arraySize][];
             System.arraycopy(this.lowestCost, 0, resizedLowestCost, 0, this.lowestCost.length);
@@ -417,15 +417,16 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             logger.warn("Arrays have been resized since there was no more free space.");
 
             // TODO: Test whether resizing here works as expected and whether it's necessary
-            this.freeSpaceCount = arraySize - numGroups;
+            this.freeSpaceCount = arraySize - this.numGroups;
             int[] resizedFreeSpace = new int[arraySize];
             System.arraycopy(this.freeSpace, 0, resizedFreeSpace, 0, this.freeSpace.length);
             this.freeSpace = resizedFreeSpace;
         }
 
+        // Find array location of region
+        int groupLoc = regionId - GameMap.START_NUM;
+
         if (isElimination) {
-            // Find array location of region to eliminate using offset
-            int groupLoc = regionId - GameMap.START_NUM;
             // Iterate over neighbours of the region to eliminate to scrub references to it
             for (int i = 0; i < this.neighborId[groupLoc].length; i++) {
                 // Grab location of neighbour
@@ -455,33 +456,38 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             this.neighborId[groupLoc] = null;
             this.paths[groupLoc] = null;
             this.lowestCost[groupLoc] = null;
-            // Decrement numGroups
-            this.numGroups--;
-            // Update freeSpace, increment counter and store free index at the end
-            freeSpace[freeSpaceCount] = groupLoc;
-            freeSpaceCount++;
+            // Update freeSpace
+            pushFreeSpace(groupLoc);
         } else if (isPartition) {
             // TODO: Region will be split in two (or more)
-            int newRegionId = freeSpace[freeSpaceCount];
-            // Compute everything for the new regions and their neighbours
 
-            // Will need to use map since it should have regionId stored, may have to change that logic a bit, take from freeSpace?
+            // freeSpace has already been updated in DBAStarUtil (needed the information for map updates)
 
-            // Increment numGroups
-            this.numGroups += 1; // or more
-            // Update freeSpace, decrement counter and overwrite last index (deal with multi-region issue)
-            freeSpace[freeSpaceCount] = 0;
-            freeSpaceCount--;
+            // regionIds contains the ids of all the regions the original region was split into after the partition
+            // Use those to overwrite the neighborId arrays of the regions
+            for (Integer id : regionIds) {
+                // Get neighbours of the new regions (updated in map.recomputeNeighbors)
+                HashSet<Integer> neighbours = groups.get(id).getNeighborIds();
+                // Create an int array with the same size as the HashSet
+                int[] neighbourArray = new int[neighbours.size()];
+
+                // Iterate through the HashSet and copy its elements to the array
+                int index = 0;
+                for (Integer neighbour : neighbours) {
+                    neighbourArray[index++] = neighbour - GameMap.START_NUM;
+                }
+
+                // Overwrite the neighbourId array of the region
+                this.neighborId[id - GameMap.START_NUM] = neighbourArray;
+            }
+
         } else {
             // Recompute paths between regions (adding the wall may have changed the lowest cost or removed a path/neighbour)
             // Number of regions should stay consistent (no need to update numGroups, freeSpace, freeSpaceCount)
             AStar astar = new AStar(problem);
             StatsRecord stats = new StatsRecord();
-            int[] tmp = new int[5000];
+            // int[] tmp = new int[5000];
             ArrayList<SearchState> path;
-
-            // Find array location of region to update using offset
-            int groupLoc = regionId - GameMap.START_NUM;
 
             // neighborsFromGroups should contain the true neighbours of any group since it gets updated in map.recomputeNeighbors
             HashSet<Integer> neighborsFromGroups = groups.get(regionId).getNeighborIds();
@@ -569,7 +575,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             }
         }
 
-        this.numGroups = groups.size();
+        // this.numGroups = groups.size();
     }
 
     public int popFreeSpace() throws Exception {
@@ -577,6 +583,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         if (freeSpace[freeSpaceCount - 1] == 0) {
             throw new Exception("Indexing is off");
         }
+        this.numGroups++;
         return freeSpace[freeSpaceCount-- - 1] + GameMap.START_NUM;
     }
 
@@ -584,6 +591,8 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         if (freeSpace[freeSpaceCount] != 0) {
             throw new Exception("Overwriting existing free space!");
         }
+        // Write into freeSpace
+        this.numGroups--;
         freeSpace[freeSpaceCount++] = regionId - GameMap.START_NUM;
     }
 }
