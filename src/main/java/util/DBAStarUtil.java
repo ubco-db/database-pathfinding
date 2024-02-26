@@ -1584,15 +1584,18 @@ public final class DBAStarUtil {
             potentialDiagonalPartition = true;
         }
 
-        if (!isElimination && !potentialDiagonalPartition && (isUniqueTouchPoint(neighborNorth, neighborNorthEast, neighborEast) || isUniqueTouchPoint(neighborEast, neighborSouthEast, neighborSouth) || isUniqueTouchPoint(neighborSouth, neighborSouthWest, neighborWest) || isUniqueTouchPoint(neighborWest, neighborNorthWest, neighborNorth))) {
+        boolean isPartition = potentialVerticalPartition || potentialHorizontalPartition || potentialDiagonalPartition;
+
+        // TODO: Ensure this still works
+        if (!isElimination && !isPartition && (isUniqueTouchPoint(neighborNorth, neighborNorthEast, neighborEast) || isUniqueTouchPoint(neighborEast, neighborSouthEast, neighborSouth) || isUniqueTouchPoint(neighborSouth, neighborSouthWest, neighborWest) || isUniqueTouchPoint(neighborWest, neighborNorthWest, neighborNorth))) {
             potentialBlocker = true;
         }
-
-        boolean isPartition = potentialVerticalPartition || potentialHorizontalPartition || potentialDiagonalPartition;
 
         ArrayList<Integer> neighborIds = new ArrayList<>(groupRecord.getNeighborIds());
 
         if (potentialBlocker) {
+            logger.warn("Potential blocker detected!");
+
             int endRow = Math.min(startRow + gridSize, map.rows);
             int endCol = Math.min(startCol + gridSize, map.cols);
             map.rebuildAbstractProblem(map, gridSize, startRow, startCol, new ArrayList<>(List.of(regionId)));
@@ -1664,7 +1667,7 @@ public final class DBAStarUtil {
         map.computeCentroidMap().outputImage(dbaStarDbPath + "WhereDidWallGo" + mapFileName + ".png", null, null);
 
         // Update regions for neighborIds in the database
-        dbBW.recomputeBasePathsAfterWallAddition(regionId, problem, groups, neighborIds.size(), isElimination, isPartition, regionIds); // 1,813ms
+        dbBW.recomputeBasePathsAfterWallAddition(regionId, problem, groups, isElimination, isPartition, regionIds, neighborIds); // 1,813ms
 
         // Commented out because this is where RLE compression and hashtable initialization happens, and we want to get rid of that
 //        dbBW.regenerateIndexDB(isPartition, isElimination, regionId, regionRepId, groups.size(), map, newRecs);
