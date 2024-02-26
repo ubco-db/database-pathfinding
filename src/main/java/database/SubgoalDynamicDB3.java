@@ -170,9 +170,9 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         // How big should I make this? Technically, we could wipe out all regions, in which case freeSpace would be filled up to arraySize
         freeSpace = new int[arraySize];
         freeSpaceCount = arraySize - numGroups;
-        // Initialize free space to contain indices of final 10% for arrays of length arraySize
+        // Initialize free space to contain indices of final 10% for arrays of length arraySize (in reverse order)
         for (int i = 0; i < freeSpaceCount; i++) {
-            freeSpace[i] = numGroups + i;
+            freeSpace[i] = arraySize - (i + 1);
         }
 
         logger.debug(Arrays.toString(freeSpace));
@@ -537,6 +537,8 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
 
                     this.paths[groupLoc][i] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
                 }
+
+                // saveDB("checkingResults3.txt");
             }
 
         } else {
@@ -634,6 +636,8 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
 
                 }
             }
+
+            // saveDB("checkingResults2.txt");
         }
 
         // this.numGroups = groups.size();
