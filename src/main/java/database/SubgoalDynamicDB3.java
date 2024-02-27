@@ -612,6 +612,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             AStar astar = new AStar(problem);
             StatsRecord stats = new StatsRecord();
             ArrayList<SearchState> path;
+            int pathCost;
 
             // Need to ensure we compute paths to connect new region to existing ones
             for (int i = 0; i < this.neighborId[groupLoc].length; i++) {
@@ -624,11 +625,17 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
                 // Compute path from groupLoc to neighbourLoc
                 path = astar.computePath(new SearchState(groups.get(regionId).groupRepId), new SearchState(groups.get(neighbourLoc + GameMap.START_NUM).groupRepId), stats);
                 SearchUtil.computePathCost(path, stats, problem);
-                int pathCost = stats.getPathCost();
+                pathCost = stats.getPathCost();
 
                 // Store path and lowest cost
                 this.lowestCost[groupLoc][i] = pathCost;
                 this.paths[groupLoc][i] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
+
+                // Compute path from neighbourLoc to groupLoc
+                // TODO: Should I use new instances of tmp and stats here?
+                path = astar.computePath(new SearchState(groups.get(neighbourLoc + GameMap.START_NUM).groupRepId), new SearchState(groups.get(regionId).groupRepId), stats);
+                SearchUtil.computePathCost(path, stats, problem);
+                pathCost = stats.getPathCost();
 
                 // This should be the same for neighborId, lowestCost, and paths
                 int originalArraySize = this.neighborId[neighbourLoc].length;
@@ -647,12 +654,15 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
                 this.lowestCost[neighbourLoc] = largerLowestCost;
 
                 // Add lowestCost of path
-                this.lowestCost[neighbourLoc][originalArraySize] = pathCost;
+                this.lowestCost[neighbourLoc][originalArraySize] = pathCost; // TODO: Is pathCost always the same in both directions?
 
                 // Increase size of paths array by 1 for current neighbourLoc
                 int[][] largerPaths = new int[originalArraySize + 1][];
                 System.arraycopy(this.paths[neighbourLoc], 0, largerPaths, 0, originalArraySize);
                 this.paths[neighbourLoc] = largerPaths;
+
+                // Add path, TODO: Could I just reverse the other path?
+                this.paths[neighbourLoc][originalArraySize] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
             }
 
             // TODO: increase size of arrays and store path from neighbourLoc to groupLoc, and cost. Also add new region as neighbour of its neighbours
