@@ -631,6 +631,8 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
                 this.lowestCost[groupLoc][i] = pathCost;
                 this.paths[groupLoc][i] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
 
+                // Increase size of arrays and store path from neighbourLoc to groupLoc, and cost. Also add new region as neighbour of its neighbours
+
                 // Compute path from neighbourLoc to groupLoc
                 // TODO: Should I use new instances of tmp and stats here?
                 path = astar.computePath(new SearchState(groups.get(neighbourLoc + GameMap.START_NUM).groupRepId), new SearchState(groups.get(regionId).groupRepId), stats);
