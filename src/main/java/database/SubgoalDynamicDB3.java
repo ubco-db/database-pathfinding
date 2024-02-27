@@ -627,8 +627,23 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
                 int pathCost = stats.getPathCost();
 
                 // Store path and lowest cost
-                this.lowestCost[neighbourLoc][i] = pathCost;
+                this.lowestCost[groupLoc][i] = pathCost;
                 this.paths[groupLoc][i] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
+
+                // Increase size of neighbourIds array by 1 for current neighbourLoc
+                int[] largerNeighbourId = new int[this.neighborId[neighbourLoc].length + 1];
+                System.arraycopy(this.neighborId[neighbourLoc], 0, largerNeighbourId, 0, this.neighborId[neighbourLoc].length);
+                this.neighborId[neighbourLoc] = largerNeighbourId;
+
+                // Increase size of lowestCost array by 1 for current neighbourLoc
+                int[] largerLowestCost = new int[this.lowestCost[neighbourLoc].length + 1];
+                System.arraycopy(this.lowestCost[neighbourLoc], 0, largerLowestCost, 0, this.lowestCost[neighbourLoc].length);
+                this.lowestCost[neighbourLoc] = largerLowestCost;
+
+                // Increase size of paths array by 1 for current neighbourLoc
+                int[][] largerPaths = new int[this.paths.length][];
+                System.arraycopy(this.paths[neighbourLoc], 0, largerPaths, 0, this.paths[neighbourLoc].length);
+                this.paths[neighbourLoc] = largerPaths;
             }
 
             // TODO: increase size of arrays and store path from neighbourLoc to groupLoc, and cost. Also add new region as neighbour of its neighbours
