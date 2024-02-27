@@ -630,19 +630,28 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
                 this.lowestCost[groupLoc][i] = pathCost;
                 this.paths[groupLoc][i] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
 
+                // This should be the same for neighborId, lowestCost, and paths
+                int originalArraySize = this.neighborId[neighbourLoc].length;
+
                 // Increase size of neighbourIds array by 1 for current neighbourLoc
-                int[] largerNeighbourId = new int[this.neighborId[neighbourLoc].length + 1];
-                System.arraycopy(this.neighborId[neighbourLoc], 0, largerNeighbourId, 0, this.neighborId[neighbourLoc].length);
+                int[] largerNeighbourId = new int[originalArraySize + 1];
+                System.arraycopy(this.neighborId[neighbourLoc], 0, largerNeighbourId, 0, originalArraySize);
                 this.neighborId[neighbourLoc] = largerNeighbourId;
 
+                // Add new region as neighbour to its neighbours
+                this.neighborId[neighbourLoc][originalArraySize] = groupLoc;
+
                 // Increase size of lowestCost array by 1 for current neighbourLoc
-                int[] largerLowestCost = new int[this.lowestCost[neighbourLoc].length + 1];
-                System.arraycopy(this.lowestCost[neighbourLoc], 0, largerLowestCost, 0, this.lowestCost[neighbourLoc].length);
+                int[] largerLowestCost = new int[originalArraySize + 1];
+                System.arraycopy(this.lowestCost[neighbourLoc], 0, largerLowestCost, 0, originalArraySize);
                 this.lowestCost[neighbourLoc] = largerLowestCost;
 
+                // Add lowestCost of path
+                this.lowestCost[neighbourLoc][originalArraySize] = pathCost;
+
                 // Increase size of paths array by 1 for current neighbourLoc
-                int[][] largerPaths = new int[this.paths.length][];
-                System.arraycopy(this.paths[neighbourLoc], 0, largerPaths, 0, this.paths[neighbourLoc].length);
+                int[][] largerPaths = new int[originalArraySize + 1][];
+                System.arraycopy(this.paths[neighbourLoc], 0, largerPaths, 0, originalArraySize);
                 this.paths[neighbourLoc] = largerPaths;
             }
 
