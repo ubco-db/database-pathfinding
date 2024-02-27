@@ -569,7 +569,46 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             this.freeSpace = resizedFreeSpace;
         }
 
+        if (isSolitary) {
+            // Case where new region has no neighbours (e.g. is surrounded by walls)
 
+            // Find array location of region
+            int groupLoc = regionId - GameMap.START_NUM;
+
+            // Create arrays for new group
+            this.neighborId[groupLoc] = new int[0];
+            this.lowestCost[groupLoc] = new int[0];
+            this.paths[groupLoc] = new int[0][];
+        } else if (isReversePartition) {
+            // Case where two regions merge into one
+
+            // Will need to recompute neighborIds, lowestCosts, and paths
+        } else {
+            // Case where new region has neighbours
+            int groupLoc = regionId - GameMap.START_NUM;
+
+            // Get neighbours of the surrounding regions (updated in map.recomputeNeighbors)
+            HashSet<Integer> neighbours = groups.get(regionId).getNeighborIds();
+            // Create an int array with the same size as the HashSet
+            int[] neighbourArray = new int[neighbours.size()];
+
+            // Iterate through the HashSet and copy its elements to the array
+            int index = 0;
+            for (Integer neighbour : neighbours) {
+                neighbourArray[index++] = neighbour - GameMap.START_NUM;
+            }
+
+            // Create arrays for new group
+            this.neighborId[groupLoc] = neighbourArray;
+            this.lowestCost[groupLoc] = new int[neighbours.size()];
+            this.paths[groupLoc] = new int[neighbours.size()][];
+
+            // Need to ensure we compute paths to connect new region to existing ones
+            for (int i = 0; i < this.neighborId[groupLoc].length; i++) {
+                // Grab location of neighbour
+                int neighbourLoc = this.neighborId[groupLoc][i];
+            }
+        }
     }
 
     public int popFreeSpace() throws Exception {
