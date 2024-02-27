@@ -666,8 +666,6 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
                 // Add path, TODO: Could I just reverse the other path?
                 this.paths[neighbourLoc][originalArraySize] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
             }
-
-            // TODO: increase size of arrays and store path from neighbourLoc to groupLoc, and cost. Also add new region as neighbour of its neighbours
         }
     }
 
