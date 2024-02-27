@@ -572,6 +572,8 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         if (isSolitary) {
             // Case where new region has no neighbours (e.g. is surrounded by walls)
 
+            // freeSpace has already been updated in DBAStarUtil (needed the information for map updates)
+
             // Find array location of region
             int groupLoc = regionId - GameMap.START_NUM;
 
@@ -585,9 +587,13 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             // Will need to recompute neighborIds, lowestCosts, and paths
         } else {
             // Case where new region has neighbours
+
+            // freeSpace has already been updated in DBAStarUtil (needed the information for map updates)
+
+            // Find array location of region
             int groupLoc = regionId - GameMap.START_NUM;
 
-            // Get neighbours of the surrounding regions (updated in map.recomputeNeighbors)
+            // Get neighbours of the new region (updated in map.recomputeNeighbors)
             HashSet<Integer> neighbours = groups.get(regionId).getNeighborIds();
             // Create an int array with the same size as the HashSet
             int[] neighbourArray = new int[neighbours.size()];
@@ -603,11 +609,29 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             this.lowestCost[groupLoc] = new int[neighbours.size()];
             this.paths[groupLoc] = new int[neighbours.size()][];
 
+            AStar astar = new AStar(problem);
+            StatsRecord stats = new StatsRecord();
+            ArrayList<SearchState> path;
+
             // Need to ensure we compute paths to connect new region to existing ones
             for (int i = 0; i < this.neighborId[groupLoc].length; i++) {
                 // Grab location of neighbour
                 int neighbourLoc = this.neighborId[groupLoc][i];
+                int[] tmp = new int[5000];
+                // TODO: May want to pass this as parameter
+                SearchAlgorithm searchAlg = new HillClimbing(problem, 10000);
+
+                // Compute path from groupLoc to neighbourLoc
+                path = astar.computePath(new SearchState(groups.get(regionId).groupRepId), new SearchState(groups.get(neighbourLoc + GameMap.START_NUM).groupRepId), stats);
+                SearchUtil.computePathCost(path, stats, problem);
+                int pathCost = stats.getPathCost();
+
+                // Store path and lowest cost
+                this.lowestCost[neighbourLoc][i] = pathCost;
+                this.paths[groupLoc][i] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
             }
+
+            // TODO: increase size of arrays and store path from neighbourLoc to groupLoc, and cost. Also add new region as neighbour of its neighbours
         }
     }
 
