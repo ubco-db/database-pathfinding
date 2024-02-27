@@ -338,10 +338,11 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
                     logger.error("There is an issue with the neighbours of region: " + regionId);
                     throw new Exception("There is an issue with the neighbours of region: " + regionId);
                 }
-                // FIXME: Find a way to move up regions to overwrite the remove one
-                // Alternatively: could copy into smaller arrays here
-                this.neighborId[neighbourLoc][indexOfRegionToEliminate] = -1;
-                this.lowestCost[neighbourLoc][indexOfRegionToEliminate] = -1;
+
+                // Copying into smaller arrays here
+                this.neighborId[neighbourLoc] = copyArrayExceptIndex(this.neighborId[neighbourLoc], indexOfRegionToEliminate);
+                this.lowestCost[neighbourLoc] = copyArrayExceptIndex(this.lowestCost[neighbourLoc], indexOfRegionToEliminate);
+                // Simply setting path to null (not copying paths array)
                 this.paths[neighbourLoc][indexOfRegionToEliminate] = null;
             }
             // Tombstone eliminated region
@@ -395,7 +396,6 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
                     // TODO: May want to pass this as parameter
                     SearchAlgorithm searchAlg = new HillClimbing(problem, 10000);
 
-                    // TODO: Update lowestCost and paths where necessary
                     path = astar.computePath(new SearchState(groups.get(id).groupRepId), new SearchState(groups.get(neighbourLoc + GameMap.START_NUM).groupRepId), stats);
                     SearchUtil.computePathCost(path, stats, problem);
                     int pathCost = stats.getPathCost();
@@ -453,13 +453,12 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
                 // Check whether groups has the same neighbours as neighborId (groups is most up-to-date)
                 if (!neighborsFromGroups.contains(neighbourLoc + GameMap.START_NUM)) {
                     logger.info("Removing region: " + (neighbourLoc + GameMap.START_NUM) + " from neighbour array of " + regionId);
-                    // FIXME: Find a way to move up regions to overwrite the removed one
-                    // Alternatively: could copy into smaller arrays here
 
-                    // Tombstone neighbor that no longer is one in neighbors of region
-                    this.neighborId[regionId - GameMap.START_NUM][i] = -1;
-                    this.lowestCost[regionId - GameMap.START_NUM][i] = -1;
-                    this.paths[regionId - GameMap.START_NUM][i] = null;
+                    // Copying into smaller arrays here
+                    this.neighborId[groupLoc] = copyArrayExceptIndex(this.neighborId[groupLoc], i);
+                    this.lowestCost[groupLoc] = copyArrayExceptIndex(this.lowestCost[groupLoc], i);
+                    // Simply setting path to null (not copying paths array)
+                    this.paths[groupLoc][i] = null;
 
                     // Iterate over neighbours of neighbour to find region to eliminate
                     int indexOfRegionToEliminate = -1;
@@ -476,10 +475,11 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
                         logger.error("There is an issue with the neighbours of region: " + regionId);
                         throw new Exception("There is an issue with the neighbours of region: " + regionId);
                     }
-                    // FIXME: Find a way to move up regions to overwrite the remove one
-                    // Alternatively: could copy into smaller arrays here
-                    this.neighborId[neighbourLoc][indexOfRegionToEliminate] = -1;
-                    this.lowestCost[neighbourLoc][indexOfRegionToEliminate] = -1;
+
+                    // Copying into smaller arrays here
+                    this.neighborId[neighbourLoc] = copyArrayExceptIndex(this.neighborId[neighbourLoc], indexOfRegionToEliminate);
+                    this.lowestCost[neighbourLoc] = copyArrayExceptIndex(this.lowestCost[neighbourLoc], indexOfRegionToEliminate);
+                    // Simply setting path to null (not copying paths array)
                     this.paths[neighbourLoc][indexOfRegionToEliminate] = null;
                 } else {
                     // If nothing changed about the neighbours
@@ -685,5 +685,16 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         // Write into freeSpace
         this.numGroups--;
         freeSpace[freeSpaceCount++] = regionId - GameMap.START_NUM;
+    }
+
+    private static int[] copyArrayExceptIndex(int[] arr, int index) {
+        int[] newArr = new int[arr.length - 1];
+        int newIndex = 0;
+        for (int i = 0; i < arr.length; i++) {
+            if (i != index) {
+                newArr[newIndex++] = arr[i];
+            }
+        }
+        return newArr;
     }
 }
