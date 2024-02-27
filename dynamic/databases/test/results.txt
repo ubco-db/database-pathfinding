@@ -1,18 +1,20 @@
-Total time partial recomputation: 9766ms
-Total time complete recomputation: 96782ms
-Total time partial recomputation: 9670ms
-Total time complete recomputation: 98896ms
-Total time partial recomputation: 9494ms
-Total time complete recomputation: 96970ms
-Total time partial recomputation (no addition checks): 10377ms
-Total time complete recomputation: 97289ms
-Total time partial recomputation (no addition checks): 9891ms
-Total time complete recomputation: 97235ms
-Total time partial recomputation (no addition checks): 10210ms
-Total time complete recomputation: 97305ms
-Total time partial recomputation (simple addition checks): 10249ms
-Total time complete recomputation: 99482ms
-Total time partial recomputation (simple addition checks): 9602ms
-Total time complete recomputation: 97111ms
-Total time partial recomputation (simple addition checks): 9630ms
-Total time complete recomputation: 98116ms
+Total time partial recomputation (simple checks): 9577ms
+	Time for checks: 0ms
+	Time for recompute: 2874ms
+Total time complete recomputation: 122782ms
+Total time partial recomputation (simple checks): 15181ms
+	Time for checks: 1ms
+	Time for recompute: 7964ms
+Total time complete recomputation: 157371ms
+Total time partial recomputation (simple checks): 8984ms
+	Time for checks: 1ms
+	Time for recompute: 10780ms
+Total time complete recomputation: 105314ms
+Total time partial recomputation (simple checks): 14579ms
+	Time for checks: 2ms
+	Time for recompute: 15401ms
+Total time complete recomputation: 163114ms
+Total time partial recomputation (simple checks): 9058ms
+	Time for checks: 2ms
+	Time for recompute: 18258ms
+Total time complete recomputation: 98571ms
