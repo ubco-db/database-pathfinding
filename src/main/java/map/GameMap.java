@@ -63,11 +63,7 @@ public class GameMap {
     private int[] numRegions;                         // Number of regions in each sector (only used for sector abstraction)
     private RegionSearchProblem abstractProblem;      // Only used for PRA*
 
-    public ArrayList<Integer> regionReps;
-
-    public ArrayList<Integer> getRegionReps() {
-        return regionReps;
-    }
+    private int[] regionReps;
 
     private static final Logger logger = LogManager.getLogger(GameMap.class);
 
@@ -2507,7 +2503,9 @@ public class GameMap {
     // Compute centroids of all groups
     // 4
     public void computeCentroids() {
-        regionReps = new ArrayList<>();
+        // TODO: How large should I make this array and where will I resize it?
+        regionReps = new int[(int) (groups.size() * 1.1)];
+
         long currentTime = System.currentTimeMillis();
         // StringBuilder buf = new StringBuilder();
 
@@ -2539,25 +2537,16 @@ public class GameMap {
                 row = minRow;
                 col = minCol;
             }
-            rec.setGroupRepId(this.getId(row, col));
-            regionReps.add(this.getId(row, col));
+            int regionRep = this.getId(row, col);
+            rec.setGroupRepId(regionRep);
 
-            // buf.append(rec.getGroupRepId()).append(", ");
+            // Region reps uses region numbers with offset to index
+            regionReps[rec.groupId - GameMap.START_NUM] = regionRep;
+            System.out.println(rec.groupId - GameMap.START_NUM + " - " + regionRep);
         }
+
         long endTime = System.currentTimeMillis();
         logger.info("Time to compute centroids: " + (endTime - currentTime));
-
-//        buf.append(System.lineSeparator()).append(System.lineSeparator());
-//
-//        try {
-//            File file = new File("dynamic/databases/DBA/012.map_DBA-STAR_Reps.txt"); // TODO: Change for different maps
-//            FileWriter fr = new FileWriter(file, true);
-//            fr.write(String.valueOf(buf));
-//            fr.close();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
     }
 
     // Compute centroid for one group
@@ -2599,9 +2588,12 @@ public class GameMap {
             row = minRow;
             col = minCol;
         }
-//        System.out.println("New rep at: " + this.getId(row, col));
-        rec.setGroupRepId(this.getId(row, col));
-//        regionReps.add(this.getId(row, col)); // remove existing rep?
+        int regionRep = this.getId(row, col);
+
+        rec.setGroupRepId(regionRep);
+        regionReps[rec.groupId - GameMap.START_NUM] = regionRep;
+        System.out.println(rec.groupId - GameMap.START_NUM + " - " + regionRep);
+
         return this.getId(row, col);
     }
 
@@ -2639,13 +2631,62 @@ public class GameMap {
             row = minRow;
             col = minCol;
         }
-//        System.out.println("New rep at: " + this.getId(row, col));
-        rec.setGroupRepId(this.getId(row, col));
-//        regionReps.add(this.getId(row, col)); // remove existing rep?
+
+        int regionRep = this.getId(row, col);
+
+        rec.setGroupRepId(regionRep);
+        regionReps[rec.groupId - GameMap.START_NUM] = regionRep;
+        System.out.println(rec.groupId - GameMap.START_NUM + " - " + regionRep);
+
         return this.getId(row, col);
     }
 
-    public RegionSearchProblem getAbstractProblem() {
-        return abstractProblem;
+    public int recomputeCentroid3(GroupRecord rec) {
+        long sumRow = 0, sumCol = 0, N = rec.getSize();
+        ExpandArray states = rec.states;
+        for (int i = 0; i < N; i++) {
+            int id = states.get(i);
+            sumRow += this.getRow(id);
+            sumCol += this.getCol(id);
+        }
+
+        int row = Math.round(sumRow / N);
+        int col = Math.round(sumCol / N);
+
+        if (this.isWall(row, col) || squares[row][col] != rec.groupId) {    // If centroid point is not in group or is a wall
+            // Find the point that is in the group that is closest
+            int minDist = 10000, minRow = -1, minCol = -1;
+            for (int i = 0; i < N; i++) {
+                int id = states.get(i);
+                int r = this.getRow(id);
+                int c = this.getCol(id);
+                int dist = GameMap.computeDistance(row, col, r, c);
+                if (dist < minDist) {
+                    minRow = r;
+                    minCol = c;
+                    minDist = dist;
+                }
+            }
+            row = minRow;
+            col = minCol;
+        }
+        rec.setGroupRepId(this.getId(row, col));
+        return this.getId(row, col);
+    }
+
+//    public RegionSearchProblem getAbstractProblem() {
+//        return abstractProblem;
+//    }
+
+    private int getRegionRepFromRegionId(int regionId) {
+        return regionReps[regionId - GameMap.START_NUM];
+    }
+
+    private int getRegionRepFromRowAndCol(int row, int col) {
+        return getRegionRepFromRegionId(this.squares[row][col]);
+    }
+
+    public int getRegionRepFromState(int sid) {
+        return getRegionRepFromRowAndCol(this.getRow(sid), this.getCol(sid));
     }
 }

@@ -13,7 +13,6 @@ public class DBAStar3 implements SearchAlgorithm {
     private final SubgoalDynamicDB3 database;
     private final SearchProblem problem;
     private final GameMap map;
-    private final RegionSearchProblem abstractProblem;
     private final ArrayList<SearchState> subgoals;
 
     private static final Logger logger = LogManager.getLogger(DBAStar.class);
@@ -22,7 +21,6 @@ public class DBAStar3 implements SearchAlgorithm {
         this.database = database;
         this.problem = problem;
         this.map = abstractMap;
-        abstractProblem = abstractMap.getAbstractProblem();
         this.subgoals = new ArrayList<SearchState>();
     }
 
@@ -47,20 +45,23 @@ public class DBAStar3 implements SearchAlgorithm {
 
         ArrayList<SearchState> path = new ArrayList<>();
 
-        ArrayList<SearchState> pathStart = new ArrayList<>();
-        ArrayList<SearchState> pathEnd = new ArrayList<>();
-
         startTime = System.nanoTime();
 
-        // TODO: Is this needed at all? Is there a better way?
+        // FIXME:
+        // Store region reps in a list, e.g. region -> regionRep (maybe array indexed through offset)
+        // Then find what the region is using the map and look up the regionRep using this array
         // We're finding the SearchState of the regionCenter aka rep? and then using that to find the region, and also in the AStar in findNearest
-        SearchState startRegionCenter = abstractProblem.findRegion2(start, pathStart, 0);
-        SearchState goalRegionCenter = abstractProblem.findRegion2(goal, pathEnd, 1);
+
+        SearchState startRegionCenter = new SearchState(map.getRegionRepFromState(start.getId()));
+        SearchState goalRegionCenter = new SearchState(map.getRegionRepFromState(goal.getId()));
+
+        ArrayList<SearchState> pathStart = astar.computePath(start, startRegionCenter, stats);
+        ArrayList<SearchState> pathEnd = astar.computePath(goalRegionCenter, goal, stats);
 
         // Search the database for records
-        int startRegion = map.squares[map.getRow(startRegionCenter.id)][map.getCol(startRegionCenter.id)];
-        int goalRegion = map.squares[map.getRow(goalRegionCenter.id)][map.getCol(goalRegionCenter.id)];
-        ArrayList<SubgoalDBRecord> records = database.findNearest(problem, startRegion, goalRegion, subgoalSearchAlg,1, stats, null);
+        int startRegion = map.getId(map.getRow(startRegionCenter.id), map.getCol(goalRegionCenter.id));
+        int goalRegion = map.getId(map.getRow(goalRegionCenter.id), map.getCol(goalRegionCenter.id));
+        ArrayList<SubgoalDBRecord> records = database.findNearest(problem, startRegion, goalRegion, subgoalSearchAlg, stats);
 
         if (records != null && !records.isEmpty()) {
             currentRecord = records.getFirst();

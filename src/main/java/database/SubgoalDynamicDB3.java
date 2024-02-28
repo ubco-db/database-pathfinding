@@ -27,8 +27,8 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
      * Returns record for start and goal for search problem between two regions.
      * Record produced dynamically from data in DP table by combining base paths between regions (non-real-time).
      */
-    public ArrayList<SubgoalDBRecord> findNearest(SearchProblem problem, int startGroupId, int goalGroupId, SearchAlgorithm searchAlg, int max, StatsRecord stats, ArrayList<SubgoalDBRecord> used) {
-        // FIXME: This is broken right now, need to make this work without DP table
+    public ArrayList<SubgoalDBRecord> findNearest(SearchProblem problem, int startGroupId, int goalGroupId, SearchAlgorithm searchAlg, StatsRecord stats) {
+        // TODO: Check whether this actually works
 
         ArrayList<SubgoalDBRecord> result = new ArrayList<>(1);
 
