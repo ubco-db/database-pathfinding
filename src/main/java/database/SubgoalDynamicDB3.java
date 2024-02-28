@@ -350,7 +350,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             this.paths[groupLoc] = null;
             this.lowestCost[groupLoc] = null;
             // Update freeSpace
-            pushFreeSpace(groupLoc);
+            pushFreeSpace(regionId);
         } else if (isPartition) {
             // TODO: Region will be split in two (or more)
             AStar astar = new AStar(problem);
@@ -582,7 +582,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             this.lowestCost[groupLoc] = new int[0];
             this.paths[groupLoc] = new int[0][];
         } else if (isReversePartition) {
-            // Case where two regions merge into one
+            // TODO: Case where two regions merge into one
 
             // Will need to recompute neighborIds, lowestCosts, and paths
         } else {
@@ -669,22 +669,32 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         }
     }
 
+    /**
+     * @return regionId that is free to use
+     * @throws Exception if the indexing is off
+     */
     public int popFreeSpace() throws Exception {
         // Return lowest freeSpace index from the end of the array
+        System.out.println(Arrays.toString(freeSpace));
         if (freeSpace[freeSpaceCount - 1] == 0) {
             throw new Exception("Indexing is off");
         }
         this.numGroups++;
-        return freeSpace[freeSpaceCount-- - 1] + GameMap.START_NUM;
+        return freeSpace[freeSpaceCount-- - 1];
     }
 
+    /**
+     * @param regionId id of a region (indexing starts at 50)
+     * @throws Exception if existing free space is being overwritten
+     */
     public void pushFreeSpace(int regionId) throws Exception {
+        System.out.println(Arrays.toString(freeSpace));
         if (freeSpace[freeSpaceCount] != 0) {
             throw new Exception("Overwriting existing free space!");
         }
         // Write into freeSpace
         this.numGroups--;
-        freeSpace[freeSpaceCount++] = regionId - GameMap.START_NUM;
+        freeSpace[freeSpaceCount++] = regionId;
     }
 
     private static int[] copyArrayExceptIndex(int[] arr, int index) {

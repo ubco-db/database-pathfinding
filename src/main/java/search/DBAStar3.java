@@ -47,11 +47,7 @@ public class DBAStar3 implements SearchAlgorithm {
 
         startTime = System.nanoTime();
 
-        // FIXME:
-        // Store region reps in a list, e.g. region -> regionRep (maybe array indexed through offset)
-        // Then find what the region is using the map and look up the regionRep using this array
-        // We're finding the SearchState of the regionCenter aka rep? and then using that to find the region, and also in the AStar in findNearest
-
+        // TODO: Check that this works
         SearchState startRegionCenter = new SearchState(map.getRegionRepFromState(start.getId()));
         SearchState goalRegionCenter = new SearchState(map.getRegionRepFromState(goal.getId()));
 
