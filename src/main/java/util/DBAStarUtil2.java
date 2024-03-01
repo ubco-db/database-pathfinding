@@ -22,10 +22,10 @@ public class DBAStarUtil2 {
     private static final Logger logger = LogManager.getLogger(DBAStarUtil2.class);
 
     /**
-     * @param gridSize           sectors on the map will be gridSize by gridSize
-     * @param cutoff             for HillClimbing algorithm
-     * @param mapFileName        name of the .map file to use
-     * @param dbaStarDbPath      location where the database and other output will be generated
+     * @param gridSize      sectors on the map will be gridSize by gridSize
+     * @param cutoff        for HillClimbing algorithm
+     * @param mapFileName   name of the .map file to use
+     * @param dbaStarDbPath location where the database and other output will be generated
      */
     public DBAStarUtil2(int gridSize, int cutoff, String mapFileName, String dbaStarDbPath) {
         // startNum is used as an offset for values in the squares array, region indexing in the array starts at startNum
@@ -143,8 +143,7 @@ public class DBAStarUtil2 {
     }
 
     /**
-     *
-     * @param wallLoc state id where wall will be place
+     * @param wallLoc   state id where wall will be place
      * @param dbaStarBW DBAStar object returned from computeDBAStarDatabaseUsingSubgoalDynamicDB3
      */
     public void recomputeWallAdditionUsingSubgoalDynamicDB3(int wallLoc, DBAStar dbaStarBW) throws Exception {
@@ -192,7 +191,7 @@ public class DBAStarUtil2 {
             // Get the neighbours of the region that will be eliminated
             HashSet<Integer> neighbours = groupRecord.getNeighborIds();
 
-            for (Integer neighbour: neighbours) {
+            for (Integer neighbour : neighbours) {
                 // Get the region rep of the current neighbour
                 int neighbourRep = map.getRegionRepFromRegionId(neighbour);
                 // If the region rep is tombstoned
@@ -208,17 +207,62 @@ public class DBAStarUtil2 {
             map.tombstoneRegionRepUsingRegionId(regionId);
         }
 
+        int numSectorsPerRow = (int) Math.ceil(map.cols * 1.0 / gridSize);
+        int sectorId = wallRow / gridSize * numSectorsPerRow + wallCol / gridSize;
+
+        // Start of sector
+        int startRow = (sectorId / numSectorsPerRow) * gridSize;
+        int startCol = (sectorId % numSectorsPerRow) * gridSize;
+        // End of sector
+        int endRow = Math.min(startRow + gridSize, map.rows);
+        int endCol = Math.min(startCol + gridSize, map.cols);
+
+        // Eight neighbours (states touching wall state)
+        int neighborNorth = map.squares[wallRow - 1][wallCol];
+
+        // Need to check boundaries for bottom row of map (if not on map, treat square as wall)
+        // TODO: Do I really need to check all of these?
+        int neighborNorthEast = map.isValid(wallRow - 1, wallCol + 1) ? map.squares[wallRow - 1][wallCol + 1] : 42;
+        int neighborEast = map.isValid(wallRow, wallCol + 1) ? map.squares[wallRow][wallCol + 1] : 42;
+        int neighborSouthEast = map.isValid(wallRow + 1, wallCol + 1) ? map.squares[wallRow + 1][wallCol + 1] : 42;
+        int neighborSouth = map.isValid(wallRow + 1, wallCol) ? map.squares[wallRow + 1][wallCol] : 42;
+        int neighborSouthWest = map.isValid(wallRow + 1, wallCol - 1) ? map.squares[wallRow + 1][wallCol - 1] : 42;
+
+        int neighborWest = map.squares[wallRow][wallCol - 1];
+        int neighborNorthWest = map.squares[wallRow - 1][wallCol - 1];
+
         // Pathblocker case
 
+        // Check if the wall will be placed in the corner of a sector. If so, and if the corner touches another region’s corner, we have a blocker case
+        if (isCornerOfSector(wallRow, wallCol, endRow, endCol, startRow, startCol) && isCornerTouchingCorner(wallRow, wallCol)) {
 
+        }
+
+        // Region Partition case
+
+        // Wall on Region Representative case
+
+        // Wall That Moves Region Representative case
+
+        // Wall That Changes Shortest Path
     }
 
     /**
-     *
-     * @param wallLoc state id where wall will be removed
+     * @param wallLoc   state id where wall will be removed
      * @param dbaStarBW DBAStar object returned from computeDBAStarDatabaseUsingSubgoalDynamicDB3
      */
     public void recomputeWallRemovalUsingSubgoalDynamicDB3(int wallLoc, DBAStar dbaStarBW) {
+
+    }
+
+    private boolean isCornerOfSector(int wallRow, int wallCol, int endRow, int endCol, int startRow, int startCol) {
+        return (wallRow == endRow && wallCol == endCol) // Bottom-right corner
+                || (wallRow == startRow && wallCol == startCol) // Top-left corner
+                || (wallRow == startRow && wallCol == endCol) // Top-right corner
+                || (wallRow == endRow && wallCol == startCol); // Bottom-right corner
+    }
+
+    private boolean isCornerTouchingCorner(int wallRow, int wallCol) {
 
     }
 }
