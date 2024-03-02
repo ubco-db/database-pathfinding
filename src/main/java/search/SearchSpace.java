@@ -87,174 +87,174 @@ public class SearchSpace {
         dbstat.addStat(7, currentNum);
     }
 
-    /**
-     * Given this search space, performs clique abstraction one more level.
-     * If no abstraction is performed, does initial level 1 abstraction (finding cliques of base states).
-     *
-     * @return
-     */
-    public SearchSpace cliqueAbstract(DBStatsRecord dbstat) {
-        // Create new abstract search space (the abstraction result)
-        SearchSpace abstractSpace = new SearchSpace(problem);
-        problem.setSearchSpace(this);
-        abstractSpace.colors = this.colors;
-        int currentNum = GameMap.START_NUM;
-        GroupRecord group;
-        SearchState currentState = new SearchState();
-        abstractSpace.groups = new TreeMap<Integer, GroupRecord>();
-        ExpandArray neighbors = new ExpandArray(10);
-        ExpandArray neighborsAddNode = new ExpandArray(10);
-        ExpandArray clique = new ExpandArray(100);
-        ExpandArray groupNeighbors = new ExpandArray(1000);
-
-        long currentTime = System.currentTimeMillis();
-        int totalSize = 0;
-
-        if (this.groups == null || this.groups.size() == 0) {    // No abstraction (or grouping) has been performed yet on this search problem.  Perform first level of abstraction
-            // Iterate through the ResultSet building cliques of base states
-
-            problem.initIterator();
-            while (problem.nextState(currentState)) {
-                if (abstractSpace.states[currentState.id] != 0) continue;
-                // Calculate clique here.  Get all neighbors.
-                problem.getNeighbors(currentState.id, neighbors);
-                // System.out.println("State id: "+currentState.id+" Neighbors: "+neighbors);
-                groupNeighbors.clear();
-                groupNeighbors.addAll(neighbors);        // All neighbors of this node added to clique will be neighbors of the group.
-                // The state and all its neighbors are not necessarily a clique as the neighbors may not be mutually reachable.
-                // IDEA: Add start state and a neighbor at a time always checking to see if still a clique.
-                clique.clear();
-                clique.add(currentState.id);
-                boolean inClique = true;
-                for (int i = 0; i < neighbors.num(); i++) {
-                    int addNodeId = neighbors.get(i);
-                    if (abstractSpace.states[addNodeId] != 0) continue;
-                    // Check if all nodes currently in clique have an edge with this one that we are currently trying to add (are neighbors)
-                    for (int j = 0; j < clique.num(); j++) {
-                        if (!problem.isNeighbor(addNodeId, clique.get(j))) {
-                            inClique = false;
-                            break;
-                        }
-                    }
-                    if (inClique) {    // Add state to clique
-                        clique.add(addNodeId);
-                        problem.getNeighbors(addNodeId, neighborsAddNode);
-                        groupNeighbors.addAll(neighborsAddNode);
-                    }
-                }
-
-                group = new GroupRecord();
-                group.groupId = currentNum;
-                group.groupRepId = currentState.id;
-                group.states = new ExpandArray(clique);
-                group.setNumStates(clique.num());
-                group.setNeighbors(groupNeighbors);
-                abstractSpace.groups.put(group.groupId, group);
-                // Update the states array to track states that have been assigned to groups already
-                for (int k = 0; k < clique.num(); k++) {
-                    int stateid = clique.get(k);
-                    abstractSpace.states[stateid] = currentNum;
-                }
-                // System.out.println("Added group: "+group);
-                currentNum++;
-                totalSize += group.getSize();
-            }
-        } else {    // Perform level 2 or higher abstraction
-            // IDEA: Iterate through the groups.  Find all neighbors for all states in the group.  Any of those are then reachable.
-            boolean inClique;
-
-            for (Integer integer : this.groups.keySet()) {
-                GroupRecord g = groups.get(integer);
-                if (abstractSpace.states[g.groupRepId] != 0)
-                    continue;    // Group has already been merged with another group
-                GroupRecord newGroup = new GroupRecord();
-                newGroup.groupId = currentNum;
-                newGroup.groupRepId = g.groupRepId;
-                newGroup.states = new ExpandArray(g.states);
-                newGroup.setNumStates(g.getSize());
-                groupNeighbors.clear();
-                groupNeighbors.addAll(g.getNeighborIds());
-                newGroup.setNeighbors(groupNeighbors);
-                ArrayList<GroupRecord> groupsInClique = new ArrayList<GroupRecord>();
-                groupsInClique.add(g);
-                // System.out.println(" Started this group: "+g);
-                // 	Iterate through all neighbor nodes of this group.
-                HashSet<Integer> n = g.getNeighborIds();
-                for (int neighborId : n) {
-                    int neighborGroupId = states[neighborId];
-                    GroupRecord neighborGroup = groups.get(neighborGroupId);
-                    if (neighborGroupId == g.groupId || abstractSpace.states[neighborId] != 0)
-                        continue;                        // Node is already in the group or group has already been merged with another
-                    // Merge this group into the new group as long as it is connected to all members currently in the group
-                    // See if all groups currently in clique are neighbors with this one
-                    inClique = true;
-                    for (GroupRecord gInClique : groupsInClique) {
-                        if (!gInClique.isNeighbor(neighborGroup)) {
-                            inClique = false;
-                            break;
-                        }
-                    }
-                    if (inClique) {    // Add group to clique
-                        groupsInClique.add(neighborGroup);
-                        groupNeighbors.addAll(neighborGroup.getNeighborIds());
-                        newGroup.states.addAllDistinct(neighborGroup.states);
-                        // System.out.println(" Merged this group: "+neighborGroup);
-                    }
-                }    // end while
-
-                // Handle the case where the abstract state is merged with no one yet.  Merge it with someone even though it is not a clique.
-                if (groupsInClique.size() == 1) {    // Merge with one of its other groups
-                    // Find a neighbor group to merge with
-                    // System.out.println("Special case.   Merging group with no clique neighbors: "+newGroup);
-                    Iterator<Integer> it = n.iterator();
-                    GroupRecord neighborGroup;
-                    while (it.hasNext()) {
-                        int neighborId = it.next();
-                        int neighborGroupId = abstractSpace.states[neighborId];
-                        neighborGroup = abstractSpace.groups.get(neighborGroupId);  // Retrieve the group for this neighbor
-                        if (neighborGroupId == g.groupId || neighborGroup == null) continue;
-                        int prevNum = neighborGroup.getSize();
-                        neighborGroup.setNumStates(prevNum + g.getSize());
-                        groupNeighbors.addAll(neighborGroup.getNeighborIds());
-                        neighborGroup.setNeighbors(groupNeighbors);
-                        neighborGroup.states.addAll(newGroup.states);
-
-                        // Update the states array to track states that have been assigned to groups already
-                        for (int k = 0; k < newGroup.states.num(); k++) {
-                            int stateid = newGroup.states.get(k);
-                            abstractSpace.states[stateid] = neighborGroupId;
-                        }
-                        totalSize += g.getSize();
-                        // System.out.println("Merged into group: "+neighborGroup);
-                        break;    // Only need to merge with one group
-                    }
-                } else {
-                    // Now add clique of groups as new group
-                    newGroup.setNumStates(newGroup.states.num());
-                    newGroup.setNeighbors(groupNeighbors);
-                    abstractSpace.groups.put(newGroup.groupId, newGroup);
-                    // Update the states array to track states that have been assigned to groups already
-                    for (int k = 0; k < newGroup.states.num(); k++) {
-                        int stateid = newGroup.states.get(k);
-                        abstractSpace.states[stateid] = newGroup.groupId;
-                    }
-                    // System.out.println("Added group: "+newGroup);
-                    currentNum++;
-                    totalSize += newGroup.getSize();
-                }
-            }
-        }
-
-        abstractSpace.setNumAbstractStates(abstractSpace.getGroups().size());
-        System.out.println("Number of areas: " + abstractSpace.getNumAbstractStates() + " Total size: " + totalSize);
-        long endTime = System.currentTimeMillis();
-        System.out.println("Time to compute abstraction: " + (endTime - currentTime));
-        dbstat.addStat(12, endTime - currentTime);
-        dbstat.addStat(11, currentNum);
-        dbstat.addStat(7, currentNum);
-
-        return abstractSpace;
-    }
+//    /**
+//     * Given this search space, performs clique abstraction one more level.
+//     * If no abstraction is performed, does initial level 1 abstraction (finding cliques of base states).
+//     *
+//     * @return
+//     */
+//    public SearchSpace cliqueAbstract(DBStatsRecord dbstat) {
+//        // Create new abstract search space (the abstraction result)
+//        SearchSpace abstractSpace = new SearchSpace(problem);
+//        problem.setSearchSpace(this);
+//        abstractSpace.colors = this.colors;
+//        int currentNum = GameMap.START_NUM;
+//        GroupRecord group;
+//        SearchState currentState = new SearchState();
+//        abstractSpace.groups = new TreeMap<Integer, GroupRecord>();
+//        ExpandArray neighbors = new ExpandArray(10);
+//        ExpandArray neighborsAddNode = new ExpandArray(10);
+//        ExpandArray clique = new ExpandArray(100);
+//        ExpandArray groupNeighbors = new ExpandArray(1000);
+//
+//        long currentTime = System.currentTimeMillis();
+//        int totalSize = 0;
+//
+//        if (this.groups == null || this.groups.size() == 0) {    // No abstraction (or grouping) has been performed yet on this search problem.  Perform first level of abstraction
+//            // Iterate through the ResultSet building cliques of base states
+//
+//            problem.initIterator();
+//            while (problem.nextState(currentState)) {
+//                if (abstractSpace.states[currentState.id] != 0) continue;
+//                // Calculate clique here.  Get all neighbors.
+//                problem.getNeighbors(currentState.id, neighbors);
+//                // System.out.println("State id: "+currentState.id+" Neighbors: "+neighbors);
+//                groupNeighbors.clear();
+//                groupNeighbors.addAll(neighbors);        // All neighbors of this node added to clique will be neighbors of the group.
+//                // The state and all its neighbors are not necessarily a clique as the neighbors may not be mutually reachable.
+//                // IDEA: Add start state and a neighbor at a time always checking to see if still a clique.
+//                clique.clear();
+//                clique.add(currentState.id);
+//                boolean inClique = true;
+//                for (int i = 0; i < neighbors.num(); i++) {
+//                    int addNodeId = neighbors.get(i);
+//                    if (abstractSpace.states[addNodeId] != 0) continue;
+//                    // Check if all nodes currently in clique have an edge with this one that we are currently trying to add (are neighbors)
+//                    for (int j = 0; j < clique.num(); j++) {
+//                        if (!problem.isNeighbor(addNodeId, clique.get(j))) {
+//                            inClique = false;
+//                            break;
+//                        }
+//                    }
+//                    if (inClique) {    // Add state to clique
+//                        clique.add(addNodeId);
+//                        problem.getNeighbors(addNodeId, neighborsAddNode);
+//                        groupNeighbors.addAll(neighborsAddNode);
+//                    }
+//                }
+//
+//                group = new GroupRecord();
+//                group.groupId = currentNum;
+//                group.groupRepId = currentState.id;
+//                group.states = new ArrayList<Integer>(clique);
+//                group.setNumStates(clique.num());
+//                group.setNeighbors(groupNeighbors);
+//                abstractSpace.groups.put(group.groupId, group);
+//                // Update the states array to track states that have been assigned to groups already
+//                for (int k = 0; k < clique.num(); k++) {
+//                    int stateid = clique.get(k);
+//                    abstractSpace.states[stateid] = currentNum;
+//                }
+//                // System.out.println("Added group: "+group);
+//                currentNum++;
+//                totalSize += group.getSize();
+//            }
+//        } else {    // Perform level 2 or higher abstraction
+//            // IDEA: Iterate through the groups.  Find all neighbors for all states in the group.  Any of those are then reachable.
+//            boolean inClique;
+//
+//            for (Integer integer : this.groups.keySet()) {
+//                GroupRecord g = groups.get(integer);
+//                if (abstractSpace.states[g.groupRepId] != 0)
+//                    continue;    // Group has already been merged with another group
+//                GroupRecord newGroup = new GroupRecord();
+//                newGroup.groupId = currentNum;
+//                newGroup.groupRepId = g.groupRepId;
+//                newGroup.states = new ArrayList<Integer>(g.states);
+//                newGroup.setNumStates(g.getSize());
+//                groupNeighbors.clear();
+//                groupNeighbors.addAll(g.getNeighborIds());
+//                newGroup.setNeighbors(groupNeighbors);
+//                ArrayList<GroupRecord> groupsInClique = new ArrayList<GroupRecord>();
+//                groupsInClique.add(g);
+//                // System.out.println(" Started this group: "+g);
+//                // 	Iterate through all neighbor nodes of this group.
+//                HashSet<Integer> n = g.getNeighborIds();
+//                for (int neighborId : n) {
+//                    int neighborGroupId = states[neighborId];
+//                    GroupRecord neighborGroup = groups.get(neighborGroupId);
+//                    if (neighborGroupId == g.groupId || abstractSpace.states[neighborId] != 0)
+//                        continue;                        // Node is already in the group or group has already been merged with another
+//                    // Merge this group into the new group as long as it is connected to all members currently in the group
+//                    // See if all groups currently in clique are neighbors with this one
+//                    inClique = true;
+//                    for (GroupRecord gInClique : groupsInClique) {
+//                        if (!gInClique.isNeighbor(neighborGroup)) {
+//                            inClique = false;
+//                            break;
+//                        }
+//                    }
+//                    if (inClique) {    // Add group to clique
+//                        groupsInClique.add(neighborGroup);
+//                        groupNeighbors.addAll(neighborGroup.getNeighborIds());
+//                        newGroup.states.addAllDistinct(neighborGroup.states);
+//                        // System.out.println(" Merged this group: "+neighborGroup);
+//                    }
+//                }    // end while
+//
+//                // Handle the case where the abstract state is merged with no one yet.  Merge it with someone even though it is not a clique.
+//                if (groupsInClique.size() == 1) {    // Merge with one of its other groups
+//                    // Find a neighbor group to merge with
+//                    // System.out.println("Special case.   Merging group with no clique neighbors: "+newGroup);
+//                    Iterator<Integer> it = n.iterator();
+//                    GroupRecord neighborGroup;
+//                    while (it.hasNext()) {
+//                        int neighborId = it.next();
+//                        int neighborGroupId = abstractSpace.states[neighborId];
+//                        neighborGroup = abstractSpace.groups.get(neighborGroupId);  // Retrieve the group for this neighbor
+//                        if (neighborGroupId == g.groupId || neighborGroup == null) continue;
+//                        int prevNum = neighborGroup.getSize();
+//                        neighborGroup.setNumStates(prevNum + g.getSize());
+//                        groupNeighbors.addAll(neighborGroup.getNeighborIds());
+//                        neighborGroup.setNeighbors(groupNeighbors);
+//                        neighborGroup.states.addAll(newGroup.states);
+//
+//                        // Update the states array to track states that have been assigned to groups already
+//                        for (int k = 0; k < newGroup.states.num(); k++) {
+//                            int stateid = newGroup.states.get(k);
+//                            abstractSpace.states[stateid] = neighborGroupId;
+//                        }
+//                        totalSize += g.getSize();
+//                        // System.out.println("Merged into group: "+neighborGroup);
+//                        break;    // Only need to merge with one group
+//                    }
+//                } else {
+//                    // Now add clique of groups as new group
+//                    newGroup.setNumStates(newGroup.states.num());
+//                    newGroup.setNeighbors(groupNeighbors);
+//                    abstractSpace.groups.put(newGroup.groupId, newGroup);
+//                    // Update the states array to track states that have been assigned to groups already
+//                    for (int k = 0; k < newGroup.states.num(); k++) {
+//                        int stateid = newGroup.states.get(k);
+//                        abstractSpace.states[stateid] = newGroup.groupId;
+//                    }
+//                    // System.out.println("Added group: "+newGroup);
+//                    currentNum++;
+//                    totalSize += newGroup.getSize();
+//                }
+//            }
+//        }
+//
+//        abstractSpace.setNumAbstractStates(abstractSpace.getGroups().size());
+//        System.out.println("Number of areas: " + abstractSpace.getNumAbstractStates() + " Total size: " + totalSize);
+//        long endTime = System.currentTimeMillis();
+//        System.out.println("Time to compute abstraction: " + (endTime - currentTime));
+//        dbstat.addStat(12, endTime - currentTime);
+//        dbstat.addStat(11, currentNum);
+//        dbstat.addStat(7, currentNum);
+//
+//        return abstractSpace;
+//    }
 
     public GroupRecord expandSpot(SearchState seed, int currentNum, SearchAbstractAlgorithm searchAlg, SavedSearch database) {
         BitSet currentSet = new BitSet(numStates);                // TODO: This is a major memory consumer - but clearing seems to be slower?  True?

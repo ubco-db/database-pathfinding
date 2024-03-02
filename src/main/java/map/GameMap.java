@@ -1,13 +1,15 @@
 package map;
 
+import comparison.ChangedPath;
 import database.DBStatsRecord;
 import database.SubgoalDynamicDB3;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import search.*;
-import comparison.ChangedPath;
+import search.SavedSearch;
+import search.SearchAbstractAlgorithm;
+import search.SearchState;
+import search.StatsRecord;
 import util.CircularQueue;
-import util.DBAStarUtil;
 import util.ExpandArray;
 import util.HeuristicFunction;
 
@@ -680,7 +682,7 @@ public class GameMap {
         group.setNumStates(1);
         int id, seedId = baseMap.getId(seedRow, seedCol);
         group.setGroupRepId(seedId);
-        group.states = new ExpandArray(50);
+        group.states = new ArrayList<>(50);
         group.states.add(seedId);
 
         StatsRecord stats = new StatsRecord();
@@ -736,7 +738,7 @@ public class GameMap {
         }
 
         // group.setNumStates(currentSet.getSize());
-        group.setNumStates(group.states.num());
+        group.setNumStates(group.states.size());
         return group;
     }
 
@@ -1558,7 +1560,8 @@ public class GameMap {
                         // Determine the number of new cells covered
                         GroupRecord grec = recs.get(this.getId(r, c));
                         int newCount = 0;
-                        for (int a = 0; a < grec.states.num(); a++)
+                        // TODO: Make sure this still works as expected
+                        for (int a = 0; a < grec.states.size(); a++)
                             if (!coveredStates.get(grec.states.get(a))) newCount++;
 
                         if (bestCoverage == null || newCount > bestCoverCount) {
@@ -1577,7 +1580,8 @@ public class GameMap {
                 coveredStates.set(maxCoverageStateId);
                 // Set all newly covered states and update in map
                 baseMap.squares[baseMap.getRow(maxCoverageStateId)][baseMap.getCol(maxCoverageStateId)] = currentNum;
-                for (int a = 0; a < bestCoverage.states.num(); a++) {
+                // TODO: Make sure this still works as expected
+                for (int a = 0; a < bestCoverage.states.size(); a++) {
                     int id = bestCoverage.states.get(a);
                     if (coveredStates.get(bestCoverage.states.get(a))) continue;
                     coveredStates.set(id);
@@ -1602,7 +1606,8 @@ public class GameMap {
 
                         GroupRecord grec = expandSpotCover(r, c, currentNum, baseMap, searchAlg, database, currentSet, coveredStates);
                         int newCount = 0;
-                        for (int a = 0; a < grec.states.num(); a++)
+                        // TODO: Make sure this still works as expected
+                        for (int a = 0; a < grec.states.size(); a++)
                             if (!coveredStates.get(grec.states.get(a))) newCount++;
 
                         if (bestCoverage == null || newCount > bestCoverCount) {
@@ -1619,7 +1624,8 @@ public class GameMap {
 
                 coveredStates.set(maxCoverageStateId);
                 // Set all newly covered states
-                for (int a = 0; a < bestCoverage.states.num(); a++)
+                // TODO: Make sure this still works as expected
+                for (int a = 0; a < bestCoverage.states.size(); a++)
                     coveredStates.set(bestCoverage.states.get(a));
 
                 baseMap.groups.put(currentNum++, bestCoverage);
@@ -2482,7 +2488,7 @@ public class GameMap {
                         newrec.setNumStates(1);
                         newrec.groupId = groupId;
                         newrec.groupRepId = this.getId(i, j);
-                        newrec.states = new ExpandArray(10);
+                        newrec.states = new ArrayList<>(10);
                         newrec.states.add(newrec.groupRepId);
                         this.addGroup(groupId, newrec);
                     } else {    // Update group
@@ -2513,9 +2519,9 @@ public class GameMap {
         for (Entry<Integer, GroupRecord> integerGroupRecordEntry : groups.entrySet()) {    // Find centroid for each record
             GroupRecord rec = integerGroupRecordEntry.getValue();
             long sumRow = 0, sumCol = 0, N = rec.getSize();
-            ExpandArray states = rec.states;
+            ArrayList states = rec.states;
             for (int i = 0; i < N; i++) {
-                int id = states.get(i);
+                int id = (int) states.get(i);
                 sumRow += this.getRow(id);
                 sumCol += this.getCol(id);
             }
@@ -2525,7 +2531,7 @@ public class GameMap {
                 // Find the point that is in the group that is closest
                 int minDist = 10000, minRow = -1, minCol = -1;
                 for (int i = 0; i < N; i++) {
-                    int id = states.get(i);
+                    int id = (int) states.get(i);
                     int r = this.getRow(id);
                     int c = this.getCol(id);
                     int dist = GameMap.computeDistance(row, col, r, c);
@@ -2558,7 +2564,7 @@ public class GameMap {
         // TODO: states will not always contain wallLoc
 
         long sumRow = 0, sumCol = 0, N = rec.getSize() - 1; // TODO: replace with ArrayList length
-        ExpandArray states = rec.states; // QUESTION: Why are we using ExpandArray here? Array should be enough
+        ArrayList<Integer> states = rec.states; // QUESTION: Why are we using ExpandArray here? Array should be enough
         for (int i = 0; i < (N + 1); i++) { // TODO: replace 1 with ArrayList length
             int id = states.get(i);
             if (id != wallLoc) { // TODO: replace this with search in ArrayList
@@ -2603,7 +2609,7 @@ public class GameMap {
         // regionReps = new ArrayList<>();
 
         long sumRow = 0, sumCol = 0, N = rec.getSize(); // TODO: replace with ArrayList length
-        ExpandArray states = rec.states; // QUESTION: Why are we using ExpandArray here? Array should be enough
+        ArrayList<Integer> states = rec.states; // QUESTION: Why are we using ExpandArray here? Array should be enough
         for (int i = 0; i < N; i++) { // TODO: replace 1 with ArrayList length
             int id = states.get(i);
             sumRow += this.getRow(id);
@@ -2644,7 +2650,7 @@ public class GameMap {
 
     public int recomputeCentroid3(GroupRecord rec) {
         long sumRow = 0, sumCol = 0, N = rec.getSize();
-        ExpandArray states = rec.states;
+        ArrayList<Integer> states = rec.states;
         for (int i = 0; i < N; i++) {
             int id = states.get(i);
             sumRow += this.getRow(id);
@@ -2680,7 +2686,6 @@ public class GameMap {
 //    }
 
     public int getRegionRepFromRegionId(int regionId) {
-        System.out.println("regionId: " + regionId);
         if (regionId == 42) {
             logger.error("Cannot find region id from wall!");
         }
@@ -2693,5 +2698,9 @@ public class GameMap {
 
     public int getRegionRepFromState(int sid) {
         return getRegionRepFromRowAndCol(this.getRow(sid), this.getCol(sid));
+    }
+
+    public void tombstoneRegionRepUsingRegionId(int regionId) {
+        regionReps[regionId - GameMap.START_NUM] = -1;
     }
 }

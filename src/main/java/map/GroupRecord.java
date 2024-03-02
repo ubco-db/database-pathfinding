@@ -2,18 +2,19 @@ package map;
 
 import util.ExpandArray;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
 public class GroupRecord {
     public int groupId;
     public int groupRepId;
-    public ExpandArray states;
+    public ArrayList<Integer> states;
     private int numStates;
     private HashSet<Integer> neighborIds;
     private HashSet<Integer> computedNeighborIds;
 
     public GroupRecord() {
-        states = new ExpandArray();
+        states = new ArrayList<Integer>();
     }
 
     public int getSize() {
@@ -73,7 +74,7 @@ public class GroupRecord {
         this.computedNeighborIds = immediateNeighborIds;
     }
 
-    public void setStates(ExpandArray states) {
+    public void setStates(ArrayList<Integer> states) {
         this.states = states;
     }
 

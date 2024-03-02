@@ -1,6 +1,9 @@
 package util;
 
-import database.*;
+import database.DBStats;
+import database.DBStatsRecord;
+import database.GameDB;
+import database.SubgoalDynamicDB3;
 import map.GameMap;
 import map.GroupRecord;
 import org.apache.logging.log4j.LogManager;
@@ -10,7 +13,6 @@ import search.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.TreeMap;
-import java.util.stream.Stream;
 
 public class DBAStarUtil2 {
     private final int startNum;
@@ -312,7 +314,13 @@ public class DBAStarUtil2 {
 
         // Region Partition case
 
+
+
         // Wall on Region Representative case
+
+        if (wallLoc == regionRep) {
+
+        }
 
         // Wall That Moves Region Representative case
 
@@ -325,10 +333,6 @@ public class DBAStarUtil2 {
      */
     public void recomputeWallRemovalUsingSubgoalDynamicDB3(int wallLoc, DBAStar dbaStarBW) {
 
-    }
-
-    private boolean isWallAtEdgeOfSector() {
-        // TODO: Implement
     }
 
     private boolean hasNoOtherPointOfContact() {
