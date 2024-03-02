@@ -241,10 +241,15 @@ public class DBAStarUtil2 {
         if (isAtSectorEdge) {
             // TODO: Eliminate the state in the states ArrayList inside the groups map
 
-            boolean isTopLeftCorner = wallRow == startRow && wallCol == startCol;
-            boolean isTopRightCorner = wallRow == startRow && wallCol == endCol;
-            boolean isBottomRightCorner = wallRow == endRow && wallCol == endCol;
-            boolean isBottomLeftCorner = wallRow == endRow && wallCol == startCol;
+            boolean isNorthEdge = wallRow == startRow;
+            boolean isEastEdge = wallCol == endCol;
+            boolean isSouthEdge = wallRow == endRow;
+            boolean isWestEdge = wallCol == startCol;
+
+            boolean isTopLeftCorner = isNorthEdge && isWestEdge;
+            boolean isTopRightCorner = isNorthEdge && isEastEdge;
+            boolean isBottomRightCorner = isSouthEdge && isEastEdge;
+            boolean isBottomLeftCorner = isSouthEdge && isWestEdge;
 
             int neighbourRegion = regionId;
             int neighbourRegionRep = -1;
@@ -268,8 +273,16 @@ public class DBAStarUtil2 {
             }
 
             // TODO: deal with edge cases
+
             // Edge case
-            if (isWallAtEdgeOfSector() && hasNoOtherPointOfContact()) {
+
+            if (isNorthEdge && hasNoOtherPointOfContact()) {
+
+            } else if (isEastEdge && hasNoOtherPointOfContact()) {
+
+            } else if (isSouthEdge && hasNoOtherPointOfContact()) {
+
+            } else if (isWestEdge && hasNoOtherPointOfContact()) {
 
             }
 
