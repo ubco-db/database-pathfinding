@@ -272,11 +272,38 @@ public class DBAStarUtil2 {
                     neighbourRegionRep = map.getRegionRepFromState(neighborSouthWest);
                 }
 
-                // TODO: deal with edge cases
+                if (neighbourRegion == regionId) {
+                    throw new Exception("NeighbourRegion id calculation went wrong!");
+                }
+
+                if (neighbourRegionRep == -1) {
+                    throw new Exception("Region rep for region " + regionId + "does not exist!");
+                }
+
+                // Pathblocker corner case
+                // TODO: Figure out a better way to combine code for edge case and corner case
+                if (neighbourRegion != 0) {
+                    // Eliminate the state in the states ArrayList inside the groups map
+                    groupRecord.states.remove((Integer) wallLoc);
+
+                    // Get the neighbours of the region
+                    HashSet<Integer> neighbours = groupRecord.getNeighborIds();
+                    // Update region’s neighbourhood in groups map
+                    neighbours.remove(neighbourRegion);
+
+                    // Get the neighbours of its soon-to-be ex-neighbor
+                    GroupRecord neighborRecord = groups.get(regionRep);
+                    HashSet<Integer> neighboursOfEx = neighborRecord.getNeighborIds();
+                    // Update old neighbour’s neighbourhood in groups map
+                    neighboursOfEx.remove(regionId);
+
+                    // TODO: Database changes
+                }
 
                 // Edge cases (check if wall is at the edge of a sector and whether the region bordering this edge has
                 // any other touching points with the region)
 
+                // TODO: Check my math here!
                 if (isNorthEdge && !map.isWall(neighborNorth)) {
                     if (hasNoOtherPointOfContactHorizontally(map, regionId, startCol, wallRow, wallCol, wallRow - 1)) {
                         neighbourRegion = map.squares[wallRow - 1][wallCol];
@@ -307,7 +334,8 @@ public class DBAStarUtil2 {
                     throw new Exception("Region rep for region " + regionId + "does not exist!");
                 }
 
-                // Pathblocker case
+                // Pathblocker edge case
+                // TODO: Figure out a better way to combine code for edge case and corner case
                 if (neighbourRegion != 0) {
                     // Eliminate the state in the states ArrayList inside the groups map
                     groupRecord.states.remove((Integer) wallLoc);
