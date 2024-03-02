@@ -209,122 +209,121 @@ public class DBAStarUtil2 {
             // Tombstone region in region reps array
             map.tombstoneRegionRepUsingRegionId(regionId);
         } else {
+            int numSectorsPerRow = (int) Math.ceil(map.cols * 1.0 / gridSize);
+            int sectorId = wallRow / gridSize * numSectorsPerRow + wallCol / gridSize;
 
+            // Start of sector
+            int startRow = (sectorId / numSectorsPerRow) * gridSize;
+            int startCol = (sectorId % numSectorsPerRow) * gridSize;
+            // End of sector
+            int endRow = Math.min(startRow + gridSize, map.rows);
+            int endCol = Math.min(startCol + gridSize, map.cols);
+
+            // Eight neighbours (states touching wall state)
+            int neighborNorth = map.squares[wallRow - 1][wallCol];
+
+            // Need to check boundaries for bottom row of map (if not on map, treat square as wall)
+            // TODO: Do I really need to check all of these?
+            int neighborNorthEast = map.isValid(wallRow - 1, wallCol + 1) ? map.squares[wallRow - 1][wallCol + 1] : 42;
+            int neighborEast = map.isValid(wallRow, wallCol + 1) ? map.squares[wallRow][wallCol + 1] : 42;
+            int neighborSouthEast = map.isValid(wallRow + 1, wallCol + 1) ? map.squares[wallRow + 1][wallCol + 1] : 42;
+            int neighborSouth = map.isValid(wallRow + 1, wallCol) ? map.squares[wallRow + 1][wallCol] : 42;
+            int neighborSouthWest = map.isValid(wallRow + 1, wallCol - 1) ? map.squares[wallRow + 1][wallCol - 1] : 42;
+
+            int neighborWest = map.squares[wallRow][wallCol - 1];
+            int neighborNorthWest = map.squares[wallRow - 1][wallCol - 1];
+
+            // Pathblocker cases
+
+            boolean isAtSectorEdge = wallRow == startRow || wallRow == endRow || wallCol == startCol || wallCol == endCol;
+
+            if (isAtSectorEdge) {
+                // Eliminate the state in the states ArrayList inside the groups map
+                groupRecord.states.remove((Integer) wallLoc);
+
+                boolean isNorthEdge = wallRow == startRow;
+                boolean isEastEdge = wallCol == endCol;
+                boolean isSouthEdge = wallRow == endRow;
+                boolean isWestEdge = wallCol == startCol;
+
+                boolean isTopLeftCorner = isNorthEdge && isWestEdge;
+                boolean isTopRightCorner = isNorthEdge && isEastEdge;
+                boolean isBottomRightCorner = isSouthEdge && isEastEdge;
+                boolean isBottomLeftCorner = isSouthEdge && isWestEdge;
+
+                int neighbourRegion = regionId;
+                int neighbourRegionRep = -1;
+
+                // Corner cases (check if wall is in a sector corner and get the region id of the corner this corner is
+                // touching, if applicable
+
+                // TODO: Check my math here!
+                if (isTopLeftCorner && !map.isWall(neighborNorthWest)) {
+                    neighbourRegion = map.squares[wallRow - 1][wallCol - 1];
+                    neighbourRegionRep = map.getRegionRepFromState(neighborNorthWest);
+                } else if (isTopRightCorner && !map.isWall(neighborNorthEast)) {
+                    neighbourRegion = map.squares[wallRow - 1][wallCol + 1];
+                    neighbourRegionRep = map.getRegionRepFromState(neighborNorthEast);
+                } else if (isBottomRightCorner && !map.isWall(neighborSouthEast)) {
+                    neighbourRegion = map.squares[wallRow + 1][wallCol + 1];
+                    neighbourRegionRep = map.getRegionRepFromState(neighborSouthEast);
+                } else if (isBottomLeftCorner && !map.isWall(neighborSouthWest)) {
+                    neighbourRegion = map.squares[wallRow + 1][wallCol - 1];
+                    neighbourRegionRep = map.getRegionRepFromState(neighborSouthWest);
+                }
+
+                // TODO: deal with edge cases
+
+                // Edge case
+
+                if (isNorthEdge && hasNoOtherPointOfContact()) {
+
+                } else if (isEastEdge && hasNoOtherPointOfContact()) {
+
+                } else if (isSouthEdge && hasNoOtherPointOfContact()) {
+
+                } else if (isWestEdge && hasNoOtherPointOfContact()) {
+
+                }
+
+                if (neighbourRegion == regionId) {
+                    throw new Exception("NeighbourRegion id calculation went wrong!");
+                }
+
+                if (neighbourRegionRep == -1) {
+                    throw new Exception("Region rep for region " + regionId + "does not exist!");
+                }
+
+                // Update region’s neighbourhood in groups map
+
+                // Get the neighbours of the region
+                HashSet<Integer> neighbours = groupRecord.getNeighborIds();
+
+                neighbours.remove(neighbourRegion);
+
+                // Update old neighbour’s neighbourhood in groups map
+
+                // Get the neighbours of its soon-to-be ex-neighbor
+                GroupRecord neighborRecord = groups.get(regionRep);
+                HashSet<Integer> neighboursOfEx = neighborRecord.getNeighborIds();
+
+                neighboursOfEx.remove(regionId);
+            }
+
+            // Region Partition case
+
+
+
+            // Wall on Region Representative case
+
+            if (wallLoc == regionRep) {
+
+            }
+
+            // Wall That Moves Region Representative case
+
+            // Wall That Changes Shortest Path
         }
-
-        int numSectorsPerRow = (int) Math.ceil(map.cols * 1.0 / gridSize);
-        int sectorId = wallRow / gridSize * numSectorsPerRow + wallCol / gridSize;
-
-        // Start of sector
-        int startRow = (sectorId / numSectorsPerRow) * gridSize;
-        int startCol = (sectorId % numSectorsPerRow) * gridSize;
-        // End of sector
-        int endRow = Math.min(startRow + gridSize, map.rows);
-        int endCol = Math.min(startCol + gridSize, map.cols);
-
-        // Eight neighbours (states touching wall state)
-        int neighborNorth = map.squares[wallRow - 1][wallCol];
-
-        // Need to check boundaries for bottom row of map (if not on map, treat square as wall)
-        // TODO: Do I really need to check all of these?
-        int neighborNorthEast = map.isValid(wallRow - 1, wallCol + 1) ? map.squares[wallRow - 1][wallCol + 1] : 42;
-        int neighborEast = map.isValid(wallRow, wallCol + 1) ? map.squares[wallRow][wallCol + 1] : 42;
-        int neighborSouthEast = map.isValid(wallRow + 1, wallCol + 1) ? map.squares[wallRow + 1][wallCol + 1] : 42;
-        int neighborSouth = map.isValid(wallRow + 1, wallCol) ? map.squares[wallRow + 1][wallCol] : 42;
-        int neighborSouthWest = map.isValid(wallRow + 1, wallCol - 1) ? map.squares[wallRow + 1][wallCol - 1] : 42;
-
-        int neighborWest = map.squares[wallRow][wallCol - 1];
-        int neighborNorthWest = map.squares[wallRow - 1][wallCol - 1];
-
-        // Pathblocker cases
-
-        boolean isAtSectorEdge = wallRow == startRow || wallRow == endRow || wallCol == startCol || wallCol == endCol;
-
-        if (isAtSectorEdge) {
-            // TODO: Eliminate the state in the states ArrayList inside the groups map
-
-            boolean isNorthEdge = wallRow == startRow;
-            boolean isEastEdge = wallCol == endCol;
-            boolean isSouthEdge = wallRow == endRow;
-            boolean isWestEdge = wallCol == startCol;
-
-            boolean isTopLeftCorner = isNorthEdge && isWestEdge;
-            boolean isTopRightCorner = isNorthEdge && isEastEdge;
-            boolean isBottomRightCorner = isSouthEdge && isEastEdge;
-            boolean isBottomLeftCorner = isSouthEdge && isWestEdge;
-
-            int neighbourRegion = regionId;
-            int neighbourRegionRep = -1;
-
-            // Corner cases (check if wall is in a sector corner and get the region id of the corner this corner is
-            // touching, if applicable
-
-            // TODO: Check my math here!
-            if (isTopLeftCorner && !map.isWall(neighborNorthWest)) {
-                neighbourRegion = map.squares[wallRow - 1][wallCol - 1];
-                neighbourRegionRep = map.getRegionRepFromState(neighborNorthWest);
-            } else if (isTopRightCorner && !map.isWall(neighborNorthEast)) {
-                neighbourRegion = map.squares[wallRow - 1][wallCol + 1];
-                neighbourRegionRep = map.getRegionRepFromState(neighborNorthEast);
-            } else if (isBottomRightCorner && !map.isWall(neighborSouthEast)) {
-                neighbourRegion = map.squares[wallRow + 1][wallCol + 1];
-                neighbourRegionRep = map.getRegionRepFromState(neighborSouthEast);
-            } else if (isBottomLeftCorner && !map.isWall(neighborSouthWest)) {
-                neighbourRegion = map.squares[wallRow + 1][wallCol - 1];
-                neighbourRegionRep = map.getRegionRepFromState(neighborSouthWest);
-            }
-
-            // TODO: deal with edge cases
-
-            // Edge case
-
-            if (isNorthEdge && hasNoOtherPointOfContact()) {
-
-            } else if (isEastEdge && hasNoOtherPointOfContact()) {
-
-            } else if (isSouthEdge && hasNoOtherPointOfContact()) {
-
-            } else if (isWestEdge && hasNoOtherPointOfContact()) {
-
-            }
-
-            if (neighbourRegion == regionId) {
-                throw new Exception("NeighbourRegion id calculation went wrong!");
-            }
-
-            if (neighbourRegionRep == -1) {
-                throw new Exception("Region rep for region " + regionId + "does not exist!");
-            }
-
-            // Update region’s neighbourhood in groups map
-
-            // Get the neighbours of the region
-            HashSet<Integer> neighbours = groupRecord.getNeighborIds();
-
-            neighbours.remove(neighbourRegion);
-
-            // Update old neighbour’s neighbourhood in groups map
-
-            // Get the neighbours of its soon-to-be ex-neighbor
-            GroupRecord neighborRecord = groups.get(regionRep);
-            HashSet<Integer> neighboursOfEx = neighborRecord.getNeighborIds();
-
-            neighboursOfEx.remove(regionId);
-        }
-
-        // Region Partition case
-
-
-
-        // Wall on Region Representative case
-
-        if (wallLoc == regionRep) {
-
-        }
-
-        // Wall That Moves Region Representative case
-
-        // Wall That Changes Shortest Path
     }
 
     /**
