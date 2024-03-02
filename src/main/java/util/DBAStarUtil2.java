@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.TreeMap;
 
+import static util.MapHelpers.isPathPossible;
+
 public class DBAStarUtil2 {
     private final int startNum;
     private final int gridSize;
@@ -365,30 +367,46 @@ public class DBAStarUtil2 {
                 }
             }
 
-            // Region Partition case
-            // TODO: If wall between two walls, or between a wall and another region, we may have partition
+            // Wall on Region Representative case
+            // TODO: Consider blocker and wall on rep case
+            if (wallLoc == REGION_REP) {
+                // Eliminate the state in the states ArrayList inside the groups map
+                groupRecord.states.remove((Integer) wallLoc);
 
-            boolean isVerticalWall = isContinuousWall(map, NEIGHBOR_S, NEIGHBOR_N);
-            boolean isHorizontalWall = isContinuousWall(map, NEIGHBOR_W, NEIGHBOR_E);
-
-            boolean isBetweenVertical = isBetweenWallAndOtherRegion(map, NEIGHBOR_S, NEIGHBOR_N, REGION_ID);
-            boolean isBetweenHorizontal = isBetweenWallAndOtherRegion(map, NEIGHBOR_W, NEIGHBOR_E, REGION_ID);
-
-            if ()
+                // Compute new region rep for the region by finding center of the region, and updating group record with
+                // this information and update region reps array to contain new region rep
+                map.recomputeCentroid2(groupRecord, wallLoc);
 
                 // TODO: Database changes
+            }
 
-                // Wall on Region Representative case
-                if (wallLoc == REGION_REP) {
-                    // Eliminate the state in the states ArrayList inside the groups map
-                    groupRecord.states.remove((Integer) wallLoc);
+            // Region Partition case
 
-                    // Compute new region rep for the region by finding center of the region, and updating group record with
-                    // this information and update region reps array to contain new region rep
-                    map.recomputeCentroid2(groupRecord, wallLoc);
+            // If wall is between two walls, or between a wall and another region, we may have partition
+            boolean isVerticalWall = isContinuousWall(map, NEIGHBOR_S, NEIGHBOR_N);
+            boolean isHorizontalWall = isContinuousWall(map, NEIGHBOR_W, NEIGHBOR_E);
+            boolean isBetweenVertical = !isVerticalWall && isBetweenWallAndOtherRegion(map, NEIGHBOR_S, NEIGHBOR_N, REGION_ID);
+            boolean isBetweenHorizontal = !isHorizontalWall && isBetweenWallAndOtherRegion(map, NEIGHBOR_W, NEIGHBOR_E, REGION_ID);
 
-                    // TODO: Database changes
-                }
+            // If we have an open diagonal,
+
+            boolean verticalPartition = false;
+            boolean horizontalPartition = false;
+            boolean diagonalPartition = false;
+
+            if (isVerticalWall || isBetweenVertical) {
+                // Check that we can still reach west to east without leaving the region
+                verticalPartition = !isPathPossible(map.squares, new int[]{WALL_ROW, WALL_COL - 1}, new int[]{WALL_ROW, WALL_COL + 1}, REGION_ID);
+            }
+
+            if (isHorizontalWall || isBetweenHorizontal) {
+                // Check that we can still reach north to south without leaving the region
+                horizontalPartition = !isPathPossible(map.squares, new int[]{WALL_ROW - 1, WALL_COL}, new int[]{WALL_ROW + 1, WALL_COL}, REGION_ID);
+            }
+
+            if (verticalPartition || horizontalPartition || diagonalPartition) {
+                // TODO: Database changes
+            }
 
             // Eliminate the state in the states ArrayList inside the groups map
             groupRecord.states.remove((Integer) wallLoc);
