@@ -212,6 +212,7 @@ public class DBAStarUtil2 {
             // TODO: Database changes
         } else {
             // Other cases
+            boolean isBlocker = false;
 
             int numSectorsPerRow = (int) Math.ceil(map.cols * 1.0 / gridSize);
             int sectorId = wallRow / gridSize * numSectorsPerRow + wallCol / gridSize;
@@ -240,6 +241,7 @@ public class DBAStarUtil2 {
             boolean isAtSectorEdge = wallRow == startRow || wallRow == endRow || wallCol == startCol || wallCol == endCol;
 
             // If we are placing a wall at the edge of a sector, we may have a pathblocker case
+            // A maximum of (4 * 16 - 4) / (16 * 16) = 60 / 256 states per sector are affected
             if (isAtSectorEdge) {
                 boolean isNorthEdge = wallRow == startRow;
                 boolean isEastEdge = wallCol == endCol;
@@ -258,6 +260,8 @@ public class DBAStarUtil2 {
                 // touching, if applicable
 
                 // TODO: Check my math here!
+                // If the wall is in a corner and the state diagonal to it is not a wall, we have a corner blocker
+                // This means the two regions that are currently neighbours shouldn't be anymore
                 if (isTopLeftCorner && !map.isWall(neighborNorthWest)) {
                     neighbourRegion = map.squares[wallRow - 1][wallCol - 1];
                     neighbourRegionRep = map.getRegionRepFromState(neighborNorthWest);
@@ -283,6 +287,8 @@ public class DBAStarUtil2 {
                 // Pathblocker corner case
                 // TODO: Figure out a better way to combine code for edge case and corner case
                 if (neighbourRegion != 0) {
+                    isBlocker = true;
+
                     // Eliminate the state in the states ArrayList inside the groups map
                     groupRecord.states.remove((Integer) wallLoc);
 
@@ -300,10 +306,17 @@ public class DBAStarUtil2 {
                     // TODO: Database changes
                 }
 
+                // Reset values before edge tests
+                neighbourRegion = 0;
+                neighbourRegionRep = 0;
+
                 // Edge cases (check if wall is at the edge of a sector and whether the region bordering this edge has
                 // any other touching points with the region)
 
                 // TODO: Check my math here!
+                // If the wall is at an edge and the state next to it is not a wall, and this was the only touching point
+                // between two regions, we have an edge blocker
+                // This means the two regions that are currently neighbours shouldn't be anymore
                 if (isNorthEdge && !map.isWall(neighborNorth)) {
                     if (hasNoOtherPointOfContactHorizontally(map, regionId, startCol, wallRow, wallCol, wallRow - 1)) {
                         neighbourRegion = map.squares[wallRow - 1][wallCol];
@@ -337,6 +350,8 @@ public class DBAStarUtil2 {
                 // Pathblocker edge case
                 // TODO: Figure out a better way to combine code for edge case and corner case
                 if (neighbourRegion != 0) {
+                    isBlocker = true;
+
                     // Eliminate the state in the states ArrayList inside the groups map
                     groupRecord.states.remove((Integer) wallLoc);
 
@@ -355,34 +370,40 @@ public class DBAStarUtil2 {
                 }
             }
 
-            // Region Partition case
-            // TODO: Database changes
+            if (!isBlocker) {
+                // Region Partition case
 
-            // Wall on Region Representative case
-            if (wallLoc == regionRep) {
+                // If we get here, we must be fully inside a sector as we have checked the entire edge of the sector above
+
+
+                // TODO: Database changes
+
+                // Wall on Region Representative case
+                if (wallLoc == regionRep) {
+                    // Eliminate the state in the states ArrayList inside the groups map
+                    groupRecord.states.remove((Integer) wallLoc);
+
+                    // Compute new region rep for the region by finding center of the region, and updating group record with
+                    // this information and update region reps array to contain new region rep
+                    map.recomputeCentroid2(groupRecord, wallLoc);
+
+                    // TODO: Database changes
+                }
+
                 // Eliminate the state in the states ArrayList inside the groups map
                 groupRecord.states.remove((Integer) wallLoc);
 
-                // Compute new region rep for the region by finding center of the region, and updating group record with
-                // this information and update region reps array to contain new region rep
-                map.recomputeCentroid2(groupRecord, wallLoc);
+                // Compute newRegionRep to detect whether a shift has happened
+                int newRegionRep = map.recomputeCentroid2(groupRecord, wallLoc);
 
+                // Wall That Moves Region Representative case
+                if (newRegionRep != regionRep) {
+                    // TODO: Database changes
+                }
+
+                // Wall That Changes Shortest Path
                 // TODO: Database changes
             }
-
-            // Eliminate the state in the states ArrayList inside the groups map
-            groupRecord.states.remove((Integer) wallLoc);
-
-            // Compute newRegionRep to detect whether a shift has happened
-            int newRegionRep = map.recomputeCentroid2(groupRecord, wallLoc);
-
-            // Wall That Moves Region Representative case
-            if (newRegionRep != regionRep) {
-                // TODO: Database changes
-            }
-
-            // Wall That Changes Shortest Path
-            // TODO: Database changes
         }
     }
 
