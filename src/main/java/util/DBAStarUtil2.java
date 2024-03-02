@@ -208,6 +208,8 @@ public class DBAStarUtil2 {
             groups.put(regionId, null);
             // Tombstone region in region reps array
             map.tombstoneRegionRepUsingRegionId(regionId);
+
+            // TODO: Database changes
         } else {
             // Other cases
 
@@ -312,21 +314,39 @@ public class DBAStarUtil2 {
                     HashSet<Integer> neighboursOfEx = neighborRecord.getNeighborIds();
                     // Update old neighbour’s neighbourhood in groups map
                     neighboursOfEx.remove(regionId);
+
+                    // TODO: Database changes
                 }
             }
 
             // Region Partition case
-
+            // TODO: Database changes
 
             // Wall on Region Representative case
-
             if (wallLoc == regionRep) {
+                // Eliminate the state in the states ArrayList inside the groups map
+                groupRecord.states.remove((Integer) wallLoc);
 
+                // Compute new region rep for the region by finding center of the region, and updating group record with
+                // this information and update region reps array to contain new region rep
+                map.recomputeCentroid2(groupRecord, wallLoc);
+
+                // TODO: Database changes
             }
 
+            // Eliminate the state in the states ArrayList inside the groups map
+            groupRecord.states.remove((Integer) wallLoc);
+
+            // Compute newRegionRep to detect whether a shift has happened
+            int newRegionRep = map.recomputeCentroid2(groupRecord, wallLoc);
+
             // Wall That Moves Region Representative case
+            if (newRegionRep != regionRep) {
+                // TODO: Database changes
+            }
 
             // Wall That Changes Shortest Path
+            // TODO: Database changes
         }
     }
 
