@@ -10,6 +10,7 @@ import search.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.TreeMap;
+import java.util.stream.Stream;
 
 public class DBAStarUtil2 {
     private final int startNum;
@@ -205,6 +206,8 @@ public class DBAStarUtil2 {
             groups.put(regionId, null);
             // Tombstone region in region reps array
             map.tombstoneRegionRepUsingRegionId(regionId);
+        } else {
+
         }
 
         int numSectorsPerRow = (int) Math.ceil(map.cols * 1.0 / gridSize);
@@ -231,11 +234,43 @@ public class DBAStarUtil2 {
         int neighborWest = map.squares[wallRow][wallCol - 1];
         int neighborNorthWest = map.squares[wallRow - 1][wallCol - 1];
 
-        // Pathblocker case
+        // Pathblocker cases
 
-        // Check if the wall will be placed in the corner of a sector. If so, and if the corner touches another region’s corner, we have a blocker case
-        if (isCornerOfSector(wallRow, wallCol, endRow, endCol, startRow, startCol) && isCornerTouchingCorner(wallRow, wallCol)) {
+        boolean isAtSectorEdge = wallRow == startRow || wallRow == endRow || wallCol == startCol || wallCol == endCol;
 
+        if (isAtSectorEdge) {
+            boolean isTopLeftCorner = wallRow == startRow && wallCol == startCol;
+            boolean isTopRightCorner = wallRow == startRow && wallCol == endCol;
+            boolean isBottomRightCorner = wallRow == endRow && wallCol == endCol;
+            boolean isBottomLeftCorner = wallRow == endRow && wallCol == startCol;
+
+            // Corner cases
+            // TODO: Check my math here!
+            if (isTopLeftCorner && !map.isWall(wallRow - 1, wallCol - 1)) {
+                // Get region id of region touching corner
+                int neighbourRegion = map.squares[wallRow - 1][wallCol - 1];
+            }
+
+            if (isTopRightCorner && !map.isWall(wallRow - 1, wallCol + 1)) {
+                // Get region id of region touching corner
+                int neighbourRegion = map.squares[wallRow - 1][wallCol + 1];
+            }
+
+            if (isBottomRightCorner && !map.isWall(wallRow + 1, wallCol + 1)) {
+                // Get region id of region touching corner
+                int neighbourRegion = map.squares[wallRow + 1][wallCol + 1];
+            }
+
+            if (isBottomLeftCorner && !map.isWall(wallRow + 1, wallCol - 1)) {
+                // Get region id of region touching corner
+                int neighbourRegion = map.squares[wallRow + 1][wallCol - 1];
+            }
+
+
+            // Edge case
+            if (isWallAtEdgeOfSector() && hasNoOtherPointOfContact()) {
+
+            }
         }
 
         // Region Partition case
@@ -255,14 +290,11 @@ public class DBAStarUtil2 {
 
     }
 
-    private boolean isCornerOfSector(int wallRow, int wallCol, int endRow, int endCol, int startRow, int startCol) {
-        return (wallRow == endRow && wallCol == endCol) // Bottom-right corner
-                || (wallRow == startRow && wallCol == startCol) // Top-left corner
-                || (wallRow == startRow && wallCol == endCol) // Top-right corner
-                || (wallRow == endRow && wallCol == startCol); // Bottom-right corner
+    private boolean isWallAtEdgeOfSector() {
+        // TODO: Implement
     }
 
-    private boolean isCornerTouchingCorner(int wallRow, int wallCol) {
-
+    private boolean hasNoOtherPointOfContact() {
+        // TODO: Implement
     }
 }
