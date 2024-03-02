@@ -209,6 +209,8 @@ public class DBAStarUtil2 {
             // Tombstone region in region reps array
             map.tombstoneRegionRepUsingRegionId(regionId);
         } else {
+            // Other cases
+
             int numSectorsPerRow = (int) Math.ceil(map.cols * 1.0 / gridSize);
             int sectorId = wallRow / gridSize * numSectorsPerRow + wallCol / gridSize;
 
@@ -233,14 +235,10 @@ public class DBAStarUtil2 {
             int neighborWest = map.squares[wallRow][wallCol - 1];
             int neighborNorthWest = map.squares[wallRow - 1][wallCol - 1];
 
-            // Pathblocker cases
-
             boolean isAtSectorEdge = wallRow == startRow || wallRow == endRow || wallCol == startCol || wallCol == endCol;
 
+            // If we are placing a wall at the edge of a sector, we may have a pathblocker case
             if (isAtSectorEdge) {
-                // Eliminate the state in the states ArrayList inside the groups map
-                groupRecord.states.remove((Integer) wallLoc);
-
                 boolean isNorthEdge = wallRow == startRow;
                 boolean isEastEdge = wallCol == endCol;
                 boolean isSouthEdge = wallRow == endRow;
@@ -251,8 +249,8 @@ public class DBAStarUtil2 {
                 boolean isBottomRightCorner = isSouthEdge && isEastEdge;
                 boolean isBottomLeftCorner = isSouthEdge && isWestEdge;
 
-                int neighbourRegion = regionId;
-                int neighbourRegionRep = -1;
+                int neighbourRegion = 0;
+                int neighbourRegionRep = 0;
 
                 // Corner cases (check if wall is in a sector corner and get the region id of the corner this corner is
                 // touching, if applicable
@@ -274,16 +272,21 @@ public class DBAStarUtil2 {
 
                 // TODO: deal with edge cases
 
-                // Edge case
+                // Edge cases (check if wall is at the edge of a sector and whether the region bordering this edge has
+                // any other touching points with the region)
 
                 if (isNorthEdge && hasNoOtherPointOfContact()) {
-
+                    neighbourRegion = map.squares[wallRow - 1][wallCol];
+                    neighbourRegionRep = map.getRegionRepFromState(neighborNorth);
                 } else if (isEastEdge && hasNoOtherPointOfContact()) {
-
+                    neighbourRegion = map.squares[wallRow][wallCol + 1];
+                    neighbourRegionRep = map.getRegionRepFromState(neighborEast);
                 } else if (isSouthEdge && hasNoOtherPointOfContact()) {
-
+                    neighbourRegion = map.squares[wallRow + 1][wallCol];
+                    neighbourRegionRep = map.getRegionRepFromState(neighborSouth);
                 } else if (isWestEdge && hasNoOtherPointOfContact()) {
-
+                    neighbourRegion = map.squares[wallRow][wallCol - 1];
+                    neighbourRegionRep = map.getRegionRepFromState(neighborWest);
                 }
 
                 if (neighbourRegion == regionId) {
@@ -294,24 +297,25 @@ public class DBAStarUtil2 {
                     throw new Exception("Region rep for region " + regionId + "does not exist!");
                 }
 
-                // Update region’s neighbourhood in groups map
+                // Pathblocker case
+                if (neighbourRegion != 0) {
+                    // Eliminate the state in the states ArrayList inside the groups map
+                    groupRecord.states.remove((Integer) wallLoc);
 
-                // Get the neighbours of the region
-                HashSet<Integer> neighbours = groupRecord.getNeighborIds();
+                    // Get the neighbours of the region
+                    HashSet<Integer> neighbours = groupRecord.getNeighborIds();
+                    // Update region’s neighbourhood in groups map
+                    neighbours.remove(neighbourRegion);
 
-                neighbours.remove(neighbourRegion);
-
-                // Update old neighbour’s neighbourhood in groups map
-
-                // Get the neighbours of its soon-to-be ex-neighbor
-                GroupRecord neighborRecord = groups.get(regionRep);
-                HashSet<Integer> neighboursOfEx = neighborRecord.getNeighborIds();
-
-                neighboursOfEx.remove(regionId);
+                    // Get the neighbours of its soon-to-be ex-neighbor
+                    GroupRecord neighborRecord = groups.get(regionRep);
+                    HashSet<Integer> neighboursOfEx = neighborRecord.getNeighborIds();
+                    // Update old neighbour’s neighbourhood in groups map
+                    neighboursOfEx.remove(regionId);
+                }
             }
 
             // Region Partition case
-
 
 
             // Wall on Region Representative case
