@@ -212,7 +212,6 @@ public class DBAStarUtil2 {
             // TODO: Database changes
         } else {
             // Other cases
-            boolean isBlocker = false;
 
             int numSectorsPerRow = (int) Math.ceil(map.cols * 1.0 / gridSize);
             int sectorId = wallRow / gridSize * numSectorsPerRow + wallCol / gridSize;
@@ -287,8 +286,6 @@ public class DBAStarUtil2 {
                 // Pathblocker corner case
                 // TODO: Figure out a better way to combine code for edge case and corner case
                 if (neighbourRegion != 0) {
-                    isBlocker = true;
-
                     // Eliminate the state in the states ArrayList inside the groups map
                     groupRecord.states.remove((Integer) wallLoc);
 
@@ -350,8 +347,6 @@ public class DBAStarUtil2 {
                 // Pathblocker edge case
                 // TODO: Figure out a better way to combine code for edge case and corner case
                 if (neighbourRegion != 0) {
-                    isBlocker = true;
-
                     // Eliminate the state in the states ArrayList inside the groups map
                     groupRecord.states.remove((Integer) wallLoc);
 
@@ -370,40 +365,37 @@ public class DBAStarUtil2 {
                 }
             }
 
-            if (!isBlocker) {
-                // Region Partition case
+            // Region Partition case
+            // TODO: Check whether wallLoc
 
-                // If we get here, we must be fully inside a sector as we have checked the entire edge of the sector above
+            // TODO: Database changes
 
-
-                // TODO: Database changes
-
-                // Wall on Region Representative case
-                if (wallLoc == regionRep) {
-                    // Eliminate the state in the states ArrayList inside the groups map
-                    groupRecord.states.remove((Integer) wallLoc);
-
-                    // Compute new region rep for the region by finding center of the region, and updating group record with
-                    // this information and update region reps array to contain new region rep
-                    map.recomputeCentroid2(groupRecord, wallLoc);
-
-                    // TODO: Database changes
-                }
-
+            // Wall on Region Representative case
+            if (wallLoc == regionRep) {
                 // Eliminate the state in the states ArrayList inside the groups map
                 groupRecord.states.remove((Integer) wallLoc);
 
-                // Compute newRegionRep to detect whether a shift has happened
-                int newRegionRep = map.recomputeCentroid2(groupRecord, wallLoc);
+                // Compute new region rep for the region by finding center of the region, and updating group record with
+                // this information and update region reps array to contain new region rep
+                map.recomputeCentroid2(groupRecord, wallLoc);
 
-                // Wall That Moves Region Representative case
-                if (newRegionRep != regionRep) {
-                    // TODO: Database changes
-                }
-
-                // Wall That Changes Shortest Path
                 // TODO: Database changes
             }
+
+            // Eliminate the state in the states ArrayList inside the groups map
+            groupRecord.states.remove((Integer) wallLoc);
+
+            // Compute newRegionRep to detect whether a shift has happened
+            int newRegionRep = map.recomputeCentroid2(groupRecord, wallLoc);
+
+            // Wall That Moves Region Representative case
+            if (newRegionRep != regionRep) {
+                // TODO: Database changes
+            }
+
+            // Wall That Changes Shortest Path
+            // TODO: Database changes
+
         }
     }
 
