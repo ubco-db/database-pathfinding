@@ -277,18 +277,26 @@ public class DBAStarUtil2 {
                 // Edge cases (check if wall is at the edge of a sector and whether the region bordering this edge has
                 // any other touching points with the region)
 
-                if (isNorthEdge && hasNoOtherPointOfContact()) {
-                    neighbourRegion = map.squares[wallRow - 1][wallCol];
-                    neighbourRegionRep = map.getRegionRepFromState(neighborNorth);
-                } else if (isEastEdge && hasNoOtherPointOfContact()) {
-                    neighbourRegion = map.squares[wallRow][wallCol + 1];
-                    neighbourRegionRep = map.getRegionRepFromState(neighborEast);
-                } else if (isSouthEdge && hasNoOtherPointOfContact()) {
-                    neighbourRegion = map.squares[wallRow + 1][wallCol];
-                    neighbourRegionRep = map.getRegionRepFromState(neighborSouth);
-                } else if (isWestEdge && hasNoOtherPointOfContact()) {
-                    neighbourRegion = map.squares[wallRow][wallCol - 1];
-                    neighbourRegionRep = map.getRegionRepFromState(neighborWest);
+                if (isNorthEdge && !map.isWall(neighborNorth)) {
+                    if (hasNoOtherPointOfContactHorizontally(map, regionId, startCol, wallRow, wallCol, wallRow - 1)) {
+                        neighbourRegion = map.squares[wallRow - 1][wallCol];
+                        neighbourRegionRep = map.getRegionRepFromState(neighborNorth);
+                    }
+                } else if (isEastEdge && !map.isWall(neighborEast)) {
+                    if (hasNoOtherPointOfContactVertically(map, regionId, startRow, wallRow, wallCol, wallCol + 1)) {
+                        neighbourRegion = map.squares[wallRow][wallCol + 1];
+                        neighbourRegionRep = map.getRegionRepFromState(neighborEast);
+                    }
+                } else if (isSouthEdge && !map.isWall(neighborSouth)) {
+                    if (hasNoOtherPointOfContactHorizontally(map, regionId, startCol, wallRow, wallCol, wallRow + 1)) {
+                        neighbourRegion = map.squares[wallRow + 1][wallCol];
+                        neighbourRegionRep = map.getRegionRepFromState(neighborSouth);
+                    }
+                } else if (isWestEdge && !map.isWall(neighborWest)) {
+                    if (hasNoOtherPointOfContactVertically(map, regionId, startRow, wallRow, wallCol, wallCol - 1)) {
+                        neighbourRegion = map.squares[wallRow][wallCol - 1];
+                        neighbourRegionRep = map.getRegionRepFromState(neighborWest);
+                    }
                 }
 
                 if (neighbourRegion == regionId) {
@@ -358,7 +366,55 @@ public class DBAStarUtil2 {
 
     }
 
-    private boolean hasNoOtherPointOfContact() {
-        // TODO: Implement
+    private boolean hasNoOtherPointOfContactVertically(GameMap map, int regionId, int edgeStartRow, int wallRow, int wallCol, int neighborCol) throws Exception {
+        int neighbourRegion = map.squares[neighborCol][wallRow];
+
+        if (neighbourRegion == 42) {
+            throw new Exception("Neighbour state is a wall!");
+        }
+
+        // Examine the entire edge of the regions touching
+        // If the region and its neighbour touch in more than the one spot where we placed the wall, we do not have a
+        // blocker case and return false
+
+        // TODO: Check this logic
+        for (int i = edgeStartRow; i < gridSize; i++) {
+            if (wallRow != i) {
+                int stateInWallSector = map.squares[i][wallCol];
+                int stateBorderingWallSector = map.squares[i][neighborCol];
+
+                if (stateInWallSector == regionId && stateBorderingWallSector == neighbourRegion) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    private boolean hasNoOtherPointOfContactHorizontally(GameMap map, int regionId, int edgeStartCol, int wallRow, int wallCol, int neighborRow) throws Exception {
+        int neighbourRegion = map.squares[wallCol][neighborRow];
+
+        if (neighbourRegion == 42) {
+            throw new Exception("Neighbour state is a wall!");
+        }
+
+        // Examine the entire edge of the regions touching
+        // If the region and its neighbour touch in more than the one spot where we placed the wall, we do not have a
+        // blocker case and return false
+
+        // TODO: Check this logic
+        for (int i = edgeStartCol; i < gridSize; i++) {
+            if (wallCol != i) {
+                int stateInWallSector = map.squares[wallRow][i];
+                int stateBorderingWallSector = map.squares[neighborRow][i];
+
+                if (stateInWallSector == regionId && stateBorderingWallSector == neighbourRegion) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 }
