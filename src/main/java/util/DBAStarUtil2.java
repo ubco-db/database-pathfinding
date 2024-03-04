@@ -435,6 +435,61 @@ public class DBAStarUtil2 {
             diagonalPartition = partitionNW || partitionNE || partitionSE || partitionSW;
 
             if (verticalPartition || horizontalPartition || diagonalPartition) {
+                // Get neighbours
+                ArrayList<Integer> neighborIds = new ArrayList<>(groupRecord.getNeighborIds());
+
+                // Reset region (necessary in order for me to be able to reuse the regionId)
+                for (int row = START_ROW; row < END_ROW; row++) {
+                    for (int col = START_COL; col < END_COL; col++) {
+                        if (!map.isWall(row, col) && map.squares[row][col] == REGION_ID) {
+                            map.squares[row][col] = ' '; // 32
+                        }
+                    }
+                }
+
+                // Perform abstraction (go over sector and recompute regions)
+                int numRegionsInSector = map.sectorReAbstract2(gridSize, START_ROW, START_COL, END_ROW, END_COL, REGION_ID, map);
+
+                // Tombstone group record in groups map (recreate it later)
+                groups.put(REGION_ID, null);
+
+                int count = 0;
+                GroupRecord[] newRecs = new GroupRecord[ numRegionsInSector];
+
+                // Re-create groups
+                for (int row = START_ROW; row < END_ROW; row++) {
+                    for (int col = START_COL; col < END_COL; col++) {
+                        int groupId = map.squares[row][col];
+                        if (groupId != GameMap.EMPTY_CHAR && groupId != GameMap.WALL_CHAR) {
+                            // See if group already exists
+                            GroupRecord rec = groups.get(groupId);
+                            if (rec == null) {    // New group
+                                GroupRecord newRec = new GroupRecord();
+                                newRec.setNumStates(1);
+                                newRec.groupId = groupId;
+                                newRec.groupRepId = map.getId(row, col);
+                                newRec.states = new ArrayList<>(10);
+                                newRec.states.add(newRec.groupRepId);
+                                map.addGroup(groupId, newRec);
+                                newRecs[count++] = newRec;
+                            } else {    // Update group
+                                rec.setNumStates(rec.getSize() + 1);
+                                rec.states.add(map.getId(row, col));
+                            }
+                        }
+                    }
+                }
+
+                // Recompute region reps for newly added regions
+                // a newRec should never be null, if it is, something went wrong with the group generation in sectorReAbstract2
+                for (GroupRecord newRec : newRecs) {
+                    map.recomputeCentroid2(newRec, wallLoc);
+                    neighborIds.add(newRec.groupId);
+                }
+
+                // Recompute neighbourhood
+                map.recomputeNeighbors(gridSize, START_ROW, START_COL, END_ROW, END_COL, neighborIds);
+
                 // TODO: Database changes
             }
 
@@ -451,7 +506,6 @@ public class DBAStarUtil2 {
 
             // Wall That Changes Shortest Path
             // TODO: Database changes
-
         }
     }
 
