@@ -388,12 +388,11 @@ public class DBAStarUtil2 {
             boolean isBetweenVertical = !isVerticalWall && isBetweenWallAndOtherRegion(map, NEIGHBOR_S, NEIGHBOR_N, REGION_ID);
             boolean isBetweenHorizontal = !isHorizontalWall && isBetweenWallAndOtherRegion(map, NEIGHBOR_W, NEIGHBOR_E, REGION_ID);
 
-            // If we have an open diagonal,
-
             boolean verticalPartition = false;
             boolean horizontalPartition = false;
-            boolean diagonalPartition = false;
+            boolean diagonalPartition;
 
+            // TODO: Do the start points for these paths make sense?
             if (isVerticalWall || isBetweenVertical) {
                 // Check that we can still reach west to east without leaving the region
                 verticalPartition = !isPathPossible(map.squares, new int[]{WALL_ROW, WALL_COL - 1}, new int[]{WALL_ROW, WALL_COL + 1}, REGION_ID);
@@ -403,6 +402,37 @@ public class DBAStarUtil2 {
                 // Check that we can still reach north to south without leaving the region
                 horizontalPartition = !isPathPossible(map.squares, new int[]{WALL_ROW - 1, WALL_COL}, new int[]{WALL_ROW + 1, WALL_COL}, REGION_ID);
             }
+
+            // If the diagonal state is open, but the cardinal ones surrounding it are not, we may have partition
+            boolean isOpenDiagonalNW = isOpenDiagonal(map, NEIGHBOR_W, NEIGHBOR_NW, NEIGHBOR_N);
+            boolean isOpenDiagonalNE = isOpenDiagonal(map, NEIGHBOR_N, NEIGHBOR_NE, NEIGHBOR_E);
+            boolean isOpenDiagonalSE = isOpenDiagonal(map, NEIGHBOR_E, NEIGHBOR_SE, NEIGHBOR_S);
+            boolean isOpenDiagonalSW = isOpenDiagonal(map, NEIGHBOR_S, NEIGHBOR_SW, NEIGHBOR_W);
+
+            boolean partitionNW = false;
+            boolean partitionNE = false;
+            boolean partitionSE = false;
+            boolean partitionSW = false;
+
+            // TODO: Do the start points for these paths make sense? Can we collapse cases?
+            if (isOpenDiagonalNW) {
+                // Check whether we can still reach southeast to northwest
+                partitionNW = !isPathPossible(map.squares, new int[]{WALL_ROW + 1, WALL_COL + 1}, new int[]{WALL_ROW - 1, WALL_COL - 1}, REGION_ID);
+            }
+            if (isOpenDiagonalNE) {
+                // Check whether we can still reach southwest to northeast
+                partitionNE = !isPathPossible(map.squares, new int[]{WALL_ROW + 1, WALL_COL - 1}, new int[]{WALL_ROW - 1, WALL_COL + 1}, REGION_ID);
+            }
+            if (isOpenDiagonalSE) {
+                // Check whether we can still reach northwest to southeast
+                partitionSE = !isPathPossible(map.squares, new int[]{WALL_ROW - 1, WALL_COL - 1}, new int[]{WALL_ROW + 1, WALL_COL + 1}, REGION_ID);
+            }
+            if (isOpenDiagonalSW) {
+                // Check whether we can still reach northeast to southwest
+                partitionSW = !isPathPossible(map.squares, new int[]{WALL_ROW - 1, WALL_COL + 1}, new int[]{WALL_ROW + 1, WALL_COL - 1}, REGION_ID);
+            }
+
+            diagonalPartition = partitionNW || partitionNE || partitionSE || partitionSW;
 
             if (verticalPartition || horizontalPartition || diagonalPartition) {
                 // TODO: Database changes
@@ -492,5 +522,9 @@ public class DBAStarUtil2 {
     private boolean isBetweenWallAndOtherRegion(GameMap map, int n1, int n2, int regionId) {
         return (map.isWall(n1) && map.getRegionFromState(n2) != regionId) ||
                 (map.isWall(n2) && map.getRegionFromState(n1) != regionId);
+    }
+
+    private boolean isOpenDiagonal(GameMap map, int n1, int n2, int n3) {
+        return (map.isWall(n1) && !map.isWall(n2) && map.isWall(n3));
     }
 }
