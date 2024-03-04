@@ -802,6 +802,27 @@ public class GameMap {
 //        return result;
     }
 
+    public int[] getNeighborIds(int r, int c) {
+        int[] result = new int[8];
+        if (isValid(r - 1, c - 1) && !isWall(r - 1, c - 1)) // Top left
+            result[0] = this.getId(r - 1, c - 1);
+        if (isValid(r - 1, c) && !isWall(r - 1, c)) // Above
+            result[1] = this.getId(r - 1, c);
+        if (isValid(r - 1, c + 1) && !isWall(r - 1, c + 1)) // Top right
+            result[2] = this.getId(r - 1, c + 1);
+        if (isValid(r + 1, c - 1) && !isWall(r + 1, c - 1)) // Bottom left
+            result[3] = this.getId(r + 1, c - 1);
+        if (isValid(r + 1, c) && !isWall(r + 1, c)) // Bottom
+            result[4] = this.getId(r + 1, c);
+        if (isValid(r + 1, c + 1) && !isWall(r + 1, c + 1)) // Bottom right
+            result[5] = this.getId(r + 1, c + 1);
+        if (isValid(r, c - 1) && !isWall(r, c - 1)) // Left
+            result[6] = this.getId(r, c - 1);
+        if (isValid(r, c + 1) && !isWall(r, c + 1)) // Right
+            result[7] = this.getId(r, c + 1);
+        return result;
+    }
+
 	/*
 	public ArrayList<SearchState> getNeighbors(int r, int c)
 	{
@@ -1736,7 +1757,7 @@ public class GameMap {
 //            }
 //        }
 
-        // Populate the edge data structure
+    // Populate the edge data structure
 //        int current = 0;
 //        for (int i = 0; i < numSectors; i++) {
 //            if (numRegions[i] > 0) {
@@ -2606,7 +2627,6 @@ public class GameMap {
 
     // TODO: This method has a lot of duplicate code, will need to refactor
     public int recomputeCentroid2(GroupRecord rec, int wallLoc) {
-        // regionReps = new ArrayList<>();
 
         long sumRow = 0, sumCol = 0, N = rec.getSize(); // TODO: replace with ArrayList length
         ArrayList<Integer> states = rec.states; // QUESTION: Why are we using ExpandArray here? Array should be enough
@@ -2702,5 +2722,23 @@ public class GameMap {
 
     public void tombstoneRegionRepUsingRegionId(int regionId) {
         regionReps[regionId - GameMap.START_NUM] = -1;
+    }
+
+    public int getRegionFromRowAndCol(int row, int col) {
+        return this.squares[row][col];
+    }
+
+    public int getRegionFromState(int sid) {
+        return getRegionFromRowAndCol(this.getRow(sid), this.getCol(sid));
+    }
+
+    public void addRegionRep(int regionId, int regionRepId) {
+        // Resize if too small
+        if (regionReps.length < regionId - GameMap.START_NUM) {
+            int[] newRegionReps = new int[(int) (regionReps.length * 1.1)];
+            System.arraycopy(this.regionReps, 0, newRegionReps, 0, this.regionReps.length);
+            this.regionReps = newRegionReps;
+        }
+        regionReps[regionId - GameMap.START_NUM] = regionRepId;
     }
 }
