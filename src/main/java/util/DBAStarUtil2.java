@@ -12,6 +12,7 @@ import search.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.TreeMap;
 
 import static util.MapHelpers.*;
@@ -538,11 +539,11 @@ public class DBAStarUtil2 {
 
         int[] neighbourStates = map.getNeighborIds(WALL_ROW, WALL_COL);
 
-        // Check whether all eight neighbour states are walls, if so, we have a new, solitary region
-        boolean isSurroundedByWalls = false;
+        // Check whether all eight neighbour states are walls
+        boolean isSurroundedByWalls = true;
         for (int neighbourState : neighbourStates) {
-            if (map.isWall(neighbourState)) {
-                isSurroundedByWalls = true;
+            if (!map.isWall(neighbourState)) {
+                isSurroundedByWalls = false;
                 break;
             }
         }
@@ -581,11 +582,67 @@ public class DBAStarUtil2 {
             // TODO: Database changes
         } else {
             // Check what sector the non-wall neighbourStates are in
+            final int NUM_SECTORS_PER_ROW = (int) Math.ceil(map.cols * 1.0 / gridSize);
+            final int SECTOR_ID = WALL_ROW / gridSize * NUM_SECTORS_PER_ROW + WALL_COL / gridSize;
 
+            // Get regions touching the wallLocation
+            // TODO: Collapse for-loops into one
+            Set<Integer> neighbouringRegions = new HashSet<>();
             for (int neighbourState : neighbourStates) {
                 if (!map.isWall(neighbourState)) {
+                    neighbouringRegions.add(map.getRegionFromState(neighbourState));
+                }
+            }
+
+            // Check whether any of the non-wall neighbourStates are in the same sector where the wall was removed
+            boolean isInDifferentSector = true;
+            for (int neighbourState : neighbourStates) {
+                if (!map.isWall(neighbourState)) {
+                    int neighbourSector = getSectorId(map, neighbourState, gridSize);
+                    if (neighbourSector == SECTOR_ID) {
+                        isInDifferentSector = false;
+                        break;
+                    }
+                }
+            }
+
+            // If the new region is in a different sector than any of its neighbours, we have a new, connected region
+            if (isInDifferentSector) {
+                // Get new regionId using freeSpace
+                int regionId = dbBW.popFreeSpace();
+
+                TreeMap<Integer, GroupRecord> groups = new MapSearchProblem(map).getGroups();
+
+                // There should not be a group record with the new region id
+                GroupRecord rec = groups.get(regionId);
+                if (rec != null) {
+                    throw new Exception("Error! Record already exists!");
+                }
+
+                // Assign the new regionId inside the squares arrays
+                map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = regionId;
+                problem.getMap().squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = regionId;
+
+                // Create a new group record for the new region
+                GroupRecord newRec = new GroupRecord();
+                newRec.setNumStates(1);
+                newRec.groupId = regionId;
+                // Group rep id does not need to be computed using compute centroids logic since it must be where the wall was removed
+                newRec.groupRepId = map.getId(WALL_ROW, WALL_COL);
+                newRec.states = new ArrayList<>(1);
+                newRec.states.add(newRec.groupRepId);
+                // Add the new group record to the groups map
+                map.addGroup(regionId, newRec);
+
+                // Update regionReps array
+                map.addRegionRep(regionId, newRec.groupRepId);
+
+                // TODO: Update region’s neighbourhood in groups map & update neighbourhood of all its neighbours in groups map
+                for (Integer neighbouringRegion: neighbouringRegions) {
 
                 }
+
+                // TODO: Database changes
             }
         }
     }
