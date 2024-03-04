@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.TreeMap;
 
-import static util.MapHelpers.isPathPossible;
+import static util.MapHelpers.*;
 
 public class DBAStarUtil2 {
     private final int startNum;
@@ -383,10 +383,10 @@ public class DBAStarUtil2 {
             // Region Partition case
 
             // If wall is between two walls, or between a wall and another region, we may have partition
-            boolean isVerticalWall = isContinuousWall(map, NEIGHBOR_S, NEIGHBOR_N);
-            boolean isHorizontalWall = isContinuousWall(map, NEIGHBOR_W, NEIGHBOR_E);
-            boolean isBetweenVertical = !isVerticalWall && isBetweenWallAndOtherRegion(map, NEIGHBOR_S, NEIGHBOR_N, REGION_ID);
-            boolean isBetweenHorizontal = !isHorizontalWall && isBetweenWallAndOtherRegion(map, NEIGHBOR_W, NEIGHBOR_E, REGION_ID);
+            boolean isVerticalWall = isContinuousWall(NEIGHBOR_S, NEIGHBOR_N);
+            boolean isHorizontalWall = isContinuousWall(NEIGHBOR_W, NEIGHBOR_E);
+            boolean isBetweenVertical = !isVerticalWall && isBetweenWallAndOtherRegion(NEIGHBOR_S, NEIGHBOR_N, REGION_ID);
+            boolean isBetweenHorizontal = !isHorizontalWall && isBetweenWallAndOtherRegion(NEIGHBOR_W, NEIGHBOR_E, REGION_ID);
 
             boolean verticalPartition = false;
             boolean horizontalPartition = false;
@@ -404,10 +404,10 @@ public class DBAStarUtil2 {
             }
 
             // If the diagonal state is open, but the cardinal ones surrounding it are not, we may have partition
-            boolean isOpenDiagonalNW = isOpenDiagonal(map, NEIGHBOR_W, NEIGHBOR_NW, NEIGHBOR_N);
-            boolean isOpenDiagonalNE = isOpenDiagonal(map, NEIGHBOR_N, NEIGHBOR_NE, NEIGHBOR_E);
-            boolean isOpenDiagonalSE = isOpenDiagonal(map, NEIGHBOR_E, NEIGHBOR_SE, NEIGHBOR_S);
-            boolean isOpenDiagonalSW = isOpenDiagonal(map, NEIGHBOR_S, NEIGHBOR_SW, NEIGHBOR_W);
+            boolean isOpenDiagonalNW = isOpenDiagonal(NEIGHBOR_W, NEIGHBOR_NW, NEIGHBOR_N);
+            boolean isOpenDiagonalNE = isOpenDiagonal(NEIGHBOR_N, NEIGHBOR_NE, NEIGHBOR_E);
+            boolean isOpenDiagonalSE = isOpenDiagonal(NEIGHBOR_E, NEIGHBOR_SE, NEIGHBOR_S);
+            boolean isOpenDiagonalSW = isOpenDiagonal(NEIGHBOR_S, NEIGHBOR_SW, NEIGHBOR_W);
 
             boolean partitionNW = false;
             boolean partitionNE = false;
@@ -580,6 +580,13 @@ public class DBAStarUtil2 {
 
             // TODO: Database changes
         } else {
+            // Check what sector the non-wall neighbourStates are in
+
+            for (int neighbourState : neighbourStates) {
+                if (!map.isWall(neighbourState)) {
+
+                }
+            }
         }
     }
 
@@ -633,18 +640,5 @@ public class DBAStarUtil2 {
         }
 
         return true;
-    }
-
-    private boolean isContinuousWall(GameMap map, int n1, int n2) {
-        return map.isWall(n1) && map.isWall(n2);
-    }
-
-    private boolean isBetweenWallAndOtherRegion(GameMap map, int n1, int n2, int regionId) {
-        return (map.isWall(n1) && map.getRegionFromState(n2) != regionId) ||
-                (map.isWall(n2) && map.getRegionFromState(n1) != regionId);
-    }
-
-    private boolean isOpenDiagonal(GameMap map, int n1, int n2, int n3) {
-        return (map.isWall(n1) && !map.isWall(n2) && map.isWall(n3));
     }
 }
