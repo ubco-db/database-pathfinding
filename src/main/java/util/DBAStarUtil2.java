@@ -207,7 +207,7 @@ public class DBAStarUtil2 {
                 groups.get(neighbourRep).getNeighborIds().remove(REGION_ID);
             }
             // Tombstone group record in groups map
-            groups.put(REGION_ID, null);
+            map.addGroup(REGION_ID, null);
             // Tombstone region in region reps array
             map.tombstoneRegionRepUsingRegionId(REGION_ID);
 
@@ -451,7 +451,7 @@ public class DBAStarUtil2 {
                 int numRegionsInSector = map.sectorReAbstract2(gridSize, START_ROW, START_COL, END_ROW, END_COL, REGION_ID, map);
 
                 // Tombstone group record in groups map (recreate it later)
-                groups.put(REGION_ID, null);
+                map.addGroup(REGION_ID, null);
 
                 int count = 0;
                 GroupRecord[] newRecs = new GroupRecord[ numRegionsInSector];
@@ -513,8 +513,74 @@ public class DBAStarUtil2 {
      * @param wallLoc   state id where wall will be removed
      * @param dbaStarBW DBAStar object returned from computeDBAStarDatabaseUsingSubgoalDynamicDB3
      */
-    public void recomputeWallRemovalUsingSubgoalDynamicDB3(int wallLoc, DBAStar dbaStarBW) {
+    public void recomputeWallRemovalUsingSubgoalDynamicDB3(int wallLoc, DBAStar dbaStarBW) throws Exception {
+        // Extract map, problem, and database from dbaStarBW
+        GameMap map = dbaStarBW.getMap();
+        MapSearchProblem problem = (MapSearchProblem) dbaStarBW.getProblem();
+        SubgoalDynamicDB3 dbBW = (SubgoalDynamicDB3) dbaStarBW.getDatabase();
 
+        final int WALL_ROW = map.getRow(wallLoc);
+        final int WALL_COL = map.getCol(wallLoc);
+
+        // Check whether there is a wall at the location the wall should be removed
+        final boolean PRIOR_WALL = map.isWall(wallLoc) && problem.getMap().isWall(wallLoc);
+
+        // Remove wall from map and from map inside problem, set the square to empty (=32) for now
+        map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = ' ';
+        problem.getMap().squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = ' ';
+
+        // Check whether the wall addition worked as intended
+        if (PRIOR_WALL && !map.isWall(wallLoc) && !problem.getMap().isWall(wallLoc)) {
+            logger.info("Wall at " + wallLoc + " removed successfully!");
+        } else {
+            throw new Exception("Wall removal failed! There is no wall to remove at" + wallLoc);
+        }
+
+        int[] neighbourStates = map.getNeighborIds(WALL_ROW, WALL_COL);
+
+        // Check whether all eight neighbour states are walls, if so, we have a new, solitary region
+        boolean isSurroundedByWalls = false;
+        for (int neighbourState : neighbourStates) {
+            if (map.isWall(neighbourState)) {
+                isSurroundedByWalls = true;
+                break;
+            }
+        }
+
+        // If all eight neighbour states of where the wall is to be removed are walls, we will have a new, solitary region
+        if (isSurroundedByWalls) {
+            // Get new regionId using freeSpace
+            int regionId = dbBW.popFreeSpace();
+
+            TreeMap<Integer, GroupRecord> groups = new MapSearchProblem(map).getGroups();
+
+            // There should not be a group record with the new region id
+            GroupRecord rec = groups.get(regionId);
+            if (rec != null) {
+                throw new Exception("Error! Record already exists!");
+            }
+
+            // Assign the new regionId inside the squares arrays
+            map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = regionId;
+            problem.getMap().squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = regionId;
+
+            // Create a new group record for the new region
+            GroupRecord newRec = new GroupRecord();
+            newRec.setNumStates(1);
+            newRec.groupId = regionId;
+            // Group rep id does not need to be computed using compute centroids logic since it must be where the wall was removed
+            newRec.groupRepId = map.getId(WALL_ROW, WALL_COL);
+            newRec.states = new ArrayList<>(1);
+            newRec.states.add(newRec.groupRepId);
+            // Add the new group record to the groups map
+            map.addGroup(regionId, newRec);
+
+            // Update regionReps array
+            map.addRegionRep(regionId, newRec.groupRepId);
+
+            // TODO: Database changes
+        } else {
+        }
     }
 
     private boolean hasNoOtherPointOfContactVertically(GameMap map, int regionId, int edgeStartRow, int wallRow, int wallCol, int neighborCol) throws Exception {
