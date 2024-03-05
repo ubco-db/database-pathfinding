@@ -530,13 +530,14 @@ public class DBAStarUtil2 {
         map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = ' ';
         problem.getMap().squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = ' ';
 
-        // Check whether the wall addition worked as intended
+        // Check whether the wall removal worked as intended
         if (PRIOR_WALL && !map.isWall(wallLoc) && !problem.getMap().isWall(wallLoc)) {
             logger.info("Wall at " + wallLoc + " removed successfully!");
         } else {
             throw new Exception("Wall removal failed! There is no wall to remove at" + wallLoc);
         }
 
+        // Get eight neighbours of state where wall was removed
         int[] neighbourStates = map.getNeighborIds(WALL_ROW, WALL_COL);
 
         // Check whether all eight neighbour states are walls
@@ -587,7 +588,7 @@ public class DBAStarUtil2 {
 
             // Get regions touching the wallLocation
             // TODO: Collapse for-loops into one
-            Set<Integer> neighbouringRegions = new HashSet<>();
+            HashSet<Integer> neighbouringRegions = new HashSet<>();
             for (int neighbourState : neighbourStates) {
                 if (!map.isWall(neighbourState)) {
                     neighbouringRegions.add(map.getRegionFromState(neighbourState));
@@ -631,16 +632,18 @@ public class DBAStarUtil2 {
                 newRec.groupRepId = map.getId(WALL_ROW, WALL_COL);
                 newRec.states = new ArrayList<>(1);
                 newRec.states.add(newRec.groupRepId);
+
+                // Update region’s neighbourhood in groups map & update neighbourhood of all its neighbours in groups map
+                for (Integer neighbouringRegion: neighbouringRegions) {
+                    groups.get(neighbouringRegion).getNeighborIds().add(regionId);
+                }
+                newRec.setNeighborIds(neighbouringRegions);
+
                 // Add the new group record to the groups map
                 map.addGroup(regionId, newRec);
 
                 // Update regionReps array
                 map.addRegionRep(regionId, newRec.groupRepId);
-
-                // TODO: Update region’s neighbourhood in groups map & update neighbourhood of all its neighbours in groups map
-                for (Integer neighbouringRegion: neighbouringRegions) {
-
-                }
 
                 // TODO: Database changes
             }
