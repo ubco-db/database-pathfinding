@@ -10,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import search.*;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -596,23 +597,26 @@ public class DBAStarUtil2 {
             }
 
             // Check whether any of the non-wall neighbourStates are in the same sector where the wall was removed
+            // If at least one of them is, store its region id
             boolean isInDifferentSector = true;
+            int neighbourRegionId = -1;
             for (int neighbourState : neighbourStates) {
                 if (!map.isWall(neighbourState)) {
                     int neighbourSector = getSectorId(map, neighbourState, gridSize);
                     if (neighbourSector == SECTOR_ID) {
                         isInDifferentSector = false;
+                        neighbourRegionId = map.getRegionFromState(neighbourState);
                         break;
                     }
                 }
             }
 
+            TreeMap<Integer, GroupRecord> groups = new MapSearchProblem(map).getGroups();
+
             // If the new region is in a different sector than any of its neighbours, we have a new, connected region
             if (isInDifferentSector) {
                 // Get new regionId using freeSpace
                 int regionId = dbBW.popFreeSpace();
-
-                TreeMap<Integer, GroupRecord> groups = new MapSearchProblem(map).getGroups();
 
                 // There should not be a group record with the new region id
                 GroupRecord rec = groups.get(regionId);
@@ -647,6 +651,48 @@ public class DBAStarUtil2 {
 
                 // TODO: Database changes
             }
+
+            // Since we have neither a new, solitary region, nor a new, connected region, our removed wall must be part
+            // of an existing region
+
+            if (neighbourRegionId == -1) {
+                throw new Exception("neighbourRegionId has not been assigned!");
+            }
+
+            // Get region id from neighbours in same sector
+            int regionId = neighbourRegionId;
+            // Get region rep
+            int regionRepId = map.getRegionRepFromRegionId(regionId);
+
+            GroupRecord groupRecord = groups.get(regionId);
+
+            if (groupRecord == null) {
+                throw new Exception("No such record!");
+            }
+
+            // Add the state to the states ArrayList inside the groups map
+            groupRecord.states.add(wallLoc);
+
+            // If the neighbours stored in the group record differ from those stored in the neighbouringRegions,
+            // we must have an unblocker case, or a region merge case
+            if (!groupRecord.getNeighborIds().equals(neighbouringRegions)) {
+                // Look at sector membership of differing neighbour?
+
+                // Unblocker case
+
+                // Region merge case
+            }
+
+            // Compute newRegionRep to detect whether a shift has happened
+            int newRegionRep = map.recomputeCentroid2(groupRecord, wallLoc);
+
+            // Wall That Moves Region Representative case
+            if (newRegionRep != regionRepId) {
+                // TODO: Database changes
+            }
+
+            // Wall That Changes Shortest Path
+            // TODO: Database changes
         }
     }
 
