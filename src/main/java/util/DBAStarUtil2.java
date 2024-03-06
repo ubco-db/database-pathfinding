@@ -299,7 +299,7 @@ public class DBAStarUtil2 {
                     neighbours.remove(neighbourRegion);
 
                     // Get the neighbours of its soon-to-be ex-neighbor
-                    GroupRecord neighborRecord = groups.get(REGION_REP);
+                    GroupRecord neighborRecord = groups.get(neighbourRegion);
                     HashSet<Integer> neighboursOfEx = neighborRecord.getNeighborIds();
                     // Update old neighbour’s neighbourhood in groups map
                     neighboursOfEx.remove(REGION_ID);
@@ -361,7 +361,7 @@ public class DBAStarUtil2 {
                     neighbours.remove(neighbourRegion);
 
                     // Get the neighbours of its soon-to-be ex-neighbor
-                    GroupRecord neighborRecord = groups.get(REGION_REP);
+                    GroupRecord neighborRecord = groups.get(neighbourRegion);
                     HashSet<Integer> neighboursOfEx = neighborRecord.getNeighborIds();
                     // Update old neighbour’s neighbourhood in groups map
                     neighboursOfEx.remove(REGION_ID);
@@ -382,7 +382,6 @@ public class DBAStarUtil2 {
                 map.recomputeCentroid2(groupRecord, wallLoc);
 
                 // TODO: Database changes
-                return;
             }
 
             // Region Partition case
@@ -686,18 +685,46 @@ public class DBAStarUtil2 {
                 throw new Exception("No such record!");
             }
 
-            // Add the state to the states ArrayList inside the groups map
-            groupRecord.states.add(wallLoc);
-
             // If the neighbours stored in the group record differ from those stored in the neighbouringRegions,
             // we must have an unblocker case, or a region merge case
-            if (!groupRecord.getNeighborIds().containsAll(neighbouringRegions)) {
+            HashSet<Integer> neighboursFromGroupRec = groupRecord.getNeighborIds();
+            if (!neighboursFromGroupRec.containsAll(neighbouringRegions)) {
                 // neighbouringRegions contains all regions the removed wall was touching
                 // groupRecord.getNeighborIds() contains all neighbours of the region the wall is in
                 if (neighbouringRegionsInSameSector.size() == 1) {
                     // Unblocker case
                     logger.info("Path Unblocker Case");
-                    // TODO: Implement
+
+                    // Add the state to the states ArrayList inside the groups map
+                    groupRecord.states.add(wallLoc);
+
+                    // TODO: Is there any scenario where there could be two?
+                    int neighbourRegion = -1;
+                    for (int neighbouringRegion: neighbouringRegions) {
+                        if (!neighboursFromGroupRec.contains(neighbouringRegion)) {
+                            neighbourRegion = neighbouringRegion;
+                        }
+                    }
+
+                    if (neighbourRegion == -1) {
+                        throw new Exception("Neighbour region could not be found!");
+                    }
+
+                    // Get the neighbours of the region
+                    HashSet<Integer> neighbours = groupRecord.getNeighborIds();
+                    // Update region’s neighbourhood in groups map
+                    neighbours.remove(neighbourRegion);
+
+                    // Get the neighbours of its soon-to-be ex-neighbor
+                    GroupRecord neighborRecord = groups.get(neighbourRegion);
+                    HashSet<Integer> neighboursOfEx = neighborRecord.getNeighborIds();
+                    // Update old neighbour’s neighbourhood in groups map
+                    neighboursOfEx.remove(regionId);
+
+                    /*
+                    Update region’s neighbourhood in groups map
+                    Update old neighbour’s neighbourhood in groups map
+                     */
 
                     // TODO: Database changes
                 } else {
