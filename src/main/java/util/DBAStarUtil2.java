@@ -594,7 +594,8 @@ public class DBAStarUtil2 {
             // Update regionReps array
             map.addRegionRep(regionId, newRec.groupRepId);
 
-            // TODO: Database changes
+            // Database changes
+            dbBW.recomputeBasePathsIfSolitary(regionId);
         } else {
             // Check what sector the non-wall neighbourStates are in
             final int NUM_SECTORS_PER_ROW = (int) Math.ceil(map.cols * 1.0 / gridSize);

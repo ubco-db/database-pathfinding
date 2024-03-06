@@ -821,6 +821,23 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         }
     }
 
+    public void recomputeBasePathsIfSolitary(int regionId) {
+        // Case where new region has no neighbours (e.g. is surrounded by walls)
+
+        // If we have run out of free space, increase the size of the arrays
+        resizeFreeSpace();
+
+        // freeSpace has already been updated in DBAStarUtil (needed the information for map updates)
+
+        // Find array location of region
+        int groupLoc = regionId - GameMap.START_NUM;
+
+        // Create arrays for new group
+        this.neighborId[groupLoc] = new int[0];
+        this.lowestCost[groupLoc] = new int[0];
+        this.paths[groupLoc] = new int[0][];
+    }
+
     /**
      * @return regionId that is free to use
      * @throws Exception if the indexing is off
