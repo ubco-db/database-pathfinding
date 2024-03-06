@@ -193,6 +193,7 @@ public class DBAStarUtil2 {
 
         // Elimination case
         if (groupRecord.getNumStates() == 1) {
+            logger.info("Elimination Case");
             // Get the neighbours of the region that will be eliminated
             HashSet<Integer> neighbours = groupRecord.getNeighborIds();
 
@@ -288,6 +289,7 @@ public class DBAStarUtil2 {
                 // Pathblocker corner case
                 // TODO: Figure out a better way to combine code for edge case and corner case
                 if (neighbourRegion != 0) {
+                    logger.info("Pathblocker Corner Case");
                     // Eliminate the state in the states ArrayList inside the groups map
                     groupRecord.states.remove((Integer) wallLoc);
 
@@ -349,6 +351,7 @@ public class DBAStarUtil2 {
                 // Pathblocker edge case
                 // TODO: Figure out a better way to combine code for edge case and corner case
                 if (neighbourRegion != 0) {
+                    logger.info("Pathblocker Edge Case");
                     // Eliminate the state in the states ArrayList inside the groups map
                     groupRecord.states.remove((Integer) wallLoc);
 
@@ -370,6 +373,7 @@ public class DBAStarUtil2 {
             // Wall on Region Representative case
             // TODO: Consider blocker and wall on rep case
             if (wallLoc == REGION_REP) {
+                logger.info("Wall on Region Representative Case");
                 // Eliminate the state in the states ArrayList inside the groups map
                 groupRecord.states.remove((Integer) wallLoc);
 
@@ -378,6 +382,7 @@ public class DBAStarUtil2 {
                 map.recomputeCentroid2(groupRecord, wallLoc);
 
                 // TODO: Database changes
+                return;
             }
 
             // Region Partition case
@@ -435,6 +440,7 @@ public class DBAStarUtil2 {
             diagonalPartition = partitionNW || partitionNE || partitionSE || partitionSW;
 
             if (verticalPartition || horizontalPartition || diagonalPartition) {
+                logger.info("Region Partition Case");
                 // Get neighbours
                 ArrayList<Integer> neighborIds = new ArrayList<>(groupRecord.getNeighborIds());
 
@@ -491,6 +497,7 @@ public class DBAStarUtil2 {
                 map.recomputeNeighbors(gridSize, START_ROW, START_COL, END_ROW, END_COL, neighborIds);
 
                 // TODO: Database changes
+                return;
             }
 
             // Eliminate the state in the states ArrayList inside the groups map
@@ -501,10 +508,13 @@ public class DBAStarUtil2 {
 
             // Wall That Moves Region Representative case
             if (newRegionRep != REGION_REP) {
+                logger.info("Wall That Moves Region Representative Case");
                 // TODO: Database changes
+                return;
             }
 
             // Wall That Changes Shortest Path
+            logger.info("Wall That Changes Shortest Path Case");
             // TODO: Database changes
         }
     }
@@ -553,6 +563,7 @@ public class DBAStarUtil2 {
 
         // If all eight neighbour states of where the wall is to be removed are walls, we will have a new, solitary region
         if (isSurroundedByWalls) {
+            logger.info("New Solitary Region Case");
             // Get new regionId using freeSpace
             int regionId = dbBW.popFreeSpace();
 
@@ -616,6 +627,7 @@ public class DBAStarUtil2 {
 
             // If the new region is in a different sector than any of its neighbours, we have a new, connected region
             if (neighbouringRegionsInSameSector.isEmpty()) {
+                logger.info("New Connected Region Case");
                 // Get new regionId using freeSpace
                 int regionId = dbBW.popFreeSpace();
 
@@ -651,6 +663,7 @@ public class DBAStarUtil2 {
                 map.addRegionRep(regionId, newRec.groupRepId);
 
                 // TODO: Database changes
+                return;
             }
 
             // Since we have neither a new, solitary region, nor a new, connected region, our removed wall must be part
@@ -683,15 +696,16 @@ public class DBAStarUtil2 {
                 // groupRecord.getNeighborIds() contains all neighbours of the region the wall is in
                 if (neighbouringRegionsInSameSector.size() == 1) {
                     // Unblocker case
-                    logger.info("Unblocker Case");
+                    logger.info("Path Unblocker Case");
 
                     // TODO: Database changes
                 } else {
                     // If our wall touches more than two regions that are in the same sector, we have a region merge case
-                    logger.info("Merge Case");
+                    logger.info("Region Merge Case");
 
                     // TODO: Database changes
                 }
+                return;
             }
 
             // Compute newRegionRep to detect whether a shift has happened
@@ -699,9 +713,12 @@ public class DBAStarUtil2 {
 
             // Wall That Moves Region Representative case
             if (newRegionRep != regionRepId) {
+                logger.info("Wall That Moves Region Representative Case");
                 // TODO: Database changes
+                return;
             }
 
+            logger.info("Wall That Changes Shortest Path Case");
             // Wall That Changes Shortest Path
             // TODO: Database changes
         }
