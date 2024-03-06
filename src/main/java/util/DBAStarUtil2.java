@@ -212,7 +212,8 @@ public class DBAStarUtil2 {
             // Tombstone region in region reps array
             map.tombstoneRegionRepUsingRegionId(REGION_ID);
 
-            // TODO: Database changes
+            // Database changes
+            dbBW.recomputeBasePathsAfterElimination(REGION_ID);
         } else {
             // Other cases
 

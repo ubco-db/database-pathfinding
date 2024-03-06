@@ -130,28 +130,30 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         //		lowestCost matrix (numGroups x numGroups)
         // 		paths matrix (with paths). Each path on a line.  A path is a list of subgoals.  Just have 0 if no states.
         try (PrintWriter out = new PrintWriter(fileName)) {
-            // out.println("numGroups: ");
+            out.println("numGroups: ");
             out.println(numGroups);
             for (int i = 0; i < numGroups; i++) {    // Read each group which has # neighbors as N, neighborId[N], lowest cost[N], neighbor[] and paths on each line
                 int numNeighbors = neighborId[i].length;
-                // out.println("numNeighbours for " + i + ": ");
+                out.println("numNeighbours for " + i + ": ");
                 out.println(numNeighbors);
-                // out.println("neighbourIds: ");
+                out.println("neighbourIds: ");
                 for (int j = 0; j < numNeighbors; j++) {
                     out.print(neighborId[i][j] + "\t");
                 }
                 out.println();
-                // out.println("lowestCosts: ");
+                out.println("lowestCosts: ");
                 for (int j = 0; j < numNeighbors; j++) {
                     out.print(lowestCost[i][j] + "\t");
                 }
                 out.println();
-                // out.println("paths: ");
+                out.println("paths: ");
                 for (int j = 0; j < numNeighbors; j++) {
-                    out.print(paths[i][j].length + "\t");
-                    for (int k = 0; k < paths[i][j].length; k++)
-                        out.print("\t" + paths[i][j][k]);
-                    out.println();
+                    if (paths[i][j] != null) {
+                        out.print(paths[i][j].length + "\t");
+                        for (int k = 0; k < paths[i][j].length; k++)
+                            out.print("\t" + paths[i][j][k]);
+                        out.println();
+                    }
                 }
             }
         } catch (FileNotFoundException e) {
@@ -527,6 +529,76 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         // this.numGroups = groups.size();
     }
 
+    private void resizeFreeSpace() {
+        if (freeSpaceCount == 0) {
+            // Allocate arrays 10% larger than the current numRegions
+            int arraySize = (int) (this.numGroups * 1.1);
+
+            int[][] resizedLowestCost = new int[arraySize][];
+            System.arraycopy(this.lowestCost, 0, resizedLowestCost, 0, this.lowestCost.length);
+            this.lowestCost = resizedLowestCost;
+
+            int[][][] resizedPath = new int[arraySize][][];
+            System.arraycopy(this.paths, 0, resizedPath, 0, this.paths.length);
+            this.paths = resizedPath;
+
+            int[][] resizedNeighborId = new int[arraySize][];
+            System.arraycopy(this.neighborId, 0, resizedNeighborId, 0, this.neighborId.length);
+            this.neighborId = resizedNeighborId;
+
+            logger.warn("Arrays have been resized since there was no more free space.");
+
+            // TODO: Test whether resizing here works as expected and whether it's necessary
+            this.freeSpaceCount = arraySize - this.numGroups;
+            int[] resizedFreeSpace = new int[arraySize];
+            System.arraycopy(this.freeSpace, 0, resizedFreeSpace, 0, this.freeSpace.length);
+            this.freeSpace = resizedFreeSpace;
+        }
+    }
+
+    public void recomputeBasePathsAfterElimination(int regionId) throws Exception {
+        // This is the elimination case, where adding a wall leads to the removal of a region
+
+        // If we have run out of free space, increase the size of the arrays
+        resizeFreeSpace();
+
+        // Find array location of region
+        int groupLoc = regionId - GameMap.START_NUM;
+
+        // Iterate over neighbours of the region to eliminate to scrub references to it
+        for (int i = 0; i < this.neighborId[groupLoc].length; i++) {
+            // Grab location of neighbour
+            int neighbourLoc = this.neighborId[groupLoc][i];
+            // Iterate over neighbours of neighbour to find region to eliminate
+            int indexOfRegionToEliminate = -1;
+            for (int j = 0; j < this.neighborId[neighbourLoc].length; j++) {
+                if (this.neighborId[neighbourLoc][j] == groupLoc) {
+                    indexOfRegionToEliminate = j;
+                    break;
+                }
+            }
+            // If the region to eliminate was not stored as a neighbour of its neighbour
+            if (indexOfRegionToEliminate == -1) {
+                // If we get here, then the neighbour lists must be messed up, because one of the neighbours
+                // of the region were eliminating did not have said region set as a neighbour
+                logger.error("There is an issue with the neighbours of region: " + regionId);
+                throw new Exception("There is an issue with the neighbours of region: " + regionId);
+            }
+
+            // Copying into smaller arrays here
+            this.neighborId[neighbourLoc] = copyArrayExceptIndex(this.neighborId[neighbourLoc], indexOfRegionToEliminate);
+            this.lowestCost[neighbourLoc] = copyArrayExceptIndex(this.lowestCost[neighbourLoc], indexOfRegionToEliminate);
+            // Simply setting path to null (not copying paths array)
+            this.paths[neighbourLoc][indexOfRegionToEliminate] = null;
+        }
+        // Tombstone eliminated region
+        this.neighborId[groupLoc] = null;
+        this.paths[groupLoc] = null;
+        this.lowestCost[groupLoc] = null;
+        // Update freeSpace
+        pushFreeSpace(regionId);
+    }
+
     /**
      * Recomputes the dynamic programming table and base paths.
      * DP table is stored as an adjacency list representation
@@ -666,6 +738,8 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
                 // Add path, TODO: Could I just reverse the other path?
                 this.paths[neighbourLoc][originalArraySize] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
             }
+
+            saveDB("RemovalOf2284.txt");
         }
     }
 
