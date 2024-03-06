@@ -496,7 +496,8 @@ public class DBAStarUtil2 {
                 // Recompute neighbourhood
                 map.recomputeNeighbors(gridSize, START_ROW, START_COL, END_ROW, END_COL, neighborIds);
 
-                // TODO: Database changes
+                // Database changes
+                dbBW.recomputeBasePathsAfterPartition(REGION_ID, problem, groups, neighborIds);
                 return;
             }
 
