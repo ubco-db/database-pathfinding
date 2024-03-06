@@ -10,10 +10,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import search.*;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.TreeMap;
 
 import static util.MapHelpers.*;
@@ -44,7 +42,7 @@ public class DBAStarUtil2 {
         this.dbaStarDbPath = dbaStarDbPath;
     }
 
-    public DBAStar computeDBAStarDatabaseUsingSubgoalDynamicDB3(GameMap map, String wallStatus) {
+    public DBAStar3 computeDBAStarDatabaseUsingSubgoalDynamicDB3(GameMap map, String wallStatus) {
         long currentTime;
 
         SearchProblem problem = new MapSearchProblem(map);
@@ -95,7 +93,7 @@ public class DBAStarUtil2 {
 
         logger.debug("Databases loaded.");
 
-        return new DBAStar(problem, map, database);
+        return new DBAStar3(problem, map, database);
     }
 
     /**
@@ -153,7 +151,7 @@ public class DBAStarUtil2 {
      * @param wallLoc   state id where wall will be place
      * @param dbaStarBW DBAStar object returned from computeDBAStarDatabaseUsingSubgoalDynamicDB3
      */
-    public void recomputeWallAdditionUsingSubgoalDynamicDB3(int wallLoc, DBAStar dbaStarBW) throws Exception {
+    public void recomputeWallAdditionUsingSubgoalDynamicDB3(int wallLoc, DBAStar3 dbaStarBW) throws Exception {
         // Extract map, problem, and database from dbaStarBW
         GameMap map = dbaStarBW.getMap();
         MapSearchProblem problem = (MapSearchProblem) dbaStarBW.getProblem();
@@ -515,7 +513,7 @@ public class DBAStarUtil2 {
      * @param wallLoc   state id where wall will be removed
      * @param dbaStarBW DBAStar object returned from computeDBAStarDatabaseUsingSubgoalDynamicDB3
      */
-    public void recomputeWallRemovalUsingSubgoalDynamicDB3(int wallLoc, DBAStar dbaStarBW) throws Exception {
+    public void recomputeWallRemovalUsingSubgoalDynamicDB3(int wallLoc, DBAStar3 dbaStarBW) throws Exception {
         // Extract map, problem, and database from dbaStarBW
         GameMap map = dbaStarBW.getMap();
         MapSearchProblem problem = (MapSearchProblem) dbaStarBW.getProblem();
@@ -535,7 +533,10 @@ public class DBAStarUtil2 {
         if (PRIOR_WALL && !map.isWall(wallLoc) && !problem.getMap().isWall(wallLoc)) {
             logger.info("Wall at " + wallLoc + " removed successfully!");
         } else {
-            throw new Exception("Wall removal failed! There is no wall to remove at" + wallLoc);
+            System.out.println(PRIOR_WALL);
+            System.out.println(!map.isWall(wallLoc));
+            System.out.println(!problem.getMap().isWall(wallLoc));
+            throw new Exception("Wall removal failed! There is no wall to remove at " + wallLoc);
         }
 
         // Get eight neighbours of state where wall was removed
@@ -587,26 +588,26 @@ public class DBAStarUtil2 {
             final int NUM_SECTORS_PER_ROW = (int) Math.ceil(map.cols * 1.0 / gridSize);
             final int SECTOR_ID = WALL_ROW / gridSize * NUM_SECTORS_PER_ROW + WALL_COL / gridSize;
 
-            // Get regions touching the wallLocation
-            // TODO: Collapse for-loops into one
+            // Store region ids of eight neighbour states
             HashSet<Integer> neighbouringRegions = new HashSet<>();
-            for (int neighbourState : neighbourStates) {
-                if (!map.isWall(neighbourState)) {
-                    neighbouringRegions.add(map.getRegionFromState(neighbourState));
-                }
-            }
+            // Store region ids of neighbour states that are in the same sector as the wall being removed
+            HashSet<Integer> neighbouringRegionsInSameSector = new HashSet<>();
 
-            // Check whether any of the non-wall neighbourStates are in the same sector where the wall was removed
-            // If at least one of them is, store its region id
-            boolean isInDifferentSector = true;
             int neighbourRegionId = -1;
+
             for (int neighbourState : neighbourStates) {
                 if (!map.isWall(neighbourState)) {
+                    // Get sector id of current neighbour state of wall (if it is not a wall)
                     int neighbourSector = getSectorId(map, neighbourState, gridSize);
+                    // Get region id of current neighbour state of wall (if it is not a wall)
+                    int neighbourRegion = map.getRegionFromState(neighbourState);
+                    // Store neighbour regions in set
+                    neighbouringRegions.add(neighbourRegion);
+                    // If the neighbour state is in the same sector as the wall
                     if (neighbourSector == SECTOR_ID) {
-                        isInDifferentSector = false;
-                        neighbourRegionId = map.getRegionFromState(neighbourState);
-                        break;
+                        // If there is multiple regions with the same sector id touching the wall being removed, we would have a merge case
+                        neighbouringRegionsInSameSector.add(neighbourRegion);
+                        neighbourRegionId = neighbourRegion;
                     }
                 }
             }
@@ -614,7 +615,7 @@ public class DBAStarUtil2 {
             TreeMap<Integer, GroupRecord> groups = new MapSearchProblem(map).getGroups();
 
             // If the new region is in a different sector than any of its neighbours, we have a new, connected region
-            if (isInDifferentSector) {
+            if (neighbouringRegionsInSameSector.isEmpty()) {
                 // Get new regionId using freeSpace
                 int regionId = dbBW.popFreeSpace();
 
@@ -660,6 +661,8 @@ public class DBAStarUtil2 {
             }
 
             // Get region id from neighbours in same sector
+            // In the merge case, which one is assigned here is random, but will be overwritten anyway
+            // In the unblocker case, there is only one choice
             int regionId = neighbourRegionId;
             // Get region rep
             int regionRepId = map.getRegionRepFromRegionId(regionId);
@@ -675,12 +678,20 @@ public class DBAStarUtil2 {
 
             // If the neighbours stored in the group record differ from those stored in the neighbouringRegions,
             // we must have an unblocker case, or a region merge case
-            if (!groupRecord.getNeighborIds().equals(neighbouringRegions)) {
-                // Look at sector membership of differing neighbour?
+            if (!groupRecord.getNeighborIds().containsAll(neighbouringRegions)) {
+                // neighbouringRegions contains all regions the removed wall was touching
+                // groupRecord.getNeighborIds() contains all neighbours of the region the wall is in
+                if (neighbouringRegionsInSameSector.size() == 1) {
+                    // Unblocker case
+                    logger.info("Unblocker Case");
 
-                // Unblocker case
+                    // TODO: Database changes
+                } else {
+                    // If our wall touches more than two regions that are in the same sector, we have a region merge case
+                    logger.info("Merge Case");
 
-                // Region merge case
+                    // TODO: Database changes
+                }
             }
 
             // Compute newRegionRep to detect whether a shift has happened
