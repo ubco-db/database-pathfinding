@@ -453,14 +453,14 @@ public class DBAStarUtil2 {
                     }
                 }
 
-                // Perform abstraction (go over sector and recompute regions)
-                int numRegionsInSector = map.sectorReAbstract2(gridSize, START_ROW, START_COL, END_ROW, END_COL, REGION_ID, map);
+                // Perform abstraction (go over sector and recompute regions), this updates free space
+                int numRegionsInSector = map.sectorReAbstractWithFreeSpace(gridSize, START_ROW, START_COL, END_ROW, END_COL, REGION_ID, map, dbBW);
 
                 // Tombstone group record in groups map (recreate it later)
                 map.addGroup(REGION_ID, null);
 
                 int count = 0;
-                GroupRecord[] newRecs = new GroupRecord[ numRegionsInSector];
+                GroupRecord[] newRecs = new GroupRecord[numRegionsInSector];
 
                 // Re-create groups
                 for (int row = START_ROW; row < END_ROW; row++) {
@@ -487,7 +487,7 @@ public class DBAStarUtil2 {
                 }
 
                 // Recompute region reps for newly added regions
-                // a newRec should never be null, if it is, something went wrong with the group generation in sectorReAbstract2
+                // a newRec should never be null, if it is, something went wrong with the group generation in sectorReAbstractWithFreeSpace
                 for (GroupRecord newRec : newRecs) {
                     map.recomputeCentroid2(newRec, wallLoc);
                     neighborIds.add(newRec.groupId);
@@ -651,7 +651,7 @@ public class DBAStarUtil2 {
                 newRec.states.add(newRec.groupRepId);
 
                 // Update region’s neighbourhood in groups map & update neighbourhood of all its neighbours in groups map
-                for (Integer neighbouringRegion: neighbouringRegions) {
+                for (Integer neighbouringRegion : neighbouringRegions) {
                     groups.get(neighbouringRegion).getNeighborIds().add(regionId);
                 }
                 newRec.setNeighborIds(neighbouringRegions);
@@ -697,11 +697,85 @@ public class DBAStarUtil2 {
                 if (neighbouringRegionsInSameSector.size() == 1) {
                     // Unblocker case
                     logger.info("Path Unblocker Case");
+                    // TODO: Implement
 
                     // TODO: Database changes
                 } else {
                     // If our wall touches more than two regions that are in the same sector, we have a region merge case
                     logger.info("Region Merge Case");
+
+                    // Start of sector
+                    final int START_ROW = (SECTOR_ID / NUM_SECTORS_PER_ROW) * gridSize;
+                    final int START_COL = (SECTOR_ID % NUM_SECTORS_PER_ROW) * gridSize;
+                    // End of sector
+                    final int END_ROW = Math.min(START_ROW + gridSize, map.rows);
+                    final int END_COL = Math.min(START_COL + gridSize, map.cols);
+
+                    // Iterate over old regions inside squares array and ‘erase’ them (assign ‘32’ instead of the old region ids)
+                    for (int row = START_ROW; row < END_ROW; row++) {
+                        for (int col = START_COL; col < END_COL; col++) {
+                            if (!map.isWall(row, col) && neighbouringRegionsInSameSector.contains(map.squares[row][col])) {
+                                map.squares[row][col] = ' '; // 32
+                            }
+                        }
+                    }
+
+                    HashSet<Integer> neighborIdsSet = new HashSet<>();
+                    for (int neighbouringRegionInSameSector : neighbouringRegionsInSameSector) {
+                        // Update freeSpace
+                        dbBW.pushFreeSpace(neighbouringRegionInSameSector);
+                        // Tombstone group record in groups map (recreate it later)
+                        map.addGroup(neighbouringRegionInSameSector, null);
+                        // Add to neighbourIds
+                        neighborIdsSet.addAll(groups.get(neighbouringRegionInSameSector).getNeighborIds());
+                    }
+
+                    // Remove regions that will merge
+                    // TODO: Is this necessary?
+                    neighborIdsSet.removeAll(neighbouringRegionsInSameSector);
+
+                    ArrayList<Integer> neighborIds = new ArrayList<>(neighborIdsSet);
+
+                    // Perform abstraction (go over sector and recompute regions), this updates free space
+                    // TODO: Should I even pass regionId here?
+                    int numRegionsInSector = map.sectorReAbstractWithFreeSpace(gridSize, START_ROW, START_COL, END_ROW, END_COL, regionId, map, dbBW);
+
+                    int count = 0;
+                    GroupRecord[] newRecs = new GroupRecord[numRegionsInSector];
+
+                    // Re-create groups
+                    for (int row = START_ROW; row < END_ROW; row++) {
+                        for (int col = START_COL; col < END_COL; col++) {
+                            int groupId = map.squares[row][col];
+                            if (groupId != GameMap.EMPTY_CHAR && groupId != GameMap.WALL_CHAR) {
+                                // See if group already exists
+                                GroupRecord rec = groups.get(groupId);
+                                if (rec == null) {    // New group
+                                    GroupRecord newRec = new GroupRecord();
+                                    newRec.setNumStates(1);
+                                    newRec.groupId = groupId;
+                                    newRec.groupRepId = map.getId(row, col);
+                                    newRec.states = new ArrayList<>(10);
+                                    newRec.states.add(newRec.groupRepId);
+                                    map.addGroup(groupId, newRec);
+                                    newRecs[count++] = newRec;
+                                } else {    // Update group
+                                    rec.setNumStates(rec.getSize() + 1);
+                                    rec.states.add(map.getId(row, col));
+                                }
+                            }
+                        }
+                    }
+
+                    // Recompute region reps for newly added regions
+                    // a newRec should never be null, if it is, something went wrong with the group generation in sectorReAbstractWithFreeSpace
+                    for (GroupRecord newRec : newRecs) {
+                        map.recomputeCentroid2(newRec, wallLoc);
+                        neighborIds.add(newRec.groupId);
+                    }
+
+                    // Recompute neighbourhood
+                    map.recomputeNeighbors(gridSize, START_ROW, START_COL, END_ROW, END_COL, neighborIds);
 
                     // TODO: Database changes
                 }
