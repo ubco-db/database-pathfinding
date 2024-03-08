@@ -677,6 +677,46 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         }
     }
 
+    public void recomputeBasePathsAfterRegionRepMove(int regionId, MapSearchProblem problem, TreeMap<Integer, GroupRecord> groups) {
+        // This is the wall moves region rep case, where adding a wall leads to paths and their costs changing
+
+        // If we have run out of free space, increase the size of the arrays
+        resizeFreeSpace();
+
+        // Find array location of region
+        int groupLoc = regionId - GameMap.START_NUM;
+
+        AStar astar = new AStar(problem);
+        StatsRecord stats = new StatsRecord();
+        ArrayList<SearchState> path;
+
+        // Update region’s paths to its neighbours (and their costs)
+        // Update the region’s neighbours paths to it (and their costs)
+        for (int i = 0; i < neighborId[groupLoc].length; i++) {
+            // Grab location of neighbour
+            int neighbourLoc = this.neighborId[groupLoc][i];
+            int[] tmp = new int[5000];
+            // TODO: May want to pass this as parameter
+            SearchAlgorithm searchAlg = new HillClimbing(problem, 10000);
+
+            path = astar.computePath(new SearchState(groups.get(regionId).groupRepId), new SearchState(groups.get(neighbourLoc + GameMap.START_NUM).groupRepId), stats);
+            SearchUtil.computePathCost(path, stats, problem);
+            int pathCost = stats.getPathCost();
+
+            // Update lowestCost of region
+            this.lowestCost[groupLoc][i] = pathCost;
+            // Update path to region
+            this.paths[groupLoc][i] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
+            // this.neighborId[groupLoc][i] = neighbourLoc;
+
+            // Update lowestCost of neighbour
+            this.lowestCost[neighbourLoc][i] = pathCost;
+            // Update path to neighbour
+            this.paths[neighbourLoc][i] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(new ArrayList<>(path.reversed())), searchAlg, tmp, path.size());
+        }
+        saveDB("checkingResultsRegionRep.txt");
+    }
+
     /**
      * Recomputes the dynamic programming table and base paths.
      * DP table is stored as an adjacency list representation
