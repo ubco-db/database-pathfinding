@@ -510,7 +510,6 @@ public class DBAStarUtil2 {
             // Wall That Changes Shortest Path
             logger.info("Wall That Changes Shortest Path Case");
             // Database changes
-            // FIXME: Does not fully work for 12969
             dbBW.recomputeBasePaths(REGION_ID, problem, groups);
         }
     }

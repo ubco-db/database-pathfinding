@@ -708,13 +708,17 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             // Update path to region
             this.paths[groupLoc][i] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
 
+            path = astar.computePath(new SearchState(groups.get(neighbourLoc + GameMap.START_NUM).groupRepId), new SearchState(groups.get(regionId).groupRepId), stats);
+            SearchUtil.computePathCost(path, stats, problem);
+            pathCost = stats.getPathCost();
+
             // Need to find correct neighborId to update
             for (int j = 0; j < this.neighborId[neighbourLoc].length; j++) {
                 if (this.neighborId[neighbourLoc][j] == groupLoc) {
                     // Update lowestCost of neighbour
                     this.lowestCost[neighbourLoc][j] = pathCost;
                     // Update path to neighbour
-                    this.paths[neighbourLoc][j] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(new ArrayList<>(path.reversed())), searchAlg, tmp, path.size());
+                    this.paths[neighbourLoc][j] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(new ArrayList<>(path)), searchAlg, tmp, path.size());
                     break;
                 }
             }
