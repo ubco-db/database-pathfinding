@@ -692,7 +692,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
 
         // Update region’s paths to its neighbours (and their costs)
         // Update the region’s neighbours paths to it (and their costs)
-        for (int i = 0; i < neighborId[groupLoc].length; i++) {
+        for (int i = 0; i < this.neighborId[groupLoc].length; i++) {
             // Grab location of neighbour
             int neighbourLoc = this.neighborId[groupLoc][i];
             int[] tmp = new int[5000];
@@ -709,10 +709,16 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             this.paths[groupLoc][i] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
             // this.neighborId[groupLoc][i] = neighbourLoc;
 
-            // Update lowestCost of neighbour
-            this.lowestCost[neighbourLoc][i] = pathCost;
-            // Update path to neighbour
-            this.paths[neighbourLoc][i] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(new ArrayList<>(path.reversed())), searchAlg, tmp, path.size());
+            // Need to find correct neighborId to update=
+            for (int j = 0; j < this.neighborId[neighbourLoc].length; j++) {
+                if (this.neighborId[neighbourLoc][j] == groupLoc) {
+                    // Update lowestCost of neighbour
+                    this.lowestCost[neighbourLoc][j] = pathCost;
+                    // Update path to neighbour
+                    this.paths[neighbourLoc][j] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(new ArrayList<>(path.reversed())), searchAlg, tmp, path.size());
+                    break;
+                }
+            }
         }
         saveDB("checkingResultsRegionRep.txt");
     }
@@ -884,7 +890,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
      */
     public int popFreeSpace() throws Exception {
         // Return lowest freeSpace index from the end of the array
-        System.out.println(Arrays.toString(freeSpace));
+        logger.debug("Free space before popping: " + Arrays.toString(freeSpace));
         if (freeSpace[freeSpaceCount - 1] == 0) {
             throw new Exception("Indexing is off");
         }
@@ -897,7 +903,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
      * @throws Exception if existing free space is being overwritten
      */
     public void pushFreeSpace(int regionId) throws Exception {
-        System.out.println(Arrays.toString(freeSpace));
+        logger.debug("Free space before pushing: " + Arrays.toString(freeSpace));
         if (freeSpace[freeSpaceCount] != 0) {
             throw new Exception("Overwriting existing free space!");
         }

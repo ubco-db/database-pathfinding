@@ -53,7 +53,7 @@ public class DBAStarUtil2 {
 
         SubgoalDynamicDB3 database = new SubgoalDynamicDB3(); // DP matrix in adjacency list representation (computed at run-time)
 
-        String fileName = getDBName(wallStatus);
+        // String fileName = getDBName(wallStatus);
 
         logger.debug("Loading map and performing abstraction...");
 
@@ -162,6 +162,7 @@ public class DBAStarUtil2 {
 
         // Get id of region that wall was placed in
         final int REGION_ID = map.squares[WALL_ROW][WALL_COL];
+        logger.debug("Region: " + REGION_ID);
 
         // Check whether there is already a wall at the location the wall should be placed
         final boolean PRIOR_WALL = map.isWall(wallLoc) && problem.getMap().isWall(wallLoc);
@@ -172,13 +173,14 @@ public class DBAStarUtil2 {
 
         // Check whether the wall addition worked as intended
         if (!PRIOR_WALL && map.isWall(wallLoc) && problem.getMap().isWall(wallLoc)) {
-            logger.info("Wall at " + wallLoc + " set successfully!");
+            logger.debug("Wall at " + wallLoc + " set successfully!");
         } else {
             throw new Exception("Wall addition failed! There is a wall at " + wallLoc + " already");
         }
 
         // Get representative of region wall was placed in
         final int REGION_REP = map.getRegionRepFromRegionId(REGION_ID);
+        logger.debug("Region rep: " + REGION_REP);
 
         // If the region rep is tombstoned
         if (REGION_REP == -1) {
@@ -189,7 +191,7 @@ public class DBAStarUtil2 {
         TreeMap<Integer, GroupRecord> groups = new MapSearchProblem(map).getGroups();
 
         // Get group record containing information on the region
-        GroupRecord groupRecord = groups.get(REGION_REP);
+        GroupRecord groupRecord = groups.get(REGION_ID);
 
         // Elimination case
         if (groupRecord.getNumStates() == 1) {
@@ -219,6 +221,7 @@ public class DBAStarUtil2 {
 
             final int NUM_SECTORS_PER_ROW = (int) Math.ceil(map.cols * 1.0 / gridSize);
             final int SECTOR_ID = WALL_ROW / gridSize * NUM_SECTORS_PER_ROW + WALL_COL / gridSize;
+            logger.debug("Sector: " + SECTOR_ID);
 
             // Start of sector
             final int START_ROW = (SECTOR_ID / NUM_SECTORS_PER_ROW) * gridSize;
@@ -371,20 +374,6 @@ public class DBAStarUtil2 {
                 }
             }
 
-            // Wall on Region Representative case
-            // TODO: Consider blocker and wall on rep case
-            if (wallLoc == REGION_REP) {
-                logger.info("Wall on Region Representative Case");
-                // Eliminate the state in the states ArrayList inside the groups map
-                groupRecord.states.remove((Integer) wallLoc);
-
-                // Compute new region rep for the region by finding center of the region, and updating group record with
-                // this information and update region reps array to contain new region rep
-                map.recomputeCentroid2(groupRecord, wallLoc);
-
-                // TODO: Database changes
-            }
-
             // Region Partition case
 
             // If wall is between two walls, or between a wall and another region, we may have partition
@@ -503,6 +492,7 @@ public class DBAStarUtil2 {
 
             // Eliminate the state in the states ArrayList inside the groups map
             groupRecord.states.remove((Integer) wallLoc);
+            groupRecord.numStates -= 1;
 
             // Compute newRegionRep to detect whether a shift has happened
             int newRegionRep = map.recomputeCentroid2(groupRecord, wallLoc);
@@ -510,7 +500,10 @@ public class DBAStarUtil2 {
             // Wall That Moves Region Representative case
             if (newRegionRep != REGION_REP) {
                 logger.info("Wall That Moves Region Representative Case");
-                // TODO: Database changes
+                logger.debug("New region rep: " + newRegionRep);
+
+                // Database changes
+                dbBW.recomputeBasePathsAfterRegionRepMove(REGION_ID, problem, groups);
                 return;
             }
 
