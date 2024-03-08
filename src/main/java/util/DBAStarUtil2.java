@@ -503,13 +503,15 @@ public class DBAStarUtil2 {
                 logger.debug("New region rep: " + newRegionRep);
 
                 // Database changes
-                dbBW.recomputeBasePathsAfterRegionRepMove(REGION_ID, problem, groups);
+                dbBW.recomputeBasePaths(REGION_ID, problem, groups);
                 return;
             }
 
             // Wall That Changes Shortest Path
             logger.info("Wall That Changes Shortest Path Case");
-            // TODO: Database changes
+            // Database changes
+            // FIXME: Does not fully work for 12969
+            dbBW.recomputeBasePaths(REGION_ID, problem, groups);
         }
     }
 
@@ -693,10 +695,11 @@ public class DBAStarUtil2 {
 
                     // Add the state to the states ArrayList inside the groups map
                     groupRecord.states.add(wallLoc);
+                    groupRecord.numStates += 1;
 
                     // TODO: Is there any scenario where there could be two?
                     int neighbourRegion = -1;
-                    for (int neighbouringRegion: neighbouringRegions) {
+                    for (int neighbouringRegion : neighbouringRegions) {
                         if (!neighboursFromGroupRec.contains(neighbouringRegion)) {
                             neighbourRegion = neighbouringRegion;
                         }
@@ -811,13 +814,17 @@ public class DBAStarUtil2 {
             // Wall That Moves Region Representative case
             if (newRegionRep != regionRepId) {
                 logger.info("Wall That Moves Region Representative Case");
-                // TODO: Database changes
+
+                // Database changes
+                dbBW.recomputeBasePaths(regionId, problem, groups);
                 return;
             }
 
             logger.info("Wall That Changes Shortest Path Case");
             // Wall That Changes Shortest Path
-            // TODO: Database changes
+
+            // Database changes
+            dbBW.recomputeBasePaths(regionId, problem, groups);
         }
     }
 

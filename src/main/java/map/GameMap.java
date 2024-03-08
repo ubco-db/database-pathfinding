@@ -65,7 +65,7 @@ public class GameMap {
     private int[] numRegions;                         // Number of regions in each sector (only used for sector abstraction)
     //  private RegionSearchProblem abstractProblem;  // Only used for PRA*
 
-    private int[] regionReps;
+    public int[] regionReps;
 
     private static final Logger logger = LogManager.getLogger(GameMap.class);
 

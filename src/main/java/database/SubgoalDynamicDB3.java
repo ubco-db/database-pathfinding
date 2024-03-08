@@ -677,7 +677,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         }
     }
 
-    public void recomputeBasePathsAfterRegionRepMove(int regionId, MapSearchProblem problem, TreeMap<Integer, GroupRecord> groups) {
+    public void recomputeBasePaths(int regionId, MapSearchProblem problem, TreeMap<Integer, GroupRecord> groups) {
         // This is the wall moves region rep case, where adding a wall leads to paths and their costs changing
 
         // If we have run out of free space, increase the size of the arrays
@@ -707,9 +707,8 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             this.lowestCost[groupLoc][i] = pathCost;
             // Update path to region
             this.paths[groupLoc][i] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
-            // this.neighborId[groupLoc][i] = neighbourLoc;
 
-            // Need to find correct neighborId to update=
+            // Need to find correct neighborId to update
             for (int j = 0; j < this.neighborId[neighbourLoc].length; j++) {
                 if (this.neighborId[neighbourLoc][j] == groupLoc) {
                     // Update lowestCost of neighbour
