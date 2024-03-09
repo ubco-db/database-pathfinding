@@ -658,7 +658,8 @@ public class DBAStarUtil2 {
                 // Update regionReps array
                 map.addRegionRep(regionId, newRec.groupRepId);
 
-                // TODO: Database changes
+                // Database changes
+                dbBW.recomputeBasePathsIfConnected(regionId, problem, groups, neighbouringRegions);
                 return;
             }
 

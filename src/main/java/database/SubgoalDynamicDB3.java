@@ -678,7 +678,8 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
     }
 
     public void recomputeBasePaths(int regionId, MapSearchProblem problem, TreeMap<Integer, GroupRecord> groups) {
-        // This is the wall moves region rep case, where adding a wall leads to paths and their costs changing
+        // This is for all cases where the paths change but the neighbourhood does not:
+        // E.g. wall on region rep, wall that moves region rep, wall that changes shortest path
 
         // If we have run out of free space, increase the size of the arrays
         resizeFreeSpace();
@@ -887,6 +888,80 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         this.paths[groupLoc] = new int[0][];
     }
 
+    public void recomputeBasePathsIfConnected(int regionId, SearchProblem problem, TreeMap<Integer, GroupRecord> groups,
+                                              HashSet<Integer> neighborIds) {
+        // Case where new region has neighbours (e.g. is in a new sector but connected)
+
+        // If we have run out of free space, increase the size of the arrays
+        resizeFreeSpace();
+
+        // freeSpace has already been updated in DBAStarUtil (needed the information for map updates)
+
+        // Find array location of region
+        int groupLoc = regionId - GameMap.START_NUM;
+
+        int numNeighbours = neighborIds.size();
+
+        // Create arrays for new group
+        this.neighborId[groupLoc] = new int[numNeighbours];
+        this.lowestCost[groupLoc] = new int[numNeighbours];
+        this.paths[groupLoc] = new int[numNeighbours][];
+
+        AStar astar = new AStar(problem);
+        StatsRecord stats = new StatsRecord();
+        ArrayList<SearchState> path;
+
+        // Update region’s paths to its neighbours (and their costs)
+        // Update the region’s neighbours paths to it (and their costs)
+        int i = 0;
+        for (int neighbourId: neighborIds) {
+            // Grab location of neighbour
+            int neighbourLoc = neighbourId - GameMap.START_NUM;
+
+            int[] tmp = new int[5000];
+            // TODO: May want to pass this as parameter
+            SearchAlgorithm searchAlg = new HillClimbing(problem, 10000);
+
+            path = astar.computePath(new SearchState(groups.get(regionId).groupRepId), new SearchState(groups.get(neighbourLoc + GameMap.START_NUM).groupRepId), stats);
+            SearchUtil.computePathCost(path, stats, problem);
+            int pathCost = stats.getPathCost();
+
+            this.neighborId[groupLoc][i] = neighbourLoc;
+            // Update lowestCost of region
+            this.lowestCost[groupLoc][i] = pathCost;
+            // Update path to region
+            this.paths[groupLoc][i] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
+
+            // Need to increase size of arrays of neighbour
+            int len = this.neighborId[neighbourLoc].length;
+
+            int[] resizedNeighbourId = new int[len + 1];
+            System.arraycopy(this.neighborId[neighbourLoc], 0, resizedNeighbourId, 0, len);
+            this.neighborId[neighbourLoc] = resizedNeighbourId;
+
+            int[][] resizedPaths = new int[len + 1][];
+            System.arraycopy(this.paths[neighbourLoc], 0, resizedPaths,0, len);
+            this.paths[neighbourLoc] = resizedPaths;
+
+            int[] resizedCosts = new int[len + 1];
+            System.arraycopy(this.lowestCost[neighbourLoc], 0, resizedCosts, 0, len);
+            this.lowestCost[neighbourLoc] = resizedCosts;
+
+            this.neighborId[neighbourLoc][len] = groupLoc;
+
+            path = astar.computePath(new SearchState(groups.get(neighbourLoc + GameMap.START_NUM).groupRepId), new SearchState(groups.get(regionId).groupRepId), stats);
+            SearchUtil.computePathCost(path, stats, problem);
+            pathCost = stats.getPathCost();
+
+            this.lowestCost[neighbourLoc][len] = pathCost;
+            this.paths[neighbourLoc][len] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
+
+            i++;
+        }
+
+        saveDB("checkingResultsNewConnected.txt");
+    }
+
     /**
      * @return regionId that is free to use
      * @throws Exception if the indexing is off
@@ -898,7 +973,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             throw new Exception("Indexing is off");
         }
         this.numGroups++;
-        return freeSpace[freeSpaceCount-- - 1];
+        return freeSpace[freeSpaceCount-- - 1] + GameMap.START_NUM;
     }
 
     /**
@@ -912,7 +987,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         }
         // Write into freeSpace
         this.numGroups--;
-        freeSpace[freeSpaceCount++] = regionId;
+        freeSpace[freeSpaceCount++] = regionId - GameMap.START_NUM;
     }
 
     private static int[] copyArrayExceptIndex(int[] arr, int index) {
