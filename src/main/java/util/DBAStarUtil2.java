@@ -489,7 +489,7 @@ public class DBAStarUtil2 {
                 map.recomputeNeighbors(gridSize, START_ROW, START_COL, END_ROW, END_COL, neighborIds);
 
                 // Database changes
-                dbBW.recomputeBasePathsAfterPartition(problem, groups, newRecs);
+                dbBW.recomputeBasePathsAfterPartition(problem, groups, neighborIds);
                 return;
             }
 
@@ -722,11 +722,6 @@ public class DBAStarUtil2 {
                     HashSet<Integer> neighboursOfEx = neighborRecord.getNeighborIds();
                     // Update old neighbour’s neighbourhood in groups map
                     neighboursOfEx.remove(regionId);
-
-                    /*
-                    Update region’s neighbourhood in groups map
-                    Update old neighbour’s neighbourhood in groups map
-                     */
 
                     // TODO: Database changes
                 } else {
