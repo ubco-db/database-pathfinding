@@ -442,6 +442,9 @@ public class DBAStarUtil2 {
                     }
                 }
 
+                // Adding the regionId to the freeSpace array in the database
+                dbBW.pushFreeSpace(REGION_ID);
+
                 // Perform abstraction (go over sector and recompute regions), this updates free space
                 int numRegionsInSector = map.sectorReAbstractWithFreeSpace(gridSize, START_ROW, START_COL, END_ROW, END_COL, REGION_ID, map, dbBW);
 
@@ -486,7 +489,7 @@ public class DBAStarUtil2 {
                 map.recomputeNeighbors(gridSize, START_ROW, START_COL, END_ROW, END_COL, neighborIds);
 
                 // Database changes
-                dbBW.recomputeBasePathsAfterPartition(REGION_ID, problem, groups, neighborIds);
+                dbBW.recomputeBasePathsAfterPartition(problem, groups, newRecs);
                 return;
             }
 

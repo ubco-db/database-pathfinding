@@ -364,44 +364,6 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             // Recompute base paths for each region
             recomputeBasePathsIfConnected(newRec.groupId, problem, groups, newRec.getNeighborIds());
         }
-
-        for (Integer id : neighborIds) {
-            // Iterate over neighbours of the region
-            int groupLoc = id - GameMap.START_NUM;
-
-            for (int i = 0; i < this.neighborId[groupLoc].length; i++) {
-                // Grab location of neighbour
-                int neighbourLoc = this.neighborId[groupLoc][i];
-                int[] tmp = new int[5000];
-                // TODO: May want to pass this as parameter
-                SearchAlgorithm searchAlg = new HillClimbing(problem, 10000);
-
-                path = astar.computePath(new SearchState(groups.get(id).groupRepId), new SearchState(groups.get(neighbourLoc + GameMap.START_NUM).groupRepId), stats);
-                SearchUtil.computePathCost(path, stats, problem);
-                int pathCost = stats.getPathCost();
-
-                // Update lowestCost
-                this.lowestCost[groupLoc][i] = pathCost;
-                int indexToUpdate = -1;
-                for (int j = 0; j < this.neighborId[neighbourLoc].length; j++) {
-                    if (this.neighborId[neighbourLoc][j] == groupLoc) {
-                        indexToUpdate = j;
-                        break;
-                    }
-                }
-                // If the region to update was not stored as a neighbour of its neighbour
-                if (indexToUpdate == -1) {
-                    // If we get here, then the neighbour lists must be messed up, because one of the neighbours
-                    // of the region were eliminating did not have said region set as a neighbour
-                    logger.error("There is an issue with the neighbours of region: " + regionId);
-                    throw new Exception("There is an issue with the neighbours of region: " + regionId);
-                }
-                // Update lowestCost of neighbour
-                this.lowestCost[neighbourLoc][indexToUpdate] = pathCost;
-
-                this.paths[groupLoc][i] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
-            }
-        }
     }
 
     /**
