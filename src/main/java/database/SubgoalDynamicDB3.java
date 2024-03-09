@@ -297,6 +297,9 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         }
     }
 
+    /**
+     * @param regionId region id where wall was added
+     */
     public void recomputeBasePathsAfterElimination(int regionId) throws Exception {
         // This is the elimination case, where adding a wall leads to the removal of a region
 
@@ -340,6 +343,12 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         pushFreeSpace(regionId);
     }
 
+    /**
+     * @param regionId    region id where wall was added
+     * @param problem     MapSearchProblem used in A*
+     * @param groups      groups mapping
+     * @param neighborIds ArrayList containing region ids of neighbour regions
+     */
     public void recomputeBasePathsAfterPartition(int regionId, SearchProblem problem, TreeMap<Integer, GroupRecord> groups,
                                                  ArrayList<Integer> neighborIds) throws Exception {
         // This is the partition case, where adding a wall leads to the splitting of a region into two or more smaller regions
@@ -418,6 +427,11 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         }
     }
 
+    /**
+     * @param regionId    region id where wall was added
+     * @param problem     MapSearchProblem used in A*
+     * @param groups      groups mapping
+     */
     public void recomputeBasePaths(int regionId, MapSearchProblem problem, TreeMap<Integer, GroupRecord> groups) {
         // This is for all cases where the paths change but the neighbourhood does not:
         // E.g. wall on region rep, wall that moves region rep, wall that changes shortest path
@@ -468,6 +482,9 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         saveDB("checkingResultsRegionRep.txt");
     }
 
+    /**
+     * @param regionId region id where wall was added
+     */
     public void recomputeBasePathsIfSolitary(int regionId) {
         // Case where new region has no neighbours (e.g. is surrounded by walls)
 
@@ -485,7 +502,13 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         this.paths[groupLoc] = new int[0][];
     }
 
-    public void recomputeBasePathsIfConnected(int regionId, SearchProblem problem, TreeMap<Integer, GroupRecord> groups,
+    /**
+     * @param regionId    region id where wall was added
+     * @param problem     MapSearchProblem used in A*
+     * @param groups      groups mapping
+     * @param neighborIds ArrayList containing region ids of neighbour regions
+     */
+    public void recomputeBasePathsIfConnected(int regionId, MapSearchProblem problem, TreeMap<Integer, GroupRecord> groups,
                                               HashSet<Integer> neighborIds) {
         // Case where new region has neighbours (e.g. is in a new sector but connected)
 
@@ -587,6 +610,11 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         freeSpace[freeSpaceCount++] = regionId - GameMap.START_NUM;
     }
 
+    /**
+     * @param arr   array to copy
+     * @param index index to exclude while copying
+     * @return array of arr.length - 1 without the element at index
+     */
     private static int[] copyArrayExceptIndex(int[] arr, int index) {
         int[] newArr = new int[arr.length - 1];
         int newIndex = 0;
