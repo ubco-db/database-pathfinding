@@ -344,48 +344,25 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
     }
 
     /**
-     * @param regionId    region id where wall was added
-     * @param problem     MapSearchProblem used in A*
-     * @param groups      groups mapping
-     * @param neighborIds ArrayList containing region ids of neighbour regions
+     * @param problem  MapSearchProblem used in A*
+     * @param groups   groups mapping
+     * @param newRecs  array containing the GroupRecords of the new regions
      */
-    public void recomputeBasePathsAfterPartition(int regionId, SearchProblem problem, TreeMap<Integer, GroupRecord> groups,
-                                                 ArrayList<Integer> neighborIds) throws Exception {
+    public void recomputeBasePathsAfterPartition(MapSearchProblem problem, TreeMap<Integer, GroupRecord> groups,
+                                                 GroupRecord[] newRecs) {
         // This is the partition case, where adding a wall leads to the splitting of a region into two or more smaller regions
 
         // If we have run out of free space, increase the size of the arrays
         resizeFreeSpace();
 
-        AStar astar = new AStar(problem);
-        StatsRecord stats = new StatsRecord();
-        ArrayList<SearchState> path;
+        // Find array location of region
 
-        // freeSpace has already been updated in DBAStarUtil (needed the information for map updates)
+        // The new regions are by definition not neighbours
 
-        // regionIds contains the ids of all the regions the original region was split into after the partition
-        // Use those to overwrite the neighborId arrays of the regions
-        for (Integer id : neighborIds) {
-            // Need to update neighborhoods of all the new regions
-            int groupLoc = id - GameMap.START_NUM;
-
-            // Get neighbours of the new/surrounding regions (updated in map.recomputeNeighbors)
-            HashSet<Integer> neighbours = groups.get(id).getNeighborIds();
-            // Create an int array with the same size as the HashSet
-            int[] neighbourArray = new int[neighbours.size()];
-
-            // Iterate through the HashSet and copy its elements to the array
-            int index = 0;
-            for (Integer neighbour : neighbours) {
-                neighbourArray[index++] = neighbour - GameMap.START_NUM;
-            }
-
-            // Overwrite the neighbourId array of the region
-            this.neighborId[groupLoc] = neighbourArray;
-            // Create new lowest cost and paths arrays of correct size
-            // FIXME: This is throwing away useful data, find a way to not to
-            // all but the paths to the new regions should be unaffected, so throwing those away and recomputing them is a waste
-            this.lowestCost[groupLoc] = new int[neighbours.size()];
-            this.paths[groupLoc] = new int[neighbours.size()][];
+        // Iterate over new regions
+        for (GroupRecord newRec : newRecs) {
+            // Recompute base paths for each region
+            recomputeBasePathsIfConnected(newRec.groupId, problem, groups, newRec.getNeighborIds());
         }
 
         for (Integer id : neighborIds) {
@@ -428,9 +405,9 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
     }
 
     /**
-     * @param regionId    region id where wall was added
-     * @param problem     MapSearchProblem used in A*
-     * @param groups      groups mapping
+     * @param regionId region id where wall was added
+     * @param problem  MapSearchProblem used in A*
+     * @param groups   groups mapping
      */
     public void recomputeBasePaths(int regionId, MapSearchProblem problem, TreeMap<Integer, GroupRecord> groups) {
         // This is for all cases where the paths change but the neighbourhood does not:
@@ -555,6 +532,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             // Need to increase size of arrays of neighbour
             int len = this.neighborId[neighbourLoc].length;
 
+            // Resize arrays
             int[] resizedNeighbourId = new int[len + 1];
             System.arraycopy(this.neighborId[neighbourLoc], 0, resizedNeighbourId, 0, len);
             this.neighborId[neighbourLoc] = resizedNeighbourId;
@@ -567,19 +545,19 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             System.arraycopy(this.lowestCost[neighbourLoc], 0, resizedCosts, 0, len);
             this.lowestCost[neighbourLoc] = resizedCosts;
 
+            // Assign neighbourId
             this.neighborId[neighbourLoc][len] = groupLoc;
 
             path = astar.computePath(new SearchState(groups.get(neighbourLoc + GameMap.START_NUM).groupRepId), new SearchState(groups.get(regionId).groupRepId), stats);
             SearchUtil.computePathCost(path, stats, problem);
             pathCost = stats.getPathCost();
 
+            // Assign lowest cost and new path
             this.lowestCost[neighbourLoc][len] = pathCost;
             this.paths[neighbourLoc][len] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
 
             i++;
         }
-
-        saveDB("checkingResultsNewConnected.txt");
     }
 
     /**
