@@ -268,18 +268,18 @@ public class DBAStarUtil2 {
                 // TODO: Check my math here!
                 // If the wall is in a corner and the state diagonal to it is not a wall, we have a corner blocker
                 // This means the two regions that are currently neighbours shouldn't be anymore
-                if (isTopLeftCorner && !map.isWall(NEIGHBOR_NW)) {
+                if (isTopLeftCorner && (NEIGHBOR_NW != 42)) {
                     neighbourRegion = map.squares[WALL_ROW - 1][WALL_COL - 1];
-                    neighbourRegionRep = map.getRegionRepFromState(NEIGHBOR_NW);
-                } else if (isTopRightCorner && !map.isWall(NEIGHBOR_NE)) {
+                    neighbourRegionRep = map.getRegionRepFromRegionId(NEIGHBOR_NW);
+                } else if (isTopRightCorner && (NEIGHBOR_NE != 42)) {
                     neighbourRegion = map.squares[WALL_ROW - 1][WALL_COL + 1];
-                    neighbourRegionRep = map.getRegionRepFromState(NEIGHBOR_NE);
-                } else if (isBottomRightCorner && !map.isWall(NEIGHBOR_SE)) {
+                    neighbourRegionRep = map.getRegionRepFromRegionId(NEIGHBOR_NE);
+                } else if (isBottomRightCorner && (NEIGHBOR_SE != 42)) {
                     neighbourRegion = map.squares[WALL_ROW + 1][WALL_COL + 1];
-                    neighbourRegionRep = map.getRegionRepFromState(NEIGHBOR_SE);
-                } else if (isBottomLeftCorner && !map.isWall(NEIGHBOR_SW)) {
+                    neighbourRegionRep = map.getRegionRepFromRegionId(NEIGHBOR_SE);
+                } else if (isBottomLeftCorner && (NEIGHBOR_SW != 42)) {
                     neighbourRegion = map.squares[WALL_ROW + 1][WALL_COL - 1];
-                    neighbourRegionRep = map.getRegionRepFromState(NEIGHBOR_SW);
+                    neighbourRegionRep = map.getRegionRepFromRegionId(NEIGHBOR_SW);
                 }
 
                 if (neighbourRegion == REGION_ID) {
@@ -322,25 +322,25 @@ public class DBAStarUtil2 {
                 // If the wall is at an edge and the state next to it is not a wall, and this was the only touching point
                 // between two regions, we have an edge blocker
                 // This means the two regions that are currently neighbours shouldn't be anymore
-                if (isNorthEdge && !map.isWall(NEIGHBOR_N)) {
+                if (isNorthEdge && (NEIGHBOR_N != 42)) {
                     if (hasNoOtherPointOfContactHorizontally(map, REGION_ID, START_COL, WALL_ROW, WALL_COL, WALL_ROW - 1)) {
                         neighbourRegion = map.squares[WALL_ROW - 1][WALL_COL];
-                        neighbourRegionRep = map.getRegionRepFromState(NEIGHBOR_N);
+                        neighbourRegionRep = map.getRegionRepFromRegionId(NEIGHBOR_N);
                     }
-                } else if (isEastEdge && !map.isWall(NEIGHBOR_E)) {
+                } else if (isEastEdge && (NEIGHBOR_E != 42)) {
                     if (hasNoOtherPointOfContactVertically(map, REGION_ID, START_ROW, WALL_ROW, WALL_COL, WALL_COL + 1)) {
                         neighbourRegion = map.squares[WALL_ROW][WALL_COL + 1];
-                        neighbourRegionRep = map.getRegionRepFromState(NEIGHBOR_E);
+                        neighbourRegionRep = map.getRegionRepFromRegionId(NEIGHBOR_E);
                     }
-                } else if (isSouthEdge && !map.isWall(NEIGHBOR_S)) {
+                } else if (isSouthEdge && (NEIGHBOR_S != 42)) {
                     if (hasNoOtherPointOfContactHorizontally(map, REGION_ID, START_COL, WALL_ROW, WALL_COL, WALL_ROW + 1)) {
                         neighbourRegion = map.squares[WALL_ROW + 1][WALL_COL];
-                        neighbourRegionRep = map.getRegionRepFromState(NEIGHBOR_S);
+                        neighbourRegionRep = map.getRegionRepFromRegionId(NEIGHBOR_S);
                     }
-                } else if (isWestEdge && !map.isWall(NEIGHBOR_W)) {
+                } else if (isWestEdge && (NEIGHBOR_W != 42)) {
                     if (hasNoOtherPointOfContactVertically(map, REGION_ID, START_ROW, WALL_ROW, WALL_COL, WALL_COL - 1)) {
                         neighbourRegion = map.squares[WALL_ROW][WALL_COL - 1];
-                        neighbourRegionRep = map.getRegionRepFromState(NEIGHBOR_W);
+                        neighbourRegionRep = map.getRegionRepFromRegionId(NEIGHBOR_W);
                     }
                 }
 
