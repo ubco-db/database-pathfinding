@@ -646,16 +646,55 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         this.paths[neighbourLoc][len] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
     }
 
-    public void recomputeCornerBlocker(int regionId, int neighbourId, MapSearchProblem problem, TreeMap<Integer, GroupRecord> groups) {
+    public void recomputeCornerBlocker(int regionId, int neighbourId, MapSearchProblem problem, TreeMap<Integer, GroupRecord> groups) throws Exception {
         // In the blocker case, we have two regions that were previously neighbours but now aren't
+
+        // If we have run out of free space, increase the size of the arrays
+        resizeFreeSpace();
 
         // Grab location of region and neighbour
         int groupLoc = regionId - GameMap.START_NUM;
         int neighbourLoc = neighbourId - GameMap.START_NUM;
 
-        // Update region’s neighbourhood
+        System.out.println(Arrays.toString(this.neighborId[groupLoc]));
 
-        // Update old neighbour’s neighbourhood
+        // Update region’s neighbourhood
+        int indexOfNeighborLoc = -1;
+        for (int i = 0; i < this.neighborId[groupLoc].length; i++) {
+            // Need to find index of neighbourLoc
+            if (this.neighborId[groupLoc][i] == neighbourLoc) {
+                indexOfNeighborLoc = i;
+                break;
+            }
+        }
+
+        // If the region to eliminate was not stored as a neighbour of its neighbour
+        if (indexOfNeighborLoc == -1) {
+            // If we get here, then the neighbour lists must be messed up, because the region and its neighbour
+            // are not neighbours in the neighborId array
+            throw new Exception("There is an issue with the neighbours of region: " + regionId);
+        }
+        
+        this.neighborId[groupLoc] = copyArrayExceptIndex(this.neighborId[groupLoc], indexOfNeighborLoc);
+        this.lowestCost[groupLoc] = copyArrayExceptIndex(this.lowestCost[groupLoc], indexOfNeighborLoc);
+        this.paths[groupLoc][indexOfNeighborLoc] = null;
+
+        int indexOfGroupLoc = -1;
+        for (int i = 0; i < this.neighborId[neighbourLoc].length; i++) {
+            // Need to find index of groupLoc
+            if (this.neighborId[neighbourLoc][i] == groupLoc) {
+                indexOfGroupLoc = i;
+                break;
+            }
+        }
+
+        if (indexOfGroupLoc == -1) {
+            throw new Exception("There is an issue with the neighbours of region: " + neighbourId);
+        }
+
+        this.neighborId[neighbourLoc] = copyArrayExceptIndex(this.neighborId[neighbourLoc], indexOfGroupLoc);
+        this.lowestCost[neighbourLoc] = copyArrayExceptIndex(this.lowestCost[neighbourLoc], indexOfGroupLoc);
+        this.paths[neighbourLoc][indexOfGroupLoc] = null;
     }
 
     /**
