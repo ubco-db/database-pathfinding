@@ -147,7 +147,8 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
                 }
                 out.println();
                 out.println("paths: ");
-                for (int j = 0; j < numNeighbors; j++) {
+                // Changed this to use paths[i].length instead of numNeighbors since they may not always be the same
+                for (int j = 0; j < paths[i].length; j++) {
                     if (paths[i][j] != null) {
                         out.print(paths[i][j].length + "\t");
                         for (int k = 0; k < paths[i][j].length; k++)
@@ -586,17 +587,21 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         // If we have run out of free space, increase the size of the arrays
         resizeFreeSpace();
 
+        // Grab location of region and neighbour
+        int groupLoc = regionId - GameMap.START_NUM;
+        int neighbourLoc = neighbourId - GameMap.START_NUM;
+
         // Get region rep of region wall was removed in, and get region rep of neighbour region that is now accessible
         int groupRepId = groups.get(regionId).groupRepId;
         int neighborRepId = groups.get(neighbourId).groupRepId;
 
         // Recompute unblocker from region
-        recomputeUnblocker(regionId, groupRepId, neighbourId, neighborRepId, problem);
+        recomputeUnblocker(groupLoc, groupRepId, neighbourLoc, neighborRepId, problem);
         // Recompute unblocker from neighbor
-        recomputeUnblocker(neighbourId, neighborRepId, regionId, groupRepId, problem);
+        recomputeUnblocker(neighbourLoc, neighborRepId, groupLoc, groupRepId, problem);
     }
 
-    private void recomputeUnblocker(int regionId, int groupRepId, int neighbourId, int neighborRepId, MapSearchProblem problem) throws Exception {
+    private void recomputeUnblocker(int groupLoc, int groupRepId, int neighbourLoc, int neighborRepId, MapSearchProblem problem) throws Exception {
         StatsRecord stats = new StatsRecord();
         ArrayList<SearchState> path;
 
@@ -605,26 +610,36 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         SearchAlgorithm searchAlg = new HillClimbing(problem, 10000);
         AStar astar = new AStar(problem);
 
-        // Grab location of region and neighbour
-        int groupLoc = regionId - GameMap.START_NUM;
-        int neighbourLoc = neighbourId - GameMap.START_NUM;
+        // Need to compute new paths between regions
+        path = astar.computePath(new SearchState(groupRepId), new SearchState(neighborRepId), stats);
+        SearchUtil.computePathCost(path, stats, problem);
+        int pathCost = stats.getPathCost();
 
         // Index of last element of array after resizing (= length before resizing)
         int idx = this.neighborId[groupLoc].length;
 
         // Need to increase size of arrays of region
         increaseArrayLengthBy1AtIndex(this.neighborId, groupLoc, idx);
-        increaseArrayLengthBy1AtIndex(this.paths, groupLoc, idx);
         increaseArrayLengthBy1AtIndex(this.lowestCost, groupLoc, idx);
-
-        // Need to compute new paths between regions
-        path = astar.computePath(new SearchState(groupRepId), new SearchState(neighborRepId), stats);
-        SearchUtil.computePathCost(path, stats, problem);
-        int pathCost = stats.getPathCost();
 
         // Assign values
         this.neighborId[groupLoc][idx] = neighbourLoc;
         this.lowestCost[groupLoc][idx] = pathCost;
+
+        // Find null in paths array (may be present due to prior blocker)
+        idx = this.paths[groupLoc].length;
+        for (int i = 0; i < this.paths[groupLoc].length; i++) {
+            if (this.paths[groupLoc][i] == null) {
+                idx = i;
+                break;
+            }
+        }
+
+        // If it's not present, increase size of paths array
+        if (idx == this.paths[groupLoc].length) {
+            increaseArrayLengthBy1AtIndex(this.paths, groupLoc, idx);
+        }
+
         this.paths[groupLoc][idx] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
     }
 
@@ -732,9 +747,10 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
     }
 
     private void increaseArrayLengthBy1AtIndex(int[][][] array, int index, int len) throws Exception {
-        if (len != array[index].length) {
-            throw new Exception("Error! Unequal array lengths");
-        }
+        // TODO: array length may be different for paths since it could have null elements, should it?
+//        if (len != array[index].length) {
+//            throw new Exception("Error! Unequal array lengths");
+//        }
 
         int[][] resizedArray = new int[len + 1][];
         System.arraycopy(array[index], 0, resizedArray, 0, len);
