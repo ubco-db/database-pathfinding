@@ -579,6 +579,85 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         }
     }
 
+
+    public void recomputeUnblocker(int regionId, int neighbourId, MapSearchProblem problem, TreeMap<Integer, GroupRecord> groups) {
+        // In the unblocker case, we have two regions that were previously not neighbours but now are
+        AStar astar = new AStar(problem);
+        StatsRecord stats = new StatsRecord();
+        ArrayList<SearchState> path;
+
+        int[] tmp = new int[5000];
+        // TODO: May want to pass this as parameter
+        SearchAlgorithm searchAlg = new HillClimbing(problem, 10000);
+
+        // Grab location of region and neighbour
+        int groupLoc = regionId - GameMap.START_NUM;
+        int neighbourLoc = neighbourId - GameMap.START_NUM;
+
+        // Need to increase size of arrays of region
+        int len = this.neighborId[groupLoc].length;
+        int[] resizedNeighbourId = new int[len + 1];
+        System.arraycopy(this.neighborId[groupLoc], 0, resizedNeighbourId, 0, len);
+        this.neighborId[groupLoc] = resizedNeighbourId;
+
+        int[][] resizedPaths = new int[len + 1][];
+        System.arraycopy(this.paths[groupLoc], 0, resizedPaths, 0, len);
+        this.paths[groupLoc] = resizedPaths;
+
+        int[] resizedCosts = new int[len + 1];
+        System.arraycopy(this.lowestCost[groupLoc], 0, resizedCosts, 0, len);
+        this.lowestCost[groupLoc] = resizedCosts;
+
+        // Need to compute new paths between regions
+        path = astar.computePath(new SearchState(groups.get(regionId).groupRepId), new SearchState(groups.get(neighbourId).groupRepId), stats);
+        SearchUtil.computePathCost(path, stats, problem);
+        int pathCost = stats.getPathCost();
+
+        // Assign values
+        this.neighborId[groupLoc][len] = neighbourId;
+        this.lowestCost[groupLoc][len] = pathCost;
+        this.paths[groupLoc][len] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
+
+
+        // Need to increase size of arrays of neighbour
+        len = this.neighborId[neighbourLoc].length;
+
+        // Resize arrays
+        resizedNeighbourId = new int[len + 1];
+        System.arraycopy(this.neighborId[neighbourLoc], 0, resizedNeighbourId, 0, len);
+        this.neighborId[neighbourLoc] = resizedNeighbourId;
+
+        resizedPaths = new int[len + 1][];
+        System.arraycopy(this.paths[neighbourLoc], 0, resizedPaths, 0, len);
+        this.paths[neighbourLoc] = resizedPaths;
+
+        resizedCosts = new int[len + 1];
+        System.arraycopy(this.lowestCost[neighbourLoc], 0, resizedCosts, 0, len);
+        this.lowestCost[neighbourLoc] = resizedCosts;
+
+        // Need to compute new paths between regions
+        path = astar.computePath(new SearchState(groups.get(neighbourId).groupRepId), new SearchState(groups.get(regionId).groupRepId), stats);
+        SearchUtil.computePathCost(path, stats, problem);
+        pathCost = stats.getPathCost();
+
+        // Assign values
+        this.neighborId[neighbourLoc][len] = neighbourId;
+        this.lowestCost[neighbourLoc][len] = pathCost;
+        this.paths[neighbourLoc][len] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
+    }
+
+    public void recomputeCornerBlocker(int regionId, int neighbourId, MapSearchProblem problem, TreeMap<Integer, GroupRecord> groups) {
+        // In the blocker case, we have two regions that were previously neighbours but now aren't
+
+        // Grab location of region and neighbour
+        int groupLoc = regionId - GameMap.START_NUM;
+        int neighbourLoc = neighbourId - GameMap.START_NUM;
+
+        // Update region’s neighbourhood
+
+        // Update old neighbour’s neighbourhood
+    }
+
     /**
      * @return regionId that is free to use
      * @throws Exception if the indexing is off
