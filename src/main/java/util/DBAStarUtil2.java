@@ -246,8 +246,7 @@ public class DBAStarUtil2 {
 
             boolean isAtSectorEdge = WALL_ROW == START_ROW || WALL_ROW == END_ROW || WALL_COL == START_COL || WALL_COL == END_COL;
 
-            // If we are placing a wall at the edge of a sector, we may have a pathblocker case
-            // A maximum of (4 * 16 - 4) / (16 * 16) = 60 / 256 states per sector are affected
+            // If we are placing a wall in the corner of a sector, we may have a pathblocker case
             if (isAtSectorEdge) {
                 boolean isNorthEdge = WALL_ROW == START_ROW;
                 boolean isEastEdge = WALL_COL == END_COL;
@@ -287,11 +286,10 @@ public class DBAStarUtil2 {
                 }
 
                 if (neighbourRegionRep == -1) {
-                    throw new Exception("Region rep for region " + REGION_ID + "does not exist!");
+                    throw new Exception("Region rep for region " + neighbourRegion + "does not exist!");
                 }
 
                 // Pathblocker corner case
-                // TODO: Figure out a better way to combine code for edge case and corner case
                 if (neighbourRegion != 0) {
                     logger.info("Pathblocker Corner Case");
                     // Eliminate the state in the states ArrayList inside the groups map
@@ -308,69 +306,8 @@ public class DBAStarUtil2 {
                     // Update old neighbour’s neighbourhood in groups map
                     neighboursOfEx.remove(REGION_ID);
 
-                    // TODO: Database changes
-                }
-
-                // Reset values before edge tests
-                neighbourRegion = 0;
-                neighbourRegionRep = 0;
-
-                // Edge cases (check if wall is at the edge of a sector and whether the region bordering this edge has
-                // any other touching points with the region)
-
-                // TODO: Check my math here!
-                // If the wall is at an edge and the state next to it is not a wall, and this was the only touching point
-                // between two regions, we have an edge blocker
-                // This means the two regions that are currently neighbours shouldn't be anymore
-                if (isNorthEdge && (NEIGHBOR_N != 42)) {
-                    if (hasNoOtherPointOfContactHorizontally(map, REGION_ID, START_COL, WALL_ROW, WALL_COL, WALL_ROW - 1)) {
-                        neighbourRegion = map.squares[WALL_ROW - 1][WALL_COL];
-                        neighbourRegionRep = map.getRegionRepFromRegionId(NEIGHBOR_N);
-                    }
-                } else if (isEastEdge && (NEIGHBOR_E != 42)) {
-                    if (hasNoOtherPointOfContactVertically(map, REGION_ID, START_ROW, WALL_ROW, WALL_COL, WALL_COL + 1)) {
-                        neighbourRegion = map.squares[WALL_ROW][WALL_COL + 1];
-                        neighbourRegionRep = map.getRegionRepFromRegionId(NEIGHBOR_E);
-                    }
-                } else if (isSouthEdge && (NEIGHBOR_S != 42)) {
-                    if (hasNoOtherPointOfContactHorizontally(map, REGION_ID, START_COL, WALL_ROW, WALL_COL, WALL_ROW + 1)) {
-                        neighbourRegion = map.squares[WALL_ROW + 1][WALL_COL];
-                        neighbourRegionRep = map.getRegionRepFromRegionId(NEIGHBOR_S);
-                    }
-                } else if (isWestEdge && (NEIGHBOR_W != 42)) {
-                    if (hasNoOtherPointOfContactVertically(map, REGION_ID, START_ROW, WALL_ROW, WALL_COL, WALL_COL - 1)) {
-                        neighbourRegion = map.squares[WALL_ROW][WALL_COL - 1];
-                        neighbourRegionRep = map.getRegionRepFromRegionId(NEIGHBOR_W);
-                    }
-                }
-
-                if (neighbourRegion == REGION_ID) {
-                    throw new Exception("NeighbourRegion id calculation went wrong!");
-                }
-
-                if (neighbourRegionRep == -1) {
-                    throw new Exception("Region rep for region " + REGION_ID + "does not exist!");
-                }
-
-                // Pathblocker edge case
-                // TODO: Figure out a better way to combine code for edge case and corner case
-                if (neighbourRegion != 0) {
-                    logger.info("Pathblocker Edge Case");
-                    // Eliminate the state in the states ArrayList inside the groups map
-                    groupRecord.states.remove((Integer) wallLoc);
-
-                    // Get the neighbours of the region
-                    HashSet<Integer> neighbours = groupRecord.getNeighborIds();
-                    // Update region’s neighbourhood in groups map
-                    neighbours.remove(neighbourRegion);
-
-                    // Get the neighbours of its soon-to-be ex-neighbor
-                    GroupRecord neighborRecord = groups.get(neighbourRegion);
-                    HashSet<Integer> neighboursOfEx = neighborRecord.getNeighborIds();
-                    // Update old neighbour’s neighbourhood in groups map
-                    neighboursOfEx.remove(REGION_ID);
-
-                    // TODO: Database changes
+                    dbBW.recomputeCornerBlocker(REGION_ID, neighbourRegion, problem, groups);
+                    return;
                 }
             }
 
