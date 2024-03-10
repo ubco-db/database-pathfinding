@@ -586,13 +586,24 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         // If we have run out of free space, increase the size of the arrays
         resizeFreeSpace();
 
-        AStar astar = new AStar(problem);
+        // Get region rep of region wall was removed in, and get region rep of neighbour region that is now accessible
+        int groupRepId = groups.get(regionId).groupRepId;
+        int neighborRepId = groups.get(neighbourId).groupRepId;
+
+        // Recompute unblocker from region
+        recomputeUnblocker(regionId, groupRepId, neighbourId, neighborRepId, problem);
+        // Recompute unblocker from neighbor
+        recomputeUnblocker(neighbourId, neighborRepId, regionId, groupRepId, problem);
+    }
+
+    private void recomputeUnblocker(int regionId, int groupRepId, int neighbourId, int neighborRepId, MapSearchProblem problem) throws Exception {
         StatsRecord stats = new StatsRecord();
         ArrayList<SearchState> path;
 
         int[] tmp = new int[5000];
         // TODO: May want to pass this as parameter
         SearchAlgorithm searchAlg = new HillClimbing(problem, 10000);
+        AStar astar = new AStar(problem);
 
         // Grab location of region and neighbour
         int groupLoc = regionId - GameMap.START_NUM;
@@ -607,32 +618,14 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         increaseArrayLengthBy1AtIndex(this.lowestCost, groupLoc, idx);
 
         // Need to compute new paths between regions
-        path = astar.computePath(new SearchState(groups.get(regionId).groupRepId), new SearchState(groups.get(neighbourId).groupRepId), stats);
+        path = astar.computePath(new SearchState(groupRepId), new SearchState(neighborRepId), stats);
         SearchUtil.computePathCost(path, stats, problem);
         int pathCost = stats.getPathCost();
 
         // Assign values
-        this.neighborId[groupLoc][idx] = neighbourId;
+        this.neighborId[groupLoc][idx] = neighbourLoc;
         this.lowestCost[groupLoc][idx] = pathCost;
         this.paths[groupLoc][idx] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
-
-        // Index of last element of array after resizing
-        idx = this.neighborId[neighbourLoc].length;
-
-        // Need to increase size of arrays of neighbour
-        increaseArrayLengthBy1AtIndex(neighborId, neighbourLoc, idx);
-        increaseArrayLengthBy1AtIndex(paths, neighbourLoc, idx);
-        increaseArrayLengthBy1AtIndex(lowestCost, neighbourLoc, idx);
-
-        // Need to compute new paths between regions
-        path = astar.computePath(new SearchState(groups.get(neighbourId).groupRepId), new SearchState(groups.get(regionId).groupRepId), stats);
-        SearchUtil.computePathCost(path, stats, problem);
-        pathCost = stats.getPathCost();
-
-        // Assign values
-        this.neighborId[neighbourLoc][idx] = neighbourId;
-        this.lowestCost[neighbourLoc][idx] = pathCost;
-        this.paths[neighbourLoc][idx] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
     }
 
     public void recomputeCornerBlocker(int regionId, int neighbourId, MapSearchProblem problem, TreeMap<Integer, GroupRecord> groups) throws Exception {
@@ -644,8 +637,6 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         // Grab location of region and neighbour
         int groupLoc = regionId - GameMap.START_NUM;
         int neighbourLoc = neighbourId - GameMap.START_NUM;
-
-        System.out.println(Arrays.toString(this.neighborId[groupLoc]));
 
         // Update region’s neighbourhood
         int indexOfNeighborLoc = -1;
@@ -728,5 +719,25 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             }
         }
         return newArr;
+    }
+
+    public void increaseArrayLengthBy1AtIndex(int[][] array, int index, int len) throws Exception {
+        if (len != array[index].length) {
+            throw new Exception("Error! Unequal array lengths");
+        }
+
+        int[] resizedArray = new int[len + 1];
+        System.arraycopy(array[index], 0, resizedArray, 0, len);
+        array[index] = resizedArray;
+    }
+
+    public void increaseArrayLengthBy1AtIndex(int[][][] array, int index, int len) throws Exception {
+        if (len != array[index].length) {
+            throw new Exception("Error! Unequal array lengths");
+        }
+
+        int[][] resizedArray = new int[len + 1][];
+        System.arraycopy(array[index], 0, resizedArray, 0, len);
+        array[index] = resizedArray;
     }
 }
