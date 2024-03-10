@@ -580,8 +580,12 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
     }
 
 
-    public void recomputeUnblocker(int regionId, int neighbourId, MapSearchProblem problem, TreeMap<Integer, GroupRecord> groups) {
+    public void recomputeUnblocker(int regionId, int neighbourId, MapSearchProblem problem, TreeMap<Integer, GroupRecord> groups) throws Exception {
         // In the unblocker case, we have two regions that were previously not neighbours but now are
+
+        // If we have run out of free space, increase the size of the arrays
+        resizeFreeSpace();
+
         AStar astar = new AStar(problem);
         StatsRecord stats = new StatsRecord();
         ArrayList<SearchState> path;
@@ -594,19 +598,13 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         int groupLoc = regionId - GameMap.START_NUM;
         int neighbourLoc = neighbourId - GameMap.START_NUM;
 
+        // Index of last element of array after resizing (= length before resizing)
+        int idx = this.neighborId[groupLoc].length;
+
         // Need to increase size of arrays of region
-        int len = this.neighborId[groupLoc].length;
-        int[] resizedNeighbourId = new int[len + 1];
-        System.arraycopy(this.neighborId[groupLoc], 0, resizedNeighbourId, 0, len);
-        this.neighborId[groupLoc] = resizedNeighbourId;
-
-        int[][] resizedPaths = new int[len + 1][];
-        System.arraycopy(this.paths[groupLoc], 0, resizedPaths, 0, len);
-        this.paths[groupLoc] = resizedPaths;
-
-        int[] resizedCosts = new int[len + 1];
-        System.arraycopy(this.lowestCost[groupLoc], 0, resizedCosts, 0, len);
-        this.lowestCost[groupLoc] = resizedCosts;
+        increaseArrayLengthBy1AtIndex(this.neighborId, groupLoc, idx);
+        increaseArrayLengthBy1AtIndex(this.paths, groupLoc, idx);
+        increaseArrayLengthBy1AtIndex(this.lowestCost, groupLoc, idx);
 
         // Need to compute new paths between regions
         path = astar.computePath(new SearchState(groups.get(regionId).groupRepId), new SearchState(groups.get(neighbourId).groupRepId), stats);
@@ -614,26 +612,17 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         int pathCost = stats.getPathCost();
 
         // Assign values
-        this.neighborId[groupLoc][len] = neighbourId;
-        this.lowestCost[groupLoc][len] = pathCost;
-        this.paths[groupLoc][len] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
+        this.neighborId[groupLoc][idx] = neighbourId;
+        this.lowestCost[groupLoc][idx] = pathCost;
+        this.paths[groupLoc][idx] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
 
+        // Index of last element of array after resizing
+        idx = this.neighborId[neighbourLoc].length;
 
         // Need to increase size of arrays of neighbour
-        len = this.neighborId[neighbourLoc].length;
-
-        // Resize arrays
-        resizedNeighbourId = new int[len + 1];
-        System.arraycopy(this.neighborId[neighbourLoc], 0, resizedNeighbourId, 0, len);
-        this.neighborId[neighbourLoc] = resizedNeighbourId;
-
-        resizedPaths = new int[len + 1][];
-        System.arraycopy(this.paths[neighbourLoc], 0, resizedPaths, 0, len);
-        this.paths[neighbourLoc] = resizedPaths;
-
-        resizedCosts = new int[len + 1];
-        System.arraycopy(this.lowestCost[neighbourLoc], 0, resizedCosts, 0, len);
-        this.lowestCost[neighbourLoc] = resizedCosts;
+        increaseArrayLengthBy1AtIndex(neighborId, neighbourLoc, idx);
+        increaseArrayLengthBy1AtIndex(paths, neighbourLoc, idx);
+        increaseArrayLengthBy1AtIndex(lowestCost, neighbourLoc, idx);
 
         // Need to compute new paths between regions
         path = astar.computePath(new SearchState(groups.get(neighbourId).groupRepId), new SearchState(groups.get(regionId).groupRepId), stats);
@@ -641,9 +630,9 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         pathCost = stats.getPathCost();
 
         // Assign values
-        this.neighborId[neighbourLoc][len] = neighbourId;
-        this.lowestCost[neighbourLoc][len] = pathCost;
-        this.paths[neighbourLoc][len] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
+        this.neighborId[neighbourLoc][idx] = neighbourId;
+        this.lowestCost[neighbourLoc][idx] = pathCost;
+        this.paths[neighbourLoc][idx] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
     }
 
     public void recomputeCornerBlocker(int regionId, int neighbourId, MapSearchProblem problem, TreeMap<Integer, GroupRecord> groups) throws Exception {
