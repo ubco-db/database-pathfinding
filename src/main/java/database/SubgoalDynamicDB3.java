@@ -721,7 +721,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         return newArr;
     }
 
-    public void increaseArrayLengthBy1AtIndex(int[][] array, int index, int len) throws Exception {
+    private void increaseArrayLengthBy1AtIndex(int[][] array, int index, int len) throws Exception {
         if (len != array[index].length) {
             throw new Exception("Error! Unequal array lengths");
         }
@@ -731,7 +731,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         array[index] = resizedArray;
     }
 
-    public void increaseArrayLengthBy1AtIndex(int[][][] array, int index, int len) throws Exception {
+    private void increaseArrayLengthBy1AtIndex(int[][][] array, int index, int len) throws Exception {
         if (len != array[index].length) {
             throw new Exception("Error! Unequal array lengths");
         }
