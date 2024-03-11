@@ -12,6 +12,7 @@ import search.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.TreeMap;
 
 import static util.MapHelpers.*;
@@ -626,10 +627,16 @@ public class DBAStarUtil2 {
             // If the neighbours stored in the group record differ from those stored in the neighbouringRegions,
             // we must have an unblocker case, or a region merge case
             HashSet<Integer> neighboursFromGroupRec = groupRecord.getNeighborIds();
-            if (!neighboursFromGroupRec.containsAll(neighbouringRegions)) {
+            // Removing the set of neighbours of the region from the neighbour states of the wall. If there are any elements
+            // left, the wall must have at least one neighbour state that is not currently considered a neighbour
+            neighbouringRegions.removeAll(neighboursFromGroupRec);
+            if (!neighbouringRegions.isEmpty()) {
                 // neighbouringRegions contains all regions the removed wall was touching
                 // groupRecord.getNeighborIds() contains all neighbours of the region the wall is in
-                if (neighbouringRegionsInSameSector.size() == 1) {
+
+                // The wall does not have multiple neighbours in different regions in the same sector
+                // and only has one neighbour out of the sector
+                if (neighbouringRegionsInSameSector.size() == 1 && neighbouringRegions.size() == 2) {
                     // Unblocker case
                     logger.info("Path Unblocker Case");
 
@@ -637,17 +644,8 @@ public class DBAStarUtil2 {
                     groupRecord.states.add(wallLoc);
                     groupRecord.numStates += 1;
 
-                    // TODO: Is there any scenario where there could be two?
-                    int neighbourRegion = -1;
-                    for (int neighbouringRegion : neighbouringRegions) {
-                        if (!neighboursFromGroupRec.contains(neighbouringRegion)) {
-                            neighbourRegion = neighbouringRegion;
-                        }
-                    }
-
-                    if (neighbourRegion == -1) {
-                        throw new Exception("Neighbour region could not be found!");
-                    }
+                    Iterator<Integer> iterator = neighbouringRegions.iterator();
+                    int neighbourRegion = iterator.next();
 
                     // Get the neighbours of the region
                     HashSet<Integer> neighbours = groupRecord.getNeighborIds();
@@ -660,7 +658,8 @@ public class DBAStarUtil2 {
                     // Update old neighbour’s neighbourhood in groups map
                     neighboursOfEx.remove(regionId);
 
-                    // TODO: Database changes
+                    // Database changes
+                    dbBW.recomputeUnblocker(regionId, neighbourRegion, problem, groups);
                 } else {
                     // If our wall touches more than two regions that are in the same sector, we have a region merge case
                     logger.info("Region Merge Case");
