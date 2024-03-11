@@ -1047,7 +1047,9 @@ public class GameMap {
         GameMap newMap = copyEntireMap();
         for (Entry<Integer, GroupRecord> integerGroupRecordEntry : groups.entrySet()) {
             GroupRecord rec = integerGroupRecordEntry.getValue();
-            newMap.squares[getRow(rec.getGroupRepId())][getCol(rec.getGroupRepId())] = 32;
+            if (rec != null) {
+                newMap.squares[getRow(rec.getGroupRepId())][getCol(rec.getGroupRepId())] = 32;
+            }
         }
         return newMap;
     }
@@ -1175,19 +1177,20 @@ public class GameMap {
     }
 
     public void addGroup(int id, GroupRecord group) {
-        groups.put(group.groupId, group);
+        groups.put(id, group);
         // Also add it to groups arrays
+        id -= GameMap.START_NUM;
         if (groupsArray == null) {
             int size = group.groupId;
             if (size < 100) size = 100;
             groupsArray = new GroupRecord[size];
-
         } else if (groupsArray.length - 1 < id) {    // Resize array
             int size = id * 2;
             GroupRecord[] tmp = new GroupRecord[size];
             System.arraycopy(groupsArray, 0, tmp, 0, groupsArray.length);
             groupsArray = tmp;
         }
+        logger.debug("Groups array after adding: " + Arrays.toString(groupsArray));
         groupsArray[id] = group;
     }
 
@@ -2610,7 +2613,7 @@ public class GameMap {
 
         rec.setGroupRepId(regionRep);
         regionReps[rec.groupId - GameMap.START_NUM] = regionRep;
-        System.out.println(rec.groupId - GameMap.START_NUM + " - " + regionRep);
+        logger.debug("Region id: " + (rec.groupId - GameMap.START_NUM) + " - region rep: " + regionRep);
 
         return this.getId(row, col);
     }
@@ -2653,7 +2656,7 @@ public class GameMap {
 
         rec.setGroupRepId(regionRep);
         regionReps[rec.groupId - GameMap.START_NUM] = regionRep;
-        System.out.println(rec.groupId - GameMap.START_NUM + " - " + regionRep);
+        logger.debug("Region id: " + (rec.groupId - GameMap.START_NUM) + " - region rep: " + regionRep);
 
         return this.getId(row, col);
     }

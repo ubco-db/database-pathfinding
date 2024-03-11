@@ -54,11 +54,11 @@ public class AddingAllWallsEfficientlyTest {
 
         for (int wallId : goalIds) {
             // Add wall & recompute database
-            logger.info("\nRecompute wall addition for wall at: " + wallId);
+            logger.info("\n\nRecompute wall addition for wall at: " + wallId);
             dbaStarUtil2.recomputeWallAdditionUsingSubgoalDynamicDB3(wallId, dbaStar3);
 
             // Remove wall
-            logger.info("\nRecompute wall removal for wall at: " + wallId);
+            logger.info("\n\nRecompute wall removal for wall at: " + wallId);
             dbaStarUtil2.recomputeWallRemovalUsingSubgoalDynamicDB3(wallId, dbaStar3);
         }
 
