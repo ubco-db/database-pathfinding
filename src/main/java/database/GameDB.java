@@ -784,13 +784,13 @@ public class GameDB {
         path = new int[5000];
         for (i = 0; i < numGroups; i++) {
             startGroup = groups.get(i + GameMap.START_NUM);
-            if (startGroup.getSize() < SIZE_CUTOFF) continue;
+            if (startGroup.getNumStates() < SIZE_CUTOFF) continue;
 
             for (j = 0; j < numGroups; j++) {
                 if (i == j) continue;
 
                 goalGroup = groups.get(j + GameMap.START_NUM);
-                if (goalGroup.getSize() < SIZE_CUTOFF) continue;
+                if (goalGroup.getNumStates() < SIZE_CUTOFF) continue;
 
                 // This code builds only the path required on demand (may incur more time as have to continually merge paths but may save time by avoiding storing/copying lists to do construction)
                 pathSize = mergePaths3(i, j, paths, neighbor, path, 0);

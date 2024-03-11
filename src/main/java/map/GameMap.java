@@ -594,7 +594,6 @@ public class GameMap {
         baseMap.squares[seedRow][seedCol] = currentCh;
         int curPos = 0;
         group.groupId = currentCh;
-        group.setNumStates(1);
         int id, seedId = baseMap.getId(seedRow, seedCol);
         group.setGroupRepId(seedId);
 
@@ -655,9 +654,6 @@ public class GameMap {
 
             curPos++;
         }
-
-        // group.setNumStates(currentSet.size());
-        group.setNumStates(currentSet.getSize());
         return group;
     }
 
@@ -679,7 +675,6 @@ public class GameMap {
         baseMap.squares[seedRow][seedCol] = currentCh;
         int curPos = 0;
         group.groupId = currentCh;
-        group.setNumStates(1);
         int id, seedId = baseMap.getId(seedRow, seedCol);
         group.setGroupRepId(seedId);
         group.states = new ArrayList<>(50);
@@ -736,9 +731,6 @@ public class GameMap {
 
             curPos++;
         }
-
-        // group.setNumStates(currentSet.getSize());
-        group.setNumStates(group.states.size());
         return group;
     }
 
@@ -1092,7 +1084,7 @@ public class GameMap {
                     database.clear();
                     group = expandSpot2(r, c, currentNum, baseMap, searchAlg, database, currentSet);
                     // baseMap.groups.put(group.groupId, group);
-                    totalSize += group.getSize();
+                    totalSize += group.getNumStates();
                     baseMap.addGroup(group.groupId, group);
                     currentNum++;
                     // 	baseMap.outputImage("tmp_map_"+currentNum+".png", null, null);
@@ -1108,7 +1100,7 @@ public class GameMap {
                     database.clear();
                     group = expandSpot2(i, j, currentNum, baseMap, searchAlg, database, currentSet);
                     // baseMap.groups.put(group.groupId, group);
-                    totalSize += group.getSize();
+                    totalSize += group.getNumStates();
                     baseMap.addGroup(group.groupId, group);
                     currentNum++;
                     //	baseMap.outputImage("tmp_map_"+currentNum+".png", null, null);
@@ -1152,7 +1144,7 @@ public class GameMap {
                 group = expandSpot2(r, c, currentNum, baseMap, searchAlg, null, currentSet);
                 // groups.put(group.groupId, group);
                 addGroup(group.groupId, group);
-                totalSize += group.getSize();
+                totalSize += group.getNumStates();
                 currentNum++;
             }
         }
@@ -1163,7 +1155,7 @@ public class GameMap {
                 if (!baseMap.isWall(i, j) && baseMap.squares[i][j] == EMPTY_CHAR) {
                     group = expandSpot2(i, j, currentNum, baseMap, searchAlg, null, currentSet);
                     // groups.put(group.groupId, group);
-                    totalSize += group.getSize();
+                    totalSize += group.getNumStates();
                     addGroup(group.groupId, group);
                     currentNum++;
                 }
@@ -2506,14 +2498,12 @@ public class GameMap {
                     GroupRecord rec = groups.get(groupId);
                     if (rec == null) {    // New group
                         GroupRecord newrec = new GroupRecord();
-                        newrec.setNumStates(1);
                         newrec.groupId = groupId;
                         newrec.groupRepId = this.getId(i, j);
                         newrec.states = new ArrayList<>(10);
                         newrec.states.add(newrec.groupRepId);
                         this.addGroup(groupId, newrec);
                     } else {    // Update group
-                        rec.setNumStates(rec.getSize() + 1);
                         rec.states.add(this.getId(i, j));
                         // rec.getCells().add(new MapPoint(i,j)); // No longer adding cells - this code doesn't work either
                         // groups.put(groupId, rec);
@@ -2539,7 +2529,7 @@ public class GameMap {
 
         for (Entry<Integer, GroupRecord> integerGroupRecordEntry : groups.entrySet()) {    // Find centroid for each record
             GroupRecord rec = integerGroupRecordEntry.getValue();
-            long sumRow = 0, sumCol = 0, N = rec.getSize();
+            long sumRow = 0, sumCol = 0, N = rec.getNumStates();
             ArrayList states = rec.states;
             for (int i = 0; i < N; i++) {
                 int id = (int) states.get(i);
@@ -2584,7 +2574,7 @@ public class GameMap {
 
         // TODO: states will not always contain wallLoc
 
-        long sumRow = 0, sumCol = 0, N = rec.getSize() - 1; // TODO: replace with ArrayList length
+        long sumRow = 0, sumCol = 0, N = rec.getNumStates() - 1; // TODO: replace with ArrayList length
         ArrayList<Integer> states = rec.states; // QUESTION: Why are we using ExpandArray here? Array should be enough
         for (int i = 0; i < (N + 1); i++) { // TODO: replace 1 with ArrayList length
             int id = states.get(i);
@@ -2628,7 +2618,7 @@ public class GameMap {
     // TODO: This method has a lot of duplicate code, will need to refactor
     public int recomputeCentroid2(GroupRecord rec, int wallLoc) {
 
-        long sumRow = 0, sumCol = 0, N = rec.getSize(); // TODO: replace with ArrayList length
+        long sumRow = 0, sumCol = 0, N = rec.getNumStates(); // TODO: replace with ArrayList length
         ArrayList<Integer> states = rec.states; // QUESTION: Why are we using ExpandArray here? Array should be enough
         for (int i = 0; i < N; i++) { // TODO: replace 1 with ArrayList length
             int id = states.get(i);
@@ -2669,7 +2659,7 @@ public class GameMap {
     }
 
     public int recomputeCentroid3(GroupRecord rec) {
-        long sumRow = 0, sumCol = 0, N = rec.getSize();
+        long sumRow = 0, sumCol = 0, N = rec.getNumStates();
         ArrayList<Integer> states = rec.states;
         for (int i = 0; i < N; i++) {
             int id = states.get(i);

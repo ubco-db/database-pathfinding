@@ -4,7 +4,6 @@ import database.DBStatsRecord;
 import map.GameMap;
 import map.GroupRecord;
 import util.CircularQueue;
-import util.ExpandArray;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -270,7 +269,6 @@ public class SearchSpace {
         states[seed.id] = currentCh;
         int curPos = 0;
         group.groupId = currentCh;
-        group.setNumStates(1);
         int id, seedId = seed.id;
         group.setGroupRepId(seedId);
         ArrayList<SearchState> neighbors;
@@ -310,10 +308,8 @@ public class SearchSpace {
                     }
                 }
             }
-
             curPos++;
         }
-        group.setNumStates(currentSet.cardinality());
         return group;
     }
 

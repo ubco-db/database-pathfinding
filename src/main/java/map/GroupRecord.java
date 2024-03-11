@@ -9,7 +9,6 @@ public class GroupRecord {
     public int groupId;
     public int groupRepId;
     public ArrayList<Integer> states;
-    private int numStates;
     private HashSet<Integer> neighborIds;
     private HashSet<Integer> computedNeighborIds;
 
@@ -17,8 +16,8 @@ public class GroupRecord {
         states = new ArrayList<Integer>();
     }
 
-    public int getSize() {
-        return numStates;
+    public int getNumStates() {
+        return states.size();
     }
 
     public void setNeighborIds(HashSet<Integer> neighborIds) {
@@ -58,14 +57,6 @@ public class GroupRecord {
         this.groupRepId = groupRepId;
     }
 
-    public int getNumStates() {
-        return numStates;
-    }
-
-    public void setNumStates(int numStates) {
-        this.numStates = numStates;
-    }
-
     public HashSet<Integer> getComputedNeighborIds() {
         return computedNeighborIds;
     }
@@ -80,8 +71,8 @@ public class GroupRecord {
 
     public String toString() {
         StringBuilder buf = new StringBuilder(100);
-        buf.append("Id: ").append(groupId).append(" Rep. Id: ").append(groupRepId).append(" Size: ").append(numStates);
-        buf.append(" States: ").append(states.toString());
+        buf.append("Id: ").append(groupId).append(" Rep. Id: ").append(groupRepId).append(" Size: ").append(states.size());
+        buf.append(" States: ").append(states);
         if (neighborIds != null) buf.append(" Neighbors: ").append(neighborIds);
         return buf.toString();
     }
