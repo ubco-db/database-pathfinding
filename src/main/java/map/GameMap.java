@@ -977,7 +977,7 @@ public class GameMap {
             }
         }
         long endTime = System.currentTimeMillis();
-        logger.info("Time to compute neighbors: " + (endTime - currentTime));
+        logger.debug("Time to compute neighbors: " + (endTime - currentTime));
     }
 
     // TODO: recompute neighbours in more efficient way, should be possible since I know neighbours of original region and ids of new regions
@@ -1114,7 +1114,7 @@ public class GameMap {
         baseMap.states = currentNum;
         logger.debug("Number of areas: " + currentNum + " Average area size: " + (totalSize * 1.0 / currentNum));
         long endTime = System.currentTimeMillis();
-        logger.info("Time to compute map abstraction: " + (endTime - currentTime));
+        logger.debug("Time to compute map abstraction: " + (endTime - currentTime));
         dbstat.addStat(12, endTime - currentTime);
         dbstat.addStat(11, currentNum);
         dbstat.addStat(7, currentNum);
@@ -2515,7 +2515,7 @@ public class GameMap {
             }
         }
         long endTime = System.currentTimeMillis();
-        logger.info("Time to compute groups: " + (endTime - currentTime) + " Groups: " + groups.size());
+        logger.debug("Time to compute groups: " + (endTime - currentTime) + " Groups: " + groups.size());
 
         // Compute centroids
         computeCentroids();
@@ -2567,7 +2567,7 @@ public class GameMap {
         }
 
         long endTime = System.currentTimeMillis();
-        logger.info("Time to compute centroids: " + (endTime - currentTime));
+        logger.debug("Time to compute centroids: " + (endTime - currentTime));
     }
 
     // Compute centroid for one group

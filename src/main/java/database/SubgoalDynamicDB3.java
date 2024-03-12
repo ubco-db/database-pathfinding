@@ -13,7 +13,7 @@ import java.util.*;
 
 public class SubgoalDynamicDB3 extends SubgoalDB {
     private int numGroups;              // Number of abstract regions
-    private int[][] neighborLoc;         // neighborLoc[i] stores list of neighbors for i. neighborLoc[i][j] is location in neighbourLoc of jth neighbor of i.
+    private int[][] neighborLoc;        // neighborLoc[i] stores list of neighbors for i. neighborLoc[i][j] is location in neighbourLoc of jth neighbor of i.
     private int[][] lowestCost;         // Lowest cost for DP table. lowestCost[i][j] is the cost of the lowest path from region i to region neighborId[i][j]
     private int[][][] paths;            // paths[i][j] is array representing a compressed path of state ids from region i to region neighborId[i][j] of lowest cost path
     int[] freeSpace;
