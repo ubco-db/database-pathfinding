@@ -12,7 +12,7 @@ public class DBAStar implements SearchAlgorithm {
     private final SubgoalDB database;
     private final SearchProblem problem;
     private final GameMap map;
-    private final RegionSearchProblem abstractProblem;
+    // private final RegionSearchProblem abstractProblem;
     private final ArrayList<SearchState> subgoals;
 
     private static final Logger logger = LogManager.getLogger(DBAStar.class);
@@ -21,7 +21,7 @@ public class DBAStar implements SearchAlgorithm {
         this.database = database;
         this.problem = problem;
         this.map = abstractMap;
-        abstractProblem = abstractMap.getAbstractProblem();
+        // abstractProblem = abstractMap.getAbstractProblem();
         this.subgoals = new ArrayList<SearchState>();
     }
 
@@ -46,15 +46,13 @@ public class DBAStar implements SearchAlgorithm {
 
         ArrayList<SearchState> path = new ArrayList<>();
 
-        ArrayList<SearchState> pathStart = new ArrayList<>();
-        ArrayList<SearchState> pathEnd = new ArrayList<>();
-
         startTime = System.nanoTime();
-        SearchState startRegionCenter = abstractProblem.findRegion2(start, pathStart, 0);
-        SearchState goalRegionCenter = abstractProblem.findRegion2(goal, pathEnd, 1);
 
-//        System.out.println("Start region center: " + startRegionCenter);
-//        System.out.println("Goal region center: " + goalRegionCenter);
+        SearchState startRegionCenter = new SearchState(map.getRegionRepFromState(start.getId()));
+        SearchState goalRegionCenter = new SearchState(map.getRegionRepFromState(goal.getId()));
+
+        ArrayList<SearchState> pathStart = astar.computePath(start, startRegionCenter, stats);
+        ArrayList<SearchState> pathEnd = astar.computePath(goalRegionCenter, goal, stats);
 
         // Search the database for records
         ArrayList<SubgoalDBRecord> records = database.findNearest(problem, startRegionCenter, goalRegionCenter, subgoalSearchAlg, 1, stats, null);

@@ -2,22 +2,22 @@ package map;
 
 import util.ExpandArray;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
 public class GroupRecord {
     public int groupId;
     public int groupRepId;
-    public ExpandArray states;
-    private int numStates;
+    public ArrayList<Integer> states;
     private HashSet<Integer> neighborIds;
     private HashSet<Integer> computedNeighborIds;
 
     public GroupRecord() {
-        states = new ExpandArray();
+        states = new ArrayList<Integer>();
     }
 
-    public int getSize() {
-        return numStates;
+    public int getNumStates() {
+        return states.size();
     }
 
     public void setNeighborIds(HashSet<Integer> neighborIds) {
@@ -57,14 +57,6 @@ public class GroupRecord {
         this.groupRepId = groupRepId;
     }
 
-    public int getNumStates() {
-        return numStates;
-    }
-
-    public void setNumStates(int numStates) {
-        this.numStates = numStates;
-    }
-
     public HashSet<Integer> getComputedNeighborIds() {
         return computedNeighborIds;
     }
@@ -73,14 +65,14 @@ public class GroupRecord {
         this.computedNeighborIds = immediateNeighborIds;
     }
 
-    public void setStates(ExpandArray states) {
+    public void setStates(ArrayList<Integer> states) {
         this.states = states;
     }
 
     public String toString() {
         StringBuilder buf = new StringBuilder(100);
-        buf.append("Id: ").append(groupId).append(" Rep. Id: ").append(groupRepId).append(" Size: ").append(numStates);
-        buf.append(" States: ").append(states.toString());
+        buf.append("Id: ").append(groupId).append(" Rep. Id: ").append(groupRepId).append(" Size: ").append(states.size());
+        buf.append(" States: ").append(states);
         if (neighborIds != null) buf.append(" Neighbors: ").append(neighborIds);
         return buf.toString();
     }

@@ -13,7 +13,7 @@ import java.util.*;
 
 public class SubgoalDynamicDB3 extends SubgoalDB {
     private int numGroups;              // Number of abstract regions
-    private int[][] neighborId;         // neighborId[i] stores list of neighbors for i. neighborId[i][j] is state id of jth neighbor of i.
+    private int[][] neighborLoc;        // neighborLoc[i] stores list of neighbors for i. neighborLoc[i][j] is location in neighbourLoc of jth neighbor of i.
     private int[][] lowestCost;         // Lowest cost for DP table. lowestCost[i][j] is the cost of the lowest path from region i to region neighborId[i][j]
     private int[][][] paths;            // paths[i][j] is array representing a compressed path of state ids from region i to region neighborId[i][j] of lowest cost path
     int[] freeSpace;
@@ -27,8 +27,8 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
      * Returns record for start and goal for search problem between two regions.
      * Record produced dynamically from data in DP table by combining base paths between regions (non-real-time).
      */
-    public ArrayList<SubgoalDBRecord> findNearest(SearchProblem problem, int startGroupId, int goalGroupId, SearchAlgorithm searchAlg, int max, StatsRecord stats, ArrayList<SubgoalDBRecord> used) {
-        // FIXME: This is broken right now, need to make this work without DP table
+    public ArrayList<SubgoalDBRecord> findNearest(SearchProblem problem, int startGroupId, int goalGroupId, SearchAlgorithm searchAlg, StatsRecord stats) {
+        // TODO: Check whether this actually works
 
         ArrayList<SubgoalDBRecord> result = new ArrayList<>(1);
 
@@ -49,7 +49,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             }
         } else {
             // This code builds only the path required on demand (may incur more time as have to continually merge paths but may save time by avoiding storing/copying lists to do construction)
-            pathSize = GameDB.mergePaths4(startGroupId, goalGroupId, paths, lowestCost, neighborId, path);
+            pathSize = GameDB.mergePaths4(startGroupId, goalGroupId, paths, lowestCost, neighborLoc, path);
         }
 
         // System.out.println(Arrays.toString(path));
@@ -91,15 +91,15 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             numGroups = Integer.parseInt(sc.nextLine());
             lowestCost = new int[numGroups][];
             paths = new int[numGroups][][];
-            neighborId = new int[numGroups][];
+            neighborLoc = new int[numGroups][];
             for (int i = 0; i < numGroups; i++) {    // Read each group which has # neighbors as N, neighborId[N], lowest cost[N] and paths on each line
                 int numNeighbors = sc.nextInt();
                 lowestCost[i] = new int[numNeighbors];
-                neighborId[i] = new int[numNeighbors];
+                neighborLoc[i] = new int[numNeighbors];
                 paths[i] = new int[numNeighbors][];
 
                 for (int j = 0; j < numNeighbors; j++)
-                    neighborId[i][j] = sc.nextInt();
+                    neighborLoc[i][j] = sc.nextInt();
                 for (int j = 0; j < numNeighbors; j++)
                     lowestCost[i][j] = sc.nextInt();
                 for (int j = 0; j < numNeighbors; j++) {
@@ -109,7 +109,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
                         paths[i][j][k] = sc.nextInt();
                 }
             }
-            logger.info("Loaded in " + (System.currentTimeMillis() - currentTime));
+            logger.debug("Loaded in " + (System.currentTimeMillis() - currentTime));
         } catch (FileNotFoundException e) {
             logger.error("Did not find input file: " + e);
             success = false;
@@ -130,28 +130,31 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         //		lowestCost matrix (numGroups x numGroups)
         // 		paths matrix (with paths). Each path on a line.  A path is a list of subgoals.  Just have 0 if no states.
         try (PrintWriter out = new PrintWriter(fileName)) {
-            // out.println("numGroups: ");
+            out.println("numGroups: ");
             out.println(numGroups);
             for (int i = 0; i < numGroups; i++) {    // Read each group which has # neighbors as N, neighborId[N], lowest cost[N], neighbor[] and paths on each line
-                int numNeighbors = neighborId[i].length;
-                // out.println("numNeighbours for " + i + ": ");
+                int numNeighbors = neighborLoc[i].length;
+                out.println("numNeighbours for " + i + ": ");
                 out.println(numNeighbors);
-                // out.println("neighbourIds: ");
+                out.println("neighbourIds: ");
                 for (int j = 0; j < numNeighbors; j++) {
-                    out.print(neighborId[i][j] + "\t");
+                    out.print(neighborLoc[i][j] + "\t");
                 }
                 out.println();
-                // out.println("lowestCosts: ");
+                out.println("lowestCosts: ");
                 for (int j = 0; j < numNeighbors; j++) {
                     out.print(lowestCost[i][j] + "\t");
                 }
                 out.println();
-                // out.println("paths: ");
-                for (int j = 0; j < numNeighbors; j++) {
-                    out.print(paths[i][j].length + "\t");
-                    for (int k = 0; k < paths[i][j].length; k++)
-                        out.print("\t" + paths[i][j][k]);
-                    out.println();
+                out.println("paths: ");
+                // Changed this to use paths[i].length instead of numNeighbors since they may not always be the same
+                for (int j = 0; j < paths[i].length; j++) {
+                    if (paths[i][j] != null) {
+                        out.print(paths[i][j].length + "\t");
+                        for (int k = 0; k < paths[i][j].length; k++)
+                            out.print("\t" + paths[i][j][k]);
+                        out.println();
+                    }
                 }
             }
         } catch (FileNotFoundException e) {
@@ -165,7 +168,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         int arraySize = (int) (numGroups * 1.1);
         lowestCost = new int[arraySize][];
         paths = new int[arraySize][][];
-        neighborId = new int[arraySize][];
+        neighborLoc = new int[arraySize][];
 
         // How big should I make this? Technically, we could wipe out all regions, in which case freeSpace would be filled up to arraySize
         freeSpace = new int[arraySize];
@@ -175,7 +178,13 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             freeSpace[i] = arraySize - (i + 1);
         }
 
-        logger.debug(Arrays.toString(freeSpace));
+        // TODO: Currently doing this because freeSpace stores locations which can be 0, so initializing to -1
+        // Ideally would add offset of GameMap.START_NUM to avoid this
+        for (int i = freeSpaceCount; i < freeSpace.length; i++) {
+            freeSpace[i] = -1;
+        }
+
+        logger.debug("Initial free space allocation: " + Arrays.toString(freeSpace));
 
         long startTime = System.currentTimeMillis();
 
@@ -185,7 +194,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
 
         dbStats.addStat(16, baseTime);
         long overallTime = endTime - startTime;
-        logger.info("Total DB compute time: " + overallTime);
+        logger.debug("Total DB compute time: " + overallTime);
         dbStats.addStat(10, overallTime);
     }
 
@@ -208,7 +217,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         StatsRecord stats = new StatsRecord();
         int numBase = 0;
 
-        logger.info("Number of groups: " + numGroups);
+        logger.debug("Number of groups: " + numGroups);
         long currentTime = System.currentTimeMillis();
 
         int[] tmp = new int[5000];
@@ -223,7 +232,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
 
             int numNeighbors = neighbors.size();
             lowestCost[startGroupLoc] = new int[numNeighbors];
-            neighborId[startGroupLoc] = new int[numNeighbors];
+            neighborLoc[startGroupLoc] = new int[numNeighbors];
             paths[startGroupLoc] = new int[numNeighbors][];
 
             Iterator<Integer> it = neighbors.iterator();
@@ -244,7 +253,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
                 // Save information
                 SearchUtil.computePathCost(path, stats, problem);
                 int pathCost = stats.getPathCost();
-                neighborId[startGroupLoc][count] = goalGroupLoc;
+                neighborLoc[startGroupLoc][count] = goalGroupLoc;
                 lowestCost[startGroupLoc][count] = pathCost;
 
                 if (asSubgoals) { // This is always true?
@@ -261,35 +270,14 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
 
         long endTime = System.currentTimeMillis();
         long baseTime = endTime - currentTime;
-        logger.info("Time to compute base paths: " + (baseTime));
-        logger.info("Base neighbors generated paths: " + numBase + " Number of states: " + numStates);
+        logger.debug("Time to compute base paths: " + (baseTime));
+        logger.debug("Base neighbors generated paths: " + numBase + " Number of states: " + numStates);
         dbStats.addStat(9, numStates);        // Set number of subgoals.  Will be changed by a version that pre-computes all paths but will not be changed for the dynamic version.
         dbStats.addStat(8, numBase);          // # of records (only corresponds to base paths)
         return baseTime;
     }
 
-    /**
-     * Recomputes the dynamic programming table and base paths.
-     * DP table is stored as an adjacency list representation
-     *
-     * @param regionId      id of the region where the wall was placed
-     * @param problem       SearchProblem used for AStar and computing path cost
-     * @param groups        TreeMap storing all the groups information
-     * @param isElimination boolean indicating whether this is the elimination case
-     * @param isPartition   boolean indicating whether this is the partition case
-     * @param regionIds     only needed for partition case, contains the ids of all the regions the original region was
-     *                      split into after the partition
-     * @param neighborIds   only needed for partition case, contains all the neighbors of the new regions
-     * @throws Exception if neighborhood is not mutual (issue inside neighborIds array)
-     */
-    public void recomputeBasePathsAfterWallAddition(int regionId, SearchProblem problem, TreeMap<Integer, GroupRecord> groups,
-                                                    boolean isElimination, boolean isPartition, ArrayList<Integer> regionIds,
-                                                    ArrayList<Integer> neighborIds) throws Exception {
-        // If a wall is added, a region may have been removed (partition/elimination case)
-        // Even if a region has not been removed, the wall addition may change paths or lowest costs, so we
-        // will need to check for updates there either way
-
-        // If we have run out of free space, increase the size of the arrays
+    private void resizeFreeSpace() {
         if (freeSpaceCount == 0) {
             // Allocate arrays 10% larger than the current numRegions
             int arraySize = (int) (this.numGroups * 1.1);
@@ -303,8 +291,8 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             this.paths = resizedPath;
 
             int[][] resizedNeighborId = new int[arraySize][];
-            System.arraycopy(this.neighborId, 0, resizedNeighborId, 0, this.neighborId.length);
-            this.neighborId = resizedNeighborId;
+            System.arraycopy(this.neighborLoc, 0, resizedNeighborId, 0, this.neighborLoc.length);
+            this.neighborLoc = resizedNeighborId;
 
             logger.warn("Arrays have been resized since there was no more free space.");
 
@@ -314,287 +302,79 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             System.arraycopy(this.freeSpace, 0, resizedFreeSpace, 0, this.freeSpace.length);
             this.freeSpace = resizedFreeSpace;
         }
-
-        if (isElimination) {
-            // Find array location of region
-            int groupLoc = regionId - GameMap.START_NUM;
-
-            // Iterate over neighbours of the region to eliminate to scrub references to it
-            for (int i = 0; i < this.neighborId[groupLoc].length; i++) {
-                // Grab location of neighbour
-                int neighbourLoc = this.neighborId[groupLoc][i];
-                // Iterate over neighbours of neighbour to find region to eliminate
-                int indexOfRegionToEliminate = -1;
-                for (int j = 0; j < this.neighborId[neighbourLoc].length; j++) {
-                    if (this.neighborId[neighbourLoc][j] == groupLoc) {
-                        indexOfRegionToEliminate = j;
-                        break;
-                    }
-                }
-                // If the region to eliminate was not stored as a neighbour of its neighbour
-                if (indexOfRegionToEliminate == -1) {
-                    // If we get here, then the neighbour lists must be messed up, because one of the neighbours
-                    // of the region were eliminating did not have said region set as a neighbour
-                    logger.error("There is an issue with the neighbours of region: " + regionId);
-                    throw new Exception("There is an issue with the neighbours of region: " + regionId);
-                }
-
-                // Copying into smaller arrays here
-                this.neighborId[neighbourLoc] = copyArrayExceptIndex(this.neighborId[neighbourLoc], indexOfRegionToEliminate);
-                this.lowestCost[neighbourLoc] = copyArrayExceptIndex(this.lowestCost[neighbourLoc], indexOfRegionToEliminate);
-                // Simply setting path to null (not copying paths array)
-                this.paths[neighbourLoc][indexOfRegionToEliminate] = null;
-            }
-            // Tombstone eliminated region
-            this.neighborId[groupLoc] = null;
-            this.paths[groupLoc] = null;
-            this.lowestCost[groupLoc] = null;
-            // Update freeSpace
-            pushFreeSpace(groupLoc);
-        } else if (isPartition) {
-            // TODO: Region will be split in two (or more)
-            AStar astar = new AStar(problem);
-            StatsRecord stats = new StatsRecord();
-            ArrayList<SearchState> path;
-
-            // freeSpace has already been updated in DBAStarUtil (needed the information for map updates)
-
-            // regionIds contains the ids of all the regions the original region was split into after the partition
-            // Use those to overwrite the neighborId arrays of the regions
-            for (Integer id : neighborIds) {
-                // Need to update neighborhoods of all the new regions
-                int groupLoc = id - GameMap.START_NUM;
-
-                // Get neighbours of the new/surrounding regions (updated in map.recomputeNeighbors)
-                HashSet<Integer> neighbours = groups.get(id).getNeighborIds();
-                // Create an int array with the same size as the HashSet
-                int[] neighbourArray = new int[neighbours.size()];
-
-                // Iterate through the HashSet and copy its elements to the array
-                int index = 0;
-                for (Integer neighbour : neighbours) {
-                    neighbourArray[index++] = neighbour - GameMap.START_NUM;
-                }
-
-                // Overwrite the neighbourId array of the region
-                this.neighborId[groupLoc] = neighbourArray;
-                // Create new lowest cost and paths arrays of correct size
-                // FIXME: This is throwing away useful data, find a way to not to
-                // all but the paths to the new regions should be unaffected, so throwing those away and recomputing them is a waste
-                this.lowestCost[groupLoc] = new int[neighbours.size()];
-                this.paths[groupLoc] = new int[neighbours.size()][];
-            }
-
-            for (Integer id : neighborIds) {
-                // Iterate over neighbours of the region
-                int groupLoc = id - GameMap.START_NUM;
-
-                for (int i = 0; i < this.neighborId[groupLoc].length; i++) {
-                    // Grab location of neighbour
-                    int neighbourLoc = this.neighborId[groupLoc][i];
-                    int[] tmp = new int[5000];
-                    // TODO: May want to pass this as parameter
-                    SearchAlgorithm searchAlg = new HillClimbing(problem, 10000);
-
-                    path = astar.computePath(new SearchState(groups.get(id).groupRepId), new SearchState(groups.get(neighbourLoc + GameMap.START_NUM).groupRepId), stats);
-                    SearchUtil.computePathCost(path, stats, problem);
-                    int pathCost = stats.getPathCost();
-
-                    // Update lowestCost
-                    this.lowestCost[groupLoc][i] = pathCost;
-                    int indexToUpdate = -1;
-                    for (int j = 0; j < this.neighborId[neighbourLoc].length; j++) {
-                        if (this.neighborId[neighbourLoc][j] == groupLoc) {
-                            indexToUpdate = j;
-                            break;
-                        }
-                    }
-                    // If the region to update was not stored as a neighbour of its neighbour
-                    if (indexToUpdate == -1) {
-                        // If we get here, then the neighbour lists must be messed up, because one of the neighbours
-                        // of the region were eliminating did not have said region set as a neighbour
-                        logger.error("There is an issue with the neighbours of region: " + regionId);
-                        throw new Exception("There is an issue with the neighbours of region: " + regionId);
-                    }
-                    // Update lowestCost of neighbour
-                    this.lowestCost[neighbourLoc][indexToUpdate] = pathCost;
-
-                    this.paths[groupLoc][i] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
-                }
-
-                // saveDB("checkingResults3.txt");
-            }
-
-        } else {
-            // Recompute paths between regions (adding the wall may have changed the lowest cost or removed a path/neighbour)
-            // Number of regions should stay consistent (no need to update numGroups, freeSpace, freeSpaceCount)
-
-            // Find array location of region
-            int groupLoc = regionId - GameMap.START_NUM;
-
-            AStar astar = new AStar(problem);
-            StatsRecord stats = new StatsRecord();
-            ArrayList<SearchState> path;
-
-            // neighborsFromGroups should contain the true neighbours of any group since it gets updated in map.recomputeNeighbors
-            HashSet<Integer> neighborsFromGroups = groups.get(regionId).getNeighborIds();
-
-            if (neighborsFromGroups.size() != this.neighborId[groupLoc].length) {
-                // This is the "Blocker" case, e.g. wall @14288, where the addition of the wall leads to two regions no
-                // longer being neighbours without a partition taking place
-                logger.warn("NeighborId array length is incorrect!");
-            }
-
-            // Iterate over neighbours of the region
-            for (int i = 0; i < this.neighborId[groupLoc].length; i++) {
-                // Grab location of neighbour
-                int neighbourLoc = this.neighborId[groupLoc][i];
-
-                // Check whether groups has the same neighbours as neighborId (groups is most up-to-date)
-                if (!neighborsFromGroups.contains(neighbourLoc + GameMap.START_NUM)) {
-                    logger.info("Removing region: " + (neighbourLoc + GameMap.START_NUM) + " from neighbour array of " + regionId);
-
-                    // Copying into smaller arrays here
-                    this.neighborId[groupLoc] = copyArrayExceptIndex(this.neighborId[groupLoc], i);
-                    this.lowestCost[groupLoc] = copyArrayExceptIndex(this.lowestCost[groupLoc], i);
-                    // Simply setting path to null (not copying paths array)
-                    this.paths[groupLoc][i] = null;
-
-                    // Iterate over neighbours of neighbour to find region to eliminate
-                    int indexOfRegionToEliminate = -1;
-                    for (int j = 0; j < this.neighborId[neighbourLoc].length; j++) {
-                        if (this.neighborId[neighbourLoc][j] == (regionId - GameMap.START_NUM)) {
-                            indexOfRegionToEliminate = j;
-                            break;
-                        }
-                    }
-                    // If the region to eliminate was not stored as a neighbour of its neighbour
-                    if (indexOfRegionToEliminate == -1) {
-                        // If we get here, then the neighbour lists must be messed up, because one of the neighbours
-                        // of the region were eliminating did not have said region set as a neighbour
-                        logger.error("There is an issue with the neighbours of region: " + regionId);
-                        throw new Exception("There is an issue with the neighbours of region: " + regionId);
-                    }
-
-                    // Copying into smaller arrays here
-                    this.neighborId[neighbourLoc] = copyArrayExceptIndex(this.neighborId[neighbourLoc], indexOfRegionToEliminate);
-                    this.lowestCost[neighbourLoc] = copyArrayExceptIndex(this.lowestCost[neighbourLoc], indexOfRegionToEliminate);
-                    // Simply setting path to null (not copying paths array)
-                    this.paths[neighbourLoc][indexOfRegionToEliminate] = null;
-                } else {
-                    // If nothing changed about the neighbours
-
-                    // TODO: Update lowestCost and paths where necessary
-                    // This will find a path regardless of whether they are neighbours anymore (which is why we are doing all of the above)
-                    path = astar.computePath(new SearchState(groups.get(groupLoc + GameMap.START_NUM).groupRepId), new SearchState(groups.get(neighbourLoc + GameMap.START_NUM).groupRepId), stats);
-                    SearchUtil.computePathCost(path, stats, problem);
-                    int pathCost = stats.getPathCost();
-
-                    // Check where they are not identical, then go to that neighbour and update there too
-                    if (lowestCost[groupLoc][i] != pathCost) {
-                        logger.debug("Lowest cost of path between " + regionId + " and " + (neighbourLoc + GameMap.START_NUM) + " has changed from " + lowestCost[groupLoc][i] + " to " + pathCost);
-                        // Update lowestCost
-                        this.lowestCost[groupLoc][i] = pathCost;
-                        int indexToUpdate = -1;
-                        for (int j = 0; j < this.neighborId[neighbourLoc].length; j++) {
-                            if (this.neighborId[neighbourLoc][j] == groupLoc) {
-                                indexToUpdate = j;
-                                break;
-                            }
-                        }
-                        // If the region to update was not stored as a neighbour of its neighbour
-                        if (indexToUpdate == -1) {
-                            // If we get here, then the neighbour lists must be messed up, because one of the neighbours
-                            // of the region were eliminating did not have said region set as a neighbour
-                            logger.error("There is an issue with the neighbours of region: " + regionId);
-                            throw new Exception("There is an issue with the neighbours of region: " + regionId);
-                        }
-                        // Update lowestCost of neighbour
-                        this.lowestCost[neighbourLoc][indexToUpdate] = pathCost;
-                    }
-
-                    // TODO: Is there some check I can do or do I just update all paths?
-
-                    // TODO: Do I need this / Is this all that's needed?
-                    // this.paths[groupLoc][i] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
-
-                }
-            }
-
-            // saveDB("checkingResults2.txt");
-        }
-
-        // this.numGroups = groups.size();
     }
 
     /**
-     * Recomputes the dynamic programming table and base paths.
-     * DP table is stored as an adjacency list representation
-     *
-     * @param regionId           id of the region where the wall was placed
-     * @param problem            SearchProblem used for AStar and computing path cost
-     * @param groups             TreeMap storing all the groups information
-     * @param isSolitary         boolean indicating whether the region has any neighbours
-     * @param isReversePartition boolean indicating whether this is the reverse partition case
+     * @param regionId region id where wall was added
      */
-    public void recomputeBasePathsAfterWallRemoval(int regionId, SearchProblem problem, TreeMap<Integer, GroupRecord> groups,
-                                                   boolean isSolitary, boolean isReversePartition) {
-        // If a wall is removed, a region may have been added
-        // Even if a region has not been added, the wall removal may change paths or lowest costs, so we
-        // will need to check for updates there either way
+    public void recomputeBasePathsAfterElimination(int regionId) throws Exception {
+        // This is the elimination case, where adding a wall leads to the removal of a region
 
         // If we have run out of free space, increase the size of the arrays
-        if (freeSpaceCount == 0) {
-            // Allocate arrays 10% larger than the current numRegions
-            int arraySize = (int) (this.numGroups * 1.1);
+        resizeFreeSpace();
 
-            int[][] resizedLowestCost = new int[arraySize][];
-            System.arraycopy(this.lowestCost, 0, resizedLowestCost, 0, this.lowestCost.length);
-            this.lowestCost = resizedLowestCost;
+        // Find array location of region
+        int groupLoc = regionId - GameMap.START_NUM;
 
-            int[][][] resizedPath = new int[arraySize][][];
-            System.arraycopy(this.paths, 0, resizedPath, 0, this.paths.length);
-            this.paths = resizedPath;
+        // Iterate over neighbours of the region to eliminate to scrub references to it
+        for (int i = 0; i < this.neighborLoc[groupLoc].length; i++) {
+            // Grab location of neighbour
+            int neighbourLoc = this.neighborLoc[groupLoc][i];
+            // Iterate over neighbours of neighbour to find region to eliminate
+            int indexOfRegionToEliminate = -1;
+            for (int j = 0; j < this.neighborLoc[neighbourLoc].length; j++) {
+                if (this.neighborLoc[neighbourLoc][j] == groupLoc) {
+                    indexOfRegionToEliminate = j;
+                    break;
+                }
+            }
+            // If the region to eliminate was not stored as a neighbour of its neighbour
+            if (indexOfRegionToEliminate == -1) {
+                // If we get here, then the neighbour lists must be messed up, because one of the neighbours
+                // of the region were eliminating did not have said region set as a neighbour
+                logger.error("There is an issue with the neighbours of region: " + regionId);
+                throw new Exception("There is an issue with the neighbours of region: " + regionId);
+            }
 
-            int[][] resizedNeighborId = new int[arraySize][];
-            System.arraycopy(this.neighborId, 0, resizedNeighborId, 0, this.neighborId.length);
-            this.neighborId = resizedNeighborId;
-
-            logger.warn("Arrays have been resized since there was no more free space.");
-
-            // TODO: Test whether resizing here works as expected and whether it's necessary
-            this.freeSpaceCount = arraySize - this.numGroups;
-            int[] resizedFreeSpace = new int[arraySize];
-            System.arraycopy(this.freeSpace, 0, resizedFreeSpace, 0, this.freeSpace.length);
-            this.freeSpace = resizedFreeSpace;
+            // Copying into smaller arrays here
+            this.neighborLoc[neighbourLoc] = copyArrayExceptIndex(this.neighborLoc[neighbourLoc], indexOfRegionToEliminate);
+            this.lowestCost[neighbourLoc] = copyArrayExceptIndex(this.lowestCost[neighbourLoc], indexOfRegionToEliminate);
+            // Simply setting path to null (not copying paths array)
+            this.paths[neighbourLoc][indexOfRegionToEliminate] = null;
         }
+        // Tombstone eliminated region
+        this.neighborLoc[groupLoc] = null;
+        this.paths[groupLoc] = null;
+        this.lowestCost[groupLoc] = null;
+        // Update freeSpace
+        pushFreeSpace(regionId);
+    }
 
-        if (isSolitary) {
-            // Case where new region has no neighbours (e.g. is surrounded by walls)
+    /**
+     * @param problem     MapSearchProblem used in A*
+     * @param groups      groups mapping
+     * @param neighborIds ArrayList containing the neighbourhood where the partition happened
+     */
+    public void recomputeBasePathsAfterPartition(MapSearchProblem problem, TreeMap<Integer, GroupRecord> groups, ArrayList<Integer> neighborIds) throws Exception {
+        // This is the partition case, where adding a wall leads to the splitting of a region into two or more smaller regions
 
-            // freeSpace has already been updated in DBAStarUtil (needed the information for map updates)
+        // If we have run out of free space, increase the size of the arrays
+        resizeFreeSpace();
 
-            // Find array location of region
-            int groupLoc = regionId - GameMap.START_NUM;
+        AStar astar = new AStar(problem);
+        StatsRecord stats = new StatsRecord();
+        ArrayList<SearchState> path;
 
-            // Create arrays for new group
-            this.neighborId[groupLoc] = new int[0];
-            this.lowestCost[groupLoc] = new int[0];
-            this.paths[groupLoc] = new int[0][];
-        } else if (isReversePartition) {
-            // Case where two regions merge into one
+        // freeSpace has already been updated in DBAStarUtil (needed the information for map updates)
 
-            // Will need to recompute neighborIds, lowestCosts, and paths
-        } else {
-            // Case where new region has neighbours
+        // regionIds contains the ids of all the regions the original region was split into after the partition
+        // Use those to overwrite the neighborId arrays of the regions
+        for (Integer id : neighborIds) {
+            // Need to update neighborhoods of all the new regions
+            int groupLoc = id - GameMap.START_NUM;
 
-            // freeSpace has already been updated in DBAStarUtil (needed the information for map updates)
-
-            // Find array location of region
-            int groupLoc = regionId - GameMap.START_NUM;
-
-            // Get neighbours of the new region (updated in map.recomputeNeighbors)
-            HashSet<Integer> neighbours = groups.get(regionId).getNeighborIds();
+            // Get neighbours of the new/surrounding regions (updated in map.recomputeNeighbors)
+            HashSet<Integer> neighbours = groups.get(id).getNeighborIds();
             // Create an int array with the same size as the HashSet
             int[] neighbourArray = new int[neighbours.size()];
 
@@ -604,89 +384,362 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
                 neighbourArray[index++] = neighbour - GameMap.START_NUM;
             }
 
-            // Create arrays for new group
-            this.neighborId[groupLoc] = neighbourArray;
+            // Overwrite the neighbourId array of the region
+            this.neighborLoc[groupLoc] = neighbourArray;
+            // Create new lowest cost and paths arrays of correct size
+            // FIXME: This is throwing away useful data, find a way to not to
+            // all but the paths to the new regions should be unaffected, so throwing those away and recomputing them is a waste
             this.lowestCost[groupLoc] = new int[neighbours.size()];
             this.paths[groupLoc] = new int[neighbours.size()][];
+        }
 
-            AStar astar = new AStar(problem);
-            StatsRecord stats = new StatsRecord();
-            ArrayList<SearchState> path;
-            int pathCost;
+        for (Integer id : neighborIds) {
+            // Iterate over neighbours of the region
+            int groupLoc = id - GameMap.START_NUM;
 
-            // Need to ensure we compute paths to connect new region to existing ones
-            for (int i = 0; i < this.neighborId[groupLoc].length; i++) {
+            for (int i = 0; i < this.neighborLoc[groupLoc].length; i++) {
                 // Grab location of neighbour
-                int neighbourLoc = this.neighborId[groupLoc][i];
+                int neighbourLoc = this.neighborLoc[groupLoc][i];
                 int[] tmp = new int[5000];
                 // TODO: May want to pass this as parameter
                 SearchAlgorithm searchAlg = new HillClimbing(problem, 10000);
 
-                // Compute path from groupLoc to neighbourLoc
-                path = astar.computePath(new SearchState(groups.get(regionId).groupRepId), new SearchState(groups.get(neighbourLoc + GameMap.START_NUM).groupRepId), stats);
+                path = astar.computePath(new SearchState(groups.get(id).groupRepId), new SearchState(groups.get(neighbourLoc + GameMap.START_NUM).groupRepId), stats);
                 SearchUtil.computePathCost(path, stats, problem);
-                pathCost = stats.getPathCost();
+                int pathCost = stats.getPathCost();
 
-                // Store path and lowest cost
+                // Update lowestCost
                 this.lowestCost[groupLoc][i] = pathCost;
+                int indexToUpdate = -1;
+                for (int j = 0; j < this.neighborLoc[neighbourLoc].length; j++) {
+                    if (this.neighborLoc[neighbourLoc][j] == groupLoc) {
+                        indexToUpdate = j;
+                        break;
+                    }
+                }
+                // If the region to update was not stored as a neighbour of its neighbour
+                if (indexToUpdate == -1) {
+                    // If we get here, then the neighbour lists must be messed up, because one of the neighbours
+                    // of the region were eliminating did not have said region set as a neighbour
+                    logger.error("groupLoc: " + groupLoc);
+                    logger.error("neighbourLoc: " + neighbourLoc);
+                    logger.error("neighborIds of neighbourLoc: " + Arrays.toString(this.neighborLoc[neighbourLoc]));
+                    throw new Exception("There is an issue with the neighbours of region: " + id + ", region rep: " + groups.get(id).groupRepId);
+                }
+                // Update lowestCost of neighbour
+                this.lowestCost[neighbourLoc][indexToUpdate] = pathCost;
+
                 this.paths[groupLoc][i] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
-
-                // Increase size of arrays and store path from neighbourLoc to groupLoc, and cost. Also add new region as neighbour of its neighbours
-
-                // Compute path from neighbourLoc to groupLoc
-                // TODO: Should I use new instances of tmp and stats here?
-                path = astar.computePath(new SearchState(groups.get(neighbourLoc + GameMap.START_NUM).groupRepId), new SearchState(groups.get(regionId).groupRepId), stats);
-                SearchUtil.computePathCost(path, stats, problem);
-                pathCost = stats.getPathCost();
-
-                // This should be the same for neighborId, lowestCost, and paths
-                int originalArraySize = this.neighborId[neighbourLoc].length;
-
-                // Increase size of neighbourIds array by 1 for current neighbourLoc
-                int[] largerNeighbourId = new int[originalArraySize + 1];
-                System.arraycopy(this.neighborId[neighbourLoc], 0, largerNeighbourId, 0, originalArraySize);
-                this.neighborId[neighbourLoc] = largerNeighbourId;
-
-                // Add new region as neighbour to its neighbours
-                this.neighborId[neighbourLoc][originalArraySize] = groupLoc;
-
-                // Increase size of lowestCost array by 1 for current neighbourLoc
-                int[] largerLowestCost = new int[originalArraySize + 1];
-                System.arraycopy(this.lowestCost[neighbourLoc], 0, largerLowestCost, 0, originalArraySize);
-                this.lowestCost[neighbourLoc] = largerLowestCost;
-
-                // Add lowestCost of path
-                this.lowestCost[neighbourLoc][originalArraySize] = pathCost; // TODO: Is pathCost always the same in both directions?
-
-                // Increase size of paths array by 1 for current neighbourLoc
-                int[][] largerPaths = new int[originalArraySize + 1][];
-                System.arraycopy(this.paths[neighbourLoc], 0, largerPaths, 0, originalArraySize);
-                this.paths[neighbourLoc] = largerPaths;
-
-                // Add path, TODO: Could I just reverse the other path?
-                this.paths[neighbourLoc][originalArraySize] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
             }
         }
     }
 
+    /**
+     * @param regionId region id where wall was added
+     * @param problem  MapSearchProblem used in A*
+     * @param groups   groups mapping
+     */
+    public void recomputeBasePaths(int regionId, MapSearchProblem problem, TreeMap<Integer, GroupRecord> groups) {
+        // This is for all cases where the paths change but the neighbourhood does not:
+        // E.g. wall on region rep, wall that moves region rep, wall that changes shortest path
+
+        // If we have run out of free space, increase the size of the arrays
+        resizeFreeSpace();
+
+        // Find array location of region
+        int groupLoc = regionId - GameMap.START_NUM;
+
+        AStar astar = new AStar(problem);
+        StatsRecord stats = new StatsRecord();
+        ArrayList<SearchState> path;
+
+        // Update region’s paths to its neighbours (and their costs)
+        // Update the region’s neighbours paths to it (and their costs)
+        for (int i = 0; i < this.neighborLoc[groupLoc].length; i++) {
+            // Grab location of neighbour
+            int neighbourLoc = this.neighborLoc[groupLoc][i];
+            int[] tmp = new int[5000];
+            // TODO: May want to pass this as parameter
+            SearchAlgorithm searchAlg = new HillClimbing(problem, 10000);
+
+            path = astar.computePath(new SearchState(groups.get(regionId).groupRepId), new SearchState(groups.get(neighbourLoc + GameMap.START_NUM).groupRepId), stats);
+            SearchUtil.computePathCost(path, stats, problem);
+            int pathCost = stats.getPathCost();
+
+            // Update lowestCost of region
+            this.lowestCost[groupLoc][i] = pathCost;
+            // Update path to region
+            this.paths[groupLoc][i] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
+
+            path = astar.computePath(new SearchState(groups.get(neighbourLoc + GameMap.START_NUM).groupRepId), new SearchState(groups.get(regionId).groupRepId), stats);
+            SearchUtil.computePathCost(path, stats, problem);
+            pathCost = stats.getPathCost();
+
+            // Need to find correct neighborId to update
+            for (int j = 0; j < this.neighborLoc[neighbourLoc].length; j++) {
+                if (this.neighborLoc[neighbourLoc][j] == groupLoc) {
+                    // Update lowestCost of neighbour
+                    this.lowestCost[neighbourLoc][j] = pathCost;
+                    // Update path to neighbour
+                    this.paths[neighbourLoc][j] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(new ArrayList<>(path)), searchAlg, tmp, path.size());
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * @param regionId region id where wall was added
+     */
+    public void recomputeBasePathsIfSolitary(int regionId) {
+        // Case where new region has no neighbours (e.g. is surrounded by walls)
+
+        // If we have run out of free space, increase the size of the arrays
+        resizeFreeSpace();
+
+        // freeSpace has already been updated in DBAStarUtil (needed the information for map updates)
+
+        // Find array location of region
+        int groupLoc = regionId - GameMap.START_NUM;
+
+        // Create arrays for new group
+        this.neighborLoc[groupLoc] = new int[0];
+        this.lowestCost[groupLoc] = new int[0];
+        this.paths[groupLoc] = new int[0][];
+    }
+
+    /**
+     * @param regionId    region id where wall was added
+     * @param problem     MapSearchProblem used in A*
+     * @param groups      groups mapping
+     * @param neighborIds ArrayList containing region ids of neighbour regions
+     */
+    public void recomputeBasePathsIfConnected(int regionId, MapSearchProblem problem, TreeMap<Integer, GroupRecord> groups, HashSet<Integer> neighborIds) {
+        // Case where new region has neighbours (e.g. is in a new sector but connected)
+
+        // If we have run out of free space, increase the size of the arrays
+        resizeFreeSpace();
+
+        // freeSpace has already been updated in DBAStarUtil (needed the information for map updates)
+
+        // Find array location of region
+        int groupLoc = regionId - GameMap.START_NUM;
+
+        int numNeighbours = neighborIds.size();
+
+        // Create arrays for new group
+        this.neighborLoc[groupLoc] = new int[numNeighbours];
+        this.lowestCost[groupLoc] = new int[numNeighbours];
+        this.paths[groupLoc] = new int[numNeighbours][];
+
+        AStar astar = new AStar(problem);
+        StatsRecord stats = new StatsRecord();
+        ArrayList<SearchState> path;
+
+        // Update region’s paths to its neighbours (and their costs)
+        // Update the region’s neighbours paths to it (and their costs)
+        int i = 0;
+        for (int neighbourId : neighborIds) {
+            // Grab location of neighbour
+            int neighbourLoc = neighbourId - GameMap.START_NUM;
+
+            int[] tmp = new int[5000];
+            // TODO: May want to pass this as parameter
+            SearchAlgorithm searchAlg = new HillClimbing(problem, 10000);
+
+            path = astar.computePath(new SearchState(groups.get(regionId).groupRepId), new SearchState(groups.get(neighbourLoc + GameMap.START_NUM).groupRepId), stats);
+            SearchUtil.computePathCost(path, stats, problem);
+            int pathCost = stats.getPathCost();
+
+            this.neighborLoc[groupLoc][i] = neighbourLoc;
+            // Update lowestCost of region
+            this.lowestCost[groupLoc][i] = pathCost;
+            // Update path to region
+            this.paths[groupLoc][i] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
+
+            // Need to increase size of arrays of neighbour
+            int len = this.neighborLoc[neighbourLoc].length;
+
+            // Resize arrays
+            int[] resizedNeighbourId = new int[len + 1];
+            System.arraycopy(this.neighborLoc[neighbourLoc], 0, resizedNeighbourId, 0, len);
+            this.neighborLoc[neighbourLoc] = resizedNeighbourId;
+
+            int[][] resizedPaths = new int[len + 1][];
+            System.arraycopy(this.paths[neighbourLoc], 0, resizedPaths, 0, len);
+            this.paths[neighbourLoc] = resizedPaths;
+
+            int[] resizedCosts = new int[len + 1];
+            System.arraycopy(this.lowestCost[neighbourLoc], 0, resizedCosts, 0, len);
+            this.lowestCost[neighbourLoc] = resizedCosts;
+
+            // Assign neighbourId
+            this.neighborLoc[neighbourLoc][len] = groupLoc;
+
+            path = astar.computePath(new SearchState(groups.get(neighbourLoc + GameMap.START_NUM).groupRepId), new SearchState(groups.get(regionId).groupRepId), stats);
+            SearchUtil.computePathCost(path, stats, problem);
+            pathCost = stats.getPathCost();
+
+            // Assign lowest cost and new path
+            this.lowestCost[neighbourLoc][len] = pathCost;
+            this.paths[neighbourLoc][len] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
+
+            i++;
+        }
+    }
+
+    public void recomputeUnblocker(int regionId, int neighbourId, MapSearchProblem problem, TreeMap<Integer, GroupRecord> groups) throws Exception {
+        // In the unblocker case, we have two regions that were previously not neighbours but now are
+
+        // If we have run out of free space, increase the size of the arrays
+        resizeFreeSpace();
+
+        // Grab location of region and neighbour
+        int groupLoc = regionId - GameMap.START_NUM;
+        int neighbourLoc = neighbourId - GameMap.START_NUM;
+
+        // Get region rep of region wall was removed in, and get region rep of neighbour region that is now accessible
+        int groupRepId = groups.get(regionId).groupRepId;
+        int neighborRepId = groups.get(neighbourId).groupRepId;
+
+        // Recompute unblocker from region
+        recomputeUnblocker(groupLoc, groupRepId, neighbourLoc, neighborRepId, problem);
+        // Recompute unblocker from neighbor
+        recomputeUnblocker(neighbourLoc, neighborRepId, groupLoc, groupRepId, problem);
+    }
+
+    private void recomputeUnblocker(int groupLoc, int groupRepId, int neighbourLoc, int neighborRepId, MapSearchProblem problem) throws Exception {
+        StatsRecord stats = new StatsRecord();
+        ArrayList<SearchState> path;
+
+        int[] tmp = new int[5000];
+        // TODO: May want to pass this as parameter
+        SearchAlgorithm searchAlg = new HillClimbing(problem, 10000);
+        AStar astar = new AStar(problem);
+
+        // Need to compute new paths between regions
+        path = astar.computePath(new SearchState(groupRepId), new SearchState(neighborRepId), stats);
+        SearchUtil.computePathCost(path, stats, problem);
+        int pathCost = stats.getPathCost();
+
+        // Index of last element of array after resizing (= length before resizing)
+        int idx = this.neighborLoc[groupLoc].length;
+
+        // Need to increase size of arrays of region
+        increaseArrayLengthBy1AtIndex(this.neighborLoc, groupLoc, idx);
+        increaseArrayLengthBy1AtIndex(this.lowestCost, groupLoc, idx);
+
+        // Assign values
+        this.neighborLoc[groupLoc][idx] = neighbourLoc;
+        this.lowestCost[groupLoc][idx] = pathCost;
+
+        // Find null in paths array (may be present due to prior blocker)
+        idx = this.paths[groupLoc].length;
+        for (int i = 0; i < this.paths[groupLoc].length; i++) {
+            if (this.paths[groupLoc][i] == null) {
+                idx = i;
+                break;
+            }
+        }
+
+        // If it's not present, increase size of paths array
+        if (idx == this.paths[groupLoc].length) {
+            increaseArrayLengthBy1AtIndex(this.paths, groupLoc, idx);
+        }
+
+        this.paths[groupLoc][idx] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
+    }
+
+    public void recomputeCornerBlocker(int regionId, int neighbourId, MapSearchProblem problem, TreeMap<Integer, GroupRecord> groups) throws Exception {
+        // In the blocker case, we have two regions that were previously neighbours but now aren't
+
+        // If we have run out of free space, increase the size of the arrays
+        resizeFreeSpace();
+
+        // Grab location of region and neighbour
+        int groupLoc = regionId - GameMap.START_NUM;
+        int neighbourLoc = neighbourId - GameMap.START_NUM;
+
+        // Update region’s neighbourhood
+        int indexOfNeighborLoc = -1;
+        for (int i = 0; i < this.neighborLoc[groupLoc].length; i++) {
+            // Need to find index of neighbourLoc
+            if (this.neighborLoc[groupLoc][i] == neighbourLoc) {
+                indexOfNeighborLoc = i;
+                break;
+            }
+        }
+
+        // If the region to eliminate was not stored as a neighbour of its neighbour
+        if (indexOfNeighborLoc == -1) {
+            // If we get here, then the neighbour lists must be messed up, because the region and its neighbour
+            // are not neighbours in the neighborId array
+            throw new Exception("There is an issue with the neighbours of region: " + regionId);
+        }
+        
+        this.neighborLoc[groupLoc] = copyArrayExceptIndex(this.neighborLoc[groupLoc], indexOfNeighborLoc);
+        this.lowestCost[groupLoc] = copyArrayExceptIndex(this.lowestCost[groupLoc], indexOfNeighborLoc);
+        this.paths[groupLoc][indexOfNeighborLoc] = null;
+
+        int indexOfGroupLoc = -1;
+        for (int i = 0; i < this.neighborLoc[neighbourLoc].length; i++) {
+            // Need to find index of groupLoc
+            if (this.neighborLoc[neighbourLoc][i] == groupLoc) {
+                indexOfGroupLoc = i;
+                break;
+            }
+        }
+
+        if (indexOfGroupLoc == -1) {
+            throw new Exception("There is an issue with the neighbours of region: " + neighbourId);
+        }
+
+        this.neighborLoc[neighbourLoc] = copyArrayExceptIndex(this.neighborLoc[neighbourLoc], indexOfGroupLoc);
+        this.lowestCost[neighbourLoc] = copyArrayExceptIndex(this.lowestCost[neighbourLoc], indexOfGroupLoc);
+        this.paths[neighbourLoc][indexOfGroupLoc] = null;
+    }
+
+    /**
+     * @return regionId that is free to use
+     * @throws Exception if the indexing is off
+     */
     public int popFreeSpace() throws Exception {
         // Return lowest freeSpace index from the end of the array
-        if (freeSpace[freeSpaceCount - 1] == 0) {
+        logger.debug("Free space before popping: " + Arrays.toString(freeSpace));
+        logger.debug("Free space count: " + freeSpaceCount);
+        if (freeSpace[freeSpaceCount - 1] == -1) {
             throw new Exception("Indexing is off");
         }
         this.numGroups++;
-        return freeSpace[freeSpaceCount-- - 1] + GameMap.START_NUM;
+        int temp = freeSpace[freeSpaceCount - 1] + GameMap.START_NUM;
+        freeSpace[--freeSpaceCount] = -1;
+        logger.debug("Free space after popping: " + Arrays.toString(freeSpace));
+        logger.debug("Free space count: " + freeSpaceCount);
+        return temp;
     }
 
+    /**
+     * @param regionId id of a region (indexing starts at 50)
+     * @throws Exception if existing free space is being overwritten
+     */
     public void pushFreeSpace(int regionId) throws Exception {
-        if (freeSpace[freeSpaceCount] != 0) {
+        logger.debug("Free space before pushing: " + Arrays.toString(freeSpace));
+        logger.debug("Free space count: " + freeSpaceCount);
+        if (freeSpace[freeSpaceCount] != -1) {
             throw new Exception("Overwriting existing free space!");
         }
         // Write into freeSpace
         this.numGroups--;
         freeSpace[freeSpaceCount++] = regionId - GameMap.START_NUM;
+        logger.debug("Free space after pushing: " + Arrays.toString(freeSpace));
+        logger.debug("Free space count: " + freeSpaceCount);
     }
 
+    /**
+     * @param arr   array to copy
+     * @param index index to exclude while copying
+     * @return array of arr.length - 1 without the element at index
+     */
     private static int[] copyArrayExceptIndex(int[] arr, int index) {
         int[] newArr = new int[arr.length - 1];
         int newIndex = 0;
@@ -696,5 +749,26 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             }
         }
         return newArr;
+    }
+
+    private void increaseArrayLengthBy1AtIndex(int[][] array, int index, int len) throws Exception {
+        if (len != array[index].length) {
+            throw new Exception("Error! Unequal array lengths");
+        }
+
+        int[] resizedArray = new int[len + 1];
+        System.arraycopy(array[index], 0, resizedArray, 0, len);
+        array[index] = resizedArray;
+    }
+
+    private void increaseArrayLengthBy1AtIndex(int[][][] array, int index, int len) throws Exception {
+        // TODO: array length may be different for paths since it could have null elements, should it?
+//        if (len != array[index].length) {
+//            throw new Exception("Error! Unequal array lengths");
+//        }
+
+        int[][] resizedArray = new int[len + 1][];
+        System.arraycopy(array[index], 0, resizedArray, 0, len);
+        array[index] = resizedArray;
     }
 }
