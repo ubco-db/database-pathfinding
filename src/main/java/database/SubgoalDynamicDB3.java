@@ -109,7 +109,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
                         paths[i][j][k] = sc.nextInt();
                 }
             }
-            logger.info("Loaded in " + (System.currentTimeMillis() - currentTime));
+            logger.debug("Loaded in " + (System.currentTimeMillis() - currentTime));
         } catch (FileNotFoundException e) {
             logger.error("Did not find input file: " + e);
             success = false;
@@ -178,7 +178,13 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             freeSpace[i] = arraySize - (i + 1);
         }
 
-        logger.debug(Arrays.toString(freeSpace));
+        // TODO: Currently doing this because freeSpace stores locations which can be 0, so initializing to -1
+        // Ideally would add offset of GameMap.START_NUM to avoid this
+        for (int i = freeSpaceCount; i < freeSpace.length; i++) {
+            freeSpace[i] = -1;
+        }
+
+        logger.debug("Initial free space allocation: " + Arrays.toString(freeSpace));
 
         long startTime = System.currentTimeMillis();
 
@@ -188,7 +194,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
 
         dbStats.addStat(16, baseTime);
         long overallTime = endTime - startTime;
-        logger.info("Total DB compute time: " + overallTime);
+        logger.debug("Total DB compute time: " + overallTime);
         dbStats.addStat(10, overallTime);
     }
 
@@ -211,7 +217,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         StatsRecord stats = new StatsRecord();
         int numBase = 0;
 
-        logger.info("Number of groups: " + numGroups);
+        logger.debug("Number of groups: " + numGroups);
         long currentTime = System.currentTimeMillis();
 
         int[] tmp = new int[5000];
@@ -264,8 +270,8 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
 
         long endTime = System.currentTimeMillis();
         long baseTime = endTime - currentTime;
-        logger.info("Time to compute base paths: " + (baseTime));
-        logger.info("Base neighbors generated paths: " + numBase + " Number of states: " + numStates);
+        logger.debug("Time to compute base paths: " + (baseTime));
+        logger.debug("Base neighbors generated paths: " + numBase + " Number of states: " + numStates);
         dbStats.addStat(9, numStates);        // Set number of subgoals.  Will be changed by a version that pre-computes all paths but will not be changed for the dynamic version.
         dbStats.addStat(8, numBase);          // # of records (only corresponds to base paths)
         return baseTime;
@@ -415,7 +421,10 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
                 if (indexToUpdate == -1) {
                     // If we get here, then the neighbour lists must be messed up, because one of the neighbours
                     // of the region were eliminating did not have said region set as a neighbour
-                    throw new Exception("There is an issue with the neighbours of region: " + groups.get(id).groupRepId);
+                    logger.error("groupLoc: " + groupLoc);
+                    logger.error("neighbourLoc: " + neighbourLoc);
+                    logger.error("neighborIds of neighbourLoc: " + Arrays.toString(this.neighborId[neighbourLoc]));
+                    throw new Exception("There is an issue with the neighbours of region: " + id + ", region rep: " + groups.get(id).groupRepId);
                 }
                 // Update lowestCost of neighbour
                 this.lowestCost[neighbourLoc][indexToUpdate] = pathCost;
@@ -477,7 +486,6 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
                 }
             }
         }
-        saveDB("checkingResultsRegionRep.txt");
     }
 
     /**
@@ -579,7 +587,6 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             i++;
         }
     }
-
 
     public void recomputeUnblocker(int regionId, int neighbourId, MapSearchProblem problem, TreeMap<Integer, GroupRecord> groups) throws Exception {
         // In the unblocker case, we have two regions that were previously not neighbours but now are
@@ -699,11 +706,16 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
     public int popFreeSpace() throws Exception {
         // Return lowest freeSpace index from the end of the array
         logger.debug("Free space before popping: " + Arrays.toString(freeSpace));
-        if (freeSpace[freeSpaceCount - 1] == 0) {
+        logger.debug("Free space count: " + freeSpaceCount);
+        if (freeSpace[freeSpaceCount - 1] == -1) {
             throw new Exception("Indexing is off");
         }
         this.numGroups++;
-        return freeSpace[freeSpaceCount-- - 1] + GameMap.START_NUM;
+        int temp = freeSpace[freeSpaceCount - 1] + GameMap.START_NUM;
+        freeSpace[--freeSpaceCount] = -1;
+        logger.debug("Free space after popping: " + Arrays.toString(freeSpace));
+        logger.debug("Free space count: " + freeSpaceCount);
+        return temp;
     }
 
     /**
@@ -712,12 +724,15 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
      */
     public void pushFreeSpace(int regionId) throws Exception {
         logger.debug("Free space before pushing: " + Arrays.toString(freeSpace));
-        if (freeSpace[freeSpaceCount] != 0) {
+        logger.debug("Free space count: " + freeSpaceCount);
+        if (freeSpace[freeSpaceCount] != -1) {
             throw new Exception("Overwriting existing free space!");
         }
         // Write into freeSpace
         this.numGroups--;
         freeSpace[freeSpaceCount++] = regionId - GameMap.START_NUM;
+        logger.debug("Free space after pushing: " + Arrays.toString(freeSpace));
+        logger.debug("Free space count: " + freeSpaceCount);
     }
 
     /**
