@@ -55,9 +55,10 @@ public class DBAStar3 implements SearchAlgorithm {
         ArrayList<SearchState> pathEnd = astar.computePath(goalRegionCenter, goal, stats);
 
         // Search the database for records
-        int startRegion = map.getId(map.getRow(startRegionCenter.id), map.getCol(goalRegionCenter.id));
-        int goalRegion = map.getId(map.getRow(goalRegionCenter.id), map.getCol(goalRegionCenter.id));
-        ArrayList<SubgoalDBRecord> records = database.findNearest(problem, startRegion, goalRegion, subgoalSearchAlg, stats);
+        int startRegionId = map.getRegionFromState(start.id) - GameMap.START_NUM;
+        int goalRegionId = map.getRegionFromState(goal.id) - GameMap.START_NUM;
+
+        ArrayList<SubgoalDBRecord> records = database.findNearest(problem, startRegionId, goalRegionId, subgoalSearchAlg, stats);
 
         if (records != null && !records.isEmpty()) {
             currentRecord = records.getFirst();

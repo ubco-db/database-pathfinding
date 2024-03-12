@@ -95,33 +95,33 @@ public class DBAStarUtil2 {
     }
 
     /**
-     * @param startId state id for start of path
-     * @param goalId  state id for start of path
-     * @param dbaStar DBAStar object
+     * @param startId  state id for start of path
+     * @param goalId   state id for start of path
+     * @param dbaStar3 DBAStar3 object
      * @return path as ArrayList of SearchStates
      */
-    public ArrayList<SearchState> getDBAStarPath(int startId, int goalId, DBAStar dbaStar) {
+    public ArrayList<SearchState> getDBAStarPath(int startId, int goalId, DBAStar3 dbaStar3) {
         StatsRecord stats = new StatsRecord();
         SearchState start = new SearchState(startId);
         SearchState goal = new SearchState(goalId);
 
         // ArrayList<SearchState> subgoals = dbaStar.getSubgoals();
-        return dbaStar.computePath(start, goal, stats);
+        return dbaStar3.computePath(start, goal, stats);
     }
 
     /**
      * @param startId    state id for start of path
      * @param goalId     state id for start of path
      * @param wallStatus used to name output files, either BW = before wall, AW = after wall, or RW = removed wall
-     * @param dbaStar    DBAStar object
+     * @param dbaStar3   DBAStar3 object
      */
-    public void getDBAStarPath(int startId, int goalId, String wallStatus, DBAStar dbaStar) {
-        GameMap map = dbaStar.getMap();
+    public void getDBAStarPath(int startId, int goalId, String wallStatus, DBAStar3 dbaStar3) {
+        GameMap map = dbaStar3.getMap();
 
-        AStar aStar = new AStar(dbaStar.getProblem());
+        AStar aStar = new AStar(dbaStar3.getProblem());
 
         StatsRecord dbaStats = new StatsRecord();
-        ArrayList<SearchState> path = dbaStar.computePath(new SearchState(startId), new SearchState(goalId), dbaStats);
+        ArrayList<SearchState> path = dbaStar3.computePath(new SearchState(startId), new SearchState(goalId), dbaStats);
 
         StatsRecord aStarStats = new StatsRecord();
         ArrayList<SearchState> optimalPath = aStar.computePath(new SearchState(startId), new SearchState(goalId), aStarStats);
@@ -132,8 +132,8 @@ public class DBAStarUtil2 {
         if (path == null || path.isEmpty()) {
             logger.warn(String.format("No path was found between %d and %d!%n", startId, goalId));
         }
-        map.computeCentroidMap().outputImage(dbaStarDbPath + wallStatus + mapFileName + "_path.png", path, dbaStar.getSubgoals());
-        map.computeCentroidMap().outputImage(dbaStarDbPath + wallStatus + mapFileName + "_optimal_path.png", optimalPath, dbaStar.getSubgoals());
+        map.computeCentroidMap().outputImage(dbaStarDbPath + wallStatus + "path_" + startId + "_" + goalId + ".png", path, dbaStar3.getSubgoals());
+        // map.computeCentroidMap().outputImage(dbaStarDbPath + wallStatus + "_optimal_path_" + startId + "_" + goalId + ".png", optimalPath, dbaStar3.getSubgoals());
     }
 
 
@@ -424,7 +424,7 @@ public class DBAStarUtil2 {
                 map.recomputeNeighbors(gridSize, START_ROW, START_COL, END_ROW, END_COL, neighborIds);
 
                 // Database changes
-                dbBW.recomputeBasePathsAfterPartition(problem, groups, neighborIds);
+                dbBW.recomputeBasePathsAfterPartition(problem, groups, neighborIds); // 60ms
                 return;
             }
 
@@ -438,14 +438,10 @@ public class DBAStarUtil2 {
             if (newRegionRep != REGION_REP) {
                 logger.info("Addition: Wall That Moves Region Representative Case");
                 logger.debug("New region rep: " + newRegionRep);
-
-                // Database changes
-                dbBW.recomputeBasePaths(REGION_ID, problem, groups);
-                return;
+            } else { // Wall That Changes Shortest Path
+                logger.info("Addition: Wall That Changes Shortest Path Case");
             }
 
-            // Wall That Changes Shortest Path
-            logger.info("Addition: Wall That Changes Shortest Path Case");
             // Database changes
             dbBW.recomputeBasePaths(REGION_ID, problem, groups);
         }
@@ -532,7 +528,7 @@ public class DBAStarUtil2 {
             // Store region ids of eight neighbour states
             HashSet<Integer> neighbouringRegions = new HashSet<>();
             // Store region ids of neighbour states that are in the same sector as the wall being removed
-            TreeSet<Integer>neighbouringRegionsInSameSector = new TreeSet<>(Comparator.reverseOrder());
+            TreeSet<Integer> neighbouringRegionsInSameSector = new TreeSet<>(Comparator.reverseOrder());
 
             int neighbourRegionId = -1;
 
@@ -759,14 +755,10 @@ public class DBAStarUtil2 {
             // Wall That Moves Region Representative case
             if (newRegionRep != regionRepId) {
                 logger.info("Removal: Wall That Moves Region Representative Case");
-
-                // Database changes
-                dbBW.recomputeBasePaths(regionId, problem, groups);
-                return;
+            } else { // Wall That Changes Shortest Path
+                logger.debug("New region rep: " + newRegionRep);
+                logger.info("Removal: Wall That Changes Shortest Path Case");
             }
-
-            logger.info("Removal: Wall That Changes Shortest Path Case");
-            // Wall That Changes Shortest Path
 
             // Database changes
             dbBW.recomputeBasePaths(regionId, problem, groups);

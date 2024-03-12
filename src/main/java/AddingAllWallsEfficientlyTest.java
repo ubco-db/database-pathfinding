@@ -45,24 +45,24 @@ public class AddingAllWallsEfficientlyTest {
         // Print number of goals (6175 on 012.map)
         logger.info("Number of goals: " + goalIds.size());
 
-        // compute DBAStar database before adding wall
-        dbaStar3 = dbaStarUtil2.computeDBAStarDatabaseUsingSubgoalDynamicDB3(startingMap, "BW");
-
         /* partial recomputation */
 
         long startTimePartial = System.currentTimeMillis();
 
+        // compute DBAStar database before adding wall
+        dbaStar3 = dbaStarUtil2.computeDBAStarDatabaseUsingSubgoalDynamicDB3(startingMap, "BW");
+
         for (int wallId : goalIds) {
             // Add wall & recompute database
             logger.info("\n\nRecompute wall addition for wall at: " + wallId);
-            dbaStarUtil2.recomputeWallAdditionUsingSubgoalDynamicDB3(wallId, dbaStar3);
+            dbaStarUtil2.recomputeWallAdditionUsingSubgoalDynamicDB3(wallId, dbaStar3); // 880ms
 
             // Remove wall
             logger.info("\n\nRecompute wall removal for wall at: " + wallId);
-            dbaStarUtil2.recomputeWallRemovalUsingSubgoalDynamicDB3(wallId, dbaStar3);
+            dbaStarUtil2.recomputeWallRemovalUsingSubgoalDynamicDB3(wallId, dbaStar3); // 770ms
         }
 
-        writeResultToFile(DBA_STAR_DB_PATH + "figureOutWhereTimeGoes.txt", "Total time partial recomputation: " + (System.currentTimeMillis() - startTimePartial) + "ms\n");
+        writeResultToFile(DBA_STAR_DB_PATH + "results.txt", "Total time partial recomputation: " + (System.currentTimeMillis() - startTimePartial) + "ms\n");
 
         /* complete recomputation */
 
