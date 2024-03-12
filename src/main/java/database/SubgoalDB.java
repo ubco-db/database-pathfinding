@@ -1,5 +1,7 @@
 package database;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import search.SearchAlgorithm;
 import search.SearchProblem;
 import search.SearchState;
@@ -20,6 +22,8 @@ import java.util.Scanner;
 public class SubgoalDB {
     protected ArrayList<SubgoalDBRecord> records;
     protected SearchProblem problem;
+
+    private static final Logger logger = LogManager.getLogger(SubgoalDB.class);
 
     public SubgoalDB() {
         records = new ArrayList<SubgoalDBRecord>();
@@ -55,7 +59,7 @@ public class SubgoalDB {
             if (!searchAlg.isPath(currentStart, currentGoal, stats)) countFailed++;
         }
 
-        System.out.println("# of records that failed: " + countFailed);
+        logger.info("# of records that failed: " + countFailed);
     }
 
     public SearchProblem getProblem() {

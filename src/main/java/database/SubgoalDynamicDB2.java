@@ -5,7 +5,6 @@ import map.GroupRecord;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import search.*;
-import util.DBAStarUtil;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -30,7 +29,6 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
     private int[][] neighborId;         // neighborId[i] stores list of neighbors for i. neighborId[i][j] is state id of jth neighbor of i.
     private int[][] lowestCost;         // Lowest cost for DP table. lowestCost[i][j] is the cost of the lowest path from region i to region neighborId[i][j]
     private int[][][] paths;            // paths[i][j] is array representing a compressed path of state ids from region i to region neighborId[i][j] of lowest cost path
-    private int[][] neighbor;           // neighbor[i][j] is region id of next region to visit on lowest cost path from region i to region neighborId[i][j] (the next hop)
 
     private static final Logger logger = LogManager.getLogger(SubgoalDynamicDB2.class);
 
@@ -61,7 +59,7 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
             }
         } else {
             // This code builds only the path required on demand (may incur more time as have to continually merge paths but may save time by avoiding storing/copying lists to do construction)
-            pathSize = GameDB.mergePaths4(startGroupId, goalGroupId, paths, neighbor, lowestCost, neighborId, path);
+            pathSize = GameDB.mergePaths4(startGroupId, goalGroupId, paths, lowestCost, neighborId, path); // Does this still work?
         }
 
         // System.out.println(Arrays.toString(path));
@@ -119,21 +117,17 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
             numGroups = Integer.parseInt(sc.nextLine());
             lowestCost = new int[numGroups][];
             paths = new int[numGroups][][];
-            neighbor = new int[numGroups][];
             neighborId = new int[numGroups][];
             for (int i = 0; i < numGroups; i++) {    // Read each group which has # neighbors as N, neighborId[N], lowest cost[N], neighbor[] and paths on each line
                 int numNeighbors = sc.nextInt();
                 lowestCost[i] = new int[numNeighbors];
                 neighborId[i] = new int[numNeighbors];
-                neighbor[i] = new int[numNeighbors];
                 paths[i] = new int[numNeighbors][];
 
                 for (int j = 0; j < numNeighbors; j++)
                     neighborId[i][j] = sc.nextInt();
                 for (int j = 0; j < numNeighbors; j++)
                     lowestCost[i][j] = sc.nextInt();
-                for (int j = 0; j < numNeighbors; j++)
-                    neighbor[i][j] = sc.nextInt();
                 for (int j = 0; j < numNeighbors; j++) {
                     int pathSize = sc.nextInt();
                     paths[i][j] = new int[pathSize];
@@ -178,7 +172,7 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
             // out.println("numGroups: ");
             out.println(numGroups);
             for (int i = 0; i < numGroups; i++) {    // Read each group which has # neighbors as N, neighborId[N], lowest cost[N], neighbor[] and paths on each line
-                if (neighbor[i] != null) {
+                if (neighborId[i] != null) {
                     int numNeighbors = neighborId[i].length;
                     // out.println("numNeighbours for " + i + ": ");
                     out.println(numNeighbors);
@@ -190,11 +184,6 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
                     // out.println("lowestCosts: ");
                     for (int j = 0; j < numNeighbors; j++) {
                         out.print(lowestCost[i][j] + "\t");
-                    }
-                    out.println();
-                    // out.println("neighbours: ");
-                    for (int j = 0; j < numNeighbors; j++) {
-                        out.print(neighbor[i][j] + "\t");
                     }
                     out.println();
                     // out.println("paths: ");
@@ -225,11 +214,11 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
         numGroups = groups.size();
         lowestCost = new int[numGroups][];
         paths = new int[numGroups][][];
-        neighbor = new int[numGroups][];
         neighborId = new int[numGroups][];
         long startTime = System.currentTimeMillis();
 
-        long baseTime = computeBasePaths2(problem, groups, searchAlg, lowestCost, paths, neighbor, numGroups, numLevels, true, dbStats);
+        // long baseTime = computeBasePaths2(problem, groups, searchAlg, numLevels, true, dbStats); // 16,594ms
+        long baseTime = computeBasePaths2(problem, groups, searchAlg, numLevels, true, dbStats);
 
         long endTime = System.currentTimeMillis();
 
@@ -249,7 +238,7 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
      * @param dbStats
      * @param numLevels
      */
-    public long computeBasePaths2(SearchProblem problem, TreeMap<Integer, GroupRecord> groups, SearchAlgorithm searchAlg, int[][] lowestCost, int[][][] paths, int[][] neighbor, int numGroups, int numLevels, boolean asSubgoals, DBStatsRecord dbStats) {
+    public long computeBasePaths2(SearchProblem problem, TreeMap<Integer, GroupRecord> groups, SearchAlgorithm searchAlg, int numLevels, boolean asSubgoals, DBStatsRecord dbStats) {
         int goalGroupLoc, startGroupLoc;
         GroupRecord startGroup, goalGroup;
         HashSet<Integer> neighbors;
@@ -271,7 +260,6 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
             neighbors = GameDB.getNeighbors(groups, startGroup, numLevels, false);
             int numNeighbors = neighbors.size();
             lowestCost[startGroupLoc] = new int[numNeighbors];
-            neighbor[startGroupLoc] = new int[numNeighbors];
             neighborId[startGroupLoc] = new int[numNeighbors];
             paths[startGroupLoc] = new int[numNeighbors][];
 
@@ -293,7 +281,6 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
                 int pathCost = stats.getPathCost();
                 neighborId[startGroupLoc][count] = goalGroupLoc;
                 lowestCost[startGroupLoc][count] = pathCost;
-                neighbor[startGroupLoc][count] = goalGroupLoc;
 
                 if (asSubgoals) { // This is always true?
                     paths[startGroupLoc][count] = SubgoalDB.convertPathToIds(path);
@@ -316,16 +303,8 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
         return baseTime;
     }
 
-    public int[][] getLowestCost() {
-        return lowestCost;
-    }
-
     public int[][][] getPaths() {
         return paths;
-    }
-
-    public int[][] getNeighbor() {
-        return neighbor;
     }
 
     /**
@@ -339,9 +318,7 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
      */
     public void recomputeBasePathsAfterWallChange(SearchProblem problem, TreeMap<Integer, GroupRecord> groups,
                                                   ArrayList<Integer> neighbourIndices, SearchAlgorithm searchAlg,
-                                                  int[][] lowestCost, int[][][] paths, int[][] neighbor,
-                                                  int numGroups, int numLevels,
-                                                  boolean isElimination, boolean isPartition) {
+                                                  int numLevels, boolean isElimination, boolean isPartition) {
         /*
         Currently, I am deleting all regions within a sector and recomputing the whole sector. In the case where the
         regions do not merge, and the number of regions therefore stays the same, this leads to an off-by-one error when
@@ -353,23 +330,19 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
         cases won't work.
          */
         int startNum = 50;
-        if (lowestCost.length < groups.lastKey() + 1 - startNum) {
-            int[][] resizedLowestCost = new int[groups.lastKey() + 1 - startNum][];
+        int targetLength = groups.lastKey() + 1 - startNum; // 10ms
+        if (lowestCost.length < targetLength) {
+            int[][] resizedLowestCost = new int[targetLength][];
             System.arraycopy(lowestCost, 0, resizedLowestCost, 0, lowestCost.length);
             this.lowestCost = resizedLowestCost;
         }
-        if (paths.length < groups.lastKey() + 1 - startNum) {
-            int[][][] resizedPath = new int[groups.lastKey() + 1 - startNum][][];
+        if (paths.length < targetLength) {
+            int[][][] resizedPath = new int[targetLength][][];
             System.arraycopy(paths, 0, resizedPath, 0, paths.length);
             this.paths = resizedPath;
         }
-        if (neighbor.length < groups.lastKey() + 1 - startNum) {
-            int[][] resizedNeighbor = new int[groups.lastKey() + 1 - startNum][];
-            System.arraycopy(neighbor, 0, resizedNeighbor, 0, neighbor.length);
-            this.neighbor = resizedNeighbor;
-        }
-        if (neighborId.length < groups.lastKey() + 1 - startNum) {
-            int[][] resizedNeighborId = new int[groups.lastKey() + 1 - startNum][];
+        if (neighborId.length < targetLength) {
+            int[][] resizedNeighborId = new int[targetLength][];
             System.arraycopy(neighborId, 0, resizedNeighborId, 0, neighborId.length);
             neighborId = resizedNeighborId;
         }
@@ -382,11 +355,11 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
         StatsRecord stats = new StatsRecord();
         int numBase = 0;
 
-        logger.debug("Number of groups to recompute: " + numGroups);
-        long currentTime = System.currentTimeMillis();
+//        logger.debug("Number of groups to recompute: " + numGroups);
+//        long currentTime = System.currentTimeMillis();
 
         int[] tmp = new int[5000];
-        logger.debug("Creating base paths to neighbors.");
+//        logger.debug("Creating base paths to neighbors.");
         int numStates = 0;
 
         for (Integer neighbourIndex : neighbourIndices) {
@@ -396,14 +369,13 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
             if (startGroup == null || neighbourIndices.size() == 1) {
                 // Need to initialize arrays so singleton regions work in wall removal
                 this.lowestCost[startGroupLoc] = new int[0];
-                this.neighbor[startGroupLoc] = new int[0];
                 neighborId[startGroupLoc] = new int[0];
                 this.paths[startGroupLoc] = new int[0][];
                 continue;
             }
 
             // TODO: could probably simplify this code since we are not taking advantage of numLevels currently anyways
-            neighbors = GameDB.getNeighbors(groups, startGroup, numLevels, isPartition);
+            neighbors = GameDB.getNeighbors(groups, startGroup, numLevels, isPartition); // 20ms
             int numNeighbors = neighbors.size();
 
             if (isElimination) {
@@ -411,7 +383,6 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
             }
 
             this.lowestCost[startGroupLoc] = new int[numNeighbors];
-            this.neighbor[startGroupLoc] = new int[numNeighbors];
             neighborId[startGroupLoc] = new int[numNeighbors];
             this.paths[startGroupLoc] = new int[numNeighbors][];
 
@@ -421,22 +392,21 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
             while (it.hasNext()) {
                 // Compute the shortest path between center representative of both groups
                 int goalGroupId = it.next();
-                goalGroup = groups.get(goalGroupId);
+                goalGroup = groups.get(goalGroupId); // 40ms
 
-                if (goalGroup != null) {
-                    path = astar.computePath(new SearchState(startGroup.groupRepId), new SearchState(goalGroup.groupRepId), stats);
+                if (goalGroup != null) { // 10ms
+                    path = astar.computePath(new SearchState(startGroup.groupRepId), new SearchState(goalGroup.groupRepId), stats); // 2680ms
                     numBase++;
                     goalGroupLoc = goalGroupId - GameMap.START_NUM;
 
                     // Save information
-                    SearchUtil.computePathCost(path, stats, problem);
+                    SearchUtil.computePathCost(path, stats, problem); // 20ms
                     int pathCost = stats.getPathCost();
 
                     neighborId[startGroupLoc][count] = goalGroupLoc;
                     this.lowestCost[startGroupLoc][count] = pathCost;
-                    this.neighbor[startGroupLoc][count] = goalGroupLoc;
-                    this.paths[startGroupLoc][count] = SubgoalDB.convertPathToIds(path);
-                    this.paths[startGroupLoc][count] = SearchUtil.compressPath(this.paths[startGroupLoc][count], searchAlg, tmp, path.size());
+                    this.paths[startGroupLoc][count] = SubgoalDB.convertPathToIds(path); // 10ms
+                    this.paths[startGroupLoc][count] = SearchUtil.compressPath(this.paths[startGroupLoc][count], searchAlg, tmp, path.size()); // 340ms
                     numStates += this.paths[startGroupLoc][count].length;
                     count++;
                 }
@@ -445,10 +415,10 @@ public class SubgoalDynamicDB2 extends SubgoalDBExact {
 
         this.numGroups = groups.size();
 
-        long endTime = System.currentTimeMillis();
-        long baseTime = endTime - currentTime;
-        logger.info("Time to re-compute base paths: " + (baseTime));
-        logger.info("Base neighbors generated paths: " + numBase + " Number of states: " + numStates);
+//        long endTime = System.currentTimeMillis();
+//        long baseTime = endTime - currentTime;
+//        logger.info("Time to re-compute base paths: " + (baseTime));
+//        logger.info("Base neighbors generated paths: " + numBase + " Number of states: " + numStates);
 //        dbStats.addStat(9, numStates);        // Set number of subgoals.  Will be changed by a version that pre-computes all paths but will not be changed for the dynamic version.
 //        dbStats.addStat(8, numBase);          // # of records (only corresponds to base paths)
     }

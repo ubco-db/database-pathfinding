@@ -158,9 +158,9 @@ public class SubgoalDBExact extends SubgoalDB {
         // TODO: need to update state.id to state.cost mapping
         int[][] groupsMapping = db.getGroups();
         // TODO: this matches the .dati2 AW completely now, even though it shouldn't
-        setProblem(new MapSearchProblem(map));
+        setProblem(new MapSearchProblem(map)); // 270ms
 
-        db = new IndexDB();
+        db = new IndexDB(); // 320ms
         HashMap<Integer, Integer> distinctStates = new HashMap<>(5000);
         SearchState state = new SearchState();
         int lastStateVal = -1;
@@ -168,13 +168,13 @@ public class SubgoalDBExact extends SubgoalDB {
         // IDEA: Scan cells in order of index number.  When hit new cell that is in a different state than last, add entry to the DB.
         // NOTE: Using the state.cost variable to pass back the abstract state id.
         problem.initIterator();
-        while (problem.nextState(state)) {
+        while (problem.nextState(state)) { // 270ms
             numStates++;
             if (state.cost != lastStateVal) {
-                db.add(state.id, (int) state.cost);
+                db.add(state.id, (int) state.cost); // 10ms
                 lastStateVal = (int) state.cost;
             }
-            if (!distinctStates.containsKey(lastStateVal)) distinctStates.put(lastStateVal, lastStateVal);
+            if (!distinctStates.containsKey(lastStateVal)) distinctStates.put(lastStateVal, lastStateVal); // 430ms
         }
 
         db.setTotalCells(numStates);
@@ -203,7 +203,7 @@ public class SubgoalDBExact extends SubgoalDB {
 
         // write groupsArr back to db
         db.setGroups(groupsMapping);
-        db.buildHT();
+        db.buildHT(); // 20ms
     }
 
     /**

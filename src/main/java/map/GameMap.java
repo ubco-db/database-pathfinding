@@ -1,6 +1,7 @@
 package map;
 
 import database.DBStatsRecord;
+import database.SubgoalDynamicDB3;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import search.*;
@@ -1017,7 +1018,7 @@ public class GameMap {
             }
         }
         long endTime = System.currentTimeMillis();
-        logger.info("Time to recompute neighbors: " + (endTime - currentTime));
+        logger.debug("Time to recompute neighbors: " + (endTime - currentTime));
     }
 
     public int generateRandomState() {
@@ -1362,6 +1363,86 @@ public class GameMap {
                         // In removal case, groups.size() may not work (case where same number of regions before and after)
                         currentNum = groups.lastKey() + 1;
                         firstTime = false;
+                    }
+                }
+            }
+
+            // Put in new group
+            Color color = new Color(generator.nextFloat(), generator.nextFloat(), generator.nextFloat());
+            map.colors.put(currentNum, color);
+        }
+        totalRegions += numRegionsInSector; // Increment region count
+        // TODO: check this works properly now
+        map.numRegions[(startRow / gridSize) * (int) Math.ceil(cols * 1.0 / gridSize) + (endRow / gridSize)] = numRegionsInSector;
+
+        map.states = totalRegions;
+        logger.debug("Number of areas: " + (map.states));
+
+        return numRegionsInSector;
+    }
+
+
+    public int sectorReAbstractWithFreeSpace(int gridSize, int startRow, int startCol, int endRow, int endCol, int regionId, GameMap map, SubgoalDynamicDB3 dbBW) throws Exception {
+
+        if (regionId == 32) {
+            throw new Exception("Error in sectorReAbstract2: Region id must not equal 32 (empty space)");
+        }
+
+        int currentNum = -1;
+        int numSectors = (int) (Math.ceil(rows * 1.0 / gridSize) * Math.ceil(cols * 1.0 / gridSize));
+
+        map.numRegions = Arrays.copyOf(map.numRegions, numSectors);
+
+        int totalRegions = map.states;
+        int numRegionsInSector = 0;
+
+        ExpandArray neighbors = new ExpandArray(10);
+
+        // If bottom of the grid exceeds the map
+        if (endRow > this.rows) endRow = rows;
+
+        // If last col of the grid exceeds the map
+        if (endCol > this.cols) endCol = cols;
+
+        for (int r = 0; r < gridSize; r++) {
+            // For each col in this sector
+            for (int c = 0; c < gridSize; c++) {
+                int row = startRow + r; // pointer to a row
+                int col = startCol + c; // pointer to a col
+
+                // if this state is valid and isn't a wall and is in the region to be recomputed:
+                // open cell for abstraction - perform constrained BFS within this sector to label all nodes in sector
+                if (map.isValid(row, col) && !map.isWall(row, col) && map.squares[row][col] == ' ') {
+                    // grab next free spot from the database
+                    currentNum = dbBW.popFreeSpace();
+                    numRegionsInSector++;
+
+                    Queue<Integer> stateIds = new LinkedList<>();
+                    stateIds.add(map.getId(row, col));
+                    map.squares[row][col] = currentNum;
+
+                    while (!stateIds.isEmpty()) {
+                        int id = stateIds.remove();
+                        row = map.getRow(id); // Row of state
+                        col = map.getCol(id); // Col of state
+
+                        // Generate neighbors and add to list if in region
+                        map.getNeighbors(row, col, neighbors);
+
+                        // For number of neighbors
+                        for (int n = 0; n < neighbors.num(); n++) {
+
+                            int nid = neighbors.get(n); // ID of neighbor state
+                            int nr = map.getRow(nid); // Row of that neighbor
+                            int nc = map.getCol(nid); // Col of that neighbor
+
+                            // Check if neighbor is in range
+                            if (map.isOpenInRange(nr, nc, endRow, endCol, gridSize)) {
+                                // Add neighbor
+                                map.squares[nr][nc] = currentNum;
+                                stateIds.add(nid);
+                            }
+                        }
                     }
                 }
             }

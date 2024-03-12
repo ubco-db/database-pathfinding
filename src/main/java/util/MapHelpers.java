@@ -29,6 +29,12 @@ public final class MapHelpers {
         return n1 == '*' && n2 == '*' && nDiag != '*';
     }
 
+
+    public static boolean isUniqueTouchPoint(int n1, int nDiag, int n2) {
+        // if n1 and n2, and nDiag are all different regions, placing a wall may make it so nDiag's region becomes unreachable
+        return n1 != n2 && n2 != nDiag;
+    }
+
     public static boolean isValid(int[][] map, boolean[][] visited, int row, int col, int r) {
         int rows = map.length;
         int cols = map[0].length;

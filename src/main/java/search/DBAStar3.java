@@ -2,14 +2,15 @@ package search;
 
 import database.SubgoalDB;
 import database.SubgoalDBRecord;
+import database.SubgoalDynamicDB3;
 import map.GameMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 
-public class DBAStar implements SearchAlgorithm {
-    private final SubgoalDB database;
+public class DBAStar3 implements SearchAlgorithm {
+    private final SubgoalDynamicDB3 database;
     private final SearchProblem problem;
     private final GameMap map;
     private final RegionSearchProblem abstractProblem;
@@ -17,7 +18,7 @@ public class DBAStar implements SearchAlgorithm {
 
     private static final Logger logger = LogManager.getLogger(DBAStar.class);
 
-    public DBAStar(SearchProblem problem, GameMap abstractMap, SubgoalDB database) {
+    public DBAStar3(SearchProblem problem, GameMap abstractMap, SubgoalDynamicDB3 database) {
         this.database = database;
         this.problem = problem;
         this.map = abstractMap;
@@ -50,14 +51,16 @@ public class DBAStar implements SearchAlgorithm {
         ArrayList<SearchState> pathEnd = new ArrayList<>();
 
         startTime = System.nanoTime();
+
+        // TODO: Is this needed at all? Is there a better way?
+        // We're finding the SearchState of the regionCenter aka rep? and then using that to find the region, and also in the AStar in findNearest
         SearchState startRegionCenter = abstractProblem.findRegion2(start, pathStart, 0);
         SearchState goalRegionCenter = abstractProblem.findRegion2(goal, pathEnd, 1);
 
-//        System.out.println("Start region center: " + startRegionCenter);
-//        System.out.println("Goal region center: " + goalRegionCenter);
-
         // Search the database for records
-        ArrayList<SubgoalDBRecord> records = database.findNearest(problem, startRegionCenter, goalRegionCenter, subgoalSearchAlg, 1, stats, null);
+        int startRegion = map.squares[map.getRow(startRegionCenter.id)][map.getCol(startRegionCenter.id)];
+        int goalRegion = map.squares[map.getRow(goalRegionCenter.id)][map.getCol(goalRegionCenter.id)];
+        ArrayList<SubgoalDBRecord> records = database.findNearest(problem, startRegion, goalRegion, subgoalSearchAlg,1, stats, null);
 
         if (records != null && !records.isEmpty()) {
             currentRecord = records.getFirst();
@@ -71,7 +74,6 @@ public class DBAStar implements SearchAlgorithm {
             subgoals.add(currentGoal);
             endTime = System.nanoTime();
             stats.updateMaxTime(endTime - startTime);
-            // TODO
             SearchUtil.computePathCost(path, stats, problem); // Compute path costs up to this point
 
             while (true) {
