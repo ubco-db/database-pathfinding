@@ -77,7 +77,7 @@ public class AddingAllWallsEfficientlyTest {
             dbaStarUtil2.computeDBAStarDatabaseUsingSubgoalDynamicDB3(startingMap, "AW");
 
             // Remove wall
-            startingMap.squares[wallRow][wallCol] = ' ';
+            startingMap.squares[wallRow][wallCol] = GameMap.EMPTY_CHAR;
         }
 
         writeResultToFile(DBA_STAR_DB_PATH + "results.txt", "Total time complete recomputation: " + (System.currentTimeMillis() - startTimeFull) + "ms\n");
