@@ -233,11 +233,11 @@ public class DBAStarUtil2 {
 
             // Need to check boundaries for bottom row of map (if not on map, treat square as wall)
             // TODO: Do I really need to check all of these?
-            int NEIGHBOR_NE = map.isValid(WALL_ROW - 1, WALL_COL + 1) ? map.squares[WALL_ROW - 1][WALL_COL + 1] : 42;
-            int NEIGHBOR_E = map.isValid(WALL_ROW, WALL_COL + 1) ? map.squares[WALL_ROW][WALL_COL + 1] : 42;
-            int NEIGHBOR_SE = map.isValid(WALL_ROW + 1, WALL_COL + 1) ? map.squares[WALL_ROW + 1][WALL_COL + 1] : 42;
-            int NEIGHBOR_S = map.isValid(WALL_ROW + 1, WALL_COL) ? map.squares[WALL_ROW + 1][WALL_COL] : 42;
-            int NEIGHBOR_SW = map.isValid(WALL_ROW + 1, WALL_COL - 1) ? map.squares[WALL_ROW + 1][WALL_COL - 1] : 42;
+            int NEIGHBOR_NE = map.isValid(WALL_ROW - 1, WALL_COL + 1) ? map.squares[WALL_ROW - 1][WALL_COL + 1] : GameMap.WALL_CHAR;
+            int NEIGHBOR_E = map.isValid(WALL_ROW, WALL_COL + 1) ? map.squares[WALL_ROW][WALL_COL + 1] : GameMap.WALL_CHAR;
+            int NEIGHBOR_SE = map.isValid(WALL_ROW + 1, WALL_COL + 1) ? map.squares[WALL_ROW + 1][WALL_COL + 1] : GameMap.WALL_CHAR;
+            int NEIGHBOR_S = map.isValid(WALL_ROW + 1, WALL_COL) ? map.squares[WALL_ROW + 1][WALL_COL] : GameMap.WALL_CHAR;
+            int NEIGHBOR_SW = map.isValid(WALL_ROW + 1, WALL_COL - 1) ? map.squares[WALL_ROW + 1][WALL_COL - 1] : GameMap.WALL_CHAR;
 
             int NEIGHBOR_W = map.squares[WALL_ROW][WALL_COL - 1];
             int NEIGHBOR_NW = map.squares[WALL_ROW - 1][WALL_COL - 1];
@@ -271,16 +271,16 @@ public class DBAStarUtil2 {
                 // TODO: Check my math here!
                 // If the wall is in a corner and the state diagonal to it is not a wall, we have a corner blocker
                 // This means the two regions that are currently neighbours shouldn't be anymore
-                if (isTopLeftCorner && (NEIGHBOR_NW != 42)) {
+                if (isTopLeftCorner && (NEIGHBOR_NW != GameMap.WALL_CHAR)) {
                     neighbourRegion = map.squares[WALL_ROW - 1][WALL_COL - 1];
                     neighbourRegionRep = map.getRegionRepFromRegionId(NEIGHBOR_NW);
-                } else if (isTopRightCorner && (NEIGHBOR_NE != 42)) {
+                } else if (isTopRightCorner && (NEIGHBOR_NE != GameMap.WALL_CHAR)) {
                     neighbourRegion = map.squares[WALL_ROW - 1][WALL_COL + 1];
                     neighbourRegionRep = map.getRegionRepFromRegionId(NEIGHBOR_NE);
-                } else if (isBottomRightCorner && (NEIGHBOR_SE != 42)) {
+                } else if (isBottomRightCorner && (NEIGHBOR_SE != GameMap.WALL_CHAR)) {
                     neighbourRegion = map.squares[WALL_ROW + 1][WALL_COL + 1];
                     neighbourRegionRep = map.getRegionRepFromRegionId(NEIGHBOR_SE);
-                } else if (isBottomLeftCorner && (NEIGHBOR_SW != 42)) {
+                } else if (isBottomLeftCorner && (NEIGHBOR_SW != GameMap.WALL_CHAR)) {
                     neighbourRegion = map.squares[WALL_ROW + 1][WALL_COL - 1];
                     neighbourRegionRep = map.getRegionRepFromRegionId(NEIGHBOR_SW);
                 }
@@ -374,7 +374,7 @@ public class DBAStarUtil2 {
                 for (int row = START_ROW; row < END_ROW; row++) {
                     for (int col = START_COL; col < END_COL; col++) {
                         if (!map.isWall(row, col) && map.squares[row][col] == REGION_ID) {
-                            map.squares[row][col] = ' '; // 32
+                            map.squares[row][col] = GameMap.EMPTY_CHAR; // 32
                         }
                     }
                 }
@@ -464,8 +464,8 @@ public class DBAStarUtil2 {
         final boolean PRIOR_WALL = map.isWall(wallLoc) && problem.getMap().isWall(wallLoc);
 
         // Remove wall from map and from map inside problem, set the square to empty (=32) for now
-        map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = ' ';
-        problem.getMap().squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = ' ';
+        map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = GameMap.EMPTY_CHAR;
+        problem.getMap().squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = GameMap.EMPTY_CHAR;
 
         // Check whether the wall removal worked as intended
         if (PRIOR_WALL && !map.isWall(wallLoc) && !problem.getMap().isWall(wallLoc)) {
@@ -674,7 +674,7 @@ public class DBAStarUtil2 {
                     for (int row = START_ROW; row < END_ROW; row++) {
                         for (int col = START_COL; col < END_COL; col++) {
                             if (!map.isWall(row, col) && neighbouringRegionsInSameSector.contains(map.squares[row][col])) {
-                                map.squares[row][col] = ' '; // 32
+                                map.squares[row][col] = GameMap.EMPTY_CHAR; // 32
                             }
                         }
                     }
@@ -847,11 +847,11 @@ public class DBAStarUtil2 {
 
             // Need to check boundaries for bottom row of map (if not on map, treat square as wall)
             // TODO: Do I really need to check all of these?
-            int NEIGHBOR_NE = map.isValid(WALL_ROW - 1, WALL_COL + 1) ? map.squares[WALL_ROW - 1][WALL_COL + 1] : 42;
-            int NEIGHBOR_E = map.isValid(WALL_ROW, WALL_COL + 1) ? map.squares[WALL_ROW][WALL_COL + 1] : 42;
-            int NEIGHBOR_SE = map.isValid(WALL_ROW + 1, WALL_COL + 1) ? map.squares[WALL_ROW + 1][WALL_COL + 1] : 42;
-            int NEIGHBOR_S = map.isValid(WALL_ROW + 1, WALL_COL) ? map.squares[WALL_ROW + 1][WALL_COL] : 42;
-            int NEIGHBOR_SW = map.isValid(WALL_ROW + 1, WALL_COL - 1) ? map.squares[WALL_ROW + 1][WALL_COL - 1] : 42;
+            int NEIGHBOR_NE = map.isValid(WALL_ROW - 1, WALL_COL + 1) ? map.squares[WALL_ROW - 1][WALL_COL + 1] : GameMap.WALL_CHAR;
+            int NEIGHBOR_E = map.isValid(WALL_ROW, WALL_COL + 1) ? map.squares[WALL_ROW][WALL_COL + 1] : GameMap.WALL_CHAR;
+            int NEIGHBOR_SE = map.isValid(WALL_ROW + 1, WALL_COL + 1) ? map.squares[WALL_ROW + 1][WALL_COL + 1] : GameMap.WALL_CHAR;
+            int NEIGHBOR_S = map.isValid(WALL_ROW + 1, WALL_COL) ? map.squares[WALL_ROW + 1][WALL_COL] : GameMap.WALL_CHAR;
+            int NEIGHBOR_SW = map.isValid(WALL_ROW + 1, WALL_COL - 1) ? map.squares[WALL_ROW + 1][WALL_COL - 1] : GameMap.WALL_CHAR;
 
             int NEIGHBOR_W = map.squares[WALL_ROW][WALL_COL - 1];
             int NEIGHBOR_NW = map.squares[WALL_ROW - 1][WALL_COL - 1];
@@ -885,16 +885,16 @@ public class DBAStarUtil2 {
                 // TODO: Check my math here!
                 // If the wall is in a corner and the state diagonal to it is not a wall, we have a corner blocker
                 // This means the two regions that are currently neighbours shouldn't be anymore
-                if (isTopLeftCorner && (NEIGHBOR_NW != 42)) {
+                if (isTopLeftCorner && (NEIGHBOR_NW != GameMap.WALL_CHAR)) {
                     neighbourRegion = map.squares[WALL_ROW - 1][WALL_COL - 1];
                     neighbourRegionRep = map.getRegionRepFromRegionId(NEIGHBOR_NW);
-                } else if (isTopRightCorner && (NEIGHBOR_NE != 42)) {
+                } else if (isTopRightCorner && (NEIGHBOR_NE != GameMap.WALL_CHAR)) {
                     neighbourRegion = map.squares[WALL_ROW - 1][WALL_COL + 1];
                     neighbourRegionRep = map.getRegionRepFromRegionId(NEIGHBOR_NE);
-                } else if (isBottomRightCorner && (NEIGHBOR_SE != 42)) {
+                } else if (isBottomRightCorner && (NEIGHBOR_SE != GameMap.WALL_CHAR)) {
                     neighbourRegion = map.squares[WALL_ROW + 1][WALL_COL + 1];
                     neighbourRegionRep = map.getRegionRepFromRegionId(NEIGHBOR_SE);
-                } else if (isBottomLeftCorner && (NEIGHBOR_SW != 42)) {
+                } else if (isBottomLeftCorner && (NEIGHBOR_SW != GameMap.WALL_CHAR)) {
                     neighbourRegion = map.squares[WALL_ROW + 1][WALL_COL - 1];
                     neighbourRegionRep = map.getRegionRepFromRegionId(NEIGHBOR_SW);
                 }
@@ -986,7 +986,7 @@ public class DBAStarUtil2 {
                 for (int row = START_ROW; row < END_ROW; row++) {
                     for (int col = START_COL; col < END_COL; col++) {
                         if (!map.isWall(row, col) && map.squares[row][col] == REGION_ID) {
-                            map.squares[row][col] = ' '; // 32
+                            map.squares[row][col] = GameMap.EMPTY_CHAR; // 32
                         }
                     }
                 }
@@ -1068,8 +1068,8 @@ public class DBAStarUtil2 {
         final boolean PRIOR_WALL = map.isWall(wallLoc) && problem.getMap().isWall(wallLoc);
 
         // Remove wall from map and from map inside problem, set the square to empty (=32) for now
-        map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = ' ';
-        problem.getMap().squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = ' ';
+        map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = GameMap.EMPTY_CHAR;
+        problem.getMap().squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = GameMap.EMPTY_CHAR;
 
         // Check whether the wall removal worked as intended
         if (!PRIOR_WALL || map.isWall(wallLoc) || problem.getMap().isWall(wallLoc)) {
@@ -1207,9 +1207,6 @@ public class DBAStarUtil2 {
             map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = regionId;
             problem.getMap().squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = regionId;
 
-            // Get region rep
-            int regionRepId = map.getRegionRepFromRegionId(regionId);
-
             GroupRecord groupRecord = groups.get(regionId);
 
             if (groupRecord == null) {
@@ -1265,7 +1262,7 @@ public class DBAStarUtil2 {
                     for (int row = START_ROW; row < END_ROW; row++) {
                         for (int col = START_COL; col < END_COL; col++) {
                             if (!map.isWall(row, col) && neighbouringRegionsInSameSector.contains(map.squares[row][col])) {
-                                map.squares[row][col] = ' '; // 32
+                                map.squares[row][col] = GameMap.EMPTY_CHAR; // 32
                             }
                         }
                     }
