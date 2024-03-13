@@ -1,9 +1,5 @@
-import dynamic.Walls;
 import map.GameMap;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import search.DBAStar3;
-import search.SearchState;
 import util.DBAStarUtil2;
 
 import java.util.ArrayList;
@@ -17,7 +13,7 @@ public class AddingAllWallsEfficientlyTest {
     final static String MAP_FILE_NAME = "012.map";
     final static String PATH_TO_MAP = MAP_FILE_PATH + MAP_FILE_NAME;
 
-    private static final Logger logger = LogManager.getLogger(AddingAllWallsEfficientlyTest.class);
+    // private static final Logger logger = LogManager.getLogger(AddingAllWallsEfficientlyTest.class);
 
     public static void main(String[] args) throws Exception {
         DBAStar3 dbaStar3;
@@ -43,42 +39,45 @@ public class AddingAllWallsEfficientlyTest {
         goalIds.remove((Integer) startId);
 
         // Print number of goals (6175 on 012.map)
-        logger.info("Number of goals: " + goalIds.size());
+        // logger.info("Number of goals: " + goalIds.size());
 
         /* partial recomputation */
 
         long startTimePartial = System.currentTimeMillis();
 
         // compute DBAStar database before adding wall
-        dbaStar3 = dbaStarUtil2.computeDBAStarDatabaseUsingSubgoalDynamicDB3(startingMap, "BW");
+        dbaStar3 = dbaStarUtil2.computeDBAStarDatabaseUsingSubgoalDynamicDB3(startingMap, "BW"); // 70ms
 
         for (int wallId : goalIds) {
             // Add wall & recompute database
-            logger.info("\n\nRecompute wall addition for wall at: " + wallId);
-            dbaStarUtil2.recomputeWallAdditionUsingSubgoalDynamicDB3(wallId, dbaStar3); // 880ms
+            // logger.info("\n\nRecompute wall addition for wall at: " + wallId);
+            dbaStarUtil2.recomputeWallAdditionUsingSubgoalDynamicDB3NoLogging(wallId, dbaStar3); // 790ms
 
             // Remove wall
-            logger.info("\n\nRecompute wall removal for wall at: " + wallId);
-            dbaStarUtil2.recomputeWallRemovalUsingSubgoalDynamicDB3(wallId, dbaStar3); // 770ms
+            // logger.info("\n\nRecompute wall removal for wall at: " + wallId);
+            dbaStarUtil2.recomputeWallRemovalUsingSubgoalDynamicDB3NoLogging(wallId, dbaStar3); // 630ms
         }
 
         writeResultToFile(DBA_STAR_DB_PATH + "results.txt", "Total time partial recomputation: " + (System.currentTimeMillis() - startTimePartial) + "ms\n");
 
         /* complete recomputation */
 
+        startingMap = new GameMap(PATH_TO_MAP); // resetting map
+
         long startTimeFull = System.currentTimeMillis();
 
         for (int wallId : goalIds) {
-            // Setting up walls
-            ArrayList<SearchState> wallLocation = new ArrayList<>();
-            wallLocation.add(new SearchState(wallId));
+            int wallRow = startingMap.getRow(wallId);
+            int wallCol = startingMap.getCol(wallId);
 
-            // Adding wall and computing database
-            Walls.addWall(PATH_TO_MAP, wallLocation, startingMap);
-            startingMap = new GameMap(PATH_TO_MAP); // resetting map
+            // Add wall
+            startingMap.squares[wallRow][wallCol] = GameMap.WALL_CHAR;
+
+            // Compute database
             dbaStarUtil2.computeDBAStarDatabaseUsingSubgoalDynamicDB3(startingMap, "AW");
 
-            Walls.removeWall(PATH_TO_MAP, wallLocation, startingMap);
+            // Remove wall
+            startingMap.squares[wallRow][wallCol] = ' ';
         }
 
         writeResultToFile(DBA_STAR_DB_PATH + "results.txt", "Total time complete recomputation: " + (System.currentTimeMillis() - startTimeFull) + "ms\n");

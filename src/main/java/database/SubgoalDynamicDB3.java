@@ -21,8 +21,6 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
 
     private static final Logger logger = LogManager.getLogger(SubgoalDynamicDB3.class);
 
-    // TODO: How to do this without DP table?
-
     /**
      * Returns record for start and goal for search problem between two regions.
      * Record produced dynamically from data in DP table by combining base paths between regions (non-real-time).
