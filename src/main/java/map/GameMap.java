@@ -32,7 +32,7 @@ import java.util.Map.Entry;
  * Maps can also be displayed on the screen.
  */
 public class GameMap {
-    public static final int EDGECOST_CARDINAL = 1; // TODO: Previously 10
+    public static final int EDGECOST_CARDINAL = 10;
     public static final int EDGECOST_DIAGONAL = 14;
     public static final char WALL_CHAR = '*';
     public static final char EMPTY_CHAR = ' ';
@@ -149,8 +149,8 @@ public class GameMap {
         int diffCol = (goalCol - startCol);
         if (diffCol < 0) diffCol = startCol - goalCol;
 
-        if (diffRow > diffCol) return diffCol * 14 + (diffRow - diffCol) * 10;
-        else return diffRow * 14 + (diffCol - diffRow) * 10;
+        if (diffRow > diffCol) return diffCol * EDGECOST_DIAGONAL + (diffRow - diffCol) * EDGECOST_CARDINAL;
+        else return diffRow * EDGECOST_DIAGONAL + (diffCol - diffRow) * EDGECOST_CARDINAL;
     }
 
     // Computes octile distance (quick estimate with no square root) from this state to goal state
@@ -181,76 +181,7 @@ public class GameMap {
         bit31 = diffCol >> 31;                    // Compute its absolute value
         diffCol = (diffCol ^ bit31) - bit31;
 
-        return Math.min(diffRow, diffCol) * 14 + ((diffRow + diffCol) - 2 * Math.min(diffRow, diffCol)) * 10;
-
-		/*
-		diffRow = startRow - goalRow;
-		diffCol = ((startId - startRow*ncols) - (goalId - goalRow*ncols));
-		int cost = 0;
-		if (diffRow > 0)
-			cost = diffRow*30;
-		else if (diffRow < 0)
-			cost = -10*diffRow;
-		if (diffCol > 0)
-			cost += diffCol*30;
-		else if (diffCol < 0)
-			cost += -10*diffCol;
-		return cost;
-		*/
-		/*
-		// Original code
-		int startRow = startId/ncols;
-		int goalRow = goalId/ncols;
-		int diffRow, diffCol;
-
-		if (startRow > goalRow)
-			diffRow = startRow - goalRow;
-		else
-			diffRow = goalRow - startRow;
-		diffCol = ((startId - startRow*ncols) - (goalId - goalRow*ncols));
-		if (diffCol < 0)
-			diffCol *= -1;
-
-		int org;
-		if (diffRow > diffCol)
-			org =  diffCol * 14 + (diffRow-diffCol) * 10;
-		else
-			org = diffRow * 14 + (diffCol-diffRow) * 10;
-		return org;
-		*/
-		/*
-		// New way
-		int diff = (startId-goalId);
-		int bit31 = diff >> 31;				// Compute its absolute value
-		diff = (diff ^ bit31) - bit31;
-		diffRow = diff / ncols;
-		diffCol = diff - diffRow*ncols;
-		diff = (diffRow-diffCol)  >> 31;				// Compute its absolute value
-		diff = (diff ^ bit31) - bit31;
-		int result;
-		if (diffRow > diffCol)							// TODO: Can we avoid this if statement?
-			result =  diffCol * 14 + (diffRow-diffCol) * 10;
-		else
-			result = diffRow * 14 + (diffCol-diffRow) * 10;
-
-		if (result != org)
-		{	System.out.println("NO match: "+result+" org: "+org);
-		diff = (startId-goalId);
-		bit31 = diff >> 31;				// Compute its absolute value
-		diff = (diff ^ bit31) - bit31;
-		diffRow = diff / ncols;
-		diffCol = diff - diffRow*ncols;
-		diff = (diffRow-diffCol)  >> 31;				// Compute its absolute value
-		diff = (diff ^ bit31) - bit31;
-
-		if (diffRow > diffCol)							// TODO: Can we avoid this if statement?
-			result =  diffCol * 14 + (diffRow-diffCol) * 10;
-		else
-			result = diffRow * 14 + (diffCol-diffRow) * 10;
-			System.exit(1);
-		}
-		return result;
-		*/
+        return Math.min(diffRow, diffCol) * EDGECOST_DIAGONAL + ((diffRow + diffCol) - 2 * Math.min(diffRow, diffCol)) * EDGECOST_CARDINAL;
     }
 
     public TreeMap<Integer, GroupRecord> getGroups() {
