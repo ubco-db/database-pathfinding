@@ -416,7 +416,7 @@ public class DBAStarUtil2 {
                 // Recompute region reps for newly added regions
                 // a newRec should never be null, if it is, something went wrong with the group generation in sectorReAbstractWithFreeSpace
                 for (GroupRecord newRec : newRecs) {
-                    map.recomputeCentroid2(newRec, wallLoc);
+                    map.recomputeCentroid(REGION_ID, newRec, START_ROW, END_ROW, START_COL, END_COL, gridSize);
                     neighborIds.add(newRec.groupId);
                 }
 
@@ -432,7 +432,7 @@ public class DBAStarUtil2 {
             groupRecord.states.remove((Integer) wallLoc);
 
             // Compute newRegionRep to detect whether a shift has happened
-            int newRegionRep = map.recomputeCentroid2(groupRecord, wallLoc);
+            int newRegionRep = map.recomputeCentroid(REGION_ID, groupRecord, START_ROW, END_ROW, START_COL, END_COL, gridSize);
 
             // Wall That Moves Region Representative case
             if (newRegionRep != REGION_REP) {
@@ -593,6 +593,13 @@ public class DBAStarUtil2 {
                 return;
             }
 
+            // Start of sector
+            final int START_ROW = (SECTOR_ID / NUM_SECTORS_PER_ROW) * gridSize;
+            final int START_COL = (SECTOR_ID % NUM_SECTORS_PER_ROW) * gridSize;
+            // End of sector
+            final int END_ROW = Math.min(START_ROW + gridSize, map.rows);
+            final int END_COL = Math.min(START_COL + gridSize, map.cols);
+
             // Since we have neither a new, solitary region, nor a new, connected region, our removed wall must be part
             // of an existing region
 
@@ -663,13 +670,6 @@ public class DBAStarUtil2 {
                     // If our wall touches more than two regions that are in the same sector, we have a region merge case
                     logger.info("Removal: Region Merge Case");
 
-                    // Start of sector
-                    final int START_ROW = (SECTOR_ID / NUM_SECTORS_PER_ROW) * gridSize;
-                    final int START_COL = (SECTOR_ID % NUM_SECTORS_PER_ROW) * gridSize;
-                    // End of sector
-                    final int END_ROW = Math.min(START_ROW + gridSize, map.rows);
-                    final int END_COL = Math.min(START_COL + gridSize, map.cols);
-
                     // Iterate over old regions inside squares array and ‘erase’ them (assign ‘32’ instead of the old region ids)
                     for (int row = START_ROW; row < END_ROW; row++) {
                         for (int col = START_COL; col < END_COL; col++) {
@@ -731,7 +731,7 @@ public class DBAStarUtil2 {
                     // Recompute region reps for newly added regions
                     // a newRec should never be null, if it is, something went wrong with the group generation in sectorReAbstractWithFreeSpace
                     for (GroupRecord newRec : newRecs) {
-                        map.recomputeCentroid2(newRec, wallLoc);
+                        map.recomputeCentroid(regionId, newRec, START_ROW, END_ROW, START_COL, END_COL, gridSize);
                         neighborIds.add(newRec.groupId);
                     }
 
@@ -750,7 +750,7 @@ public class DBAStarUtil2 {
             groupRecord.states.add(wallLoc);
 
             // Compute newRegionRep to detect whether a shift has happened
-            int newRegionRep = map.recomputeCentroid2(groupRecord, wallLoc);
+            int newRegionRep = map.recomputeCentroid(regionId, groupRecord, START_ROW, END_ROW, START_COL, END_COL, gridSize);
 
             // Wall That Moves Region Representative case
             if (newRegionRep != regionRepId) {
@@ -1028,7 +1028,7 @@ public class DBAStarUtil2 {
                 // Recompute region reps for newly added regions
                 // a newRec should never be null, if it is, something went wrong with the group generation in sectorReAbstractWithFreeSpace
                 for (GroupRecord newRec : newRecs) {
-                    map.recomputeCentroid2(newRec, wallLoc);
+                    map.recomputeCentroid(REGION_ID, newRec, START_ROW, END_ROW, START_COL, END_COL, gridSize);
                     neighborIds.add(newRec.groupId);
                 }
 
@@ -1044,7 +1044,7 @@ public class DBAStarUtil2 {
             groupRecord.states.remove((Integer) wallLoc);
 
             // Compute newRegionRep (it may or may not be the same as before)
-            map.recomputeCentroid2(groupRecord, wallLoc);
+            map.recomputeCentroid(REGION_ID, groupRecord, START_ROW, END_ROW, START_COL, END_COL, gridSize);
 
             // Database changes
             dbBW.recomputeBasePaths(REGION_ID, problem, groups); // 600ms
@@ -1191,6 +1191,13 @@ public class DBAStarUtil2 {
                 return;
             }
 
+            // Start of sector
+            final int START_ROW = (SECTOR_ID / NUM_SECTORS_PER_ROW) * gridSize;
+            final int START_COL = (SECTOR_ID % NUM_SECTORS_PER_ROW) * gridSize;
+            // End of sector
+            final int END_ROW = Math.min(START_ROW + gridSize, map.rows);
+            final int END_COL = Math.min(START_COL + gridSize, map.cols);
+
             // Since we have neither a new, solitary region, nor a new, connected region, our removed wall must be part
             // of an existing region
 
@@ -1250,13 +1257,6 @@ public class DBAStarUtil2 {
                     dbBW.recomputeUnblocker(regionId, neighbourRegion, problem, groups);
                 } else {
                     // If our wall touches more than two regions that are in the same sector, we have a region merge case
-
-                    // Start of sector
-                    final int START_ROW = (SECTOR_ID / NUM_SECTORS_PER_ROW) * gridSize;
-                    final int START_COL = (SECTOR_ID % NUM_SECTORS_PER_ROW) * gridSize;
-                    // End of sector
-                    final int END_ROW = Math.min(START_ROW + gridSize, map.rows);
-                    final int END_COL = Math.min(START_COL + gridSize, map.cols);
 
                     // Iterate over old regions inside squares array and ‘erase’ them (assign ‘32’ instead of the old region ids)
                     for (int row = START_ROW; row < END_ROW; row++) {
@@ -1318,7 +1318,7 @@ public class DBAStarUtil2 {
                     // Recompute region reps for newly added regions
                     // a newRec should never be null, if it is, something went wrong with the group generation in sectorReAbstractWithFreeSpace
                     for (GroupRecord newRec : newRecs) {
-                        map.recomputeCentroid2(newRec, wallLoc);
+                        map.recomputeCentroid(regionId, newRec, START_ROW, END_ROW, START_COL, END_COL, gridSize);
                         neighborIds.add(newRec.groupId);
                     }
 
@@ -1335,7 +1335,7 @@ public class DBAStarUtil2 {
             groupRecord.states.add(wallLoc);
 
             // Compute newRegionRep (it may or may not be the same as before)
-            map.recomputeCentroid2(groupRecord, wallLoc);
+            map.recomputeCentroid(regionId, groupRecord, START_ROW, END_ROW, START_COL, END_COL, gridSize);
 
             // Database changes
             dbBW.recomputeBasePaths(regionId, problem, groups); // 590ms

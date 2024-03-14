@@ -2502,17 +2502,16 @@ public class GameMap {
     }
 
     // Compute centroid for one group
-    // TODO: pass ArrayList of walls (currently assuming only one wall is placed)
     public int recomputeCentroid(GroupRecord rec, int wallLoc) {
         // regionReps = new ArrayList<>();
 
         // TODO: states will not always contain wallLoc
 
-        long sumRow = 0, sumCol = 0, N = rec.getNumStates() - 1; // TODO: replace with ArrayList length
+        long sumRow = 0, sumCol = 0, N = rec.getNumStates() - 1;
         ArrayList<Integer> states = rec.states; // QUESTION: Why are we using ExpandArray here? Array should be enough
-        for (int i = 0; i < (N + 1); i++) { // TODO: replace 1 with ArrayList length
+        for (int i = 0; i < (N + 1); i++) {
             int id = states.get(i);
-            if (id != wallLoc) { // TODO: replace this with search in ArrayList
+            if (id != wallLoc) {
                 sumRow += this.getRow(id);
                 sumCol += this.getCol(id);
             }
@@ -2524,9 +2523,9 @@ public class GameMap {
         if (this.isWall(row, col) || squares[row][col] != rec.groupId) {    // If centroid point is not in group or is a wall
             // Find the point that is in the group that is closest
             int minDist = 10000, minRow = -1, minCol = -1;
-            for (int i = 0; i < (N + 1); i++) { // TODO: replace 1 with ArrayList length
+            for (int i = 0; i < (N + 1); i++) {
                 int id = states.get(i);
-                if (id != wallLoc) { // TODO: replace this with search in ArrayList
+                if (id != wallLoc) {
                     int r = this.getRow(id);
                     int c = this.getCol(id);
                     int dist = GameMap.computeDistance(row, col, r, c);
@@ -2549,50 +2548,8 @@ public class GameMap {
         return this.getId(row, col);
     }
 
-    // TODO: This method has a lot of duplicate code, will need to refactor
-    public int recomputeCentroid2(GroupRecord rec, int wallLoc) {
+    public int recomputeCentroid(GroupRecord rec) {
 
-        long sumRow = 0, sumCol = 0, N = rec.getNumStates(); // TODO: replace with ArrayList length
-        ArrayList<Integer> states = rec.states; // QUESTION: Why are we using ExpandArray here? Array should be enough
-        for (int i = 0; i < N; i++) { // TODO: replace 1 with ArrayList length
-            int id = states.get(i);
-            sumRow += this.getRow(id);
-            sumCol += this.getCol(id);
-        }
-
-        int row = Math.round(sumRow / N);
-        int col = Math.round(sumCol / N);
-
-        if (this.isWall(row, col) || squares[row][col] != rec.groupId) {    // If centroid point is not in group or is a wall
-            // Find the point that is in the group that is closest
-            int minDist = 10000, minRow = -1, minCol = -1;
-            for (int i = 0; i < N; i++) { // TODO: replace 1 with ArrayList length
-                int id = states.get(i);
-                if (id != wallLoc) { // TODO: replace this with search in ArrayList
-                    int r = this.getRow(id);
-                    int c = this.getCol(id);
-                    int dist = GameMap.computeDistance(row, col, r, c);
-                    if (dist < minDist) {
-                        minRow = r;
-                        minCol = c;
-                        minDist = dist;
-                    }
-                }
-            }
-            row = minRow;
-            col = minCol;
-        }
-
-        int regionRep = this.getId(row, col);
-
-        rec.setGroupRepId(regionRep);
-        regionReps[rec.groupId - GameMap.START_NUM] = regionRep;
-        logger.debug("Region id: " + (rec.groupId - GameMap.START_NUM) + " - region rep: " + regionRep);
-
-        return this.getId(row, col);
-    }
-
-    public int recomputeCentroid3(GroupRecord rec) {
         long sumRow = 0, sumCol = 0, N = rec.getNumStates();
         ArrayList<Integer> states = rec.states;
         for (int i = 0; i < N; i++) {
@@ -2621,13 +2578,64 @@ public class GameMap {
             row = minRow;
             col = minCol;
         }
-        rec.setGroupRepId(this.getId(row, col));
+
+        int regionRep = this.getId(row, col);
+
+        rec.setGroupRepId(regionRep);
+        regionReps[rec.groupId - GameMap.START_NUM] = regionRep;
+        logger.debug("Region id: " + (rec.groupId - GameMap.START_NUM) + " - region rep: " + regionRep);
+
         return this.getId(row, col);
     }
 
-//    public RegionSearchProblem getAbstractProblem() {
-//        return abstractProblem;
-//    }
+
+    public int recomputeCentroid(int regionId, GroupRecord rec, int startRow, int endRow, int startCol, int endCol, int gridSize) {
+        int[] rows = new int[gridSize * gridSize];
+        int[] cols = new int[gridSize * gridSize];
+        long sumRow = 0, sumCol = 0;
+        int numStates = 0;
+        for (int row = startRow; row < endRow; row++) {
+            for (int col = startCol; col < endCol; col++) {
+                // If the state is in the region
+                if (squares[row][col] == regionId) {
+                    rows[numStates] = row;
+                    cols[numStates] = col;
+                    sumRow += row;
+                    sumCol += col;
+                    numStates++;
+                }
+            }
+        }
+
+        // Compute center of region
+        int centroidRow = Math.round(sumRow / numStates);
+        int centroidCol = Math.round(sumCol / numStates);
+
+        // If the computed center is a wall or outside the region
+        if (this.isWall(centroidRow, centroidCol) || squares[centroidRow][centroidCol] != regionId) {
+            // Find the point that is in the group that is closest
+            int minDist = 10000, minRow = -1, minCol = -1;
+            for (int stateNum = 0; stateNum < numStates; stateNum++) {
+                int row = rows[stateNum];
+                int col = cols[stateNum];
+                int dist = GameMap.computeDistance(centroidRow, centroidCol, row, col);
+                if (dist < minDist) {
+                    minRow = row;
+                    minCol = col;
+                    minDist = dist;
+                }
+            }
+            centroidRow = minRow;
+            centroidCol = minCol;
+        }
+        int regionRep = this.getId(centroidRow, centroidCol);
+
+        rec.setGroupRepId(regionRep);
+        regionReps[rec.groupId - GameMap.START_NUM] = regionRep;
+        logger.debug("Region id: " + regionId + " - region rep: " + regionRep);
+
+        return regionRep;
+    }
 
     public int getRegionRepFromRegionId(int regionId) {
         if (regionId == 42) {
