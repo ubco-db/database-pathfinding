@@ -2,14 +2,11 @@ import dynamic.Walls;
 import map.GameMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import search.DBAStar;
 import search.DBAStar3;
 import search.SearchState;
-import util.DBAStarUtil;
 import util.DBAStarUtil2;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import static util.FileWritingUtil.writeResultToFile;
 import static util.MapHelpers.getSectorId;
@@ -29,7 +26,7 @@ public class CheckingPathEqualityTest {
         DBAStar3 dbaStar3;
         GameMap startingMap = new GameMap(PATH_TO_MAP);
 
-        // Initialize DBAStarUtil with settings for DBAStar run
+        // Initialize DBAStarUtil2 with settings for DBAStar run
         DBAStarUtil2 dbaStarUtil2 = new DBAStarUtil2(GRID_SIZE, 1, MAP_FILE_NAME, DBA_STAR_DB_PATH);
 
         // Fix start
@@ -55,7 +52,7 @@ public class CheckingPathEqualityTest {
         logger.info("Goals in sector " + sectorNum + ": " + goalIds);
 
         // Compute DBAStar database before adding wall
-        dbaStar3 = dbaStarUtil2.computeDBAStarDatabaseUsingSubgoalDynamicDB3(startingMap, "BW");
+        dbaStar3 = dbaStarUtil2.computeDBAStarDatabase(startingMap, "BW");
 
         // Compute paths to all goals, store in HashMap of arrays (goal state as key)
 //        HashMap<Integer, ArrayList<SearchState>> paths = new HashMap<>();
@@ -73,7 +70,7 @@ public class CheckingPathEqualityTest {
         for (int wallId : goalIds) {
             // Add wall & recompute database
             logger.info("\nRecompute wall addition for: " + wallId);
-            dbaStarUtil2.recomputeWallAdditionUsingSubgoalDynamicDB3(wallId, dbaStar3);
+            dbaStarUtil2.recomputeWallAddition(wallId, dbaStar3);
 
             int goalNum = 0;
             for (int goalStateId : goalIds) {
@@ -89,7 +86,7 @@ public class CheckingPathEqualityTest {
 
             // Remove wall
             logger.debug("\nRecompute wall removal for: " + wallId);
-            dbaStarUtil2.recomputeWallRemovalUsingSubgoalDynamicDB3(wallId, dbaStar3);
+            dbaStarUtil2.recomputeWallRemoval(wallId, dbaStar3);
         }
 
         writeResultToFile(DBA_STAR_DB_PATH + "results.txt", "Total time partial recomputation: " + (System.currentTimeMillis() - startTimePartial) + "ms\n");
@@ -109,7 +106,7 @@ public class CheckingPathEqualityTest {
             // Adding wall and computing database
             Walls.addWall(PATH_TO_MAP, wallLocation, startingMap);
             startingMap = new GameMap(PATH_TO_MAP); // Resetting map
-            dbaStar3 = dbaStarUtil2.computeDBAStarDatabaseUsingSubgoalDynamicDB3(startingMap, "AW");
+            dbaStar3 = dbaStarUtil2.computeDBAStarDatabase(startingMap, "AW");
 
             int goalNum = 0;
             for (int goalStateId : goalIds) {

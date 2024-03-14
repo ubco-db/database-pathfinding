@@ -363,7 +363,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         StatsRecord stats = new StatsRecord();
         ArrayList<SearchState> path;
 
-        // freeSpace has already been updated in DBAStarUtil (needed the information for map updates)
+        // freeSpace has already been updated in DBAStarUtil2 (needed the information for map updates)
 
         // regionIds contains the ids of all the regions the original region was split into after the partition
         // Use those to overwrite the neighborId arrays of the regions
@@ -495,7 +495,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         // If we have run out of free space, increase the size of the arrays
         resizeFreeSpace();
 
-        // freeSpace has already been updated in DBAStarUtil (needed the information for map updates)
+        // freeSpace has already been updated in DBAStarUtil2 (needed the information for map updates)
 
         // Find array location of region
         int groupLoc = regionId - GameMap.START_NUM;
@@ -518,7 +518,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         // If we have run out of free space, increase the size of the arrays
         resizeFreeSpace();
 
-        // freeSpace has already been updated in DBAStarUtil (needed the information for map updates)
+        // freeSpace has already been updated in DBAStarUtil2 (needed the information for map updates)
 
         // Find array location of region
         int groupLoc = regionId - GameMap.START_NUM;

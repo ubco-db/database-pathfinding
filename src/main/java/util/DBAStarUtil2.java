@@ -40,7 +40,7 @@ public class DBAStarUtil2 {
         this.dbaStarDbPath = dbaStarDbPath;
     }
 
-    public DBAStar3 computeDBAStarDatabaseUsingSubgoalDynamicDB3(GameMap map, String wallStatus) {
+    public DBAStar3 computeDBAStarDatabase(GameMap map, String wallStatus) {
         long currentTime;
 
         SearchProblem problem = new MapSearchProblem(map);
@@ -149,7 +149,7 @@ public class DBAStarUtil2 {
      * @param wallLoc   state id where wall will be place
      * @param dbaStarBW DBAStar object returned from computeDBAStarDatabaseUsingSubgoalDynamicDB3
      */
-    public void recomputeWallAdditionUsingSubgoalDynamicDB3(int wallLoc, DBAStar3 dbaStarBW) throws Exception {
+    public void recomputeWallAddition(int wallLoc, DBAStar3 dbaStarBW) throws Exception {
         // Extract map, problem, and database from dbaStarBW
         GameMap map = dbaStarBW.getMap();
         MapSearchProblem problem = (MapSearchProblem) dbaStarBW.getProblem();
@@ -451,7 +451,7 @@ public class DBAStarUtil2 {
      * @param wallLoc   state id where wall will be removed
      * @param dbaStarBW DBAStar object returned from computeDBAStarDatabaseUsingSubgoalDynamicDB3
      */
-    public void recomputeWallRemovalUsingSubgoalDynamicDB3(int wallLoc, DBAStar3 dbaStarBW) throws Exception {
+    public void recomputeWallRemoval(int wallLoc, DBAStar3 dbaStarBW) throws Exception {
         // Extract map, problem, and database from dbaStarBW
         GameMap map = dbaStarBW.getMap();
         MapSearchProblem problem = (MapSearchProblem) dbaStarBW.getProblem();

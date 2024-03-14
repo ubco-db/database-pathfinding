@@ -46,7 +46,7 @@ public class AddingAllWallsEfficientlyTest {
         long startTimePartial = System.currentTimeMillis();
 
         // compute DBAStar database before adding wall
-        dbaStar3 = dbaStarUtil2.computeDBAStarDatabaseUsingSubgoalDynamicDB3(startingMap, "BW"); // 70ms
+        dbaStar3 = dbaStarUtil2.computeDBAStarDatabase(startingMap, "BW"); // 70ms
 
         for (int wallId : goalIds) {
             // Add wall & recompute database
@@ -74,7 +74,7 @@ public class AddingAllWallsEfficientlyTest {
             startingMap.squares[wallRow][wallCol] = GameMap.WALL_CHAR;
 
             // Compute database
-            dbaStarUtil2.computeDBAStarDatabaseUsingSubgoalDynamicDB3(startingMap, "AW");
+            dbaStarUtil2.computeDBAStarDatabase(startingMap, "AW");
 
             // Remove wall
             startingMap.squares[wallRow][wallCol] = GameMap.EMPTY_CHAR;
