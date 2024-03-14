@@ -2,7 +2,7 @@ import dynamic.Walls;
 import map.GameMap;
 import search.DBAStar3;
 import search.SearchState;
-import util.DBAStarUtil2;
+import util.DBAStarUtil;
 
 import java.util.ArrayList;
 
@@ -20,14 +20,14 @@ public class EvaluateWallRemoval {
         int goalId = 11671;
 
         // Configure settings for the run
-        DBAStarUtil2 dbaStarUtil2 = new DBAStarUtil2(16, 1,  MAP_FILE_NAME, DBA_STAR_DB_PATH);
+        DBAStarUtil dbaStarUtil = new DBAStarUtil(16, 1,  MAP_FILE_NAME, DBA_STAR_DB_PATH);
 
         // Load map
         GameMap startingMap = new GameMap(PATH_TO_MAP);
 
         // Build DBAStar Database with starting map and compute path on starting map
-        DBAStar3 dbaStarBW = dbaStarUtil2.computeDBAStarDatabase(startingMap, "BW"); // BW = before wall
-        dbaStarUtil2.getDBAStarPath(startId, goalId, "BW", dbaStarBW);
+        DBAStar3 dbaStarBW = dbaStarUtil.computeDBAStarDatabase(startingMap, "BW"); // BW = before wall
+        dbaStarUtil.getDBAStarPath(startId, goalId, "BW", dbaStarBW);
 
         // Set wall
         ArrayList<SearchState> wallLocation = new ArrayList<>();
@@ -44,8 +44,8 @@ public class EvaluateWallRemoval {
         startTime = System.currentTimeMillis();
 
         // Recompute database partially and compute path after partial recomputation
-        dbaStarUtil2.recomputeWallRemoval(wallLoc, dbaStarBW);
-        dbaStarUtil2.getDBAStarPath(startId, goalId, "BW_Recomp", dbaStarBW);
+        dbaStarUtil.recomputeWallRemoval(wallLoc, dbaStarBW);
+        dbaStarUtil.getDBAStarPath(startId, goalId, "BW_Recomp", dbaStarBW);
 
         endTime = System.currentTimeMillis();
 
@@ -61,8 +61,8 @@ public class EvaluateWallRemoval {
         // Recompute entire database to see if I matched it and compute path after full recomputation
         Walls.removeWall(PATH_TO_MAP, wallLocation, startingMap);
         startingMap = new GameMap(PATH_TO_MAP);
-        DBAStar3 dbaStarRW = dbaStarUtil2.computeDBAStarDatabase(startingMap, "RW"); // RW = removed wall
-        dbaStarUtil2.getDBAStarPath(startId, goalId, "RW", dbaStarRW);
+        DBAStar3 dbaStarRW = dbaStarUtil.computeDBAStarDatabase(startingMap, "RW"); // RW = removed wall
+        dbaStarUtil.getDBAStarPath(startId, goalId, "RW", dbaStarRW);
 
         endTime = System.currentTimeMillis();
 

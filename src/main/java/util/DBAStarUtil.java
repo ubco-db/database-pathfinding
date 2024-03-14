@@ -14,7 +14,7 @@ import java.util.*;
 
 import static util.MapHelpers.*;
 
-public class DBAStarUtil2 {
+public class DBAStarUtil {
     private final int startNum;
     private final int gridSize;
     private final int numNeighbourLevels;
@@ -22,7 +22,7 @@ public class DBAStarUtil2 {
     private final String mapFileName;
     private final String dbaStarDbPath;
 
-    private static final Logger logger = LogManager.getLogger(DBAStarUtil2.class);
+    private static final Logger logger = LogManager.getLogger(DBAStarUtil.class);
 
     /**
      * @param gridSize      sectors on the map will be gridSize by gridSize
@@ -30,7 +30,7 @@ public class DBAStarUtil2 {
      * @param mapFileName   name of the .map file to use
      * @param dbaStarDbPath location where the database and other output will be generated
      */
-    public DBAStarUtil2(int gridSize, int cutoff, String mapFileName, String dbaStarDbPath) {
+    public DBAStarUtil(int gridSize, int cutoff, String mapFileName, String dbaStarDbPath) {
         // startNum is used as an offset for values in the squares array, region indexing in the array starts at startNum
         this.startNum = 50;
         this.gridSize = gridSize;

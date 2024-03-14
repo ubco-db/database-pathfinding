@@ -4,7 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import search.DBAStar3;
 import search.SearchState;
-import util.DBAStarUtil2;
+import util.DBAStarUtil;
 
 import java.util.ArrayList;
 
@@ -26,8 +26,8 @@ public class CheckingPathEqualityTest {
         DBAStar3 dbaStar3;
         GameMap startingMap = new GameMap(PATH_TO_MAP);
 
-        // Initialize DBAStarUtil2 with settings for DBAStar run
-        DBAStarUtil2 dbaStarUtil2 = new DBAStarUtil2(GRID_SIZE, 1, MAP_FILE_NAME, DBA_STAR_DB_PATH);
+        // Initialize DBAStarUtil with settings for DBAStar run
+        DBAStarUtil dbaStarUtil = new DBAStarUtil(GRID_SIZE, 1, MAP_FILE_NAME, DBA_STAR_DB_PATH);
 
         // Fix start
         int startStateId = 13411;
@@ -52,12 +52,12 @@ public class CheckingPathEqualityTest {
         logger.info("Goals in sector " + sectorNum + ": " + goalIds);
 
         // Compute DBAStar database before adding wall
-        dbaStar3 = dbaStarUtil2.computeDBAStarDatabase(startingMap, "BW");
+        dbaStar3 = dbaStarUtil.computeDBAStarDatabase(startingMap, "BW");
 
         // Compute paths to all goals, store in HashMap of arrays (goal state as key)
 //        HashMap<Integer, ArrayList<SearchState>> paths = new HashMap<>();
 //        for (int goalId : goalIds) {
-//            paths.put(goalId, dbaStarUtil2.getDBAStarPath(startStateId, goalId, dbaStar3));
+//            paths.put(goalId, dbaStarUtil.getDBAStarPath(startStateId, goalId, dbaStar3));
 //        }
 
         /* partial recomputation */
@@ -70,14 +70,14 @@ public class CheckingPathEqualityTest {
         for (int wallId : goalIds) {
             // Add wall & recompute database
             logger.info("\nRecompute wall addition for: " + wallId);
-            dbaStarUtil2.recomputeWallAddition(wallId, dbaStar3);
+            dbaStarUtil.recomputeWallAddition(wallId, dbaStar3);
 
             int goalNum = 0;
             for (int goalStateId : goalIds) {
                 if (goalStateId != wallId) {
                     System.out.println("Path from " + startStateId + " to " + goalStateId + ": ");
-                    pathsAfterPartialRecomputation[wallNumber][goalNum] = dbaStarUtil2.getDBAStarPath(startStateId, goalStateId, dbaStar3);
-                    dbaStarUtil2.getDBAStarPath(startStateId, goalStateId, "BW_Recomp", dbaStar3);
+                    pathsAfterPartialRecomputation[wallNumber][goalNum] = dbaStarUtil.getDBAStarPath(startStateId, goalStateId, dbaStar3);
+                    dbaStarUtil.getDBAStarPath(startStateId, goalStateId, "BW_Recomp", dbaStar3);
                     System.out.println(pathsAfterPartialRecomputation[wallNumber][goalNum]);
                 }
                 goalNum++;
@@ -86,7 +86,7 @@ public class CheckingPathEqualityTest {
 
             // Remove wall
             logger.debug("\nRecompute wall removal for: " + wallId);
-            dbaStarUtil2.recomputeWallRemoval(wallId, dbaStar3);
+            dbaStarUtil.recomputeWallRemoval(wallId, dbaStar3);
         }
 
         writeResultToFile(DBA_STAR_DB_PATH + "results.txt", "Total time partial recomputation: " + (System.currentTimeMillis() - startTimePartial) + "ms\n");
@@ -106,14 +106,14 @@ public class CheckingPathEqualityTest {
             // Adding wall and computing database
             Walls.addWall(PATH_TO_MAP, wallLocation, startingMap);
             startingMap = new GameMap(PATH_TO_MAP); // Resetting map
-            dbaStar3 = dbaStarUtil2.computeDBAStarDatabase(startingMap, "AW");
+            dbaStar3 = dbaStarUtil.computeDBAStarDatabase(startingMap, "AW");
 
             int goalNum = 0;
             for (int goalStateId : goalIds) {
                 if (goalStateId != wallId) {
                     System.out.println("Path from " + startStateId + " to " + goalStateId + ": ");
-                    pathsAfterFullRecomputation[wallNumber][goalNum] = dbaStarUtil2.getDBAStarPath(startStateId, goalStateId, dbaStar3);
-                    dbaStarUtil2.getDBAStarPath(startStateId, goalStateId, "AW", dbaStar3);
+                    pathsAfterFullRecomputation[wallNumber][goalNum] = dbaStarUtil.getDBAStarPath(startStateId, goalStateId, dbaStar3);
+                    dbaStarUtil.getDBAStarPath(startStateId, goalStateId, "AW", dbaStar3);
                     System.out.println(pathsAfterFullRecomputation[wallNumber][goalNum]);
                 }
                 goalNum++;

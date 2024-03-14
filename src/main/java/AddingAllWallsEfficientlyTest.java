@@ -1,6 +1,6 @@
 import map.GameMap;
 import search.DBAStar3;
-import util.DBAStarUtil2;
+import util.DBAStarUtil;
 
 import java.util.ArrayList;
 
@@ -19,8 +19,8 @@ public class AddingAllWallsEfficientlyTest {
         DBAStar3 dbaStar3;
         GameMap startingMap = new GameMap(PATH_TO_MAP);
 
-        // Initialize DBAStarUtil2 with settings for DBAStar run
-        DBAStarUtil2 dbaStarUtil2 = new DBAStarUtil2(16, 1, MAP_FILE_NAME, DBA_STAR_DB_PATH);
+        // Initialize DBAStarUtil with settings for DBAStar run
+        DBAStarUtil dbaStarUtil = new DBAStarUtil(16, 1, MAP_FILE_NAME, DBA_STAR_DB_PATH);
 
         // Fix start
         int startId = 13411;
@@ -46,16 +46,16 @@ public class AddingAllWallsEfficientlyTest {
         long startTimePartial = System.currentTimeMillis();
 
         // compute DBAStar database before adding wall
-        dbaStar3 = dbaStarUtil2.computeDBAStarDatabase(startingMap, "BW"); // 70ms
+        dbaStar3 = dbaStarUtil.computeDBAStarDatabase(startingMap, "BW"); // 70ms
 
         for (int wallId : goalIds) {
             // Add wall & recompute database
             // logger.info("\n\nRecompute wall addition for wall at: " + wallId);
-            dbaStarUtil2.recomputeWallAdditionUsingSubgoalDynamicDB3NoLogging(wallId, dbaStar3); // 790ms
+            dbaStarUtil.recomputeWallAdditionUsingSubgoalDynamicDB3NoLogging(wallId, dbaStar3); // 790ms
 
             // Remove wall
             // logger.info("\n\nRecompute wall removal for wall at: " + wallId);
-            dbaStarUtil2.recomputeWallRemovalUsingSubgoalDynamicDB3NoLogging(wallId, dbaStar3); // 630ms
+            dbaStarUtil.recomputeWallRemovalUsingSubgoalDynamicDB3NoLogging(wallId, dbaStar3); // 630ms
         }
 
         writeResultToFile(DBA_STAR_DB_PATH + "results.txt", "Total time partial recomputation: " + (System.currentTimeMillis() - startTimePartial) + "ms\n");
@@ -74,7 +74,7 @@ public class AddingAllWallsEfficientlyTest {
             startingMap.squares[wallRow][wallCol] = GameMap.WALL_CHAR;
 
             // Compute database
-            dbaStarUtil2.computeDBAStarDatabase(startingMap, "AW");
+            dbaStarUtil.computeDBAStarDatabase(startingMap, "AW");
 
             // Remove wall
             startingMap.squares[wallRow][wallCol] = GameMap.EMPTY_CHAR;
