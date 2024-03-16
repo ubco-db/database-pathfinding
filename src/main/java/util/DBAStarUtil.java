@@ -40,7 +40,7 @@ public class DBAStarUtil {
         this.dbaStarDbPath = dbaStarDbPath;
     }
 
-    public DBAStar3 computeDBAStarDatabase(GameMap map, String wallStatus) {
+    public DBAStar3 computeDBAStarDatabase(GameMap map, String wallStatus) throws Exception {
         long currentTime;
 
         SearchProblem problem = new MapSearchProblem(map);
@@ -73,8 +73,6 @@ public class DBAStarUtil {
         long resultTime = System.currentTimeMillis() - currentTime;
         rec.addStat(12, resultTime);
         rec.addStat(10, resultTime);
-        rec.addStat(11, map.states);
-        rec.addStat(7, map.states);
         dbStats.addRecord(rec);
 
         SearchProblem tmpProb = new MapSearchProblem(map);
@@ -296,8 +294,6 @@ public class DBAStarUtil {
                 // Pathblocker corner case
                 if (neighbourRegion != 0) {
                     logger.info("Addition: Pathblocker Corner Case");
-                    // Eliminate the state in the states ArrayList inside the groups map
-                    groupRecord.states.remove((Integer) wallLoc);
 
                     // Get the neighbours of the region
                     HashSet<Integer> neighbours = groupRecord.getNeighborIds();
@@ -402,12 +398,11 @@ public class DBAStarUtil {
                                 GroupRecord newRec = new GroupRecord();
                                 newRec.groupId = groupId;
                                 newRec.groupRepId = map.getId(row, col);
-                                newRec.states = new ArrayList<>(10);
-                                newRec.states.add(newRec.groupRepId);
+                                newRec.setNumStates(1);
                                 map.addGroup(groupId, newRec);
                                 newRecs[count++] = newRec;
                             } else {    // Update group
-                                rec.states.add(map.getId(row, col));
+                                rec.incrementNumStates();
                             }
                         }
                     }
@@ -427,9 +422,6 @@ public class DBAStarUtil {
                 dbBW.recomputeBasePathsAfterPartition(problem, groups, neighborIds); // 60ms
                 return;
             }
-
-            // Eliminate the state in the states ArrayList inside the groups map
-            groupRecord.states.remove((Integer) wallLoc);
 
             // Compute newRegionRep to detect whether a shift has happened
             int newRegionRep = map.recomputeCentroid(REGION_ID, groupRecord, START_ROW, END_ROW, START_COL, END_COL, gridSize);
@@ -510,8 +502,7 @@ public class DBAStarUtil {
             newRec.groupId = regionId;
             // Group rep id does not need to be computed using compute centroids logic since it must be where the wall was removed
             newRec.groupRepId = map.getId(WALL_ROW, WALL_COL);
-            newRec.states = new ArrayList<>(1);
-            newRec.states.add(newRec.groupRepId);
+            newRec.setNumStates(1);
             // Add the new group record to the groups map
             map.addGroup(regionId, newRec);
 
@@ -573,8 +564,7 @@ public class DBAStarUtil {
                 newRec.groupId = regionId;
                 // Group rep id does not need to be computed using compute centroids logic since it must be where the wall was removed
                 newRec.groupRepId = map.getId(WALL_ROW, WALL_COL);
-                newRec.states = new ArrayList<>(1);
-                newRec.states.add(newRec.groupRepId);
+                newRec.setNumStates(1);
 
                 // Update region’s neighbourhood in groups map & update neighbourhood of all its neighbours in groups map
                 for (Integer neighbouringRegion : neighbouringRegions) {
@@ -647,9 +637,6 @@ public class DBAStarUtil {
                     // Unblocker case
                     logger.info("Removal: Path Unblocker Case");
 
-                    // Add the state to the states ArrayList inside the groups map
-                    groupRecord.states.add(wallLoc);
-
                     Iterator<Integer> iterator = neighbouringRegions.iterator();
                     int neighbourRegion = iterator.next();
 
@@ -717,12 +704,11 @@ public class DBAStarUtil {
                                     GroupRecord newRec = new GroupRecord();
                                     newRec.groupId = groupId;
                                     newRec.groupRepId = map.getId(row, col);
-                                    newRec.states = new ArrayList<>(10);
-                                    newRec.states.add(newRec.groupRepId);
+                                    newRec.setNumStates(1);
                                     map.addGroup(groupId, newRec);
                                     newRecs[count++] = newRec;
                                 } else {    // Update group
-                                    rec.states.add(map.getId(row, col));
+                                    rec.incrementNumStates();
                                 }
                             }
                         }
@@ -745,9 +731,6 @@ public class DBAStarUtil {
                 }
                 return;
             }
-
-            // Add the state in the states ArrayList inside the groups map
-            groupRecord.states.add(wallLoc);
 
             // Compute newRegionRep to detect whether a shift has happened
             int newRegionRep = map.recomputeCentroid(regionId, groupRecord, START_ROW, END_ROW, START_COL, END_COL, gridSize);
@@ -909,9 +892,6 @@ public class DBAStarUtil {
 
                 // Pathblocker corner case
                 if (neighbourRegion != 0) {
-                    // Eliminate the state in the states ArrayList inside the groups map
-                    groupRecord.states.remove((Integer) wallLoc);
-
                     // Get the neighbours of the region
                     HashSet<Integer> neighbours = groupRecord.getNeighborIds();
                     // Update region’s neighbourhood in groups map
@@ -1014,12 +994,11 @@ public class DBAStarUtil {
                                 GroupRecord newRec = new GroupRecord();
                                 newRec.groupId = groupId;
                                 newRec.groupRepId = map.getId(row, col);
-                                newRec.states = new ArrayList<>(10);
-                                newRec.states.add(newRec.groupRepId);
+                                newRec.setNumStates(1);
                                 map.addGroup(groupId, newRec);
                                 newRecs[count++] = newRec;
                             } else {    // Update group
-                                rec.states.add(map.getId(row, col));
+                                rec.incrementNumStates();
                             }
                         }
                     }
@@ -1039,9 +1018,6 @@ public class DBAStarUtil {
                 dbBW.recomputeBasePathsAfterPartition(problem, groups, neighborIds); // 40ms
                 return;
             }
-
-            // Eliminate the state in the states ArrayList inside the groups map
-            groupRecord.states.remove((Integer) wallLoc);
 
             // Compute newRegionRep (it may or may not be the same as before)
             map.recomputeCentroid(REGION_ID, groupRecord, START_ROW, END_ROW, START_COL, END_COL, gridSize);
@@ -1110,8 +1086,7 @@ public class DBAStarUtil {
             newRec.groupId = regionId;
             // Group rep id does not need to be computed using compute centroids logic since it must be where the wall was removed
             newRec.groupRepId = map.getId(WALL_ROW, WALL_COL);
-            newRec.states = new ArrayList<>(1);
-            newRec.states.add(newRec.groupRepId);
+            newRec.setNumStates(1);
             // Add the new group record to the groups map
             map.addGroup(regionId, newRec);
 
@@ -1171,8 +1146,7 @@ public class DBAStarUtil {
                 newRec.groupId = regionId;
                 // Group rep id does not need to be computed using compute centroids logic since it must be where the wall was removed
                 newRec.groupRepId = map.getId(WALL_ROW, WALL_COL);
-                newRec.states = new ArrayList<>(1);
-                newRec.states.add(newRec.groupRepId);
+                newRec.setNumStates(1);
 
                 // Update region’s neighbourhood in groups map & update neighbourhood of all its neighbours in groups map
                 for (Integer neighbouringRegion : neighbouringRegions) {
@@ -1235,10 +1209,6 @@ public class DBAStarUtil {
                 // and only has one neighbour out of the sector
                 if (neighbouringRegionsInSameSector.size() == 1 && neighbouringRegions.size() == 1) {
                     // Unblocker case
-
-                    // Add the state to the states ArrayList inside the groups map
-                    groupRecord.states.add(wallLoc);
-
                     Iterator<Integer> iterator = neighbouringRegions.iterator();
                     int neighbourRegion = iterator.next();
 
@@ -1304,12 +1274,11 @@ public class DBAStarUtil {
                                     GroupRecord newRec = new GroupRecord();
                                     newRec.groupId = groupId;
                                     newRec.groupRepId = map.getId(row, col);
-                                    newRec.states = new ArrayList<>(10);
-                                    newRec.states.add(newRec.groupRepId);
+                                    newRec.setNumStates(1);
                                     map.addGroup(groupId, newRec);
                                     newRecs[count++] = newRec;
                                 } else {    // Update group
-                                    rec.states.add(map.getId(row, col));
+                                    rec.incrementNumStates();
                                 }
                             }
                         }
@@ -1318,7 +1287,7 @@ public class DBAStarUtil {
                     // Recompute region reps for newly added regions
                     // a newRec should never be null, if it is, something went wrong with the group generation in sectorReAbstractWithFreeSpace
                     for (GroupRecord newRec : newRecs) {
-                        map.recomputeCentroid(regionId, newRec, START_ROW, END_ROW, START_COL, END_COL, gridSize);
+                        map.recomputeCentroid(newRec.groupId, newRec, START_ROW, END_ROW, START_COL, END_COL, gridSize);
                         neighborIds.add(newRec.groupId);
                     }
 
@@ -1330,9 +1299,6 @@ public class DBAStarUtil {
                 }
                 return;
             }
-
-            // Add the state in the states ArrayList inside the groups map
-            groupRecord.states.add(wallLoc);
 
             // Compute newRegionRep (it may or may not be the same as before)
             map.recomputeCentroid(regionId, groupRecord, START_ROW, END_ROW, START_COL, END_COL, gridSize);

@@ -1,28 +1,14 @@
 package map;
 
-import util.ExpandArray;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 
 public class GroupRecord {
     public int groupId;
     public int groupRepId;
-    public ArrayList<Integer> states;
+    private int numStates;
     private HashSet<Integer> neighborIds;
     private HashSet<Integer> computedNeighborIds;
-
-    public GroupRecord() {
-        states = new ArrayList<Integer>();
-    }
-
-    public int getNumStates() {
-        return states.size();
-    }
-
-    public void setNeighborIds(HashSet<Integer> neighborIds) {
-        this.neighborIds = neighborIds;
-    }
 
     // Returns true if two groups are neighbors by virtue of one group having a base state that is in the neighbor list of the other.
     // Since assuming non-directed edges (this works either way as both states should have the same pair of nodes as neighbors in the neighbor lists).
@@ -38,42 +24,73 @@ public class GroupRecord {
         return false;
     }
 
-    public void setNeighbors(ExpandArray neighbors) {
-        this.neighborIds = new HashSet<Integer>(neighbors.num());
-        for (int k = 0; k < neighbors.num(); k++) {
-            neighborIds.add(neighbors.get(k));
+    public String toString() {
+        StringBuilder buf = new StringBuilder(100);
+        buf.append("Id: ").append(groupId).append(" Rep. Id: ").append(groupRepId).append(" Size: ").append(numStates);
+        if (neighborIds != null) buf.append(" Neighbors: ").append(neighborIds);
+        return buf.toString();
+    }
+
+    public void decrementNumStates() throws Exception {
+        if (numStates < 0) {
+            throw new Exception("numStates cannot be negative!");
         }
+        numStates--;
     }
 
-    public HashSet<Integer> getNeighborIds() {
-        return neighborIds;
+    public void incrementNumStates() {
+        numStates++;
     }
 
-    public int getGroupRepId() {
-        return groupRepId;
+    /* SETTERS */
+
+    public void setGroupId(int groupId) {
+        this.groupId = groupId;
     }
 
     public void setGroupRepId(int groupRepId) {
         this.groupRepId = groupRepId;
     }
 
-    public HashSet<Integer> getComputedNeighborIds() {
-        return computedNeighborIds;
+    public void setNumStates(int numStates) throws Exception {
+        if (numStates < 0) {
+            throw new Exception("numStates cannot be negative!");
+        }
+        this.numStates = numStates;
+    }
+
+    public void setNeighborIds(HashSet<Integer> neighborIds) {
+        this.neighborIds = neighborIds;
+    }
+
+    public void setNeighbors(ArrayList<Integer> neighbors) {
+        this.neighborIds = new HashSet<>(neighbors.size());
+        neighborIds.addAll(neighbors);
     }
 
     public void setComputedNeighborIds(HashSet<Integer> immediateNeighborIds) {
         this.computedNeighborIds = immediateNeighborIds;
     }
 
-    public void setStates(ArrayList<Integer> states) {
-        this.states = states;
+    /* GETTERS */
+
+    public int getGroupId() {
+        return groupId;
     }
 
-    public String toString() {
-        StringBuilder buf = new StringBuilder(100);
-        buf.append("Id: ").append(groupId).append(" Rep. Id: ").append(groupRepId).append(" Size: ").append(states.size());
-        buf.append(" States: ").append(states);
-        if (neighborIds != null) buf.append(" Neighbors: ").append(neighborIds);
-        return buf.toString();
+    public int getGroupRepId() {
+        return groupRepId;
+    }
+
+    public int getNumStates() {
+        return numStates;
+    }
+
+    public HashSet<Integer> getNeighborIds() {
+        return neighborIds;
+    }
+
+    public HashSet<Integer> getComputedNeighborIds() {
+        return computedNeighborIds;
     }
 }

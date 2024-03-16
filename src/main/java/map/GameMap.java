@@ -63,9 +63,12 @@ public class GameMap {
     private GroupRecord[] groupsArray;                // A faster lookup mechanism
 
     private int[] numRegions;                         // Number of regions in each sector (only used for sector abstraction)
-    //  private RegionSearchProblem abstractProblem;  // Only used for PRA*
 
     public int[] regionReps;
+    public int[] numStates;
+
+    // TODO: set this in constructor
+    private int gridSize = 16;
 
     private static final Logger logger = LogManager.getLogger(GameMap.class);
 
@@ -746,72 +749,7 @@ public class GameMap {
         return result;
     }
 
-	/*
-	public ArrayList<SearchState> getNeighbors(int r, int c)
-	{
-    	result.clear();
-    	boolean up = false, down = false, left = false, right = false;
-
-		if (isValid(r - 1, c) && !isWall(r - 1, c))	// Above
-		{	result.add(getState(this.getId(r-1,c)));
-			up = true;
-		}
-		if (isValid(r + 1, c) && !isWall(r + 1, c))// Bottom
-		{	result.add(getState(this.getId(r+1,c)));
-			down = true;
-		}
-		if (isValid(r, c - 1) && !isWall(r, c - 1)) // Left
-		{	result.add(getState(this.getId(r,c-1)));
-			left = true;
-		}
-
-		if (isValid(r, c + 1) && !isWall(r, c + 1)) // Right
-		{	result.add(getState(this.getId(r,c+1)));
-			right = true;
-		}
-
-	   	if (isValid(r - 1, c - 1) && !isWall(r - 1, c - 1) && up && left) // Top left
-			result.add(getState(this.getId(r-1,c-1)));
-
-	   	if (isValid(r - 1, c+1) && !isWall(r - 1, c + 1) && up && right) // Top right
-			result.add(getState(this.getId(r-1,c+1)));
-
-	   	if (isValid(r + 1, c - 1) && !isWall(r + 1, c - 1) && down && left) // Bottom left
-			result.add(getState(this.getId(r+1,c-1)));
-
-		if (isValid(r + 1, c + 1) && !isWall(r + 1, c + 1) && down && right) // Bottom right
-			result.add(getState(this.getId(r+1,c+1)));
-
-		return result;
-	}
-	*/
-	/*
-    public ArrayList<SearchState> getNeighbors(int r, int c)
-	{
-    	result.clear();
-    	if (isValid(r - 1, c - 1) && !isWall(r - 1, c - 1)) // Top left
-			result.add(new SearchState(this.getId(r-1,c-1)));
-    	if (isValid(r - 1, c) && !isWall(r - 1, c))	// Above
-			result.add(new SearchState(this.getId(r-1,c)));
-    	if (isValid(r - 1, c+1) && !isWall(r - 1, c + 1)) // Top right
-			result.add(new SearchState(this.getId(r-1,c+1)));
-    	if (isValid(r + 1, c - 1) && !isWall(r + 1, c - 1)) // Bottom left
-			result.add(new SearchState(this.getId(r+1,c-1)));
-    	if (isValid(r + 1, c) && !isWall(r + 1, c))// Bottom
-			result.add(new SearchState(this.getId(r+1,c)));
-		if (isValid(r + 1, c + 1) && !isWall(r + 1, c + 1)) // Bottom right
-			result.add(new SearchState(this.getId(r+1,c+1)));
-		if (isValid(r, c - 1) && !isWall(r, c - 1)) // Left
-			result.add(new SearchState(this.getId(r,c-1)));
-		if (isValid(r, c + 1) && !isWall(r, c + 1)) // Right
-			result.add(new SearchState(this.getId(r,c+1)));
-		return result;
-	}
-       	*/
-
-    /* This version always diagonal traversal even if just have opening on diagonal but not in two cardinal directions.
-     *
-     */
+    // This version always diagonal traversal even if just have opening on diagonal but not in two cardinal directions.
     public void getNeighbors(int r, int c, ExpandArray result) {
         result.clear();
         if (isValid(r - 1, c - 1) && !isWall(r - 1, c - 1)) // Top left
@@ -985,76 +923,8 @@ public class GameMap {
         return newMap;
     }
 
-    /*
-     * This version just guarantees that each point in a state can reach the centroid and vice versa.
-     * Instead of growing from a point and picking a centroid later.  This version picks a starting point first (that will be like the centroid but not necessarily in the center).
-     * Then it grows the points from this making sure each new point can HC the initial point.
-     * Further, points are initially spaced evenly on the grid.  Then one last past handles any points that were not captured in the first spacing.
-     * SmoothShortest flag will move cells to be associated with their closest seed after the fact.
-     */
-    public GameMap reachableGridAbstract(int EXPAND_LIMIT, SearchAbstractAlgorithm searchAlg, DBStatsRecord dbstat) {
-        // Idea: Keep adding squares to current one until no longer all elements are reachable in greedy fashion
-        int currentNum = 0;
-        GameMap baseMap = this.copyMap();
-        GroupRecord group;
 
-        baseMap.groups = new TreeMap<>();
-        SavedSearch currentSet = new SavedSearch(65536);
-        SavedSearch database = new SavedSearch(65536);
-        long totalSize = 0;
-
-        long currentTime = System.currentTimeMillis();
-
-        int cutoff = EXPAND_LIMIT / 2;
-        // Phase 1: Put initial points evenly across the grid
-        for (int i = 0; i < rows / cutoff; i++) {
-            for (int j = 0; j < cols / cutoff; j++) {
-                int r = cutoff / 2 + i * cutoff;
-                int c = cutoff / 2 + j * cutoff;
-                if (i % 2 == 0) c += cutoff / 2;
-                if (!baseMap.isWall(r, c) && baseMap.squares[r][c] == EMPTY_CHAR)    // if we're on a walkable space...
-                {
-                    database.clear();
-                    group = expandSpot2(r, c, currentNum, baseMap, searchAlg, database, currentSet);
-                    // baseMap.groups.put(group.groupId, group);
-                    totalSize += group.getNumStates();
-                    baseMap.addGroup(group.groupId, group);
-                    currentNum++;
-                    // 	baseMap.outputImage("tmp_map_"+currentNum+".png", null, null);
-                }
-                // System.out.println("Expand: i: "+i+" j: "+j);
-            }
-        }
-
-        // Phase 2: Handle any other points not previously found.
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                if (!baseMap.isWall(i, j) && baseMap.squares[i][j] == EMPTY_CHAR) {
-                    database.clear();
-                    group = expandSpot2(i, j, currentNum, baseMap, searchAlg, database, currentSet);
-                    // baseMap.groups.put(group.groupId, group);
-                    totalSize += group.getNumStates();
-                    baseMap.addGroup(group.groupId, group);
-                    currentNum++;
-                    //	baseMap.outputImage("tmp_map_"+currentNum+".png", null, null);
-                    // System.out.println("Expand: i: "+i+" j: "+j);
-                }
-            }
-        }
-
-        baseMap.states = currentNum;
-        logger.debug("Number of areas: " + currentNum + " Average area size: " + (totalSize * 1.0 / currentNum));
-        long endTime = System.currentTimeMillis();
-        logger.debug("Time to compute map abstraction: " + (endTime - currentTime));
-        dbstat.addStat(12, endTime - currentTime);
-        dbstat.addStat(11, currentNum);
-        dbstat.addStat(7, currentNum);
-        return baseMap;
-    }
-
-    /*
-	This version has no cutoff and inserts random seeds.
-	 */
+	// This version has no cutoff and inserts random seeds.
     public GameMap reachableAbstract(SearchAbstractAlgorithm searchAlg, DBStatsRecord dbstat) {
         // Idea: Keep adding squares to current one until no longer all elements are reachable in greedy fashion
         int currentNum = 0;
@@ -1126,8 +996,14 @@ public class GameMap {
     }
 
 
-    // 1
-    public GameMap sectorAbstract2(int gridSize) {
+    /**
+     * Given a gridSize, this code iterates over the map and uses BFS within each sector (sectors are gridSize x gridSize
+     * squares) to compute regions and mark them on the baseMap (number them starting at START_NUM = 50)
+     *
+     * @param gridSize width/height of each sector
+     * @return GameMap where squares has had numbers assigned to open spots to demarcate regions
+     */
+    public GameMap sectorAbstract2(int gridSize) throws Exception {
         int currentNum = START_NUM - 1;    // Start # above 42 which is a wall
         GameMap baseMap = this.copyMap();
         int maxr, maxc;
@@ -1137,74 +1013,52 @@ public class GameMap {
         int totalRegions = 0;
         ExpandArray neighbors = new ExpandArray(10);
 
-        //For # of rows on grid
+        // For # of rows of sectors
         for (int i = 0; i < (int) Math.ceil(rows * 1.0 / gridSize); i++) {
-            //top row of this grid cell
-            int startRow = i * gridSize;
+            int startRow = i * gridSize; // top row of current sector
+            maxr = i * gridSize + gridSize; // bottom row current sector
+            if (maxr > this.rows) maxr = rows; // if bottom of the sector is outside the map
 
-            //bottom row of this grid cell
-            maxr = i * gridSize + gridSize;
-
-            //if bottom of the grid exceed the map~
-            if (maxr > this.rows) maxr = rows;
-
-            //For # of cols on grid
+            // For # of cols of sectors
             for (int j = 0; j < (int) Math.ceil(cols * 1.0 / gridSize); j++) {
-                //first col of this grid cell
-                int startCol = j * gridSize;
+                int startCol = j * gridSize; // first col of current sector
+                maxc = j * gridSize + gridSize; // last col of current sector
+                if (maxc > this.cols) maxc = cols; // if last col of the sector is outside the map
 
-                //last col of this grid cell
-                maxc = j * gridSize + gridSize;
-
-                //if last col of the grid exceed the map~
-                if (maxc > this.cols) maxc = cols;
-
-                //??Counter for # of states in the region(sector) that isn't a wall
                 int numRegionsInSector = 0;
+                for (int r = 0; r < gridSize; r++) { // for each row in this sector
+                    for (int c = 0; c < gridSize; c++) { // for each col in this sector
+                        int row = startRow + r; // pointer to a row
+                        int col = startCol + c; // pointer to a col
 
-                //for each row in this grid cell
-                for (int r = 0; r < gridSize; r++) {
-                    //for each col in this grid cell
-                    for (int c = 0; c < gridSize; c++) {
-                        //pointer to a row
-                        int row = startRow + r;
-
-                        //pointer to a col
-                        int col = startCol + c;
-
-                        //if this state is valid and isn't a wall and is ' '
-                        if (baseMap.isValid(row, col) && !baseMap.isWall(row, col) && baseMap.squares[row][col] == ' ') {    // Open cell for abstraction - perform constrained BFS within this sector to label all nodes in sector
+                        // If this state is valid and isn't a wall and is ' '
+                        if (baseMap.isValid(row, col) && !baseMap.isWall(row, col) && baseMap.squares[row][col] == ' ') {
+                            // Open cell for abstraction - perform constrained BFS within this sector to label all nodes in sector
                             currentNum++;
                             numRegionsInSector++;
 
-
                             Queue<Integer> stateIds = new LinkedList<>();
-
-                            //?Calculate and return some sort of id
                             stateIds.add(baseMap.getId(row, col));
-
-                            //?Assign some number to this square
                             baseMap.squares[row][col] = currentNum;
-
 
                             while (!stateIds.isEmpty()) {
                                 int id = stateIds.remove();
-                                row = baseMap.getRow(id);//Row of state
-                                col = baseMap.getCol(id);//Col of state
+                                row = baseMap.getRow(id); //Row of state
+                                col = baseMap.getCol(id); //Col of state
 
                                 // Generate neighbors and add to list if in region
                                 baseMap.getNeighbors(row, col, neighbors);
 
-                                //For number of neighbors
+                                // For number of neighbors
                                 for (int n = 0; n < neighbors.num(); n++) {
 
-                                    int nid = neighbors.get(n);//ID of neighbor state
-                                    int nr = baseMap.getRow(nid);//Row of that neighbor
-                                    int nc = baseMap.getCol(nid);//Col of that neighbor
+                                    int nid = neighbors.get(n); // ID of neighbor state
+                                    int nr = baseMap.getRow(nid); // Row of that neighbor
+                                    int nc = baseMap.getCol(nid); // Col of that neighbor
 
-                                    //Check if neighbor is in range
+                                    // Check if neighbor is in range
                                     if (baseMap.isOpenInRange(nr, nc, maxr, maxc, gridSize)) {
-                                        //Add neighbor
+                                        // Add neighbor
                                         baseMap.squares[nr][nc] = currentNum;
                                         stateIds.add(nid);
                                     }
@@ -1217,8 +1071,7 @@ public class GameMap {
                         }
                     }
                 }
-                totalRegions += numRegionsInSector; //increment region count
-                //???
+                totalRegions += numRegionsInSector; // Increment region count
                 baseMap.numRegions[i * (int) Math.ceil(cols * 1.0 / gridSize) + j] = numRegionsInSector;
             }
         }
@@ -1226,11 +1079,7 @@ public class GameMap {
         baseMap.states = totalRegions;
         logger.debug("Number of areas: " + (baseMap.states));
 
-//        baseMap.buildAbstractProblem(gridSize);
         baseMap.computeGroups();
-        //dbstat.addStat(12, endTime-currentTime);
-        //dbstat.addStat(11, baseMap.states);
-        //dbstat.addStat(7, baseMap.states);
         return baseMap;
     }
 
@@ -1587,221 +1436,6 @@ public class GameMap {
 
         return baseMap;
     }
-
-
-    // 2
-//    public void buildAbstractProblem(int gridSize) {
-//        GameMap baseMap = this;
-//        int maxr, maxc;
-//        int numSectors = (int) (Math.ceil(rows * 1.0 / gridSize) * Math.ceil(cols * 1.0 / gridSize));
-//
-//        // Compute the groups and center representative states
-//        baseMap.computeGroups();
-//
-//        // Compute the abstract state space in terms of regions and edges
-//        int[] regionCenter = new int[baseMap.states];
-//        for (int i = 0; i < baseMap.states; i++) {
-//            GroupRecord rec = baseMap.groups.get(i + START_NUM);
-//            regionCenter[i] = rec.groupRepId;
-//        }
-//
-//        int[][] edges = new int[baseMap.states + 1][];
-//
-//        // Examine the border states in each sector
-//        for (int i = 0; i < Math.ceil(rows * 1.0 / gridSize); i++) {
-//            int startRow = i * gridSize;
-//            maxr = i * gridSize + gridSize;
-//            if (maxr > this.rows) maxr = rows;
-//
-//            for (int j = 0; j < Math.ceil(cols * 1.0 / gridSize); j++) {
-//                int startCol = j * gridSize;
-//                maxc = j * gridSize + gridSize;
-//                if (maxc > this.cols) maxc = cols;
-//
-//                int fromRegion, toRegion;
-//
-//                // Examine up-left
-//                if (isValid(startRow, startCol) && !isWall(startRow, startCol) && isValid(startRow - 1, startCol - 1) && !isWall(startRow - 1, startCol - 1)) {
-//                    fromRegion = baseMap.getCell(startRow, startCol) - START_NUM;
-//                    toRegion = baseMap.getCell(startRow - 1, startCol - 1) - START_NUM;
-//                    addEdge(fromRegion, toRegion, edges);
-//                }
-//                // Examine up-right
-//                if (isValid(startRow, startCol + gridSize - 1) && !isWall(startRow, startCol + gridSize - 1) && isValid(startRow - 1, startCol + 1 + gridSize - 1) && !isWall(startRow - 1, startCol + 1 + gridSize - 1)) {
-//                    fromRegion = baseMap.getCell(startRow, startCol + gridSize - 1) - START_NUM;
-//                    toRegion = baseMap.getCell(startRow - 1, startCol + 1 + gridSize - 1) - START_NUM;
-//                    addEdge(fromRegion, toRegion, edges);
-//                }
-//                // Examine down-left
-//                if (isValid(startRow + gridSize - 1, startCol) && !isWall(startRow + gridSize - 1, startCol) && isValid(startRow + 1 + gridSize - 1, startCol - 1) && !isWall(startRow + 1 + gridSize - 1, startCol - 1)) {
-//                    fromRegion = baseMap.getCell(startRow + gridSize - 1, startCol) - START_NUM;
-//                    toRegion = baseMap.getCell(startRow + 1 + gridSize - 1, startCol - 1) - START_NUM;
-//                    addEdge(fromRegion, toRegion, edges);
-//                }
-//                // Examine down-right
-//                if (isValid(startRow + gridSize - 1, startCol + gridSize - 1) && !isWall(startRow + gridSize - 1, startCol + gridSize - 1) && isValid(startRow + 1 + gridSize - 1, startCol + 1 + gridSize - 1) && !isWall(startRow + 1 + gridSize - 1, startCol + 1 + gridSize - 1)) {
-//                    fromRegion = baseMap.getCell(startRow + gridSize - 1, startCol + gridSize - 1) - START_NUM;
-//                    toRegion = baseMap.getCell(startRow + 1 + gridSize - 1, startCol + 1 + gridSize - 1) - START_NUM;
-//                    addEdge(fromRegion, toRegion, edges);
-//                }
-//
-//                // Examine all cells in row at top of region
-//                for (int c = 0; c < gridSize; c++) {
-//                    if (isValid(startRow, startCol + c) && !isWall(startRow, startCol + c) && isValid(startRow - 1, startCol + c) && !isWall(startRow - 1, startCol + c)) {
-//                        fromRegion = baseMap.getCell(startRow, startCol + c) - START_NUM;
-//                        toRegion = baseMap.getCell(startRow - 1, startCol + c) - START_NUM;
-//                        addEdge(fromRegion, toRegion, edges);
-//                    }
-//                }
-//                // Examine all cells in row at bottom of region
-//                int row = startRow + gridSize - 1;
-//                for (int c = 0; c < gridSize; c++) {
-//                    if (isValid(row, startCol + c) && !isWall(row, startCol + c) && isValid(row + 1, startCol + c) && !isWall(row + 1, startCol + c)) {
-//                        fromRegion = baseMap.getCell(row, startCol + c) - START_NUM;
-//                        toRegion = baseMap.getCell(row + 1, startCol + c) - START_NUM;
-//                        addEdge(fromRegion, toRegion, edges);
-//                    }
-//                }
-//                // Examine all cells in column at left of region
-//                for (int r = 0; r < gridSize; r++) {
-//                    if (isValid(startRow + r, startCol) && !isWall(startRow + r, startCol) && isValid(startRow + r, startCol - 1) && !isWall(startRow + r, startCol - 1)) {
-//                        fromRegion = baseMap.getCell(startRow + r, startCol) - START_NUM;
-//                        toRegion = baseMap.getCell(startRow + r, startCol - 1) - START_NUM;
-//                        addEdge(fromRegion, toRegion, edges);
-//                    }
-//                }
-//                // Examine all cells in column at right of region
-//                int col = startCol + gridSize - 1;
-//                for (int r = 0; r < gridSize; r++) {
-//                    if (isValid(startRow + r, col) && !isWall(startRow + r, col) && isValid(startRow + r, col + 1) && !isWall(startRow + r, col + 1)) {
-//                        fromRegion = baseMap.getCell(startRow + r, col) - START_NUM;
-//                        toRegion = baseMap.getCell(startRow + r, col + 1) - START_NUM;
-//                        //build adjacency matrix
-//                        addEdge(fromRegion, toRegion, edges);
-//                    }
-//                }
-//            }
-//        }
-
-    // Populate the edge data structure
-//        int current = 0;
-//        for (int i = 0; i < numSectors; i++) {
-//            if (numRegions[i] > 0) {
-//                //	System.out.println("Sector: "+i+" Num regions: "+numRegions[i]);
-//                for (int j = 0; j < numRegions[i]; j++) {    // System.out.print("  Region: "+(current)+" Region edges: ");
-//                    for (int k = 0; edges[current] != null && k < edges[current].length; k++) {//	System.out.print(edges[current][k]+"\t");
-//
-//                    }
-//                    current++;
-//                    // System.out.println();
-//                }
-//            }
-//        }
-
-//        System.out.println("Num regions in buildAbstractProblem: " + Arrays.toString(numRegions));
-//
-//        for (int[] edge : edges) {
-//            if (edge == null) {
-//                System.out.println("null");
-//                continue;
-//            }
-//            for (int i : edge) {
-//                System.out.print(i + " ");
-//            }
-//            System.out.println();
-//        }
-
-//        abstractProblem = new RegionSearchProblem(numRegions, edges, null, this, gridSize);
-//    }
-
-//    public void rebuildAbstractProblem(GameMap map, int gridSize, int startRow, int startCol, ArrayList<Integer> regionIds) {
-//        int[][] edges = Arrays.copyOf(abstractProblem.getEdges(), map.groups.lastKey() - START_NUM + 1);
-//        int fromRegion, toRegion;
-//
-//        // Examine up-left
-//        if (isValid(startRow, startCol) && !isWall(startRow, startCol) && isValid(startRow - 1, startCol - 1) && !isWall(startRow - 1, startCol - 1)) {
-//            fromRegion = map.getCell(startRow, startCol) - START_NUM;
-//            toRegion = map.getCell(startRow - 1, startCol - 1) - START_NUM;
-//            addEdge(fromRegion, toRegion, edges);
-//        }
-//        // Examine up-right
-//        if (isValid(startRow, startCol + gridSize - 1) && !isWall(startRow, startCol + gridSize - 1) && isValid(startRow - 1, startCol + 1 + gridSize - 1) && !isWall(startRow - 1, startCol + 1 + gridSize - 1)) {
-//            fromRegion = map.getCell(startRow, startCol + gridSize - 1) - START_NUM;
-//            toRegion = map.getCell(startRow - 1, startCol + 1 + gridSize - 1) - START_NUM;
-//            addEdge(fromRegion, toRegion, edges);
-//        }
-//        // Examine down-left
-//        if (isValid(startRow + gridSize - 1, startCol) && !isWall(startRow + gridSize - 1, startCol) && isValid(startRow + 1 + gridSize - 1, startCol - 1) && !isWall(startRow + 1 + gridSize - 1, startCol - 1)) {
-//            fromRegion = map.getCell(startRow + gridSize - 1, startCol) - START_NUM;
-//            toRegion = map.getCell(startRow + 1 + gridSize - 1, startCol - 1) - START_NUM;
-//            addEdge(fromRegion, toRegion, edges);
-//        }
-//        // Examine down-right
-//        if (isValid(startRow + gridSize - 1, startCol + gridSize - 1) && !isWall(startRow + gridSize - 1, startCol + gridSize - 1) && isValid(startRow + 1 + gridSize - 1, startCol + 1 + gridSize - 1) && !isWall(startRow + 1 + gridSize - 1, startCol + 1 + gridSize - 1)) {
-//            fromRegion = map.getCell(startRow + gridSize - 1, startCol + gridSize - 1) - START_NUM;
-//            toRegion = map.getCell(startRow + 1 + gridSize - 1, startCol + 1 + gridSize - 1) - START_NUM;
-//            addEdge(fromRegion, toRegion, edges);
-//        }
-//
-//        // Examine all cells in row at top of region
-//        for (int c = 0; c < gridSize; c++) {
-//            if (isValid(startRow, startCol + c) && !isWall(startRow, startCol + c) && isValid(startRow - 1, startCol + c) && !isWall(startRow - 1, startCol + c)) {
-//                fromRegion = map.getCell(startRow, startCol + c) - START_NUM;
-//                toRegion = map.getCell(startRow - 1, startCol + c) - START_NUM;
-//                addEdge(fromRegion, toRegion, edges);
-//            }
-//        }
-//
-//        // Examine all cells in row at bottom of region
-//        int row = startRow + gridSize - 1;
-//        for (int c = 0; c < gridSize; c++) {
-//            if (isValid(row, startCol + c) && !isWall(row, startCol + c) && isValid(row + 1, startCol + c) && !isWall(row + 1, startCol + c)) {
-//                fromRegion = map.getCell(row, startCol + c) - START_NUM;
-//                toRegion = map.getCell(row + 1, startCol + c) - START_NUM;
-//                addEdge(fromRegion, toRegion, edges);
-//            }
-//        }
-//
-//        // Examine all cells in column at left of region
-//        for (int r = 0; r < gridSize; r++) {
-//            if (isValid(startRow + r, startCol) && !isWall(startRow + r, startCol) && isValid(startRow + r, startCol - 1) && !isWall(startRow + r, startCol - 1)) {
-//                fromRegion = map.getCell(startRow + r, startCol) - START_NUM;
-//                toRegion = map.getCell(startRow + r, startCol - 1) - START_NUM;
-//                addEdge(fromRegion, toRegion, edges);
-//            }
-//        }
-//
-//        // Examine all cells in column at right of region
-//        int col = startCol + gridSize - 1;
-//        for (int r = 0; r < gridSize; r++) {
-//            if (isValid(startRow + r, col) && !isWall(startRow + r, col) && isValid(startRow + r, col + 1) && !isWall(startRow + r, col + 1)) {
-//                fromRegion = map.getCell(startRow + r, col) - START_NUM;
-//                toRegion = map.getCell(startRow + r, col + 1) - START_NUM;
-//                // build adjacency matrix
-//                addEdge(fromRegion, toRegion, edges);
-//            }
-//        }
-//
-//        int numSectorsPerRow = (int) Math.ceil(map.cols * 1.0 / gridSize);
-//        int sectorId = startRow / gridSize * numSectorsPerRow + startCol / gridSize;
-//
-//        // FIXME
-//        abstractProblem.recomputeRegionSearchProblem(numRegions, edges, map, sectorId, regionIds);
-//    }
-
-
-//    private void addEdge(int fromRegion, int toRegion, int[][] edges) {
-//        if (edges[fromRegion] == null) {
-//            edges[fromRegion] = new int[1];
-//        } else {    // Copy over existing array if not already there
-//            for (int i = 0; i < edges[fromRegion].length; i++)
-//                if (edges[fromRegion][i] == toRegion) return;        // Already have this element
-//            int[] tmp = new int[edges[fromRegion].length + 1];
-//            System.arraycopy(edges[fromRegion], 0, tmp, 0, edges[fromRegion].length);
-//            edges[fromRegion] = tmp;
-//        }
-//        edges[fromRegion][edges[fromRegion].length - 1] = toRegion;        // Always add edge to last place on list of edges
-//    }
 
     // Draws a map on the screen
     public void draw(Graphics2D g2) {
@@ -2333,7 +1967,6 @@ public class GameMap {
         stats.addStat(22, avg);        // Avg state size
     }
 
-
     public int size() {    // Returns the number of visitable states on the map (does not count walls)
         int size = 0;
 
@@ -2417,8 +2050,7 @@ public class GameMap {
      * Compute group records from abstract regions in a map.
      */
     // 3
-    // TODO
-    public void computeGroups() {
+    public void computeGroups() throws Exception {
         long currentTime = System.currentTimeMillis();
         groups = new TreeMap<Integer, GroupRecord>();
 
@@ -2434,13 +2066,10 @@ public class GameMap {
                         GroupRecord newrec = new GroupRecord();
                         newrec.groupId = groupId;
                         newrec.groupRepId = this.getId(i, j);
-                        newrec.states = new ArrayList<>(10);
-                        newrec.states.add(newrec.groupRepId);
+                        newrec.setNumStates(1);
                         this.addGroup(groupId, newrec);
                     } else {    // Update group
-                        rec.states.add(this.getId(i, j));
-                        // rec.getCells().add(new MapPoint(i,j)); // No longer adding cells - this code doesn't work either
-                        // groups.put(groupId, rec);
+                        rec.incrementNumStates();
                     }
                 }
             }
@@ -2459,135 +2088,32 @@ public class GameMap {
         regionReps = new int[(int) (groups.size() * 1.1)];
 
         long currentTime = System.currentTimeMillis();
-        // StringBuilder buf = new StringBuilder();
 
         for (Entry<Integer, GroupRecord> integerGroupRecordEntry : groups.entrySet()) {    // Find centroid for each record
             GroupRecord rec = integerGroupRecordEntry.getValue();
-            long sumRow = 0, sumCol = 0, N = rec.getNumStates();
-            ArrayList states = rec.states;
-            for (int i = 0; i < N; i++) {
-                int id = (int) states.get(i);
-                sumRow += this.getRow(id);
-                sumCol += this.getCol(id);
-            }
-            int row = Math.round(sumRow / N);
-            int col = Math.round(sumCol / N);
-            if (this.isWall(row, col) || squares[row][col] != rec.groupId) {    // If centroid point is not in group or is a wall
-                // Find the point that is in the group that is closest
-                int minDist = 10000, minRow = -1, minCol = -1;
-                for (int i = 0; i < N; i++) {
-                    int id = (int) states.get(i);
-                    int r = this.getRow(id);
-                    int c = this.getCol(id);
-                    int dist = GameMap.computeDistance(row, col, r, c);
-                    if (dist < minDist) {
-                        minRow = r;
-                        minCol = c;
-                        minDist = dist;
-                    }
-                }
-                row = minRow;
-                col = minCol;
-            }
-            int regionRep = this.getId(row, col);
-            rec.setGroupRepId(regionRep);
+            // This won't be the actual region rep id yet since that hasn't been computed, so it's just the first state
+            // encountered in the region. That's enough to find the sector, and I need to pass sector bounds to my method
 
-            // Region reps uses region numbers with offset to index
-            regionReps[rec.groupId - GameMap.START_NUM] = regionRep;
-            // System.out.println(rec.groupId - GameMap.START_NUM + " - " + regionRep);
+            int stateId = rec.groupRepId;
+            int row = this.getRow(stateId);
+            int col = this.getCol(stateId);
+
+            final int NUM_SECTORS_PER_ROW = (int) Math.ceil(this.cols * 1.0 / this.gridSize);
+            final int SECTOR_ID = row / gridSize * NUM_SECTORS_PER_ROW + col / this.gridSize;
+
+            // Start of sector
+            final int START_ROW = (SECTOR_ID / NUM_SECTORS_PER_ROW) * gridSize;
+            final int START_COL = (SECTOR_ID % NUM_SECTORS_PER_ROW) * gridSize;
+            // End of sector
+            final int END_ROW = Math.min(START_ROW + gridSize, this.rows);
+            final int END_COL = Math.min(START_COL + gridSize, this.cols);
+
+            recomputeCentroid(rec.groupId, rec, START_ROW, END_ROW, START_COL, END_COL, gridSize);
         }
 
         long endTime = System.currentTimeMillis();
         logger.debug("Time to compute centroids: " + (endTime - currentTime));
     }
-
-    // Compute centroid for one group
-    public int recomputeCentroid(GroupRecord rec, int wallLoc) {
-        // regionReps = new ArrayList<>();
-
-        // TODO: states will not always contain wallLoc
-
-        long sumRow = 0, sumCol = 0, N = rec.getNumStates() - 1;
-        ArrayList<Integer> states = rec.states; // QUESTION: Why are we using ExpandArray here? Array should be enough
-        for (int i = 0; i < (N + 1); i++) {
-            int id = states.get(i);
-            if (id != wallLoc) {
-                sumRow += this.getRow(id);
-                sumCol += this.getCol(id);
-            }
-        }
-
-        int row = Math.round(sumRow / N);
-        int col = Math.round(sumCol / N);
-
-        if (this.isWall(row, col) || squares[row][col] != rec.groupId) {    // If centroid point is not in group or is a wall
-            // Find the point that is in the group that is closest
-            int minDist = 10000, minRow = -1, minCol = -1;
-            for (int i = 0; i < (N + 1); i++) {
-                int id = states.get(i);
-                if (id != wallLoc) {
-                    int r = this.getRow(id);
-                    int c = this.getCol(id);
-                    int dist = GameMap.computeDistance(row, col, r, c);
-                    if (dist < minDist) {
-                        minRow = r;
-                        minCol = c;
-                        minDist = dist;
-                    }
-                }
-            }
-            row = minRow;
-            col = minCol;
-        }
-        int regionRep = this.getId(row, col);
-
-        rec.setGroupRepId(regionRep);
-        regionReps[rec.groupId - GameMap.START_NUM] = regionRep;
-        logger.debug("Region id: " + (rec.groupId - GameMap.START_NUM) + " - region rep: " + regionRep);
-
-        return this.getId(row, col);
-    }
-
-    public int recomputeCentroid(GroupRecord rec) {
-
-        long sumRow = 0, sumCol = 0, N = rec.getNumStates();
-        ArrayList<Integer> states = rec.states;
-        for (int i = 0; i < N; i++) {
-            int id = states.get(i);
-            sumRow += this.getRow(id);
-            sumCol += this.getCol(id);
-        }
-
-        int row = Math.round(sumRow / N);
-        int col = Math.round(sumCol / N);
-
-        if (this.isWall(row, col) || squares[row][col] != rec.groupId) {    // If centroid point is not in group or is a wall
-            // Find the point that is in the group that is closest
-            int minDist = 10000, minRow = -1, minCol = -1;
-            for (int i = 0; i < N; i++) {
-                int id = states.get(i);
-                int r = this.getRow(id);
-                int c = this.getCol(id);
-                int dist = GameMap.computeDistance(row, col, r, c);
-                if (dist < minDist) {
-                    minRow = r;
-                    minCol = c;
-                    minDist = dist;
-                }
-            }
-            row = minRow;
-            col = minCol;
-        }
-
-        int regionRep = this.getId(row, col);
-
-        rec.setGroupRepId(regionRep);
-        regionReps[rec.groupId - GameMap.START_NUM] = regionRep;
-        logger.debug("Region id: " + (rec.groupId - GameMap.START_NUM) + " - region rep: " + regionRep);
-
-        return this.getId(row, col);
-    }
-
 
     public int recomputeCentroid(int regionId, GroupRecord rec, int startRow, int endRow, int startCol, int endCol, int gridSize) {
         int[] rows = new int[gridSize * gridSize];
