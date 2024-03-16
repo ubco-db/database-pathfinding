@@ -8,3 +8,16 @@ Total time partial recomputation: 1459ms
 Total time complete recomputation: 46095ms
 Total time partial recomputation: 1368ms
 Total time complete recomputation: 46152ms
+
+Without states in GroupRecord:
+
+Total time partial recomputation: 1310ms
+Total time complete recomputation: 21856ms
+Total time partial recomputation: 1273ms
+Total time complete recomputation: 21466ms
+Total time partial recomputation: 1246ms
+Total time complete recomputation: 21723ms
+Total time partial recomputation: 1248ms
+Total time complete recomputation: 21742ms
+Total time partial recomputation: 1239ms
+Total time complete recomputation: 21508ms

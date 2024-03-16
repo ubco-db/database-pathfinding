@@ -614,8 +614,7 @@ public class DBAStarUtil {
             GroupRecord groupRecord = groups.get(regionId);
 
             if (groupRecord == null) {
-                logger.error("Cannot find record for region: " + regionId);
-                throw new Exception("No such record!");
+                throw new Exception("No record found for " + regionId + "!");
             }
 
             // If the neighbours stored in the group record differ from those stored in the neighbouringRegions,
@@ -756,7 +755,7 @@ public class DBAStarUtil {
      * @param wallLoc   state id where wall will be place
      * @param dbaStarBW DBAStar object returned from computeDBAStarDatabaseUsingSubgoalDynamicDB3
      */
-    public void recomputeWallAdditionUsingSubgoalDynamicDB3NoLogging(int wallLoc, DBAStar3 dbaStarBW) throws Exception {
+    public void recomputeWallAdditionNoLogging(int wallLoc, DBAStar3 dbaStarBW) throws Exception {
         // Extract map, problem, and database from dbaStarBW
         GameMap map = dbaStarBW.getMap();
         MapSearchProblem problem = (MapSearchProblem) dbaStarBW.getProblem();
@@ -1037,7 +1036,7 @@ public class DBAStarUtil {
      * @param wallLoc   state id where wall will be removed
      * @param dbaStarBW DBAStar object returned from computeDBAStarDatabaseUsingSubgoalDynamicDB3
      */
-    public void recomputeWallRemovalUsingSubgoalDynamicDB3NoLogging(int wallLoc, DBAStar3 dbaStarBW) throws Exception {
+    public void recomputeWallRemovalNoLogging(int wallLoc, DBAStar3 dbaStarBW) throws Exception {
         // Extract map, problem, and database from dbaStarBW
         GameMap map = dbaStarBW.getMap();
         MapSearchProblem problem = (MapSearchProblem) dbaStarBW.getProblem();
@@ -1197,7 +1196,7 @@ public class DBAStarUtil {
             GroupRecord groupRecord = groups.get(regionId);
 
             if (groupRecord == null) {
-                throw new Exception("No such record!");
+                throw new Exception("No record found for " + regionId + "!");
             }
 
             // If the neighbours stored in the group record differ from those stored in the neighbouringRegions,

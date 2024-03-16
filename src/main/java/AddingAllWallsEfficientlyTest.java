@@ -51,11 +51,11 @@ public class AddingAllWallsEfficientlyTest {
         for (int wallId : goalIds) {
             // Add wall & recompute database
             // logger.info("\n\nRecompute wall addition for wall at: " + wallId);
-            dbaStarUtil.recomputeWallAdditionUsingSubgoalDynamicDB3NoLogging(wallId, dbaStar3); // 790ms
+            dbaStarUtil.recomputeWallAdditionNoLogging(wallId, dbaStar3); // 790ms
 
             // Remove wall
             // logger.info("\n\nRecompute wall removal for wall at: " + wallId);
-            dbaStarUtil.recomputeWallRemovalUsingSubgoalDynamicDB3NoLogging(wallId, dbaStar3); // 630ms
+            dbaStarUtil.recomputeWallRemovalNoLogging(wallId, dbaStar3); // 630ms
         }
 
         writeResultToFile(DBA_STAR_DB_PATH + "results.txt", "Total time partial recomputation: " + (System.currentTimeMillis() - startTimePartial) + "ms\n");
