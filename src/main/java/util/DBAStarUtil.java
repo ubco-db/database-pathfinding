@@ -15,25 +15,19 @@ import java.util.*;
 import static util.MapHelpers.*;
 
 public class DBAStarUtil {
-    private final int startNum;
-    private final int gridSize;
     private final int numNeighbourLevels;
     private final int cutoff;
     private final String mapFileName;
     private final String dbaStarDbPath;
-
     private static final Logger logger = LogManager.getLogger(DBAStarUtil.class);
 
     /**
-     * @param gridSize      sectors on the map will be gridSize by gridSize
      * @param cutoff        for HillClimbing algorithm
      * @param mapFileName   name of the .map file to use
      * @param dbaStarDbPath location where the database and other output will be generated
      */
-    public DBAStarUtil(int gridSize, int cutoff, String mapFileName, String dbaStarDbPath) {
+    public DBAStarUtil(int cutoff, String mapFileName, String dbaStarDbPath) {
         // startNum is used as an offset for values in the squares array, region indexing in the array starts at startNum
-        this.startNum = 50;
-        this.gridSize = gridSize;
         this.numNeighbourLevels = 1;
         this.cutoff = cutoff;
         this.mapFileName = mapFileName;
@@ -51,7 +45,7 @@ public class DBAStarUtil {
 
         SubgoalDynamicDB3 database = new SubgoalDynamicDB3(); // DP matrix in adjacency list representation (computed at run-time)
 
-        // String fileName = getDBName(wallStatus);
+        // String fileName = getDBName(wallStatus, map.getGridSize());
 
         logger.debug("Loading map and performing abstraction...");
 
@@ -61,14 +55,14 @@ public class DBAStarUtil {
 
         DBStatsRecord rec = new DBStatsRecord(dbStats.getSize());
         rec.addStat(0, "dbaStar (" + numNeighbourLevels + ")");
-        rec.addStat(1, gridSize);
+        rec.addStat(1, map.getGridSize());
         rec.addStat(3, cutoff);
         rec.addStat(4, mapFileName);
         rec.addStat(5, map.rows);
         rec.addStat(6, map.cols);
 
         currentTime = System.currentTimeMillis();
-        map = map.sectorAbstract2(gridSize);
+        map = map.sectorAbstract2();
 
         long resultTime = System.currentTimeMillis() - currentTime;
         rec.addStat(12, resultTime);
@@ -139,7 +133,7 @@ public class DBAStarUtil {
      * @param wallStatus used to name output files, either BW = before wall, AW = after wall, or RW = removed wall
      * @return String
      */
-    private String getDBName(String wallStatus) {
+    private String getDBName(String wallStatus, int gridSize) {
         return dbaStarDbPath + wallStatus + mapFileName + "_DBA-STAR_G" + gridSize + "_N" + numNeighbourLevels + "_C" + cutoff + ".dat";
     }
 
