@@ -178,10 +178,10 @@ public class DBAStarUtil {
         }
 
         // Get groups containing information on all regions from map
-        TreeMap<Integer, GroupRecord> groups = new MapSearchProblem(map).getGroups();
+        GroupRecord[] groups = map.getGroups();
 
         // Get group record containing information on the region
-        GroupRecord groupRecord = groups.get(REGION_ID);
+        GroupRecord groupRecord = groups[REGION_ID - GameMap.START_NUM];
 
         // Elimination case
         if (groupRecord.getNumStates() == 1) {
@@ -197,7 +197,7 @@ public class DBAStarUtil {
                     throw new Exception("Region rep for region " + REGION_ID + "does not exist!");
                 }
                 // Remove the region as a neighbour of its neighbours
-                groups.get(neighbour).getNeighborIds().remove(REGION_ID);
+                groups[neighbour - GameMap.START_NUM].getNeighborIds().remove(REGION_ID);
             }
             // Tombstone group record in groups map
             map.addGroup(REGION_ID, null);
@@ -293,7 +293,7 @@ public class DBAStarUtil {
                     neighbours.remove(neighbourRegion);
 
                     // Get the neighbours of its soon-to-be ex-neighbor
-                    GroupRecord neighborRecord = groups.get(neighbourRegion);
+                    GroupRecord neighborRecord = groups[neighbourRegion - GameMap.START_NUM];
                     HashSet<Integer> neighboursOfEx = neighborRecord.getNeighborIds();
                     // Update old neighbour’s neighbourhood in groups map
                     neighboursOfEx.remove(REGION_ID);
@@ -385,7 +385,7 @@ public class DBAStarUtil {
                         int groupId = map.squares[row][col];
                         if (groupId != GameMap.EMPTY_CHAR && groupId != GameMap.WALL_CHAR) {
                             // See if group already exists
-                            GroupRecord rec = groups.get(groupId);
+                            GroupRecord rec = groups[groupId - GameMap.START_NUM];
                             if (rec == null) {    // New group
                                 GroupRecord newRec = new GroupRecord();
                                 newRec.groupId = groupId;
@@ -479,10 +479,10 @@ public class DBAStarUtil {
             // Get new regionId using freeSpace
             int regionId = dbBW.popFreeSpace();
 
-            TreeMap<Integer, GroupRecord> groups = new MapSearchProblem(map).getGroups();
+            GroupRecord[] groups = map.getGroups();
 
             // There should not be a group record with the new region id
-            GroupRecord rec = groups.get(regionId);
+            GroupRecord rec = groups[regionId - GameMap.START_NUM];
             if (rec != null) {
                 throw new Exception("Error! Record already exists!");
             }
@@ -534,7 +534,7 @@ public class DBAStarUtil {
                 }
             }
 
-            TreeMap<Integer, GroupRecord> groups = new MapSearchProblem(map).getGroups();
+            GroupRecord[] groups = map.getGroups();
 
             // If the new region is in a different sector than any of its neighbours, we have a new, connected region
             if (neighbouringRegionsInSameSector.isEmpty()) {
@@ -543,7 +543,7 @@ public class DBAStarUtil {
                 int regionId = dbBW.popFreeSpace();
 
                 // There should not be a group record with the new region id
-                GroupRecord rec = groups.get(regionId);
+                GroupRecord rec = groups[regionId - GameMap.START_NUM];
                 if (rec != null) {
                     logger.error("Existing record at " + regionId + ": " + rec);
                     throw new Exception("Error! Record already exists!");
@@ -562,7 +562,7 @@ public class DBAStarUtil {
 
                 // Update region’s neighbourhood in groups map & update neighbourhood of all its neighbours in groups map
                 for (Integer neighbouringRegion : neighbouringRegions) {
-                    groups.get(neighbouringRegion).getNeighborIds().add(regionId);
+                    groups[neighbouringRegion - GameMap.START_NUM].getNeighborIds().add(regionId);
                 }
                 newRec.setNeighborIds(neighbouringRegions);
 
@@ -603,7 +603,7 @@ public class DBAStarUtil {
             // Get region rep
             int regionRepId = map.getRegionRepFromRegionId(regionId);
 
-            GroupRecord groupRecord = groups.get(regionId);
+            GroupRecord groupRecord = groups[regionId - GameMap.START_NUM];
 
             if (groupRecord == null) {
                 throw new Exception("No record found for " + regionId + "!");
@@ -639,7 +639,7 @@ public class DBAStarUtil {
                     neighbours.remove(neighbourRegion);
 
                     // Get the neighbours of its soon-to-be ex-neighbor
-                    GroupRecord neighborRecord = groups.get(neighbourRegion);
+                    GroupRecord neighborRecord = groups[neighbourRegion - GameMap.START_NUM];
                     HashSet<Integer> neighboursOfEx = neighborRecord.getNeighborIds();
                     // Update old neighbour’s neighbourhood in groups map
                     neighboursOfEx.remove(regionId);
@@ -665,8 +665,8 @@ public class DBAStarUtil {
                         // Update freeSpace
                         dbBW.pushFreeSpace(neighbouringRegionInSameSector);
                         // Add to neighbourIds
-                        if (groups.get(neighbouringRegionInSameSector) != null) {
-                            neighborIdsSet.addAll(groups.get(neighbouringRegionInSameSector).getNeighborIds());
+                        if (groups[neighbouringRegionInSameSector - GameMap.START_NUM] != null) {
+                            neighborIdsSet.addAll(groups[neighbouringRegionInSameSector - GameMap.START_NUM].getNeighborIds());
                         }
                         // Tombstone group record in groups map (recreate it later)
                         map.addGroup(neighbouringRegionInSameSector, null);
@@ -692,7 +692,7 @@ public class DBAStarUtil {
                             int groupId = map.squares[row][col];
                             if (groupId != GameMap.EMPTY_CHAR && groupId != GameMap.WALL_CHAR) {
                                 // See if group already exists
-                                GroupRecord rec = groups.get(groupId);
+                                GroupRecord rec = groups[groupId - GameMap.START_NUM];
                                 if (rec == null) {    // New group
                                     GroupRecord newRec = new GroupRecord();
                                     newRec.groupId = groupId;
@@ -780,10 +780,10 @@ public class DBAStarUtil {
         }
 
         // Get groups containing information on all regions from map
-        TreeMap<Integer, GroupRecord> groups = new MapSearchProblem(map).getGroups();
+        GroupRecord[] groups = map.getGroups();
 
         // Get group record containing information on the region
-        GroupRecord groupRecord = groups.get(REGION_ID);
+        GroupRecord groupRecord = groups[REGION_ID - GameMap.START_NUM];
 
         // Elimination case
         if (groupRecord.getNumStates() == 1) {
@@ -798,7 +798,7 @@ public class DBAStarUtil {
                     throw new Exception("Region rep for region " + REGION_ID + "does not exist!");
                 }
                 // Remove the region as a neighbour of its neighbours
-                groups.get(neighbour).getNeighborIds().remove(REGION_ID);
+                groups[neighbour - GameMap.START_NUM].getNeighborIds().remove(REGION_ID);
             }
             // Tombstone group record in groups map
             map.addGroup(REGION_ID, null);
@@ -892,7 +892,7 @@ public class DBAStarUtil {
                     neighbours.remove(neighbourRegion);
 
                     // Get the neighbours of its soon-to-be ex-neighbor
-                    GroupRecord neighborRecord = groups.get(neighbourRegion);
+                    GroupRecord neighborRecord = groups[neighbourRegion - GameMap.START_NUM];
                     HashSet<Integer> neighboursOfEx = neighborRecord.getNeighborIds();
                     // Update old neighbour’s neighbourhood in groups map
                     neighboursOfEx.remove(REGION_ID);
@@ -983,7 +983,7 @@ public class DBAStarUtil {
                         int groupId = map.squares[row][col];
                         if (groupId != GameMap.EMPTY_CHAR && groupId != GameMap.WALL_CHAR) {
                             // See if group already exists
-                            GroupRecord rec = groups.get(groupId);
+                            GroupRecord rec = groups[groupId - GameMap.START_NUM];
                             if (rec == null) {    // New group
                                 GroupRecord newRec = new GroupRecord();
                                 newRec.groupId = groupId;
@@ -1065,10 +1065,10 @@ public class DBAStarUtil {
             // Get new regionId using freeSpace
             int regionId = dbBW.popFreeSpace();
 
-            TreeMap<Integer, GroupRecord> groups = new MapSearchProblem(map).getGroups();
+            GroupRecord[] groups = map.getGroups();
 
             // There should not be a group record with the new region id
-            GroupRecord rec = groups.get(regionId);
+            GroupRecord rec = groups[regionId - GameMap.START_NUM];
             if (rec != null) {
                 throw new Exception("Error! Record already exists!");
             }
@@ -1120,7 +1120,7 @@ public class DBAStarUtil {
                 }
             }
 
-            TreeMap<Integer, GroupRecord> groups = new MapSearchProblem(map).getGroups();
+            GroupRecord[] groups = map.getGroups();
 
             // If the new region is in a different sector than any of its neighbours, we have a new, connected region
             if (neighbouringRegionsInSameSector.isEmpty()) {
@@ -1128,7 +1128,7 @@ public class DBAStarUtil {
                 int regionId = dbBW.popFreeSpace();
 
                 // There should not be a group record with the new region id
-                GroupRecord rec = groups.get(regionId);
+                GroupRecord rec = groups[regionId - GameMap.START_NUM];
                 if (rec != null) {
                     throw new Exception("Error! Record already exists!");
                 }
@@ -1146,7 +1146,7 @@ public class DBAStarUtil {
 
                 // Update region’s neighbourhood in groups map & update neighbourhood of all its neighbours in groups map
                 for (Integer neighbouringRegion : neighbouringRegions) {
-                    groups.get(neighbouringRegion).getNeighborIds().add(regionId);
+                    groups[neighbouringRegion - GameMap.START_NUM].getNeighborIds().add(regionId);
                 }
                 newRec.setNeighborIds(neighbouringRegions);
 
@@ -1184,7 +1184,7 @@ public class DBAStarUtil {
             map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = regionId;
             problem.getMap().squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = regionId;
 
-            GroupRecord groupRecord = groups.get(regionId);
+            GroupRecord groupRecord = groups[regionId - GameMap.START_NUM];
 
             if (groupRecord == null) {
                 throw new Exception("No record found for " + regionId + "!");
@@ -1214,7 +1214,7 @@ public class DBAStarUtil {
                     neighbours.remove(neighbourRegion);
 
                     // Get the neighbours of its soon-to-be ex-neighbor
-                    GroupRecord neighborRecord = groups.get(neighbourRegion);
+                    GroupRecord neighborRecord = groups[neighbourRegion - GameMap.START_NUM];
                     HashSet<Integer> neighboursOfEx = neighborRecord.getNeighborIds();
                     // Update old neighbour’s neighbourhood in groups map
                     neighboursOfEx.remove(regionId);
@@ -1238,8 +1238,8 @@ public class DBAStarUtil {
                         // Update freeSpace
                         dbBW.pushFreeSpace(neighbouringRegionInSameSector);
                         // Add to neighbourIds
-                        if (groups.get(neighbouringRegionInSameSector) != null) {
-                            neighborIdsSet.addAll(groups.get(neighbouringRegionInSameSector).getNeighborIds());
+                        if (groups[neighbouringRegionInSameSector - GameMap.START_NUM] != null) {
+                            neighborIdsSet.addAll(groups[neighbouringRegionInSameSector - GameMap.START_NUM].getNeighborIds());
                         }
                         // Tombstone group record in groups map (recreate it later)
                         map.addGroup(neighbouringRegionInSameSector, null);
@@ -1265,7 +1265,7 @@ public class DBAStarUtil {
                             int groupId = map.squares[row][col];
                             if (groupId != GameMap.EMPTY_CHAR && groupId != GameMap.WALL_CHAR) {
                                 // See if group already exists
-                                GroupRecord rec = groups.get(groupId);
+                                GroupRecord rec = groups[groupId - GameMap.START_NUM];
                                 if (rec == null) {    // New group
                                     GroupRecord newRec = new GroupRecord();
                                     newRec.groupId = groupId;

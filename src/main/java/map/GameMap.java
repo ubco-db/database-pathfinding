@@ -138,7 +138,6 @@ public class GameMap {
 
     public GameMap(String fileName, int gridSize) {    // Loads a map in Vadim's format into data structure
         this.gridSize = gridSize;
-        this.numSectorsPerRow = (int) Math.ceil(this.cols * 1.0 / this.gridSize);
         load(fileName);
         generator = new Random();
         generator.setSeed(56256902);
@@ -159,6 +158,8 @@ public class GameMap {
             st = sc.nextLine();            // Number of cols. e.g. width 148
             cols = Integer.parseInt(st.substring(6).trim());
             sc.nextLine();                  // Just says map
+            // Cannot initialize earlier because rows and cols need to be set for this
+            this.numSectorsPerRow = (int) Math.ceil(this.cols * 1.0 / this.gridSize);
             squares = new int[rows][cols];
             mapInit();
             states = 0;
@@ -375,6 +376,8 @@ public class GameMap {
 
     public GameMap copyMap() {
         GameMap result = new GameMap(this.rows, this.cols);
+        result.gridSize = gridSize;
+        result.numSectorsPerRow = numSectorsPerRow;
         for (int i = 0; i < rows; i++)
             for (int j = 0; j < cols; j++)
                 if (isWall(i, j)) result.squares[i][j] = this.squares[i][j];
@@ -706,7 +709,7 @@ public class GameMap {
             for (int c = 0; c < cols; c++) {
                 if (!isWall(r, c)) {
                     int val = squares[r][c];
-                    GroupRecord rec = groups.get(val);
+                    GroupRecord rec = groups[val - GameMap.START_NUM];
                     if (rec == null) {
                         logger.warn("Unable to find group: " + val + " for row: " + r + " col: " + c + " id: " + getId(r, c));
                         continue;
@@ -740,7 +743,7 @@ public class GameMap {
 
         // Create a neighbor set for each group that needs recomputation (original region and all its neighbours)
         for (int neighborId : neighborIds) {
-            groups.get(neighborId).setNeighborIds(new HashSet<>());
+            groups[neighborId - GameMap.START_NUM].setNeighborIds(new HashSet<>());
         }
 
         // Need to recompute neighbours for original region and all its neighbours, so passing entire 3 sector x 3 sector area
@@ -758,7 +761,7 @@ public class GameMap {
             for (int c = startInnerLoop; c < endInnerLoop; c++) {
                 if (!isWall(r, c)) {
                     int val = squares[r][c];
-                    GroupRecord rec = groups.get(val);
+                    GroupRecord rec = groups[val - GameMap.START_NUM];
                     if (rec == null) {
                         logger.warn("Unable to find group: " + val + " for row: " + r + " col: " + c + " id: " + getId(r, c));
                         continue;
@@ -799,8 +802,7 @@ public class GameMap {
     // Creates a new map where each centroid point of a group is white.
     public GameMap computeCentroidMap() {
         GameMap newMap = copyEntireMap();
-        for (Entry<Integer, GroupRecord> integerGroupRecordEntry : groups.entrySet()) {
-            GroupRecord rec = integerGroupRecordEntry.getValue();
+        for (GroupRecord rec: groups) {
             if (rec != null) {
                 newMap.squares[getRow(rec.getGroupRepId())][getCol(rec.getGroupRepId())] = 32;
             }
@@ -927,8 +929,8 @@ public class GameMap {
 
                             while (!stateIds.isEmpty()) {
                                 int id = stateIds.remove();
-                                row = baseMap.getRow(id); //Row of state
-                                col = baseMap.getCol(id); //Col of state
+                                row = baseMap.getRow(id); // Row of state
+                                col = baseMap.getCol(id); // Col of state
 
                                 // Generate neighbors and add to list if in region
                                 baseMap.getNeighbors(row, col, neighbors);
@@ -1651,7 +1653,7 @@ public class GameMap {
     public boolean isCloser2(int row, int col, int newSeedRow, int newSeedCol) {
         int currentSeedId = getCell(row, col);
         // GroupRecord record = groups.get(currentSeedId);			// TODO: Major memory consumer.  Can we replace HashMap with a no object data sturcture?
-        GroupRecord record = groupsArray[currentSeedId];
+        GroupRecord record = groups[currentSeedId];
         return (GameMap.computeDistance(row, col, newSeedRow, newSeedCol) < GameMap.computeDistance(row, col, getRow(record.getGroupRepId()), getCol(record.getGroupRepId())));
     }
 
@@ -1670,7 +1672,7 @@ public class GameMap {
 
                 if (groupId != GameMap.EMPTY_CHAR && groupId != GameMap.WALL_CHAR) {
                     // See if group already exists
-                    GroupRecord rec = groups.get(groupId);
+                    GroupRecord rec = groups[groupId - GameMap.START_NUM];
                     if (rec == null) {    // New group
                         GroupRecord newrec = new GroupRecord();
                         newrec.groupId = groupId;
@@ -1724,7 +1726,8 @@ public class GameMap {
         logger.debug("Time to compute centroids: " + (endTime - currentTime));
     }
 
-    public int recomputeCentroid(int regionId, GroupRecord rec, int startRow, int endRow, int startCol, int endCol, int gridSize) {
+    public int recomputeCentroid(int regionId, GroupRecord rec, int startRow, int endRow, int startCol, int endCol) {
+        // TODO: Use num states instead
         int[] rows = new int[gridSize * gridSize];
         int[] cols = new int[gridSize * gridSize];
         long sumRow = 0, sumCol = 0;
@@ -1766,8 +1769,7 @@ public class GameMap {
         int regionRep = this.getId(centroidRow, centroidCol);
 
         rec.setGroupRepId(regionRep);
-        regionReps[rec.groupId - GameMap.START_NUM] = regionRep;
-        logger.debug("Region id: " + regionId + " - region rep: " + regionRep);
+        // logger.debug("Region id: " + regionId + " - region rep: " + regionRep);
 
         return regionRep;
     }
@@ -1776,7 +1778,7 @@ public class GameMap {
         if (regionId == 42) {
             logger.error("Cannot find region id from wall!");
         }
-        return regionReps[regionId - GameMap.START_NUM];
+        return groups[regionId - GameMap.START_NUM].groupRepId;
     }
 
     private int getRegionRepFromRowAndCol(int row, int col) {
@@ -1823,5 +1825,9 @@ public class GameMap {
         int wallRow = getRow(sid);
         int wallCol = getCol(sid);
         return wallRow / gridSize * this.numSectorsPerRow + wallCol / this.gridSize;
+    }
+
+    public int getNumGroups() {
+        return numGroups;
     }
 }
