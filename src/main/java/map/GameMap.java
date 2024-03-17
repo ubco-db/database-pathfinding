@@ -71,6 +71,7 @@ public class GameMap {
 
     public GameMap() {
     }
+
     public GameMap(int r, int c) {
         rows = r;
         cols = c;
@@ -255,8 +256,8 @@ public class GameMap {
         return Math.min(diffRow, diffCol) * EDGECOST_DIAGONAL + ((diffRow + diffCol) - 2 * Math.min(diffRow, diffCol)) * EDGECOST_CARDINAL;
     }
 
-    public TreeMap<Integer, GroupRecord> getGroups() {
-        if (groups == null) {    // Compute groups
+    public GroupRecord[] getGroups() throws Exception {
+        if (groups == null) {
             computeGroups();
         }
         return groups;
@@ -699,9 +700,8 @@ public class GameMap {
         // IDEA: Perform one pass through map updating group records everytime encounter new neighbor
 
         // Create a neighbor set for each group
-        for (Entry<Integer, GroupRecord> integerGroupRecordEntry : groups.entrySet()) {
-            GroupRecord rec = integerGroupRecordEntry.getValue();
-            rec.setNeighborIds(new HashSet<Integer>());
+        for (int i = 0; i < numGroups; i++) {
+            groups[i].setNeighborIds(new HashSet<Integer>());
         }
 
         long currentTime = System.currentTimeMillis();
@@ -747,7 +747,6 @@ public class GameMap {
         }
 
         // Need to recompute neighbours for original region and all its neighbours, so passing entire 3 sector x 3 sector area
-        // TODO: am I actually doing this correctly?
 
         long currentTime = System.currentTimeMillis();
 
@@ -802,10 +801,9 @@ public class GameMap {
     // Creates a new map where each centroid point of a group is white.
     public GameMap computeCentroidMap() {
         GameMap newMap = copyEntireMap();
-        for (GroupRecord rec: groups) {
-            if (rec != null) {
-                newMap.squares[getRow(rec.getGroupRepId())][getCol(rec.getGroupRepId())] = 32;
-            }
+        for (int i = 0; i < numGroups; i++) {
+            GroupRecord rec = groups[i];
+            newMap.squares[getRow(rec.getGroupRepId())][getCol(rec.getGroupRepId())] = 32;
         }
         return newMap;
     }
@@ -864,22 +862,28 @@ public class GameMap {
         return baseMap;
     }
 
-    public void addGroup(int id, GroupRecord group) {
-        groups.put(id, group);
-        // Also add it to groups arrays
-        id -= GameMap.START_NUM;
-        if (groupsArray == null) {
-            int size = group.groupId;
-            if (size < 100) size = 100;
-            groupsArray = new GroupRecord[size];
-        } else if (groupsArray.length - 1 < id) {    // Resize array
-            int size = id * 2;
+    public void addGroup(int regionId, GroupRecord group) {
+        int regionLoc = regionId - GameMap.START_NUM;
+
+        if (groups.length - 1 < regionLoc) {
+            // Resize array
+            int size = regionLoc * 2;
             GroupRecord[] tmp = new GroupRecord[size];
-            System.arraycopy(groupsArray, 0, tmp, 0, groupsArray.length);
-            groupsArray = tmp;
+            System.arraycopy(groups, 0, tmp, 0, groups.length);
+            groups = tmp;
+            logger.warn("Groups was resized!");
         }
-        logger.debug("Groups array after adding: " + Arrays.toString(groupsArray));
-        groupsArray[id] = group;
+
+        if (group == null) {
+            // tombstoning case
+            this.numGroups--;
+        } else {
+            // addition case
+            this.numGroups++;
+        }
+
+        groups[regionLoc] = group;
+        logger.debug("Groups array after adding: " + Arrays.toString(groups));
     }
 
 
@@ -1039,7 +1043,7 @@ public class GameMap {
             map.colors.put(currentNum, color);
         }
         totalRegions += numRegionsInSector; // Increment region count
-        // TODO: check this works properly now
+        // TODO: can likely remove since this was only used by abstract problem
         map.numRegions[(startRow / gridSize) * (int) Math.ceil(cols * 1.0 / gridSize) + (endRow / gridSize)] = numRegionsInSector;
 
         map.states = totalRegions;
@@ -1208,187 +1212,6 @@ public class GameMap {
                 currentMask.add(rec);
                 used.put(rec.toString(), null);
             }
-            addMask(currentMask);
-            this.currentMask = this.masks.size() - 1;
-        }
-        // Create an image to save
-        RenderedImage rendImage = createImage();
-
-        // Write generated image to a file
-        try {
-            // Save as PNG
-            File file = new File(fileName);
-            ImageIO.write(rendImage, "png", file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void showChanges(String fileName, ArrayList<ChangedPath> changedPaths, SearchState start, SearchState wall) {
-        if (changedPaths != null && start != null) {    // Make a mask for the map for the path
-            Color color;
-            SparseMask currentMask = new SparseMask();
-            HashMap<String, String> used = new HashMap<>();
-
-            // colour changed goals in red
-            for (ChangedPath current : changedPaths) {
-                int row = getRow(current.getGoal().getId());
-                int col = getCol(current.getGoal().getId());
-
-                ChangeRecord rec;
-                color = new Color(255, 255 - (int) (255 * current.getPercentageOfPathToGoalChanged() / 100), 255);
-                rec = new ChangeRecord(row, col, color, 1);
-                if (used.containsKey(rec.toString())) continue;
-                currentMask.add(rec);
-                used.put(rec.toString(), null);
-            }
-
-            // colour start in green
-            color = Color.GREEN;
-            ChangeRecord rec = new ChangeRecord(getRow(start.getId()), getCol(start.getId()), color, 1);
-            currentMask.add(rec);
-
-            // colour added wall in blue
-            color = Color.BLUE;
-            rec = new ChangeRecord(getRow(wall.getId()), getCol(wall.getId()), color, 1);
-            currentMask.add(rec);
-
-            addMask(currentMask);
-            this.currentMask = this.masks.size() - 1;
-        }
-        // Create an image to save
-        RenderedImage rendImage = createImage();
-
-        // Write generated image to a file
-        try {
-            // Save as PNG
-            File file = new File(fileName);
-            ImageIO.write(rendImage, "png", file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void showHeatMap(String fileName, HashMap<SearchState, Double> wallImpactMap, SearchState start) {
-        if (wallImpactMap != null && start != null) {    // Make a mask for the map for the path
-            Color color;
-            SparseMask currentMask = new SparseMask();
-            HashMap<String, String> used = new HashMap<>();
-
-            // colour changed goals in red
-            for (SearchState current : wallImpactMap.keySet()) {
-                int row = getRow(current.getId());
-                int col = getCol(current.getId());
-
-                ChangeRecord rec;
-                color = new Color(255, 255 - (int) (255 * wallImpactMap.get(current) / 100), 255);
-                rec = new ChangeRecord(row, col, color, 1);
-                if (used.containsKey(rec.toString())) continue;
-                currentMask.add(rec);
-                used.put(rec.toString(), null);
-            }
-
-            // colour start in green
-            color = Color.GREEN;
-            ChangeRecord rec = new ChangeRecord(getRow(start.getId()), getCol(start.getId()), color, 1);
-            currentMask.add(rec);
-
-            addMask(currentMask);
-            this.currentMask = this.masks.size() - 1;
-        }
-        // Create an image to save
-        RenderedImage rendImage = createImage();
-
-        // Write generated image to a file
-        try {
-            // Save as PNG
-            File file = new File(fileName);
-            ImageIO.write(rendImage, "png", file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void showWallsThatChangeRegioning(String fileName, ArrayList<SearchState> wallsThatChangeRegioning, SearchState start) {
-        if (wallsThatChangeRegioning != null && start != null) {    // Make a mask for the map for the path
-            Color color;
-            SparseMask currentMask = new SparseMask();
-            HashMap<String, String> used = new HashMap<>();
-
-            // colour changed goals in red
-            for (SearchState current : wallsThatChangeRegioning) {
-                int row = getRow(current.getId());
-                int col = getCol(current.getId());
-
-                ChangeRecord rec;
-                color = Color.RED;
-                rec = new ChangeRecord(row, col, color, 1);
-                if (used.containsKey(rec.toString())) continue;
-                currentMask.add(rec);
-                used.put(rec.toString(), null);
-            }
-
-            // colour start in green
-            color = Color.GREEN;
-            ChangeRecord rec = new ChangeRecord(getRow(start.getId()), getCol(start.getId()), color, 1);
-            currentMask.add(rec);
-
-            addMask(currentMask);
-            this.currentMask = this.masks.size() - 1;
-        }
-        // Create an image to save
-        RenderedImage rendImage = createImage();
-
-        // Write generated image to a file
-        try {
-            // Save as PNG
-            File file = new File(fileName);
-            ImageIO.write(rendImage, "png", file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void wallsHeatMap(String fileName, HashMap<SearchState, Double> wallsThatChangeDat, HashMap<SearchState, Double> wallsThatChangeDati2, SearchState start) {
-        if (wallsThatChangeDat != null && wallsThatChangeDati2 != null && start != null) {    // Make a mask for the map for the path
-            Color color;
-            SparseMask currentMask = new SparseMask();
-            HashMap<String, String> used = new HashMap<>();
-
-            double maxDat = wallsThatChangeDat.values().stream().max(Double::compare).get();
-            logger.debug("Max dat: " + maxDat);
-            double maxDati2 = wallsThatChangeDati2.values().stream().max(Double::compare).get();
-            logger.debug("Max dati2: " + maxDati2);
-
-            for (SearchState current : wallsThatChangeDat.keySet()) {
-                int row = getRow(current.getId());
-                int col = getCol(current.getId());
-
-                ChangeRecord rec;
-                color = new Color(255, 255 - (int) (255 * Math.log(wallsThatChangeDat.get(current)) / Math.log(maxDat)), 255);
-                rec = new ChangeRecord(row, col, color, 1);
-                if (used.containsKey(rec.toString())) continue;
-                currentMask.add(rec);
-                used.put(rec.toString(), null);
-            }
-
-//            for (SearchState current : wallsThatChangeDati2.keySet()) {
-//                int row = getRow(current.getId());
-//                int col = getCol(current.getId());
-//
-//                ChangeRecord rec;
-//                color = new Color(255, 255 - (int) (255 * Math.log(wallsThatChangeDati2.get(current)) / Math.log(maxDati2)), 255);
-//                rec = new ChangeRecord(row, col, color, 1);
-//                if (used.containsKey(rec.toString())) continue;
-//                currentMask.add(rec);
-//                used.put(rec.toString(), null);
-//            }
-
-            // colour start in green
-            color = Color.GREEN;
-            ChangeRecord rec = new ChangeRecord(getRow(start.getId()), getCol(start.getId()), color, 1);
-            currentMask.add(rec);
-
             addMask(currentMask);
             this.currentMask = this.masks.size() - 1;
         }
@@ -1591,60 +1414,6 @@ public class GameMap {
         return size;
     }
 
-    public int computeDifficulty(StatsRecord stats) {
-		/*
-		AStar astar = new AStar(this);
-		// ArrayList<SearchState> path, tmpPath;
-		StatsRecord tmp = new StatsRecord();
-		SearchAlgorithm alg = new HillClimbing(this, 25);
-		int totalSubgoals = 0;
-		int numPaths = 0;
-		*/
-		/*
-		//This is just too inefficient.
-		// Computes the difficulty of a map by doing all pairs of A* and also computes number of subgoals as a measure
-		for (int i=0; i < rows; i++)
-		{	for (int j=0; j < cols; j++)
-			{
-				if (this.isWall(i, j))
-					continue;
-
-				// This is the start point.  Compute all paths to all our states.
-				for (int r=0; r < rows; r++)
-				{	for (int c=0; c < cols; c++)
-					{
-						if (this.isWall(r, c))
-							continue;
-
-						tmp.clear();
-
-			//			path = astar.computePath(i, j, r, c, tmp);
-			//			if (path == null)
-			//				continue;
-
-			//			stats.merge(tmp);
-						numPaths++;
-						if (numPaths % 100 == 0)
-							System.out.println("Done path: "+numPaths);
-
-						// Now compress the path.  The path fragments may already been compressed or not during base path construction.
-			//			tmpPath =  SearchUtil.computeSubgoals(this, path, alg);
-
-			//			totalSubgoals += tmpPath.size()-2;
-					}
-				}
-			}
-		}
-		*/
-		/*
-		System.out.println("Number of paths: "+numPaths);
-		System.out.println("Number of subgoals: "+totalSubgoals);
-		System.out.println(stats);
-		return totalSubgoals;
-		*/
-        return 0;
-    }
-
     /**
      * Returns true if given seed (pt) is closer to cell (row, col) that its current seed.
      * This version is optimized for speed and does not use MapPoint opbject.
@@ -1663,7 +1432,8 @@ public class GameMap {
     // 3
     public void computeGroups() throws Exception {
         long currentTime = System.currentTimeMillis();
-        groups = new TreeMap<Integer, GroupRecord>();
+        // TODO: Better way to initialize this? 100 is a guess-timate
+        groups = new GroupRecord[100];
 
         // Traverse all cells to create the groups
         for (int i = 0; i < rows; i++) {
@@ -1686,7 +1456,7 @@ public class GameMap {
             }
         }
         long endTime = System.currentTimeMillis();
-        logger.debug("Time to compute groups: " + (endTime - currentTime) + " Groups: " + groups.size());
+        logger.debug("Time to compute groups: " + (endTime - currentTime) + " Groups: " + numGroups);
 
         // Compute centroids
         computeCentroids();
@@ -1695,31 +1465,26 @@ public class GameMap {
     // Compute centroids of all groups
     // 4
     public void computeCentroids() {
-        // TODO: How large should I make this array and where will I resize it?
-        regionReps = new int[(int) (groups.size() * 1.1)];
-
         long currentTime = System.currentTimeMillis();
 
-        for (Entry<Integer, GroupRecord> integerGroupRecordEntry : groups.entrySet()) {    // Find centroid for each record
-            GroupRecord rec = integerGroupRecordEntry.getValue();
+        for (int i = 0; i < numGroups; i++) {    // Find centroid for each record
             // This won't be the actual region rep id yet since that hasn't been computed, so it's just the first state
             // encountered in the region. That's enough to find the sector, and I need to pass sector bounds to my method
-
+            GroupRecord rec = groups[i];
             int stateId = rec.groupRepId;
+
             int row = this.getRow(stateId);
             int col = this.getCol(stateId);
 
-            final int NUM_SECTORS_PER_ROW = (int) Math.ceil(this.cols * 1.0 / this.gridSize);
-            final int SECTOR_ID = row / gridSize * NUM_SECTORS_PER_ROW + col / this.gridSize;
-
+            final int SECTOR_ID = findSectorId(row, col);
             // Start of sector
-            final int START_ROW = (SECTOR_ID / NUM_SECTORS_PER_ROW) * gridSize;
-            final int START_COL = (SECTOR_ID % NUM_SECTORS_PER_ROW) * gridSize;
+            final int START_ROW = findStartRowOfSector(SECTOR_ID);
+            final int START_COL = findStartColOfSector(SECTOR_ID);
             // End of sector
-            final int END_ROW = Math.min(START_ROW + gridSize, this.rows);
-            final int END_COL = Math.min(START_COL + gridSize, this.cols);
+            final int END_ROW = findEndRowOfSector(START_ROW);
+            final int END_COL = findEndColOfSector(START_COL);
 
-            recomputeCentroid(rec.groupId, rec, START_ROW, END_ROW, START_COL, END_COL, gridSize);
+            recomputeCentroid(rec.groupId, rec, START_ROW, END_ROW, START_COL, END_COL);
         }
 
         long endTime = System.currentTimeMillis();

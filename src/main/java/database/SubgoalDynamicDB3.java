@@ -160,14 +160,13 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         }
     }
 
-    public void compute(SearchProblem problem, TreeMap<Integer, GroupRecord> groups, SearchAlgorithm searchAlg, DBStatsRecord dbStats, int numLevels) {
-        numGroups = groups.size();
+    public void compute(SearchProblem problem, GroupRecord[] groups, int numGroups, SearchAlgorithm searchAlg, DBStatsRecord dbStats, int numLevels) {
         // Allocate arrays 10% larger than the current numRegions
+        this.numGroups = numGroups;
         int arraySize = (int) (numGroups * 1.1);
         this.lowestCost = new int[arraySize][];
         this.paths = new int[arraySize][][];
         this.neighborLoc = new int[arraySize][];
-        this.numGroups = numGroups;
 
         // How big should I make this? Technically, we could wipe out all regions, in which case freeSpace would be filled up to arraySize
         this.freeSpace = new int[arraySize];
@@ -187,7 +186,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
 
         long startTime = System.currentTimeMillis();
 
-        long baseTime = computeBasePaths2(problem, groups, searchAlg, numGroups, numLevels, true, dbStats);
+        long baseTime = computeBasePaths2(problem, groups, searchAlg, numLevels, true, dbStats);
 
         long endTime = System.currentTimeMillis();
 
@@ -207,7 +206,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
      * @param dbStats
      * @param numLevels
      */
-    public long computeBasePaths2(SearchProblem problem, TreeMap<Integer, GroupRecord> groups, SearchAlgorithm searchAlg, int numGroups, int numLevels, boolean asSubgoals, DBStatsRecord dbStats) {
+    public long computeBasePaths2(SearchProblem problem, GroupRecord[] groups, SearchAlgorithm searchAlg, int numLevels, boolean asSubgoals, DBStatsRecord dbStats) {
         int goalGroupLoc, startGroupLoc;
         GroupRecord startGroup, goalGroup;
         HashSet<Integer> neighbors;
@@ -223,9 +222,11 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         logger.debug("Creating base paths to neighbors.");
         int numStates = 0;
 
-            startGroup = groups.get(i + GameMap.START_NUM);
         for (int i = 0; i < this.numGroups; i++) {
+            startGroup = groups[i];
             startGroupLoc = i;
+
+            if (startGroup == null) continue;
 
             neighbors = GameDB.getNeighbors(groups, startGroup, numLevels, false);
 
@@ -242,7 +243,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             while (it.hasNext()) {
                 // Compute the shortest path between center representative of both groups
                 int goalGroupId = it.next();
-                goalGroup = groups.get(goalGroupId);
+                goalGroup = groups[goalGroupId - GameMap.START_NUM];
 
                 path = astar.computePath(new SearchState(startGroup.groupRepId), new SearchState(goalGroup.groupRepId), stats);
                 numBase++; // Is this the number of paths?
@@ -354,7 +355,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
      * @param groups      groups mapping
      * @param neighborIds ArrayList containing the neighbourhood where the partition happened
      */
-    public void recomputeBasePathsAfterPartition(MapSearchProblem problem, TreeMap<Integer, GroupRecord> groups, ArrayList<Integer> neighborIds) throws Exception {
+    public void recomputeBasePathsAfterPartition(MapSearchProblem problem, GroupRecord[] groups, ArrayList<Integer> neighborIds) throws Exception {
         // This is the partition case, where adding a wall leads to the splitting of a region into two or more smaller regions
 
         // If we have run out of free space, increase the size of the arrays

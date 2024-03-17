@@ -14,7 +14,8 @@ import java.util.*;
 
 public class GameDB {
     private final SearchProblem problem;
-    private TreeMap<Integer, GroupRecord> groups;
+    private GroupRecord[] groups;
+    private int numGroups;
 
     public GameDB(SearchProblem problem) {
         this.problem = problem;
@@ -105,428 +106,7 @@ public class GameDB {
         return sgdb;
     }
 
-
-    /**
-     * Given a list of group identifiers produced by any map abstraction, generates a knnLRTA* style database of optimal A* compressed paths between each
-     * group member.
-     * @param searchAlg
-     * @param dbstat
-     * @param sgdb
-     * @return
-     */
-//	public SubgoalDB computeCoverDB(SearchAbstractAlgorithm searchAlg, DBStatsRecord dbstat, SubgoalDB sgdb, HashMap<Integer,GroupRecord> groups, int cutoff, double minOpt, double maxOpt, int maxRecords)
-//	{
-//		System.out.println("Creating cover database on map with  "+groups.size()+" trialheads.");
-//		long startTime = System.currentTimeMillis();
-//
-//		AStar astar = new AStar(problem);
-//
-//		SearchState start, goal;
-//		long currentTime;
-//		long totalATime = 0, totalSGTime = 0;
-//		int numSubgoals = 0;
-//		StatsRecord stats = new StatsRecord();
-//		ArrayList<SearchState> subgoals = new ArrayList<SearchState>(5000);
-//		int count = 0;
-//		ArrayList<SearchState> path;
-//
-//		ArrayList<Path> problems = new ArrayList<Path>();
-//
-//		// Iterate through all possible trailhead combinations
-//		Iterator<Integer> it1 = groups.keySet().iterator();
-//		while (it1.hasNext())
-//		{
-//			GroupRecord startRec = groups.get(it1.next());
-//			Iterator<Integer> it2 = groups.keySet().iterator();
-//			while (it2.hasNext())
-//			{
-//				GroupRecord goalRec = groups.get(it2.next());
-//				if (startRec == goalRec)
-//					continue;		// No path between state and itself
-//
-//				start = new SearchState(startRec.getGroupRepId());
-//				goal = new SearchState(goalRec.getGroupRepId());
-//
-//				// Compute optimal path for set of points
-//				currentTime = System.currentTimeMillis();
-//				ArrayList<SearchState> apath = astar.computePath(start, goal, stats);
-//				totalATime += System.currentTimeMillis()-currentTime;
-//				currentTime = System.currentTimeMillis();
-//
-//				if (apath == null)
-//					continue;
-//
-//				// Filter with cover algorithm
-//				// Find path between start and goal using LRTA* (will stop if over a certain cost)
-//				LRTA lrta = new LRTA(problem, goal, 1, 90000000, false, 0);
-//				int optimalCost = stats.getPathCost();
-//				lrta.setMaxCost((int) (optimalCost*maxOpt));
-//				path = lrta.computePath(start, goal, stats);
-//				double cost = 0;
-//				if (path == null)	// Must had an early termination
-//					cost = optimalCost*maxOpt;
-//				else
-//					cost = stats.getPathCost();
-//
-//				// Otherwise add record to list of possiblities
-//		//		if (stats.getPathCost()/optimalCost >= minOpt)		// Difficulty of problem must be higher than minimum cutoff
-//					problems.add(new Path(apath, -1*cost/optimalCost, stats.getPathLength(), start, goal));
-//			}
-//		}
-//
-//		Collections.sort(problems);	// Sort in ascending order
-//
-//		// Select only required number of paths and compress them
-//		for (int i=0; i < maxRecords && i < problems.size(); i++)
-//		{
-//			Path p = problems.get(i);
-//			path = p.getStates();
-//
-//			currentTime = System.currentTimeMillis();
-//			SearchUtil.computeSubgoalsBinary(path, searchAlg, subgoals);
-//
-//			totalSGTime += System.currentTimeMillis()-currentTime;
-//
-//			int []subgoal = new int[subgoals.size()-2];
-//
-//			for (int k=1; k < subgoals.size()-1; k++)
-//			{	SearchState s = (SearchState) subgoals.get(k);
-//				subgoal[k-1] = s.id;
-//			}
-//			numSubgoals += subgoal.length+1;
-//
-//			SubgoalDBRecord rec = new SubgoalDBRecord(count++, p.getStart().id, p.getGoal().id, subgoal, 0);
-//			sgdb.addRecord(rec);
-//			//System.out.println("Selected record: "+i+" Subopt: "+p.getCost()+" "+" start: "+p.getStart().id+" rec: "+rec);
-//			//SearchUtil.printPath(path);
-//		}
-//
-//		System.out.println("Generated random database with "+sgdb.getSize()+" records in time: "+(System.currentTimeMillis()-startTime)/1000);
-//		System.out.println("Time performing A*: "+totalATime+" Time performing subgoal calculation: "+totalSGTime);
-//		System.out.println("Number of subgoals: "+numSubgoals);
-//		dbstat.addStat(8, count);
-//		dbstat.addStat(9, numSubgoals);
-//		long overallTime = (System.currentTimeMillis()-startTime);
-//		dbstat.addStat(10, overallTime);
-//		dbstat.addStat(13, totalATime);
-//		dbstat.addStat(14, totalSGTime);
-//		return sgdb;
-//	}
-
-
-    /**
-     * Given a previously constructed HCDPS exact database, filters the records by removing simple ones.
-     * User specifies number of records to keep, and the rest of the records are dropped.
-     * @param searchAlg
-     * @param dbstat
-     * @param sgdb
-     * @return
-     */
-//	public SubgoalDB computeCoverDB2(SearchAbstractAlgorithm searchAlg, DBStatsRecord dbstat, SubgoalDBExact sgdb, HashMap<Integer,GroupRecord> groups, int cutoff, double minOpt, double maxOpt, int maxRecords)
-//	{
-//		System.out.println("Filtering HCDPS database on map with  "+groups.size()+" trialheads.");
-//		long startTime = System.currentTimeMillis();
-//
-//		AStar astar = new AStar(problem);
-//
-//		SearchState start, goal;
-//		long currentTime;
-//		long totalATime = 0, totalLRTATime = 0;
-//		int numSubgoals = 0;
-//		StatsRecord stats = new StatsRecord();
-//		ArrayList<SearchState> subgoals = new ArrayList<SearchState>(5000);
-//		int count = 0;
-//		ArrayList<SearchState> path;
-//
-//		ArrayList<Path> problems = new ArrayList<Path>();
-//		GenHillClimbing pathCompressAlg = new GenHillClimbing(problem, 10000);
-//		// Iterate through all possible trailhead combinations
-//		Iterator<Integer> it1 = groups.keySet().iterator();
-//		while (it1.hasNext())
-//		{
-//			GroupRecord startRec = groups.get(it1.next());
-//			Iterator<Integer> it2 = groups.keySet().iterator();
-//			while (it2.hasNext())
-//			{
-//				GroupRecord goalRec = groups.get(it2.next());
-//				if (startRec == goalRec)
-//					continue;		// No path between state and itself
-//
-//				start = new SearchState(startRec.getGroupRepId());
-//				goal = new SearchState(goalRec.getGroupRepId());
-//
-//				// Compute optimal path for set of points
-//				currentTime = System.currentTimeMillis();
-//				// Instead of A* use pre-constructed HCDPS path as estimate for optimal
-//				//ArrayList<SearchState> apath = astar.computePath(start, goal, stats);
-//				// Retrieve record from database
-//				ArrayList<SubgoalDBRecord> recs = sgdb.findNearest(problem, start, goal, searchAlg, 1, stats, null);
-//				ArrayList<SearchState> apath = recs.get(0).computePath(pathCompressAlg);
-//
-//				totalATime += System.currentTimeMillis()-currentTime;
-//				currentTime = System.currentTimeMillis();
-//
-//				if (apath == null)
-//					continue;
-//
-//				// Filter with cover algorithm
-//				// Find path between start and goal using LRTA* (will stop if over a certain cost)
-//				LRTA lrta = new LRTA(problem, goal, 1, 90000000, false, 0);
-//				int optimalCost = stats.getPathCost();
-//				lrta.setMaxCost((int) (optimalCost*maxOpt));
-//				path = lrta.computePath(start, goal, stats);
-//				double cost = 0;
-//				if (path == null)	// Must had an early termination
-//					cost = optimalCost*maxOpt;
-//				else
-//					cost = stats.getPathCost();
-//				totalLRTATime += System.currentTimeMillis()-currentTime;
-//				// Otherwise add record to list of possiblities
-//		//		if (stats.getPathCost()/optimalCost >= minOpt)		// Difficulty of problem must be higher than minimum cutoff
-//					problems.add(new Path(apath, -1*cost/optimalCost, stats.getPathLength(), start, goal));
-//			}
-//		}
-//
-//		Collections.sort(problems);	// Sort in ascending order
-//
-//		ArrayList<SubgoalDBRecord> keptRecords = new ArrayList<SubgoalDBRecord>();
-//
-//		// Select only required number of paths and compress them
-//		for (int i=0; i < maxRecords && i < problems.size(); i++)
-//		{
-//			Path p = problems.get(i);
-//			// Lookup record in existing database
-//			SubgoalDBRecord rec = sgdb.getRecord(p.getStart(), p.getGoal());
-//			if (rec == null)
-//			{	System.out.println("Problem");
-//				rec = sgdb.getRecord(p.getStart(), p.getGoal());
-//			}
-//			if (rec.getSubgoalList() == null)
-//				numSubgoals++;
-//			else
-//				numSubgoals += rec.getSubgoalList().length+1;
-//
-//			keptRecords.add(rec);
-//			//System.out.println("Selected record: "+i+" Subopt: "+p.getCost()+" "+" start: "+p.getStart().id+" rec: "+rec);
-//			//SearchUtil.printPath(path);
-//		}
-//
-//		sgdb.replaceRecords(keptRecords);
-//		sgdb.init();		// Redo the lookup matrix for records as now may be missing some
-//		System.out.println("Generated filtered database with "+sgdb.getSize()+" records in time: "+(System.currentTimeMillis()-startTime)/1000);
-//		System.out.println("Time performing A* estimation: "+totalATime+" Time performing subgoal calculation: "+totalLRTATime);
-//		System.out.println("Number of subgoals: "+numSubgoals);
-//		dbstat.addStat(8, count);
-//		dbstat.addStat(9, numSubgoals);
-//		//long overallTime = (System.currentTimeMillis()-startTime);
-//		//dbstat.addStat(10, overallTime);
-//		dbstat.addStat(13, totalATime);
-//		dbstat.addStat(14, totalLRTATime);
-//		return sgdb;
-//	}
-    /*
-     * Computes a tree of subgoals as a database
-     */
-//	public SubgoalTreeDB computeTreeDB(int num, SearchAbstractAlgorithm searchAlg, DBStatsRecord dbstat, SubgoalTreeDB sgdb)
-//	{
-//		System.out.println("Creating tree subgoal database.");
-//		long startTime = System.currentTimeMillis();
-//
-//		int numnodes = 0, numtrees = 0;
-//
-//		int[] node = new int [1000];
-//		int[] parentn = new int[1000];
-//		int count = 0;
-//		ExpandArray neighbors = new ExpandArray();
-//
-//		BitSet closedList = new BitSet(problem.getMaxSize());
-//
-//		// Go through all states and make a tree for them
-//		problem.initIterator();
-//		SearchState goal = new SearchState();
-//		while (problem.nextState(goal))
-//		{
-//			// Perform Dijkstra's from this state and identify states for subgoals
-//			PriorityQueue<SearchState> openList = new PriorityQueue<SearchState>();
-//			HashMap<Integer, SearchState> openListLookup = new HashMap<Integer, SearchState>();
-//			closedList.clear();
-//
-//			goal.g = 0;				// Using g for g(s) in the algorithm
-//			goal.h = 0;				// Using h for g_sub(s)
-//			goal.stateData = goal;	// Equivalent to Sub(s)
-//			goal.cost = 0;			// Just used so priority queue sorts on it (smallest to largest) - equivalent to goal.g all times
-//			count = 0;
-//
-//			openList.add(goal);
-//	        while (openList.size() > 0)
-//	        {
-//	            // Find the lowest-cost state so far
-//	        	SearchState curr = openList.remove();
-//
-//	        	closedList.set(curr.id);
-//
-//	        	if (curr != goal)
-//	        	{
-//	        		SearchState parent = curr.prev;
-//	        		curr.stateData = parent.stateData;
-//	        		curr.h = parent.h + problem.getMoveCost(parent, curr);
-//	        	}
-//
-//	            // Expand the current state
-//	        	//ArrayList<SearchState> neighbors = problem.getNeighbors(curr);
-//	        	problem.getNeighbors(curr.id, neighbors);
-//	    		for (int i=0; i < neighbors.num(); i++)
-//	    		{	// SearchState next = neighbors.get(i);
-//	    			int nextid = neighbors.get(i);
-//
-//	    			if (closedList.get(nextid))
-//	    				continue;
-//
-//	    			int moveCost = problem.getMoveCost(curr.id, nextid);
-//	    			int newG = curr.g + moveCost;
-//
-//	    			// 	Add state to open list.  If already there, update its cost only
-//	    			SearchState state = openListLookup.get(GameMap.ints[nextid]);
-//
-//	    			if (state == null)
-//	    			{	state = new SearchState(nextid);
-//	    				state.g = Integer.MAX_VALUE;
-//	    				state.cost = Integer.MAX_VALUE;
-//	    			}
-//	    			else
-//	    			{	if (state.g > newG)
-//	    				{	openList.remove(state);
-//	    				}
-//	    			}
-//
-//	    			if (state.g > newG)
-//	    			{	state.g = newG;
-//	    				state.h = curr.h + moveCost;
-//	    				state.cost = state.g;
-//	    				state.prev = curr;
-//	    				if (state.h != problem.computeDistance(state.id, ((SearchState) curr.stateData).id) )
-//	    				{	curr.h = 0;
-//
-//	    					// Add node to tree
-//	    					node[count] = curr.id;
-//	    					parentn[count++] = ((SearchState) curr.stateData).id;
-//
-//	    					numnodes++;
-//	    					curr.stateData = curr;
-//	    				}
-//	    				openList.add(state);
-//	    				openListLookup.put(GameMap.ints[state.id], state);
-//	    			}
-//	    		}
-//	        } // end while
-//
-//	        // Add the tree
-//	        sgdb.addtree(goal.id, node, parentn, count);
-//	        numtrees++;
-//	        if (numtrees % 100 == 0)
-//	        	System.out.println("Generated tree: "+numtrees + " Num nodes: "+count);
-//		}
-//
-//		System.out.println("Generated tree database entries in time: "+(System.currentTimeMillis()-startTime)/1000);
-//		System.out.println("Number of trees: "+numtrees+"\tNumber of nodes: "+numnodes);
-//		dbstat.addStat(8, numtrees);
-//		dbstat.addStat(9, numnodes);
-//		long overallTime = (System.currentTimeMillis()-startTime);
-//		dbstat.addStat(10, overallTime);
-//		dbstat.addStat(13, 0);
-//		dbstat.addStat(14, 0);
-//		return sgdb;
-//	}
-
-    /**
-     * Computes a database based on a problem that has undergone clique abstraction.  Assumes at least one level of abstraction has been performed.
-     * (i.e. Does not work on base maps)
-     * Each database entry stores a start and goal which is the centroid of the abstract state, a search depth, and a subgoal to exit the current state.
-     * The database has an entry for all pairs of abstract states as required by the DLRTA* algorithm.
-     */
-//	public SubgoalDBDLRTA computeAbstractDB(DBStatsRecord dbstat, SubgoalDBDLRTA database)
-//	{
-//		System.out.println("Creating database based on clique abstraction.");
-//		long startTime = System.currentTimeMillis();
-//		long aStarTime = 0;
-//		ArrayList<SearchState> path;
-//		ArrayList<Integer> subgoal=null;
-//		AStar astar = new AStar(problem);
-//		StatsRecord stats = new StatsRecord();
-//
-//		int i, count = 0;
-//
-//		groups = problem.getGroups();
-//
-//		// Compute all pairs subgoal and minimum lookahead
-//		// Compute the neighbors of all groups
-//		Iterator<Map.Entry<Integer,GroupRecord>> it = groups.entrySet().iterator();
-//		Iterator<Map.Entry<Integer,GroupRecord>> it2;
-//
-//		while (it.hasNext())
-//		{
-//			GroupRecord startState = it.next().getValue();
-//			it2 = groups.entrySet().iterator();
-//			while (it2.hasNext())
-//			{
-//				GroupRecord goalState = it2.next().getValue();
-//
-//				if (goalState == startState)
-//					continue;
-//
-//				// Compute optimal A* path between start and goal
-//				long start = System.currentTimeMillis();
-//				path = astar.computePath(new SearchState(startState.groupRepId), new SearchState(goalState.groupRepId), stats);
-//				aStarTime += (System.currentTimeMillis() - start);
-//
-//				if (path != null)
-//				{	// What to do if two abstract states are not reachable?
-//					int currentGroup = startState.groupId - GameMap.START_NUM;	// TODO: Can this be avoided or be made consistent?
-//					SearchState state=null;
-//					// Find first state on path that is in next abstract state and make that the subgoal
-//					for (i=0; i < path.size(); i++)
-//					{	state = path.get(i);
-//						if (database.getAbstractState(state.id) != currentGroup)
-//							break;
-//					}
-//					if (database.getAbstractState(state.id) != currentGroup)
-//					{	// TODO: Not sure what to do in case where no element in the path does not leave group.  I believe this case is not possible by construction.
-//						subgoal = new ArrayList<Integer>();
-//						subgoal.add(state.id);
-//					}
-//
-//					// Not computing optimal lookahead depth.  Assumption is that it is always one for now.
-//					//int depth = 1;
-//
-//					int[] subgoals = new int[subgoal.size()];
-//					for (int k=0; k < subgoal.size(); k++)
-//						subgoals[k] = (int) subgoal.get(k);
-//
-//					int goalGroup= goalState.groupId-GameMap.START_NUM;
-//					// currentGroup = currentGroup-1;
-//					// SubgoalDBRecord rec = new SubgoalDBRecord(i,startState.groupRepId, goalState.groupRepId, subgoals, depth);
-//					SubgoalDBRecord rec = new SubgoalDBRecord(count, startState.groupRepId, goalState.groupRepId, subgoals,
-//							(currentGroup+1)*10000+goalGroup);
-//					database.addRecord(rec);
-//					count++;
-//				//	if (count % 1 == 0)
-//				//		System.out.println("Added record "+count+" between: "+(currentGroup)+" and "+(goalGroup)+" Record: "+rec.toString(problem));
-//					// System.out.println("Added record "+count+" Record: "+rec);
-//				}
-//			}
-//		}
-//
-//		dbstat.addStat(2, count);
-//		dbstat.addStat(8, count);		// Records
-//		dbstat.addStat(9, count*2);		// Subgoals (one subgoal + end per record)
-//		dbstat.addStat(13, aStarTime);
-//		long overallTime = (System.currentTimeMillis()-startTime)/1000;
-//		dbstat.addStat(10, overallTime);
-//		System.out.println("Generated database with "+(count)+" entries in time: "+overallTime);
-//		return database;
-//	}
-
-    public SubgoalDB computeDBDP2(SubgoalDB db, SearchAlgorithm astarj, DBStatsRecord dbstats, int numLevels) {
+    public SubgoalDB computeDBDP2(SubgoalDB db, SearchAlgorithm astarj, DBStatsRecord dbstats, int numLevels) throws Exception {
         groups = problem.getGroups();
 
         long current = System.currentTimeMillis();
@@ -540,7 +120,7 @@ public class GameDB {
         return db;
     }
 
-    public static HashSet<Integer> getNeighbors(TreeMap<Integer, GroupRecord> groups, GroupRecord startGroup, int numLevels, boolean isPartition) {
+    public static HashSet<Integer> getNeighbors(GroupRecord[] groups, GroupRecord startGroup, int numLevels, boolean isPartition) {
         HashSet<Integer> neighbors = startGroup.getComputedNeighborIds();
 
         if (neighbors == null || isPartition) {
@@ -558,7 +138,7 @@ public class GameDB {
                     if (done.get(neighborId)) continue;    // Already processed this neighbors set
 
                     done.set(neighborId);
-                    neighborGroup = groups.get(neighborId);
+                    neighborGroup = groups[neighborId - GameMap.START_NUM];
                     // Do not itself if already there
                     for (int val : neighborGroup.getNeighborIds()) {
                         if (val != startGroup.groupId) neighbors2.add(val);
@@ -576,7 +156,7 @@ public class GameDB {
         return neighbors;
     }
 
-    public static long computeBasePaths(SearchProblem problem, TreeMap<Integer, GroupRecord> groups, SearchAlgorithm searchAlg, int[][] lowestCost, int[][][] paths, int[][] neighbor, int numGroups, int numLevels, boolean asSubgoals, DBStatsRecord dbstats) {
+    public static long computeBasePaths(SearchProblem problem, GroupRecord[] groups, SearchAlgorithm searchAlg, int[][] lowestCost, int[][][] paths, int[][] neighbor, int numGroups, int numLevels, boolean asSubgoals, DBStatsRecord dbstats) {
         int goalGroupLoc, startGroupLoc;
         GroupRecord startGroup, goalGroup;
         HashSet<Integer> neighbors;
@@ -597,14 +177,14 @@ public class GameDB {
         // Base case: Generate paths to all neighbors
         int numStates = 0;
         for (int i = 0; i < numGroups; i++) {
-            startGroup = groups.get(i + GameMap.START_NUM);
+            startGroup = groups[i];
 
             neighbors = GameDB.getNeighbors(groups, startGroup, numLevels, false);
             // System.out.println("Doing group: "+i+" Neighbors: "+neighbors.size());
             // Generate for each neighbor group
             for (int goalGroupId : neighbors) {
                 // Compute the shortest path between center representative of both groups
-                goalGroup = groups.get(goalGroupId);
+                goalGroup = groups[goalGroupId - GameMap.START_NUM];
 
                 path = astar.computePath(new SearchState(startGroup.groupRepId), new SearchState(goalGroup.groupRepId), stats);
                 numBase++;
@@ -626,20 +206,20 @@ public class GameDB {
                     numStates += path.size();
                 }
             }
-            //	System.out.println("Done group: "+i+" Num paths (so far): "+numBase);
         }
 
         long endTime = System.currentTimeMillis();
         long baseTime = endTime - currentTime;
         System.out.println("Time to compute base paths: " + (baseTime));
         System.out.println("Base neighbors generated paths: " + numBase + " Number of states: " + numStates);
-        dbstats.addStat(9, numStates);        // Set number of subgoals.  Will be changed by a version that pre-computes all paths but will not be changed for the dynamic version.
+        dbstats.addStat(9, numStates);      // Set number of subgoals.  Will be changed by a version that pre-computes all paths but will not be changed for the dynamic version.
         dbstats.addStat(8, numBase);        // # of records (only corresponds to base paths)
         return baseTime;
     }
 
-    public SubgoalDynamicDB2 computeDynamicDB(SubgoalDynamicDB2 db, SearchAbstractAlgorithm searchAlg, DBStatsRecord dbstats, int numLevels) {
+    public SubgoalDynamicDB3 computeDynamicDBUsingSubgoalDynamicDB3(SubgoalDynamicDB3 db, SearchAbstractAlgorithm searchAlg, DBStatsRecord dbstats, int numLevels) throws Exception {
         groups = problem.getGroups();
+        numGroups = problem.getNumGroups();
 
         long current = System.currentTimeMillis();
         problem.computeNeighbors();
@@ -647,21 +227,7 @@ public class GameDB {
         dbstats.addStat(18, neighborTime);
 
         // Generate subgoal databases using the groups
-        db.compute(problem, groups, searchAlg, dbstats, numLevels);
-
-        return db;
-    }
-
-    public SubgoalDynamicDB3 computeDynamicDBUsingSubgoalDynamicDB3(SubgoalDynamicDB3 db, SearchAbstractAlgorithm searchAlg, DBStatsRecord dbstats, int numLevels) {
-        groups = problem.getGroups();
-
-        long current = System.currentTimeMillis();
-        problem.computeNeighbors();
-        long neighborTime = System.currentTimeMillis() - current;
-        dbstats.addStat(18, neighborTime);
-
-        // Generate subgoal databases using the groups
-        db.compute(problem, groups, searchAlg, dbstats, numLevels);
+        db.compute(problem, groups, numGroups, searchAlg, dbstats, numLevels);
 
         return db;
     }
@@ -677,7 +243,8 @@ public class GameDB {
         int SIZE_CUTOFF = 1;
         int count = 0;
         int numSubgoals = 0;
-        int numGroups = groups.size();
+        // FIXME
+        int numGroups = this.numGroups;
         int[][] lowestCost = new int[numGroups][numGroups];
         int[][][] paths = new int[numGroups][numGroups][];
         int[][] neighbor = new int[numGroups][numGroups];
@@ -704,17 +271,6 @@ public class GameDB {
         boolean changed = true;
         int numUpdates = 0;
         while (changed) {
-			/*
-			System.out.println("\nCurrent matrix: ");
-			for (int i=0; i < numGroups; i++)
-			{	
-				for (int j=0; j < numGroups; j++)
-				{
-					System.out.print(lowestCost[i][j]+" ("+neighbor[i][j]+")\t");
-				}
-				System.out.println();
-			}
-			*/
             changed = false;
 
             for (int i = 0; i < numGroups; i++) {
@@ -735,42 +291,7 @@ public class GameDB {
                 }
             }
         }
-		
-		/*
-		// Previous code recomputed neighbors each time
-		// Now the dynamic programming portion
-		// Idea: Keep updating from neighbors until no further changes are made
-		boolean changed = true;
-		int numUpdates = 0;
-		while (changed)
-		{
-			changed = false;
-			
-			for (int i=0; i < numGroups; i++)
-			{	
-				startGroup = groups.get(i+GameMap.START_NUM);
-				// Process all neighbors of this node
-				neighbors = GameDB.getNeighbors(groups, startGroup, numLevels);
-				Iterator<Integer> it = neighbors.iterator();
-				while (it.hasNext())
-				{
-					int neighborId = (Integer) it.next()- GameMap.START_NUM;
-					// Compute new costs for all locations based on value of neighbor
-					for (int j=0; j < numGroups; j++)
-					{	if (i==j)
-							continue;
-						if (lowestCost[neighborId][j]>0 && (lowestCost[i][j]==0 || lowestCost[i][j] > lowestCost[i][neighborId]+lowestCost[neighborId][j]))
-						{
-							changed = true;
-							lowestCost[i][j] = lowestCost[i][neighborId]+lowestCost[neighborId][j];
-							neighbor[i][j] = neighborId;
-							numUpdates++;
-						}
-					}
-				}
-			}
-		}
-				*/
+
         System.out.println("Number of cost updates: " + numUpdates);
         endTime = System.currentTimeMillis();
         long dpTime = endTime - currentTime;
@@ -783,13 +304,13 @@ public class GameDB {
         int totalCost = 0, pathSize;
         path = new int[5000];
         for (i = 0; i < numGroups; i++) {
-            startGroup = groups.get(i + GameMap.START_NUM);
+            startGroup = groups[i];
             if (startGroup.getNumStates() < SIZE_CUTOFF) continue;
 
             for (j = 0; j < numGroups; j++) {
                 if (i == j) continue;
 
-                goalGroup = groups.get(j + GameMap.START_NUM);
+                goalGroup = groups[j];
                 if (goalGroup.getNumStates() < SIZE_CUTOFF) continue;
 
                 // This code builds only the path required on demand (may incur more time as have to continually merge paths but may save time by avoiding storing/copying lists to do construction)
@@ -971,43 +492,6 @@ public class GameDB {
             lastId = nextId;
         }
         return pathLen;
-			 /*
-		
-		int currentGroupId = startGroupId;
-		int goalGroupSeedId = db.getSeedId(goalGroupId);		
-		
-		while (true)
-		{
-			// Select minimum neighbor
-			int minCost = 100000, minLoc = -1;			
-			for (int k=0; k < neighborId[currentGroupId].length; k++)
-			{	int neighborSeedId = db.getSeedId(neighbor[currentGroupId][k]);
-				int cost = lowestCost[currentGroupId][k] + problem.computeDistance(neighborSeedId, goalGroupSeedId);		
-				if (cost < minCost)
-				{	minCost = cost;
-					minLoc = k;					
-				}
-			}
-			
-			if (minLoc == -1)
-				// No neighbor - failure
-				return 0;
-			
-			// Copy path to get to this neighbor
-			int start = 0;
-			if (lastOffset > 0)
-				start = 1;
-			for (int k=start; k < paths[currentGroupId][minLoc].length; k++)		// Copy (but do not include duplicate start node - start from 1 instead of 0).
-				path[k] = paths[currentGroupId][minLoc][k];
-			lastOffset += paths[currentGroupId][minLoc].length-start;
-	
-			if (goalGroupId == neighbor[currentGroupId][minLoc])
-			{	// Found it
-				return lastOffset;
-			}
-			currentGroupId = neighbor[currentGroupId][minLoc];	// Advance to neighbor and continue
-		}
-*/
     }
 
     public static int mergePaths4(int startGroupId, int goalGroupId, int[][][] paths, int[][] lowestCost, int[][] neighborId, int[] path) {
@@ -1113,43 +597,6 @@ public class GameDB {
             lastId = nextId;
         }
         return pathLen;
-			 /*
-
-		int currentGroupId = startGroupId;
-		int goalGroupSeedId = db.getSeedId(goalGroupId);
-
-		while (true)
-		{
-			// Select minimum neighbor
-			int minCost = 100000, minLoc = -1;
-			for (int k=0; k < neighborId[currentGroupId].length; k++)
-			{	int neighborSeedId = db.getSeedId(neighbor[currentGroupId][k]);
-				int cost = lowestCost[currentGroupId][k] + problem.computeDistance(neighborSeedId, goalGroupSeedId);
-				if (cost < minCost)
-				{	minCost = cost;
-					minLoc = k;
-				}
-			}
-
-			if (minLoc == -1)
-				// No neighbor - failure
-				return 0;
-
-			// Copy path to get to this neighbor
-			int start = 0;
-			if (lastOffset > 0)
-				start = 1;
-			for (int k=start; k < paths[currentGroupId][minLoc].length; k++)		// Copy (but do not include duplicate start node - start from 1 instead of 0).
-				path[k] = paths[currentGroupId][minLoc][k];
-			lastOffset += paths[currentGroupId][minLoc].length-start;
-
-			if (goalGroupId == neighbor[currentGroupId][minLoc])
-			{	// Found it
-				return lastOffset;
-			}
-			currentGroupId = neighbor[currentGroupId][minLoc];	// Advance to neighbor and continue
-		}
-*/
     }
 
     /**
