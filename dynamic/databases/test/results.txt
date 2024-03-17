@@ -21,3 +21,14 @@ Total time partial recomputation: 1248ms
 Total time complete recomputation: 21742ms
 Total time partial recomputation: 1239ms
 Total time complete recomputation: 21508ms
+
+Total time partial recomputation: 1253ms
+Total time complete recomputation: 20638ms
+Total time partial recomputation: 1305ms
+Total time complete recomputation: 21428ms
+Total time partial recomputation: 1271ms
+Total time complete recomputation: 21002ms
+Total time partial recomputation: 1255ms
+Total time complete recomputation: 20415ms
+Total time partial recomputation: 1296ms
+Total time complete recomputation: 20801ms
