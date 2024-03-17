@@ -201,8 +201,6 @@ public class DBAStarUtil {
             }
             // Tombstone group record in groups map
             map.addGroup(REGION_ID, null);
-            // Tombstone region in region reps array
-            map.tombstoneRegionRepUsingRegionId(REGION_ID);
 
             // Database changes
             dbBW.recomputeBasePathsAfterElimination(REGION_ID);
@@ -500,9 +498,6 @@ public class DBAStarUtil {
             // Add the new group record to the groups map
             map.addGroup(regionId, newRec);
 
-            // Update regionReps array
-            map.addRegionRep(regionId, newRec.groupRepId);
-
             // Database changes
             dbBW.recomputeBasePathsIfSolitary(regionId);
         } else {
@@ -568,9 +563,6 @@ public class DBAStarUtil {
 
                 // Add the new group record to the groups map
                 map.addGroup(regionId, newRec);
-
-                // Update regionReps array
-                map.addRegionRep(regionId, newRec.groupRepId);
 
                 // Database changes
                 dbBW.recomputeBasePathsIfConnected(regionId, problem, groups, neighbouringRegions);
@@ -802,8 +794,6 @@ public class DBAStarUtil {
             }
             // Tombstone group record in groups map
             map.addGroup(REGION_ID, null);
-            // Tombstone region in region reps array
-            map.tombstoneRegionRepUsingRegionId(REGION_ID);
 
             // Database changes
             dbBW.recomputeBasePathsAfterElimination(REGION_ID);
@@ -1086,9 +1076,6 @@ public class DBAStarUtil {
             // Add the new group record to the groups map
             map.addGroup(regionId, newRec);
 
-            // Update regionReps array
-            map.addRegionRep(regionId, newRec.groupRepId);
-
             // Database changes
             dbBW.recomputeBasePathsIfSolitary(regionId);
         } else {
@@ -1152,9 +1139,6 @@ public class DBAStarUtil {
 
                 // Add the new group record to the groups map
                 map.addGroup(regionId, newRec);
-
-                // Update regionReps array
-                map.addRegionRep(regionId, newRec.groupRepId);
 
                 // Database changes
                 dbBW.recomputeBasePathsIfConnected(regionId, problem, groups, neighbouringRegions);
