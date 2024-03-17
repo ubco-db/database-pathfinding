@@ -77,28 +77,6 @@ public final class MapHelpers {
     }
 
     /**
-     * @param map GameMap object
-     * @param row row number of state on map
-     * @param col column number of state on map
-     * @return number of sector the state is part of
-     */
-    public static int getSectorId(GameMap map, int row, int col, int gridSize) {
-        int numSectorsPerRow = (int) Math.ceil(map.cols * 1.0 / gridSize);
-        return row / gridSize * numSectorsPerRow + col / gridSize;
-    }
-
-    /**
-     * @param map GameMap object
-     * @param sid state id of state on map
-     * @return number of sector the state is part of
-     */
-    public static int getSectorId(GameMap map, int sid, int gridSize) {
-        int row = map.getRow(sid);
-        int col = map.getCol(sid);
-        return getSectorId(map, row, col, gridSize);
-    }
-
-    /**
      * @param map        GameMap object
      * @param neighbours the eight squares touching the state to find region id for
      * @param sectorId   sector number of state to find region id for
@@ -108,7 +86,7 @@ public final class MapHelpers {
     public static int getRegionIdFromNeighbourStates(GameMap map, ArrayList<SearchState> neighbours, int sectorId, int gridSize) throws Exception {
         for (SearchState neighbour : neighbours) {
             // Need to use !isWall instead of isOpenCell, because the cells are not empty, they have their regions written into them
-            if (!map.isWall(neighbour.id) && getSectorId(map, neighbour.id, gridSize) == sectorId) {
+            if (!map.isWall(neighbour.id) && map.findSectorId(neighbour.id) == sectorId) {
                 return map.squares[map.getRow(neighbour.id)][map.getCol(neighbour.id)];
             }
         }
@@ -128,7 +106,7 @@ public final class MapHelpers {
             // Need to use !isWall instead of isOpenCell, because the cells are not empty, they have their regions written into them
             if (!map.isWall(neighbour.id)) {
                 // Fill HashMap with state id to sector id mapping
-                openStatesToSectors.put(neighbour.id, getSectorId(map, neighbour.id, gridSize));
+                openStatesToSectors.put(neighbour.id, map.findSectorId(neighbour.id));
             }
         }
 

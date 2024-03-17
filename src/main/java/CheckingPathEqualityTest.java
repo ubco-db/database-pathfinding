@@ -9,7 +9,6 @@ import util.DBAStarUtil;
 import java.util.ArrayList;
 
 import static util.FileWritingUtil.writeResultToFile;
-import static util.MapHelpers.getSectorId;
 import static util.MapHelpers.isPathEqual;
 
 public class CheckingPathEqualityTest {
@@ -24,10 +23,10 @@ public class CheckingPathEqualityTest {
 
     public static void main(String[] args) throws Exception {
         DBAStar3 dbaStar3;
-        GameMap startingMap = new GameMap(PATH_TO_MAP);
+        GameMap startingMap = new GameMap(PATH_TO_MAP, GRID_SIZE);
 
         // Initialize DBAStarUtil with settings for DBAStar run
-        DBAStarUtil dbaStarUtil = new DBAStarUtil(GRID_SIZE, 1, MAP_FILE_NAME, DBA_STAR_DB_PATH);
+        DBAStarUtil dbaStarUtil = new DBAStarUtil( 1, MAP_FILE_NAME, DBA_STAR_DB_PATH);
 
         // Fix start
         int startStateId = 13411;
@@ -38,7 +37,7 @@ public class CheckingPathEqualityTest {
         // Start in sector 12 and add all goal ids (open spots, no wall):
         for (int i = 16; i < startingMap.rows; i++) {
             for (int j = 0; j < startingMap.cols; j++) {
-                if (!startingMap.isWall(i, j) && (getSectorId(startingMap, startingMap.getId(i, j), GRID_SIZE) == sectorNum)) {
+                if (!startingMap.isWall(i, j) && (startingMap.findSectorId(i, j)) == sectorNum) {
                     goalIds.add(startingMap.getId(i, j));
                 }
             }
@@ -105,7 +104,7 @@ public class CheckingPathEqualityTest {
 
             // Adding wall and computing database
             Walls.addWall(PATH_TO_MAP, wallLocation, startingMap);
-            startingMap = new GameMap(PATH_TO_MAP); // Resetting map
+            startingMap = new GameMap(PATH_TO_MAP, GRID_SIZE); // Resetting map
             dbaStar3 = dbaStarUtil.computeDBAStarDatabase(startingMap, "AW");
 
             int goalNum = 0;

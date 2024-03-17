@@ -12,15 +12,16 @@ public class AddingAllWallsEfficientlyTest {
     final static String MAP_FILE_PATH = "maps/dMap/";
     final static String MAP_FILE_NAME = "012.map";
     final static String PATH_TO_MAP = MAP_FILE_PATH + MAP_FILE_NAME;
+    final static int GRID_SIZE = 16;
 
     // private static final Logger logger = LogManager.getLogger(AddingAllWallsEfficientlyTest.class);
 
     public static void main(String[] args) throws Exception {
         DBAStar3 dbaStar3;
-        GameMap startingMap = new GameMap(PATH_TO_MAP);
+        GameMap startingMap = new GameMap(PATH_TO_MAP, GRID_SIZE);
 
         // Initialize DBAStarUtil with settings for DBAStar run
-        DBAStarUtil dbaStarUtil = new DBAStarUtil(16, 1, MAP_FILE_NAME, DBA_STAR_DB_PATH);
+        DBAStarUtil dbaStarUtil = new DBAStarUtil(1, MAP_FILE_NAME, DBA_STAR_DB_PATH);
 
         // Fix start
         int startId = 13411;
@@ -62,7 +63,7 @@ public class AddingAllWallsEfficientlyTest {
 
         /* complete recomputation */
 
-        startingMap = new GameMap(PATH_TO_MAP); // resetting map
+        startingMap = new GameMap(PATH_TO_MAP, GRID_SIZE); // resetting map
 
         long startTimeFull = System.currentTimeMillis();
 
