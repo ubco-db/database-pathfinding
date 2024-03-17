@@ -126,7 +126,7 @@ public class HeuristicCompare {
         ArrayList<SearchState> path = null;
         StatsRecord stats;
 
-        GameMap map = new GameMap(mapFile);
+        GameMap map = new GameMap(mapFile, 16);
         int numStarts = 100, numGoals = 1000;
 
         MapSearchProblem problem = new MapSearchProblem(map);
