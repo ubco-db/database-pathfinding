@@ -374,7 +374,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             int groupLoc = id - GameMap.START_NUM;
 
             // Get neighbours of the new/surrounding regions (updated in map.recomputeNeighbors)
-            HashSet<Integer> neighbours = groups.get(id).getNeighborIds();
+            HashSet<Integer> neighbours = groups[groupLoc].getNeighborIds();
             // Create an int array with the same size as the HashSet
             int[] neighbourArray = new int[neighbours.size()];
 
@@ -404,7 +404,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
                 // TODO: May want to pass this as parameter
                 SearchAlgorithm searchAlg = new HillClimbing(problem, 10000);
 
-                path = astar.computePath(new SearchState(groups.get(id).groupRepId), new SearchState(groups.get(neighbourLoc + GameMap.START_NUM).groupRepId), stats);
+                path = astar.computePath(new SearchState(groups[groupLoc].groupRepId), new SearchState(groups[neighbourLoc].groupRepId), stats);
                 SearchUtil.computePathCost(path, stats, problem);
                 int pathCost = stats.getPathCost();
 
@@ -424,7 +424,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
                     logger.error("groupLoc: " + groupLoc);
                     logger.error("neighbourLoc: " + neighbourLoc);
                     logger.error("neighborIds of neighbourLoc: " + Arrays.toString(this.neighborLoc[neighbourLoc]));
-                    throw new Exception("There is an issue with the neighbours of region: " + id + ", region rep: " + groups.get(id).groupRepId);
+                    throw new Exception("There is an issue with the neighbours of region: " + id + ", region rep: " + groups[groupLoc].groupRepId);
                 }
                 // Update lowestCost of neighbour
                 this.lowestCost[neighbourLoc][indexToUpdate] = pathCost;
@@ -439,7 +439,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
      * @param problem  MapSearchProblem used in A*
      * @param groups   groups mapping
      */
-    public void recomputeBasePaths(int regionId, MapSearchProblem problem, TreeMap<Integer, GroupRecord> groups) {
+    public void recomputeBasePaths(int regionId, MapSearchProblem problem, GroupRecord[] groups) {
         // This is for all cases where the paths change but the neighbourhood does not:
         // E.g. wall on region rep, wall that moves region rep, wall that changes shortest path
 
@@ -462,7 +462,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             // TODO: May want to pass this as parameter
             SearchAlgorithm searchAlg = new HillClimbing(problem, 10000);
 
-            path = astar.computePath(new SearchState(groups.get(regionId).groupRepId), new SearchState(groups.get(neighbourLoc + GameMap.START_NUM).groupRepId), stats);
+            path = astar.computePath(new SearchState(groups[regionId - GameMap.START_NUM].groupRepId), new SearchState(groups[neighbourLoc].groupRepId), stats);
             SearchUtil.computePathCost(path, stats, problem);
             int pathCost = stats.getPathCost();
 
@@ -471,7 +471,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             // Update path to region
             this.paths[groupLoc][i] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
 
-            path = astar.computePath(new SearchState(groups.get(neighbourLoc + GameMap.START_NUM).groupRepId), new SearchState(groups.get(regionId).groupRepId), stats);
+            path = astar.computePath(new SearchState(groups[neighbourLoc].groupRepId), new SearchState(groups[regionId - GameMap.START_NUM].groupRepId), stats);
             SearchUtil.computePathCost(path, stats, problem);
             pathCost = stats.getPathCost();
 
@@ -514,7 +514,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
      * @param groups      groups mapping
      * @param neighborIds ArrayList containing region ids of neighbour regions
      */
-    public void recomputeBasePathsIfConnected(int regionId, MapSearchProblem problem, TreeMap<Integer, GroupRecord> groups, HashSet<Integer> neighborIds) {
+    public void recomputeBasePathsIfConnected(int regionId, MapSearchProblem problem, GroupRecord[] groups, HashSet<Integer> neighborIds) {
         // Case where new region has neighbours (e.g. is in a new sector but connected)
 
         // If we have run out of free space, increase the size of the arrays
@@ -547,7 +547,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             // TODO: May want to pass this as parameter
             SearchAlgorithm searchAlg = new HillClimbing(problem, 10000);
 
-            path = astar.computePath(new SearchState(groups.get(regionId).groupRepId), new SearchState(groups.get(neighbourLoc + GameMap.START_NUM).groupRepId), stats);
+            path = astar.computePath(new SearchState(groups[regionId - GameMap.START_NUM].groupRepId), new SearchState(groups[neighbourLoc].groupRepId), stats);
             SearchUtil.computePathCost(path, stats, problem);
             int pathCost = stats.getPathCost();
 
@@ -576,7 +576,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             // Assign neighbourId
             this.neighborLoc[neighbourLoc][len] = groupLoc;
 
-            path = astar.computePath(new SearchState(groups.get(neighbourLoc + GameMap.START_NUM).groupRepId), new SearchState(groups.get(regionId).groupRepId), stats);
+            path = astar.computePath(new SearchState(groups[neighbourLoc].groupRepId), new SearchState(groups[neighbourLoc].groupRepId), stats);
             SearchUtil.computePathCost(path, stats, problem);
             pathCost = stats.getPathCost();
 
@@ -588,7 +588,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         }
     }
 
-    public void recomputeUnblocker(int regionId, int neighbourId, MapSearchProblem problem, TreeMap<Integer, GroupRecord> groups) throws Exception {
+    public void recomputeUnblocker(int regionId, int neighbourId, MapSearchProblem problem, GroupRecord[] groups) throws Exception {
         // In the unblocker case, we have two regions that were previously not neighbours but now are
 
         // If we have run out of free space, increase the size of the arrays
@@ -599,8 +599,8 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         int neighbourLoc = neighbourId - GameMap.START_NUM;
 
         // Get region rep of region wall was removed in, and get region rep of neighbour region that is now accessible
-        int groupRepId = groups.get(regionId).groupRepId;
-        int neighborRepId = groups.get(neighbourId).groupRepId;
+        int groupRepId = groups[groupLoc].groupRepId;
+        int neighborRepId = groups[neighbourLoc].groupRepId;
 
         // Recompute unblocker from region
         recomputeUnblocker(groupLoc, groupRepId, neighbourLoc, neighborRepId, problem);
@@ -650,7 +650,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         this.paths[groupLoc][idx] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
     }
 
-    public void recomputeCornerBlocker(int regionId, int neighbourId, MapSearchProblem problem, TreeMap<Integer, GroupRecord> groups) throws Exception {
+    public void recomputeCornerBlocker(int regionId, int neighbourId) throws Exception {
         // In the blocker case, we have two regions that were previously neighbours but now aren't
 
         // If we have run out of free space, increase the size of the arrays
