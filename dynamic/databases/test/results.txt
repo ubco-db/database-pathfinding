@@ -22,6 +22,8 @@ Total time complete recomputation: 21742ms
 Total time partial recomputation: 1239ms
 Total time complete recomputation: 21508ms
 
+Using array instead of map:
+
 Total time partial recomputation: 1253ms
 Total time complete recomputation: 20638ms
 Total time partial recomputation: 1305ms
