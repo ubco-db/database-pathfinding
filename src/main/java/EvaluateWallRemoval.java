@@ -13,6 +13,7 @@ public class EvaluateWallRemoval {
     final static String MAP_FILE_PATH = "maps/dMap/";
     final static String MAP_FILE_NAME = "012.map";
     final static String PATH_TO_MAP = MAP_FILE_PATH + MAP_FILE_NAME;
+    final static int GRID_SIZE = 16;
 
     public static void main(String[] args) throws Exception {
         // Set start and goal
@@ -20,10 +21,10 @@ public class EvaluateWallRemoval {
         int goalId = 11671;
 
         // Configure settings for the run
-        DBAStarUtil dbaStarUtil = new DBAStarUtil(16, 1,  MAP_FILE_NAME, DBA_STAR_DB_PATH);
+        DBAStarUtil dbaStarUtil = new DBAStarUtil( 1,  MAP_FILE_NAME, DBA_STAR_DB_PATH);
 
         // Load map
-        GameMap startingMap = new GameMap(PATH_TO_MAP);
+        GameMap startingMap = new GameMap(PATH_TO_MAP, GRID_SIZE);
 
         // Build DBAStar Database with starting map and compute path on starting map
         DBAStar3 dbaStarBW = dbaStarUtil.computeDBAStarDatabase(startingMap, "BW"); // BW = before wall
@@ -60,7 +61,7 @@ public class EvaluateWallRemoval {
 
         // Recompute entire database to see if I matched it and compute path after full recomputation
         Walls.removeWall(PATH_TO_MAP, wallLocation, startingMap);
-        startingMap = new GameMap(PATH_TO_MAP);
+        startingMap = new GameMap(PATH_TO_MAP, GRID_SIZE);
         DBAStar3 dbaStarRW = dbaStarUtil.computeDBAStarDatabase(startingMap, "RW"); // RW = removed wall
         dbaStarUtil.getDBAStarPath(startId, goalId, "RW", dbaStarRW);
 

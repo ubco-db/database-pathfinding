@@ -15,25 +15,19 @@ import java.util.*;
 import static util.MapHelpers.*;
 
 public class DBAStarUtil {
-    private final int startNum;
-    private final int gridSize;
     private final int numNeighbourLevels;
     private final int cutoff;
     private final String mapFileName;
     private final String dbaStarDbPath;
-
     private static final Logger logger = LogManager.getLogger(DBAStarUtil.class);
 
     /**
-     * @param gridSize      sectors on the map will be gridSize by gridSize
      * @param cutoff        for HillClimbing algorithm
      * @param mapFileName   name of the .map file to use
      * @param dbaStarDbPath location where the database and other output will be generated
      */
-    public DBAStarUtil(int gridSize, int cutoff, String mapFileName, String dbaStarDbPath) {
+    public DBAStarUtil(int cutoff, String mapFileName, String dbaStarDbPath) {
         // startNum is used as an offset for values in the squares array, region indexing in the array starts at startNum
-        this.startNum = 50;
-        this.gridSize = gridSize;
         this.numNeighbourLevels = 1;
         this.cutoff = cutoff;
         this.mapFileName = mapFileName;
@@ -51,7 +45,7 @@ public class DBAStarUtil {
 
         SubgoalDynamicDB3 database = new SubgoalDynamicDB3(); // DP matrix in adjacency list representation (computed at run-time)
 
-        // String fileName = getDBName(wallStatus);
+        // String fileName = getDBName(wallStatus, map.getGridSize());
 
         logger.debug("Loading map and performing abstraction...");
 
@@ -61,14 +55,14 @@ public class DBAStarUtil {
 
         DBStatsRecord rec = new DBStatsRecord(dbStats.getSize());
         rec.addStat(0, "dbaStar (" + numNeighbourLevels + ")");
-        rec.addStat(1, gridSize);
+        rec.addStat(1, map.getGridSize());
         rec.addStat(3, cutoff);
         rec.addStat(4, mapFileName);
         rec.addStat(5, map.rows);
         rec.addStat(6, map.cols);
 
         currentTime = System.currentTimeMillis();
-        map = map.sectorAbstract2(gridSize);
+        map = map.sectorAbstract2();
 
         long resultTime = System.currentTimeMillis() - currentTime;
         rec.addStat(12, resultTime);
@@ -139,7 +133,7 @@ public class DBAStarUtil {
      * @param wallStatus used to name output files, either BW = before wall, AW = after wall, or RW = removed wall
      * @return String
      */
-    private String getDBName(String wallStatus) {
+    private String getDBName(String wallStatus, int gridSize) {
         return dbaStarDbPath + wallStatus + mapFileName + "_DBA-STAR_G" + gridSize + "_N" + numNeighbourLevels + "_C" + cutoff + ".dat";
     }
 
@@ -207,24 +201,20 @@ public class DBAStarUtil {
             }
             // Tombstone group record in groups map
             map.addGroup(REGION_ID, null);
-            // Tombstone region in region reps array
-            map.tombstoneRegionRepUsingRegionId(REGION_ID);
 
             // Database changes
             dbBW.recomputeBasePathsAfterElimination(REGION_ID);
         } else {
             // Other cases
-
-            final int NUM_SECTORS_PER_ROW = (int) Math.ceil(map.cols * 1.0 / gridSize);
-            final int SECTOR_ID = WALL_ROW / gridSize * NUM_SECTORS_PER_ROW + WALL_COL / gridSize;
+            final int SECTOR_ID = map.findSectorId(WALL_ROW, WALL_COL);
             logger.debug("Sector: " + SECTOR_ID);
 
             // Start of sector
-            final int START_ROW = (SECTOR_ID / NUM_SECTORS_PER_ROW) * gridSize;
-            final int START_COL = (SECTOR_ID % NUM_SECTORS_PER_ROW) * gridSize;
+            final int START_ROW = map.findStartRowOfSector(SECTOR_ID);
+            final int START_COL = map.findStartColOfSector(SECTOR_ID);
             // End of sector
-            final int END_ROW = Math.min(START_ROW + gridSize, map.rows);
-            final int END_COL = Math.min(START_COL + gridSize, map.cols);
+            final int END_ROW = map.findEndRowOfSector(START_ROW);
+            final int END_COL = map.findEndColOfSector(START_COL);
 
             // Eight neighbours (states touching wall state)
             int NEIGHBOR_N = map.squares[WALL_ROW - 1][WALL_COL];
@@ -306,7 +296,7 @@ public class DBAStarUtil {
                     // Update old neighbour’s neighbourhood in groups map
                     neighboursOfEx.remove(REGION_ID);
 
-                    dbBW.recomputeCornerBlocker(REGION_ID, neighbourRegion, problem, groups);
+                    dbBW.recomputeCornerBlocker(REGION_ID, neighbourRegion);
                     return;
                 }
 
@@ -379,7 +369,7 @@ public class DBAStarUtil {
                 dbBW.pushFreeSpace(REGION_ID);
 
                 // Perform abstraction (go over sector and recompute regions), this updates free space
-                int numRegionsInSector = map.sectorReAbstractWithFreeSpace(gridSize, START_ROW, START_COL, END_ROW, END_COL, REGION_ID, map, dbBW);
+                int numRegionsInSector = map.sectorReAbstractWithFreeSpace(START_ROW, START_COL, END_ROW, END_COL, REGION_ID, map, dbBW);
 
                 // Tombstone group record in groups map (recreate it later)
                 map.addGroup(REGION_ID, null);
@@ -411,12 +401,12 @@ public class DBAStarUtil {
                 // Recompute region reps for newly added regions
                 // a newRec should never be null, if it is, something went wrong with the group generation in sectorReAbstractWithFreeSpace
                 for (GroupRecord newRec : newRecs) {
-                    map.recomputeCentroid(REGION_ID, newRec, START_ROW, END_ROW, START_COL, END_COL, gridSize);
+                    map.recomputeCentroid(REGION_ID, newRec, START_ROW, END_ROW, START_COL, END_COL);
                     neighborIds.add(newRec.groupId);
                 }
 
                 // Recompute neighbourhood
-                map.recomputeNeighbors(gridSize, START_ROW, START_COL, END_ROW, END_COL, neighborIds);
+                map.recomputeNeighbors(START_ROW, START_COL, END_ROW, END_COL, neighborIds);
 
                 // Database changes
                 dbBW.recomputeBasePathsAfterPartition(problem, groups, neighborIds); // 60ms
@@ -426,7 +416,7 @@ public class DBAStarUtil {
             groupRecord.decrementNumStates();
 
             // Compute newRegionRep to detect whether a shift has happened
-            int newRegionRep = map.recomputeCentroid(REGION_ID, groupRecord, START_ROW, END_ROW, START_COL, END_COL, gridSize);
+            int newRegionRep = map.recomputeCentroid(REGION_ID, groupRecord, START_ROW, END_ROW, START_COL, END_COL);
 
             // Wall That Moves Region Representative case
             if (newRegionRep != REGION_REP) {
@@ -508,15 +498,12 @@ public class DBAStarUtil {
             // Add the new group record to the groups map
             map.addGroup(regionId, newRec);
 
-            // Update regionReps array
-            map.addRegionRep(regionId, newRec.groupRepId);
-
             // Database changes
             dbBW.recomputeBasePathsIfSolitary(regionId);
         } else {
             // Check what sector the non-wall neighbourStates are in
-            final int NUM_SECTORS_PER_ROW = (int) Math.ceil(map.cols * 1.0 / gridSize);
-            final int SECTOR_ID = WALL_ROW / gridSize * NUM_SECTORS_PER_ROW + WALL_COL / gridSize;
+            final int SECTOR_ID = map.findSectorId(WALL_ROW, WALL_COL);
+            logger.debug("Sector: " + SECTOR_ID);
 
             // Store region ids of eight neighbour states
             HashSet<Integer> neighbouringRegions = new HashSet<>();
@@ -528,7 +515,7 @@ public class DBAStarUtil {
             for (int neighbourState : neighbourStates) {
                 if (!map.isWall(neighbourState)) {
                     // Get sector id of current neighbour state of wall (if it is not a wall)
-                    int neighbourSector = getSectorId(map, neighbourState, gridSize);
+                    int neighbourSector = map.findSectorId(neighbourState);
                     // Get region id of current neighbour state of wall (if it is not a wall)
                     int neighbourRegion = map.getRegionFromState(neighbourState);
                     // Store neighbour regions in set
@@ -577,20 +564,17 @@ public class DBAStarUtil {
                 // Add the new group record to the groups map
                 map.addGroup(regionId, newRec);
 
-                // Update regionReps array
-                map.addRegionRep(regionId, newRec.groupRepId);
-
                 // Database changes
                 dbBW.recomputeBasePathsIfConnected(regionId, problem, groups, neighbouringRegions);
                 return;
             }
 
             // Start of sector
-            final int START_ROW = (SECTOR_ID / NUM_SECTORS_PER_ROW) * gridSize;
-            final int START_COL = (SECTOR_ID % NUM_SECTORS_PER_ROW) * gridSize;
+            final int START_ROW = map.findStartRowOfSector(SECTOR_ID);
+            final int START_COL = map.findStartColOfSector(SECTOR_ID);
             // End of sector
-            final int END_ROW = Math.min(START_ROW + gridSize, map.rows);
-            final int END_COL = Math.min(START_COL + gridSize, map.cols);
+            final int END_ROW = map.findEndRowOfSector(START_ROW);
+            final int END_COL = map.findEndColOfSector(START_COL);
 
             // Since we have neither a new, solitary region, nor a new, connected region, our removed wall must be part
             // of an existing region
@@ -689,7 +673,7 @@ public class DBAStarUtil {
 
                     // Perform abstraction (go over sector and recompute regions), this updates free space
                     // TODO: Should I even pass regionId here?
-                    int numRegionsInSector = map.sectorReAbstractWithFreeSpace(gridSize, START_ROW, START_COL, END_ROW, END_COL, regionId, map, dbBW);
+                    int numRegionsInSector = map.sectorReAbstractWithFreeSpace(START_ROW, START_COL, END_ROW, END_COL, regionId, map, dbBW);
 
                     int count = 0;
                     GroupRecord[] newRecs = new GroupRecord[numRegionsInSector];
@@ -718,14 +702,14 @@ public class DBAStarUtil {
                     // Recompute region reps for newly added regions
                     // a newRec should never be null, if it is, something went wrong with the group generation in sectorReAbstractWithFreeSpace
                     for (GroupRecord newRec : newRecs) {
-                        map.recomputeCentroid(newRec.groupId, newRec, START_ROW, END_ROW, START_COL, END_COL, gridSize);
+                        map.recomputeCentroid(newRec.groupId, newRec, START_ROW, END_ROW, START_COL, END_COL);
                         neighborIds.add(newRec.groupId);
                     }
 
                     logger.info("Neighbour ids for neighbourhood recomputation: " + neighborIds);
 
                     // Recompute neighbourhood
-                    map.recomputeNeighbors(gridSize, START_ROW, START_COL, END_ROW, END_COL, neighborIds);
+                    map.recomputeNeighbors(START_ROW, START_COL, END_ROW, END_COL, neighborIds);
 
                     // Database changes
                     dbBW.recomputeBasePathsAfterPartition(problem, groups, neighborIds);
@@ -736,7 +720,7 @@ public class DBAStarUtil {
             groupRecord.incrementNumStates();
 
             // Compute newRegionRep to detect whether a shift has happened
-            int newRegionRep = map.recomputeCentroid(regionId, groupRecord, START_ROW, END_ROW, START_COL, END_COL, gridSize);
+            int newRegionRep = map.recomputeCentroid(regionId, groupRecord, START_ROW, END_ROW, START_COL, END_COL);
 
             // Wall That Moves Region Representative case
             if (newRegionRep != regionRepId) {
@@ -784,7 +768,7 @@ public class DBAStarUtil {
 
         // If the region rep is tombstoned
         if (REGION_REP == -1) {
-            throw new Exception("Region rep for region " + REGION_ID + "does not exist!");
+            throw new Exception("Region rep for region " + REGION_ID + " does not exist!");
         }
 
         // Get groups containing information on all regions from map
@@ -810,23 +794,20 @@ public class DBAStarUtil {
             }
             // Tombstone group record in groups map
             map.addGroup(REGION_ID, null);
-            // Tombstone region in region reps array
-            map.tombstoneRegionRepUsingRegionId(REGION_ID);
 
             // Database changes
             dbBW.recomputeBasePathsAfterElimination(REGION_ID);
         } else {
             // Other cases
-
-            final int NUM_SECTORS_PER_ROW = (int) Math.ceil(map.cols * 1.0 / gridSize);
-            final int SECTOR_ID = WALL_ROW / gridSize * NUM_SECTORS_PER_ROW + WALL_COL / gridSize;
+            final int SECTOR_ID = map.findSectorId(WALL_ROW, WALL_COL);
+            logger.debug("Sector: " + SECTOR_ID);
 
             // Start of sector
-            final int START_ROW = (SECTOR_ID / NUM_SECTORS_PER_ROW) * gridSize;
-            final int START_COL = (SECTOR_ID % NUM_SECTORS_PER_ROW) * gridSize;
+            final int START_ROW = map.findStartRowOfSector(SECTOR_ID);
+            final int START_COL = map.findStartColOfSector(SECTOR_ID);
             // End of sector
-            final int END_ROW = Math.min(START_ROW + gridSize, map.rows);
-            final int END_COL = Math.min(START_COL + gridSize, map.cols);
+            final int END_ROW = map.findEndRowOfSector(START_ROW);
+            final int END_COL = map.findEndColOfSector(START_COL);
 
             // Eight neighbours (states touching wall state)
             int NEIGHBOR_N = map.squares[WALL_ROW - 1][WALL_COL];
@@ -906,7 +887,7 @@ public class DBAStarUtil {
                     // Update old neighbour’s neighbourhood in groups map
                     neighboursOfEx.remove(REGION_ID);
 
-                    dbBW.recomputeCornerBlocker(REGION_ID, neighbourRegion, problem, groups);
+                    dbBW.recomputeCornerBlocker(REGION_ID, neighbourRegion);
                     return;
                 }
 
@@ -978,7 +959,7 @@ public class DBAStarUtil {
                 dbBW.pushFreeSpace(REGION_ID);
 
                 // Perform abstraction (go over sector and recompute regions), this updates free space
-                int numRegionsInSector = map.sectorReAbstractWithFreeSpace(gridSize, START_ROW, START_COL, END_ROW, END_COL, REGION_ID, map, dbBW);
+                int numRegionsInSector = map.sectorReAbstractWithFreeSpace(START_ROW, START_COL, END_ROW, END_COL, REGION_ID, map, dbBW);
 
                 // Tombstone group record in groups map (recreate it later)
                 map.addGroup(REGION_ID, null);
@@ -1010,12 +991,12 @@ public class DBAStarUtil {
                 // Recompute region reps for newly added regions
                 // a newRec should never be null, if it is, something went wrong with the group generation in sectorReAbstractWithFreeSpace
                 for (GroupRecord newRec : newRecs) {
-                    map.recomputeCentroid(REGION_ID, newRec, START_ROW, END_ROW, START_COL, END_COL, gridSize);
+                    map.recomputeCentroid(REGION_ID, newRec, START_ROW, END_ROW, START_COL, END_COL);
                     neighborIds.add(newRec.groupId);
                 }
 
                 // Recompute neighbourhood
-                map.recomputeNeighbors(gridSize, START_ROW, START_COL, END_ROW, END_COL, neighborIds);
+                map.recomputeNeighbors(START_ROW, START_COL, END_ROW, END_COL, neighborIds);
 
                 // Database changes
                 dbBW.recomputeBasePathsAfterPartition(problem, groups, neighborIds); // 40ms
@@ -1025,7 +1006,7 @@ public class DBAStarUtil {
             groupRecord.decrementNumStates();
 
             // Compute newRegionRep (it may or may not be the same as before)
-            map.recomputeCentroid(REGION_ID, groupRecord, START_ROW, END_ROW, START_COL, END_COL, gridSize);
+            map.recomputeCentroid(REGION_ID, groupRecord, START_ROW, END_ROW, START_COL, END_COL);
 
             // Database changes
             dbBW.recomputeBasePaths(REGION_ID, problem, groups); // 600ms
@@ -1095,15 +1076,12 @@ public class DBAStarUtil {
             // Add the new group record to the groups map
             map.addGroup(regionId, newRec);
 
-            // Update regionReps array
-            map.addRegionRep(regionId, newRec.groupRepId);
-
             // Database changes
             dbBW.recomputeBasePathsIfSolitary(regionId);
         } else {
             // Check what sector the non-wall neighbourStates are in
-            final int NUM_SECTORS_PER_ROW = (int) Math.ceil(map.cols * 1.0 / gridSize);
-            final int SECTOR_ID = WALL_ROW / gridSize * NUM_SECTORS_PER_ROW + WALL_COL / gridSize;
+            final int SECTOR_ID = map.findSectorId(WALL_ROW, WALL_COL);
+            logger.debug("Sector: " + SECTOR_ID);
 
             // Store region ids of eight neighbour states
             HashSet<Integer> neighbouringRegions = new HashSet<>();
@@ -1115,7 +1093,7 @@ public class DBAStarUtil {
             for (int neighbourState : neighbourStates) {
                 if (!map.isWall(neighbourState)) {
                     // Get sector id of current neighbour state of wall (if it is not a wall)
-                    int neighbourSector = getSectorId(map, neighbourState, gridSize);
+                    int neighbourSector = map.findSectorId(neighbourState);
                     // Get region id of current neighbour state of wall (if it is not a wall)
                     int neighbourRegion = map.getRegionFromState(neighbourState);
                     // Store neighbour regions in set
@@ -1162,20 +1140,17 @@ public class DBAStarUtil {
                 // Add the new group record to the groups map
                 map.addGroup(regionId, newRec);
 
-                // Update regionReps array
-                map.addRegionRep(regionId, newRec.groupRepId);
-
                 // Database changes
                 dbBW.recomputeBasePathsIfConnected(regionId, problem, groups, neighbouringRegions);
                 return;
             }
 
             // Start of sector
-            final int START_ROW = (SECTOR_ID / NUM_SECTORS_PER_ROW) * gridSize;
-            final int START_COL = (SECTOR_ID % NUM_SECTORS_PER_ROW) * gridSize;
+            final int START_ROW = map.findStartRowOfSector(SECTOR_ID);
+            final int START_COL = map.findStartColOfSector(SECTOR_ID);
             // End of sector
-            final int END_ROW = Math.min(START_ROW + gridSize, map.rows);
-            final int END_COL = Math.min(START_COL + gridSize, map.cols);
+            final int END_ROW = map.findEndRowOfSector(START_ROW);
+            final int END_COL = map.findEndColOfSector(START_COL);
 
             // Since we have neither a new, solitary region, nor a new, connected region, our removed wall must be part
             // of an existing region
@@ -1263,7 +1238,7 @@ public class DBAStarUtil {
 
                     // Perform abstraction (go over sector and recompute regions), this updates free space
                     // TODO: Should I even pass regionId here?
-                    int numRegionsInSector = map.sectorReAbstractWithFreeSpace(gridSize, START_ROW, START_COL, END_ROW, END_COL, regionId, map, dbBW);
+                    int numRegionsInSector = map.sectorReAbstractWithFreeSpace(START_ROW, START_COL, END_ROW, END_COL, regionId, map, dbBW);
 
                     int count = 0;
                     GroupRecord[] newRecs = new GroupRecord[numRegionsInSector];
@@ -1292,12 +1267,12 @@ public class DBAStarUtil {
                     // Recompute region reps for newly added regions
                     // a newRec should never be null, if it is, something went wrong with the group generation in sectorReAbstractWithFreeSpace
                     for (GroupRecord newRec : newRecs) {
-                        map.recomputeCentroid(newRec.groupId, newRec, START_ROW, END_ROW, START_COL, END_COL, gridSize);
+                        map.recomputeCentroid(newRec.groupId, newRec, START_ROW, END_ROW, START_COL, END_COL);
                         neighborIds.add(newRec.groupId);
                     }
 
                     // Recompute neighbourhood
-                    map.recomputeNeighbors(gridSize, START_ROW, START_COL, END_ROW, END_COL, neighborIds);
+                    map.recomputeNeighbors(START_ROW, START_COL, END_ROW, END_COL, neighborIds);
 
                     // Database changes
                     dbBW.recomputeBasePathsAfterPartition(problem, groups, neighborIds);
@@ -1308,7 +1283,7 @@ public class DBAStarUtil {
             groupRecord.incrementNumStates();
 
             // Compute newRegionRep (it may or may not be the same as before)
-            map.recomputeCentroid(regionId, groupRecord, START_ROW, END_ROW, START_COL, END_COL, gridSize);
+            map.recomputeCentroid(regionId, groupRecord, START_ROW, END_ROW, START_COL, END_COL);
 
             // Database changes
             dbBW.recomputeBasePaths(regionId, problem, groups); // 590ms

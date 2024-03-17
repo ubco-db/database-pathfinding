@@ -77,38 +77,16 @@ public final class MapHelpers {
     }
 
     /**
-     * @param map GameMap object
-     * @param row row number of state on map
-     * @param col column number of state on map
-     * @return number of sector the state is part of
-     */
-    public static int getSectorId(GameMap map, int row, int col, int gridSize) {
-        int numSectorsPerRow = (int) Math.ceil(map.cols * 1.0 / gridSize);
-        return row / gridSize * numSectorsPerRow + col / gridSize;
-    }
-
-    /**
-     * @param map GameMap object
-     * @param sid state id of state on map
-     * @return number of sector the state is part of
-     */
-    public static int getSectorId(GameMap map, int sid, int gridSize) {
-        int row = map.getRow(sid);
-        int col = map.getCol(sid);
-        return getSectorId(map, row, col, gridSize);
-    }
-
-    /**
      * @param map        GameMap object
      * @param neighbours the eight squares touching the state to find region id for
      * @param sectorId   sector number of state to find region id for
      * @return region id
      * @throws Exception if no neighbours are found
      */
-    public static int getRegionIdFromNeighbourStates(GameMap map, ArrayList<SearchState> neighbours, int sectorId, int gridSize) throws Exception {
+    public static int getRegionIdFromNeighbourStates(GameMap map, ArrayList<SearchState> neighbours, int sectorId) throws Exception {
         for (SearchState neighbour : neighbours) {
             // Need to use !isWall instead of isOpenCell, because the cells are not empty, they have their regions written into them
-            if (!map.isWall(neighbour.id) && getSectorId(map, neighbour.id, gridSize) == sectorId) {
+            if (!map.isWall(neighbour.id) && map.findSectorId(neighbour.id) == sectorId) {
                 return map.squares[map.getRow(neighbour.id)][map.getCol(neighbour.id)];
             }
         }
@@ -121,14 +99,14 @@ public final class MapHelpers {
      * @param openStatesToSectors empty HashMap
      * @return true if all 8 neighbours of a state are walls, otherwise false
      */
-    public static boolean isSurroundedByWalls(GameMap map, ArrayList<SearchState> neighbours, Map<Integer, Integer> openStatesToSectors, int gridSize) {
+    public static boolean isSurroundedByWalls(GameMap map, ArrayList<SearchState> neighbours, Map<Integer, Integer> openStatesToSectors) {
         // Return true if all 8 neighbours of the cell are walls, else return false
 
         for (SearchState neighbour : neighbours) {
             // Need to use !isWall instead of isOpenCell, because the cells are not empty, they have their regions written into them
             if (!map.isWall(neighbour.id)) {
                 // Fill HashMap with state id to sector id mapping
-                openStatesToSectors.put(neighbour.id, getSectorId(map, neighbour.id, gridSize));
+                openStatesToSectors.put(neighbour.id, map.findSectorId(neighbour.id));
             }
         }
 
