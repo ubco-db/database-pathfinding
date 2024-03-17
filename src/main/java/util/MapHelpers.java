@@ -83,7 +83,7 @@ public final class MapHelpers {
      * @return region id
      * @throws Exception if no neighbours are found
      */
-    public static int getRegionIdFromNeighbourStates(GameMap map, ArrayList<SearchState> neighbours, int sectorId, int gridSize) throws Exception {
+    public static int getRegionIdFromNeighbourStates(GameMap map, ArrayList<SearchState> neighbours, int sectorId) throws Exception {
         for (SearchState neighbour : neighbours) {
             // Need to use !isWall instead of isOpenCell, because the cells are not empty, they have their regions written into them
             if (!map.isWall(neighbour.id) && map.findSectorId(neighbour.id) == sectorId) {
@@ -99,7 +99,7 @@ public final class MapHelpers {
      * @param openStatesToSectors empty HashMap
      * @return true if all 8 neighbours of a state are walls, otherwise false
      */
-    public static boolean isSurroundedByWalls(GameMap map, ArrayList<SearchState> neighbours, Map<Integer, Integer> openStatesToSectors, int gridSize) {
+    public static boolean isSurroundedByWalls(GameMap map, ArrayList<SearchState> neighbours, Map<Integer, Integer> openStatesToSectors) {
         // Return true if all 8 neighbours of the cell are walls, else return false
 
         for (SearchState neighbour : neighbours) {
