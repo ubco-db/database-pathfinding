@@ -34,7 +34,7 @@ public class DBAStarUtil {
         this.dbaStarDbPath = dbaStarDbPath;
     }
 
-    public DBAStar3 computeDBAStarDatabase(GameMap map, String wallStatus) throws Exception {
+    public DBAStar computeDBAStarDatabase(GameMap map, String wallStatus) throws Exception {
         long currentTime;
 
         SearchProblem problem = new MapSearchProblem(map);
@@ -83,37 +83,37 @@ public class DBAStarUtil {
 
         logger.debug("Databases loaded.");
 
-        return new DBAStar3(problem, map, database);
+        return new DBAStar(problem, map, database);
     }
 
     /**
      * @param startId  state id for start of path
      * @param goalId   state id for start of path
-     * @param dbaStar3 DBAStar3 object
+     * @param dbaStar DBAStar object
      * @return path as ArrayList of SearchStates
      */
-    public ArrayList<SearchState> getDBAStarPath(int startId, int goalId, DBAStar3 dbaStar3) {
+    public ArrayList<SearchState> getDBAStarPath(int startId, int goalId, DBAStar dbaStar) {
         StatsRecord stats = new StatsRecord();
         SearchState start = new SearchState(startId);
         SearchState goal = new SearchState(goalId);
 
         // ArrayList<SearchState> subgoals = dbaStar.getSubgoals();
-        return dbaStar3.computePath(start, goal, stats);
+        return dbaStar.computePath(start, goal, stats);
     }
 
     /**
      * @param startId    state id for start of path
      * @param goalId     state id for start of path
      * @param wallStatus used to name output files, either BW = before wall, AW = after wall, or RW = removed wall
-     * @param dbaStar3   DBAStar3 object
+     * @param dbaStar   DBAStar object
      */
-    public void getDBAStarPath(int startId, int goalId, String wallStatus, DBAStar3 dbaStar3) {
-        GameMap map = dbaStar3.getMap();
+    public void getDBAStarPath(int startId, int goalId, String wallStatus, DBAStar dbaStar) {
+        GameMap map = dbaStar.getMap();
 
-        AStar aStar = new AStar(dbaStar3.getProblem());
+        AStar aStar = new AStar(dbaStar.getProblem());
 
         StatsRecord dbaStats = new StatsRecord();
-        ArrayList<SearchState> path = dbaStar3.computePath(new SearchState(startId), new SearchState(goalId), dbaStats);
+        ArrayList<SearchState> path = dbaStar.computePath(new SearchState(startId), new SearchState(goalId), dbaStats);
 
         StatsRecord aStarStats = new StatsRecord();
         ArrayList<SearchState> optimalPath = aStar.computePath(new SearchState(startId), new SearchState(goalId), aStarStats);
@@ -124,8 +124,8 @@ public class DBAStarUtil {
         if (path == null || path.isEmpty()) {
             logger.warn(String.format("No path was found between %d and %d!%n", startId, goalId));
         }
-        map.computeCentroidMap().outputImage(dbaStarDbPath + wallStatus + "path_" + startId + "_" + goalId + ".png", path, dbaStar3.getSubgoals());
-        // map.computeCentroidMap().outputImage(dbaStarDbPath + wallStatus + "_optimal_path_" + startId + "_" + goalId + ".png", optimalPath, dbaStar3.getSubgoals());
+        map.computeCentroidMap().outputImage(dbaStarDbPath + wallStatus + "path_" + startId + "_" + goalId + ".png", path, dbaStar.getSubgoals());
+        // map.computeCentroidMap().outputImage(dbaStarDbPath + wallStatus + "_optimal_path_" + startId + "_" + goalId + ".png", optimalPath, dbaStar.getSubgoals());
     }
 
 
@@ -141,7 +141,7 @@ public class DBAStarUtil {
      * @param wallLoc   state id where wall will be place
      * @param dbaStarBW DBAStar object returned from computeDBAStarDatabaseUsingSubgoalDynamicDB3
      */
-    public void recomputeWallAddition(int wallLoc, DBAStar3 dbaStarBW) throws Exception {
+    public void recomputeWallAddition(int wallLoc, DBAStar dbaStarBW) throws Exception {
         // Extract map, problem, and database from dbaStarBW
         GameMap map = dbaStarBW.getMap();
         MapSearchProblem problem = (MapSearchProblem) dbaStarBW.getProblem();
@@ -435,7 +435,7 @@ public class DBAStarUtil {
      * @param wallLoc   state id where wall will be removed
      * @param dbaStarBW DBAStar object returned from computeDBAStarDatabaseUsingSubgoalDynamicDB3
      */
-    public void recomputeWallRemoval(int wallLoc, DBAStar3 dbaStarBW) throws Exception {
+    public void recomputeWallRemoval(int wallLoc, DBAStar dbaStarBW) throws Exception {
         // Extract map, problem, and database from dbaStarBW
         GameMap map = dbaStarBW.getMap();
         MapSearchProblem problem = (MapSearchProblem) dbaStarBW.getProblem();
@@ -739,7 +739,7 @@ public class DBAStarUtil {
      * @param wallLoc   state id where wall will be place
      * @param dbaStarBW DBAStar object returned from computeDBAStarDatabaseUsingSubgoalDynamicDB3
      */
-    public void recomputeWallAdditionNoLogging(int wallLoc, DBAStar3 dbaStarBW) throws Exception {
+    public void recomputeWallAdditionNoLogging(int wallLoc, DBAStar dbaStarBW) throws Exception {
         // Extract map, problem, and database from dbaStarBW
         GameMap map = dbaStarBW.getMap();
         MapSearchProblem problem = (MapSearchProblem) dbaStarBW.getProblem();
@@ -1017,7 +1017,7 @@ public class DBAStarUtil {
      * @param wallLoc   state id where wall will be removed
      * @param dbaStarBW DBAStar object returned from computeDBAStarDatabaseUsingSubgoalDynamicDB3
      */
-    public void recomputeWallRemovalNoLogging(int wallLoc, DBAStar3 dbaStarBW) throws Exception {
+    public void recomputeWallRemovalNoLogging(int wallLoc, DBAStar dbaStarBW) throws Exception {
         // Extract map, problem, and database from dbaStarBW
         GameMap map = dbaStarBW.getMap();
         MapSearchProblem problem = (MapSearchProblem) dbaStarBW.getProblem();

@@ -9,15 +9,15 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 
-public class DBAStar3 implements SearchAlgorithm {
+public class DBAStar implements SearchAlgorithm {
     private final SubgoalDynamicDB3 database;
     private final SearchProblem problem;
     private final GameMap map;
     private final ArrayList<SearchState> subgoals;
 
-    private static final Logger logger = LogManager.getLogger(DBAStar3.class);
+    private static final Logger logger = LogManager.getLogger(DBAStar.class);
 
-    public DBAStar3(SearchProblem problem, GameMap abstractMap, SubgoalDynamicDB3 database) {
+    public DBAStar(SearchProblem problem, GameMap abstractMap, SubgoalDynamicDB3 database) {
         this.database = database;
         this.problem = problem;
         this.map = abstractMap;
