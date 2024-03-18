@@ -1,10 +1,6 @@
-import dynamic.Walls;
 import map.GameMap;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import search.DBAStar3;
-import search.SearchState;
-import util.DBAStarUtil2;
+import util.DBAStarUtil;
 
 import java.util.ArrayList;
 
@@ -16,15 +12,16 @@ public class AddingAllWallsEfficientlyTest {
     final static String MAP_FILE_PATH = "maps/dMap/";
     final static String MAP_FILE_NAME = "012.map";
     final static String PATH_TO_MAP = MAP_FILE_PATH + MAP_FILE_NAME;
+    final static int GRID_SIZE = 16;
 
-    private static final Logger logger = LogManager.getLogger(AddingAllWallsEfficientlyTest.class);
+    // private static final Logger logger = LogManager.getLogger(AddingAllWallsEfficientlyTest.class);
 
     public static void main(String[] args) throws Exception {
         DBAStar3 dbaStar3;
-        GameMap startingMap = new GameMap(PATH_TO_MAP);
+        GameMap startingMap = new GameMap(PATH_TO_MAP, GRID_SIZE);
 
-        // Initialize DBAStarUtil2 with settings for DBAStar run
-        DBAStarUtil2 dbaStarUtil2 = new DBAStarUtil2(16, 1, MAP_FILE_NAME, DBA_STAR_DB_PATH);
+        // Initialize DBAStarUtil with settings for DBAStar run
+        DBAStarUtil dbaStarUtil = new DBAStarUtil(1, MAP_FILE_NAME, DBA_STAR_DB_PATH);
 
         // Fix start
         int startId = 13411;
@@ -43,42 +40,45 @@ public class AddingAllWallsEfficientlyTest {
         goalIds.remove((Integer) startId);
 
         // Print number of goals (6175 on 012.map)
-        logger.info("Number of goals: " + goalIds.size());
-
-        // compute DBAStar database before adding wall
-        dbaStar3 = dbaStarUtil2.computeDBAStarDatabaseUsingSubgoalDynamicDB3(startingMap, "BW");
+        // logger.info("Number of goals: " + goalIds.size());
 
         /* partial recomputation */
 
         long startTimePartial = System.currentTimeMillis();
 
+        // compute DBAStar database before adding wall
+        dbaStar3 = dbaStarUtil.computeDBAStarDatabase(startingMap, "BW"); // 70ms
+
         for (int wallId : goalIds) {
             // Add wall & recompute database
-            logger.info("\n\nRecompute wall addition for wall at: " + wallId);
-            dbaStarUtil2.recomputeWallAdditionUsingSubgoalDynamicDB3(wallId, dbaStar3);
+            // logger.info("\n\nRecompute wall addition for wall at: " + wallId);
+            dbaStarUtil.recomputeWallAdditionNoLogging(wallId, dbaStar3); // 790ms
 
             // Remove wall
-            logger.info("\n\nRecompute wall removal for wall at: " + wallId);
-            dbaStarUtil2.recomputeWallRemovalUsingSubgoalDynamicDB3(wallId, dbaStar3);
+            // logger.info("\n\nRecompute wall removal for wall at: " + wallId);
+            dbaStarUtil.recomputeWallRemovalNoLogging(wallId, dbaStar3); // 630ms
         }
 
-        writeResultToFile(DBA_STAR_DB_PATH + "figureOutWhereTimeGoes.txt", "Total time partial recomputation: " + (System.currentTimeMillis() - startTimePartial) + "ms\n");
+        writeResultToFile(DBA_STAR_DB_PATH + "results.txt", "Total time partial recomputation: " + (System.currentTimeMillis() - startTimePartial) + "ms\n");
 
         /* complete recomputation */
+
+        startingMap = new GameMap(PATH_TO_MAP, GRID_SIZE); // resetting map
 
         long startTimeFull = System.currentTimeMillis();
 
         for (int wallId : goalIds) {
-            // Setting up walls
-            ArrayList<SearchState> wallLocation = new ArrayList<>();
-            wallLocation.add(new SearchState(wallId));
+            int wallRow = startingMap.getRow(wallId);
+            int wallCol = startingMap.getCol(wallId);
 
-            // Adding wall and computing database
-            Walls.addWall(PATH_TO_MAP, wallLocation, startingMap);
-            startingMap = new GameMap(PATH_TO_MAP); // resetting map
-            dbaStarUtil2.computeDBAStarDatabaseUsingSubgoalDynamicDB3(startingMap, "AW");
+            // Add wall
+            startingMap.squares[wallRow][wallCol] = GameMap.WALL_CHAR;
 
-            Walls.removeWall(PATH_TO_MAP, wallLocation, startingMap);
+            // Compute database
+            dbaStarUtil.computeDBAStarDatabase(startingMap, "AW");
+
+            // Remove wall
+            startingMap.squares[wallRow][wallCol] = GameMap.EMPTY_CHAR;
         }
 
         writeResultToFile(DBA_STAR_DB_PATH + "results.txt", "Total time complete recomputation: " + (System.currentTimeMillis() - startTimeFull) + "ms\n");

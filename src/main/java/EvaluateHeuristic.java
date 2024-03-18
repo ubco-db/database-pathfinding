@@ -75,7 +75,7 @@ public class EvaluateHeuristic {
 
             // Load map and/or database if different from last problem
             if (lastMapName == null || !lastMapName.equals(mapName)) {
-                baseMap = new GameMap(mapName);
+                baseMap = new GameMap(mapName, 16);
                 problem = new MapSearchProblem(baseMap);
                 lastMapName = mapName;
             }
