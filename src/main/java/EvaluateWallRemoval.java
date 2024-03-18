@@ -21,7 +21,7 @@ public class EvaluateWallRemoval {
         int goalId = 11671;
 
         // Configure settings for the run
-        DBAStarUtil dbaStarUtil = new DBAStarUtil( 1,  MAP_FILE_NAME, DBA_STAR_DB_PATH);
+        DBAStarUtil dbaStarUtil = new DBAStarUtil(1, MAP_FILE_NAME, DBA_STAR_DB_PATH);
 
         // Load map
         GameMap startingMap = new GameMap(PATH_TO_MAP, GRID_SIZE);
