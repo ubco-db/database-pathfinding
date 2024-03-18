@@ -48,8 +48,8 @@ public class DBAStar implements SearchAlgorithm {
         startTime = System.nanoTime();
 
         // Search the database for records
-        int startRegionId = map.getRegionFromState(start.id) - GameMap.START_NUM;
-        int goalRegionId = map.getRegionFromState(goal.id) - GameMap.START_NUM;
+        int startRegionId = map.getRegionFromState(start.id);
+        int goalRegionId = map.getRegionFromState(goal.id);
 
         if (startRegionId == goalRegionId) {
             path = astar.computePath(start, goal, stats);
@@ -62,7 +62,7 @@ public class DBAStar implements SearchAlgorithm {
         ArrayList<SearchState> pathStart = astar.computePath(start, startRegionCenter, stats);
         ArrayList<SearchState> pathEnd = astar.computePath(goalRegionCenter, goal, stats);
 
-        ArrayList<SubgoalDBRecord> records = database.findNearest(problem, startRegionId, goalRegionId, subgoalSearchAlg, stats);
+        ArrayList<SubgoalDBRecord> records = database.findNearest(problem, startRegionId - GameMap.START_NUM, goalRegionId - GameMap.START_NUM, subgoalSearchAlg, stats);
 
         if (records != null && !records.isEmpty()) {
             currentRecord = records.getFirst();
