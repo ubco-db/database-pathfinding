@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 public class GroupRecord {
-    public int groupId;
+    public int groupId; // TODO: remove
     public int groupRepId;
     private int numStates;
     private HashSet<Integer> neighborIds;
-    private HashSet<Integer> computedNeighborIds;
+    private HashSet<Integer> computedNeighborIds; // TODO: Figure out
 
     // Returns true if two groups are neighbors by virtue of one group having a base state that is in the neighbor list of the other.
     // Since assuming non-directed edges (this works either way as both states should have the same pair of nodes as neighbors in the neighbor lists).

@@ -15,7 +15,7 @@ public class DBAStar3 implements SearchAlgorithm {
     private final GameMap map;
     private final ArrayList<SearchState> subgoals;
 
-    private static final Logger logger = LogManager.getLogger(DBAStar.class);
+    private static final Logger logger = LogManager.getLogger(DBAStar3.class);
 
     public DBAStar3(SearchProblem problem, GameMap abstractMap, SubgoalDynamicDB3 database) {
         this.database = database;

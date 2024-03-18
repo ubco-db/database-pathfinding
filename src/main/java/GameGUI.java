@@ -140,7 +140,7 @@ public class GameGUI extends JFrame {
         heuristicList = new ArrayList<HeuristicFunction>();
         heuristicList = HeuristicCompare.createHeuristics();
 
-        GameMap mp = new GameMap("maps/smallMaps/012.map");
+        GameMap mp = new GameMap("maps/smallMaps/012.map", 16);
         //GameMap mp = new GameMap("maps/wc3maps/divideandconquer.map");
         panel = new MapPanel(mp);
         contentPane.add(panel, "Center");
