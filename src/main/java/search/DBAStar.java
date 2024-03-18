@@ -25,27 +25,14 @@ public class DBAStar implements SearchAlgorithm {
     }
 
     public ArrayList<SearchState> computePath(SearchState start, SearchState goal, StatsRecord stats) {
-        ArrayList<SubgoalDBRecord> used = new ArrayList<>();
-        ArrayList<SearchState> newPath;
-
-        SearchState currentStart = start;
-        SearchState currentGoal;
-
-        SubgoalDBRecord currentRecord;
-
-        int currentIndex;
-        int[] subgoalList;
-        int cutoff = 10000;
-
-        HillClimbing subgoalSearchAlg = new HillClimbing(problem, cutoff);
-        AStar astar = new AStar(problem);
-        subgoals.clear();
-
-        long startTime, endTime;
+        SearchState currentStart = start, currentGoal;
 
         ArrayList<SearchState> path = new ArrayList<>();
 
-        startTime = System.nanoTime();
+        HillClimbing subgoalSearchAlg = new HillClimbing(problem, 10000); // TODO: Consider passing cutoff as parameter
+        AStar astar = new AStar(problem);
+
+        long startTime = System.nanoTime(), endTime;
 
         // Search the database for records
         int startRegionId = map.getRegionFromState(start.id);
@@ -57,18 +44,24 @@ public class DBAStar implements SearchAlgorithm {
             return path;
         }
 
+        // Get search states for region reps of start and goal region
         SearchState startRegionCenter = new SearchState(map.getRegionRepFromState(start.getId()));
         SearchState goalRegionCenter = new SearchState(map.getRegionRepFromState(goal.getId()));
 
+        // Compute path from start to startRegionCenter and goalRegionCenter to goal
         ArrayList<SearchState> pathStart = astar.computePath(start, startRegionCenter, stats);
         ArrayList<SearchState> pathEnd = astar.computePath(goalRegionCenter, goal, stats);
 
         ArrayList<SubgoalDBRecord> records = database.findNearest(problem, startRegionId - GameMap.START_NUM, goalRegionId - GameMap.START_NUM, subgoalSearchAlg, stats);
 
+        ArrayList<SearchState> newPath;
+        SubgoalDBRecord currentRecord;
+        int[] subgoalList;
+        int currentIndex;
+
         if (records != null && !records.isEmpty()) {
             currentRecord = records.getFirst();
             logger.debug(currentRecord);
-            used.add(currentRecord);
             logger.debug("Using subgoal record from database: " + currentRecord.toString());
             subgoalList = currentRecord.getSubgoalList();
             currentIndex = -1;
@@ -129,7 +122,6 @@ public class DBAStar implements SearchAlgorithm {
                     if (!records.isEmpty()) {
                         currentRecord = records.getFirst();
                         subgoalList = currentRecord.getSubgoalList();
-                        used.add(currentRecord);
                         // System.out.println("Using subgoal record from database: "+currentRecord.toString());
                         currentIndex = -1;
                         // Always go for start
@@ -180,10 +172,6 @@ public class DBAStar implements SearchAlgorithm {
 
     public ArrayList<SearchState> getSubgoals() {
         return subgoals;
-    }
-
-    public GameMap getDBAStarMap() {
-        return map;
     }
 
     public SubgoalDB getDatabase() {
