@@ -178,7 +178,7 @@ public class DBAStarUtil {
         }
 
         // Get groups containing information on all regions from map
-        TreeMap<Integer, GroupRecord> groups = new MapSearchProblem(map).getGroups();
+        TreeMap<Integer, GroupRecord> groups = map.getGroups();
 
         // Get group record containing information on the region
         GroupRecord groupRecord = groups.get(REGION_ID);
@@ -477,7 +477,7 @@ public class DBAStarUtil {
             // Get new regionId using freeSpace
             int regionId = dbBW.popFreeSpace();
 
-            TreeMap<Integer, GroupRecord> groups = new MapSearchProblem(map).getGroups();
+            TreeMap<Integer, GroupRecord> groups = map.getGroups();
 
             // There should not be a group record with the new region id
             GroupRecord rec = groups.get(regionId);
@@ -529,7 +529,7 @@ public class DBAStarUtil {
                 }
             }
 
-            TreeMap<Integer, GroupRecord> groups = new MapSearchProblem(map).getGroups();
+            TreeMap<Integer, GroupRecord> groups = map.getGroups();
 
             // If the new region is in a different sector than any of its neighbours, we have a new, connected region
             if (neighbouringRegionsInSameSector.isEmpty()) {
@@ -772,7 +772,7 @@ public class DBAStarUtil {
         }
 
         // Get groups containing information on all regions from map
-        TreeMap<Integer, GroupRecord> groups = new MapSearchProblem(map).getGroups();
+        TreeMap<Integer, GroupRecord> groups = map.getGroups();
 
         // Get group record containing information on the region
         GroupRecord groupRecord = groups.get(REGION_ID);
@@ -1055,7 +1055,7 @@ public class DBAStarUtil {
             // Get new regionId using freeSpace
             int regionId = dbBW.popFreeSpace();
 
-            TreeMap<Integer, GroupRecord> groups = new MapSearchProblem(map).getGroups();
+            TreeMap<Integer, GroupRecord> groups = map.getGroups();
 
             // There should not be a group record with the new region id
             GroupRecord rec = groups.get(regionId);
@@ -1107,7 +1107,7 @@ public class DBAStarUtil {
                 }
             }
 
-            TreeMap<Integer, GroupRecord> groups = new MapSearchProblem(map).getGroups();
+            TreeMap<Integer, GroupRecord> groups = map.getGroups();
 
             // If the new region is in a different sector than any of its neighbours, we have a new, connected region
             if (neighbouringRegionsInSameSector.isEmpty()) {
