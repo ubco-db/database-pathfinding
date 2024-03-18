@@ -51,14 +51,10 @@ public class DBAStar implements SearchAlgorithm {
         int startRegionId = map.getRegionFromState(start.id);
         int goalRegionId = map.getRegionFromState(goal.id);
 
-
-        try {
-            if (startRegionId == goalRegionId || map.getGroups().get(startRegionId).getNeighborIds().contains(goalRegionId)) {
-                path = astar.computePath(start, goal, stats);
-                return path;
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        // If the start region and goal region are the same, or if they are neighbours, use AStar instead
+        if (startRegionId == goalRegionId || areNeighbours(startRegionId, goalRegionId)) {
+            path = astar.computePath(start, goal, stats);
+            return path;
         }
 
         SearchState startRegionCenter = new SearchState(map.getRegionRepFromState(start.getId()));
@@ -162,6 +158,14 @@ public class DBAStar implements SearchAlgorithm {
             stats.updateMaxTime(endTime - startTime);
         }
         return path;
+    }
+
+    private boolean areNeighbours(int startRegionId, int goalRegionId) {
+        try {
+            return map.getGroups().get(startRegionId).getNeighborIds().contains(goalRegionId);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
