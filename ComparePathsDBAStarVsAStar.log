@@ -4013,8 +4013,8 @@ AStar path cost: 252 DBAStar path cost: 252
 Suboptimality: 0.0
 AStar path cost: 248 DBAStar path cost: 248
 Suboptimality: 0.0
-AStar path cost: 264 DBAStar path cost: 272
-Suboptimality: 3.0303030303030276
+AStar path cost: 264 DBAStar path cost: 264
+Suboptimality: 0.0
 AStar path cost: 268 DBAStar path cost: 276
 Suboptimality: 2.9850746268656803
 AStar path cost: 272 DBAStar path cost: 280
@@ -4163,10 +4163,10 @@ AStar path cost: 238 DBAStar path cost: 238
 Suboptimality: 0.0
 AStar path cost: 234 DBAStar path cost: 234
 Suboptimality: 0.0
-AStar path cost: 250 DBAStar path cost: 258
-Suboptimality: 3.200000000000003
-AStar path cost: 254 DBAStar path cost: 262
-Suboptimality: 3.149606299212593
+AStar path cost: 250 DBAStar path cost: 250
+Suboptimality: 0.0
+AStar path cost: 254 DBAStar path cost: 254
+Suboptimality: 0.0
 AStar path cost: 258 DBAStar path cost: 266
 Suboptimality: 3.100775193798455
 AStar path cost: 316 DBAStar path cost: 316
@@ -4321,16 +4321,16 @@ AStar path cost: 228 DBAStar path cost: 228
 Suboptimality: 0.0
 AStar path cost: 224 DBAStar path cost: 224
 Suboptimality: 0.0
-AStar path cost: 228 DBAStar path cost: 236
-Suboptimality: 3.5087719298245723
-AStar path cost: 232 DBAStar path cost: 240
-Suboptimality: 3.4482758620689724
-AStar path cost: 236 DBAStar path cost: 244
-Suboptimality: 3.3898305084745672
-AStar path cost: 240 DBAStar path cost: 248
-Suboptimality: 3.3333333333333437
-AStar path cost: 244 DBAStar path cost: 252
-Suboptimality: 3.2786885245901676
+AStar path cost: 228 DBAStar path cost: 228
+Suboptimality: 0.0
+AStar path cost: 232 DBAStar path cost: 232
+Suboptimality: 0.0
+AStar path cost: 236 DBAStar path cost: 236
+Suboptimality: 0.0
+AStar path cost: 240 DBAStar path cost: 240
+Suboptimality: 0.0
+AStar path cost: 244 DBAStar path cost: 244
+Suboptimality: 0.0
 AStar path cost: 322 DBAStar path cost: 322
 Suboptimality: 0.0
 AStar path cost: 312 DBAStar path cost: 312
@@ -4483,14 +4483,14 @@ AStar path cost: 218 DBAStar path cost: 218
 Suboptimality: 0.0
 AStar path cost: 214 DBAStar path cost: 214
 Suboptimality: 0.0
-AStar path cost: 218 DBAStar path cost: 226
-Suboptimality: 3.669724770642202
-AStar path cost: 222 DBAStar path cost: 230
-Suboptimality: 3.603603603603611
-AStar path cost: 226 DBAStar path cost: 234
-Suboptimality: 3.539823008849563
-AStar path cost: 230 DBAStar path cost: 238
-Suboptimality: 3.4782608695652195
+AStar path cost: 218 DBAStar path cost: 218
+Suboptimality: 0.0
+AStar path cost: 222 DBAStar path cost: 222
+Suboptimality: 0.0
+AStar path cost: 226 DBAStar path cost: 226
+Suboptimality: 0.0
+AStar path cost: 230 DBAStar path cost: 230
+Suboptimality: 0.0
 AStar path cost: 336 DBAStar path cost: 336
 Suboptimality: 0.0
 AStar path cost: 326 DBAStar path cost: 326
@@ -4509,8 +4509,8 @@ AStar path cost: 282 DBAStar path cost: 282
 Suboptimality: 0.0
 AStar path cost: 286 DBAStar path cost: 286
 Suboptimality: 0.0
-AStar path cost: 290 DBAStar path cost: 296
-Suboptimality: 2.0689655172413834
+AStar path cost: 290 DBAStar path cost: 290
+Suboptimality: 0.0
 AStar path cost: 294 DBAStar path cost: 494
 Suboptimality: 68.02721088435375
 AStar path cost: 304 DBAStar path cost: 490
@@ -4625,8 +4625,8 @@ AStar path cost: 252 DBAStar path cost: 306
 Suboptimality: 21.42857142857142
 AStar path cost: 248 DBAStar path cost: 310
 Suboptimality: 25.0
-AStar path cost: 244 DBAStar path cost: 250
-Suboptimality: 2.4590163934426146
+AStar path cost: 244 DBAStar path cost: 244
+Suboptimality: 0.0
 AStar path cost: 228 DBAStar path cost: 228
 Suboptimality: 0.0
 AStar path cost: 224 DBAStar path cost: 224
@@ -4641,12 +4641,12 @@ AStar path cost: 208 DBAStar path cost: 208
 Suboptimality: 0.0
 AStar path cost: 204 DBAStar path cost: 204
 Suboptimality: 0.0
-AStar path cost: 208 DBAStar path cost: 216
-Suboptimality: 3.8461538461538547
-AStar path cost: 212 DBAStar path cost: 220
-Suboptimality: 3.7735849056603765
-AStar path cost: 216 DBAStar path cost: 224
-Suboptimality: 3.703703703703698
+AStar path cost: 208 DBAStar path cost: 208
+Suboptimality: 0.0
+AStar path cost: 212 DBAStar path cost: 212
+Suboptimality: 0.0
+AStar path cost: 216 DBAStar path cost: 216
+Suboptimality: 0.0
 AStar path cost: 264 DBAStar path cost: 264
 Suboptimality: 0.0
 AStar path cost: 260 DBAStar path cost: 260
@@ -4657,10 +4657,10 @@ AStar path cost: 268 DBAStar path cost: 268
 Suboptimality: 0.0
 AStar path cost: 272 DBAStar path cost: 272
 Suboptimality: 0.0
-AStar path cost: 276 DBAStar path cost: 282
-Suboptimality: 2.1739130434782705
-AStar path cost: 280 DBAStar path cost: 292
-Suboptimality: 4.285714285714293
+AStar path cost: 276 DBAStar path cost: 276
+Suboptimality: 0.0
+AStar path cost: 280 DBAStar path cost: 280
+Suboptimality: 0.0
 AStar path cost: 290 DBAStar path cost: 490
 Suboptimality: 68.96551724137932
 AStar path cost: 300 DBAStar path cost: 480
@@ -4779,10 +4779,10 @@ AStar path cost: 242 DBAStar path cost: 296
 Suboptimality: 22.314049586776854
 AStar path cost: 238 DBAStar path cost: 300
 Suboptimality: 26.050420168067223
-AStar path cost: 234 DBAStar path cost: 240
-Suboptimality: 2.564102564102555
-AStar path cost: 230 DBAStar path cost: 236
-Suboptimality: 2.60869565217392
+AStar path cost: 234 DBAStar path cost: 234
+Suboptimality: 0.0
+AStar path cost: 230 DBAStar path cost: 230
+Suboptimality: 0.0
 AStar path cost: 214 DBAStar path cost: 214
 Suboptimality: 0.0
 AStar path cost: 210 DBAStar path cost: 210
@@ -4795,10 +4795,10 @@ AStar path cost: 198 DBAStar path cost: 198
 Suboptimality: 0.0
 AStar path cost: 194 DBAStar path cost: 194
 Suboptimality: 0.0
-AStar path cost: 198 DBAStar path cost: 206
-Suboptimality: 4.040404040404044
-AStar path cost: 202 DBAStar path cost: 210
-Suboptimality: 3.960396039603964
+AStar path cost: 198 DBAStar path cost: 198
+Suboptimality: 0.0
+AStar path cost: 202 DBAStar path cost: 202
+Suboptimality: 0.0
 AStar path cost: 254 DBAStar path cost: 254
 Suboptimality: 0.0
 AStar path cost: 250 DBAStar path cost: 250
@@ -4807,12 +4807,12 @@ AStar path cost: 254 DBAStar path cost: 254
 Suboptimality: 0.0
 AStar path cost: 258 DBAStar path cost: 258
 Suboptimality: 0.0
-AStar path cost: 262 DBAStar path cost: 268
-Suboptimality: 2.2900763358778553
-AStar path cost: 266 DBAStar path cost: 278
-Suboptimality: 4.511278195488733
-AStar path cost: 276 DBAStar path cost: 288
-Suboptimality: 4.347826086956519
+AStar path cost: 262 DBAStar path cost: 262
+Suboptimality: 0.0
+AStar path cost: 266 DBAStar path cost: 266
+Suboptimality: 0.0
+AStar path cost: 276 DBAStar path cost: 276
+Suboptimality: 0.0
 AStar path cost: 304 DBAStar path cost: 476
 Suboptimality: 56.57894736842106
 AStar path cost: 314 DBAStar path cost: 466
@@ -4925,12 +4925,12 @@ AStar path cost: 232 DBAStar path cost: 286
 Suboptimality: 23.275862068965523
 AStar path cost: 228 DBAStar path cost: 296
 Suboptimality: 29.824561403508774
-AStar path cost: 224 DBAStar path cost: 230
-Suboptimality: 2.678571428571419
-AStar path cost: 220 DBAStar path cost: 226
-Suboptimality: 2.7272727272727337
-AStar path cost: 216 DBAStar path cost: 222
-Suboptimality: 2.777777777777768
+AStar path cost: 224 DBAStar path cost: 224
+Suboptimality: 0.0
+AStar path cost: 220 DBAStar path cost: 220
+Suboptimality: 0.0
+AStar path cost: 216 DBAStar path cost: 216
+Suboptimality: 0.0
 AStar path cost: 200 DBAStar path cost: 200
 Suboptimality: 0.0
 AStar path cost: 196 DBAStar path cost: 196
@@ -4941,20 +4941,20 @@ AStar path cost: 188 DBAStar path cost: 188
 Suboptimality: 0.0
 AStar path cost: 184 DBAStar path cost: 184
 Suboptimality: 0.0
-AStar path cost: 188 DBAStar path cost: 196
-Suboptimality: 4.255319148936176
-AStar path cost: 200 DBAStar path cost: 420
-Suboptimality: 110.00000000000001
+AStar path cost: 188 DBAStar path cost: 188
+Suboptimality: 0.0
+AStar path cost: 200 DBAStar path cost: 200
+Suboptimality: 0.0
 AStar path cost: 240 DBAStar path cost: 240
 Suboptimality: 0.0
 AStar path cost: 244 DBAStar path cost: 244
 Suboptimality: 0.0
-AStar path cost: 248 DBAStar path cost: 254
-Suboptimality: 2.4193548387096753
-AStar path cost: 252 DBAStar path cost: 264
-Suboptimality: 4.761904761904767
-AStar path cost: 262 DBAStar path cost: 274
-Suboptimality: 4.580152671755733
+AStar path cost: 248 DBAStar path cost: 248
+Suboptimality: 0.0
+AStar path cost: 252 DBAStar path cost: 252
+Suboptimality: 0.0
+AStar path cost: 262 DBAStar path cost: 262
+Suboptimality: 0.0
 AStar path cost: 308 DBAStar path cost: 462
 Suboptimality: 50.0
 AStar path cost: 312 DBAStar path cost: 452
@@ -5067,14 +5067,14 @@ AStar path cost: 222 DBAStar path cost: 282
 Suboptimality: 27.027027027027017
 AStar path cost: 218 DBAStar path cost: 292
 Suboptimality: 33.944954128440365
-AStar path cost: 214 DBAStar path cost: 220
-Suboptimality: 2.8037383177569986
-AStar path cost: 210 DBAStar path cost: 216
-Suboptimality: 2.857142857142847
-AStar path cost: 206 DBAStar path cost: 212
-Suboptimality: 2.9126213592232997
-AStar path cost: 202 DBAStar path cost: 216
-Suboptimality: 6.930693069306937
+AStar path cost: 214 DBAStar path cost: 214
+Suboptimality: 0.0
+AStar path cost: 210 DBAStar path cost: 210
+Suboptimality: 0.0
+AStar path cost: 206 DBAStar path cost: 206
+Suboptimality: 0.0
+AStar path cost: 202 DBAStar path cost: 202
+Suboptimality: 0.0
 AStar path cost: 186 DBAStar path cost: 186
 Suboptimality: 0.0
 AStar path cost: 182 DBAStar path cost: 182
@@ -5083,20 +5083,20 @@ AStar path cost: 178 DBAStar path cost: 178
 Suboptimality: 0.0
 AStar path cost: 174 DBAStar path cost: 174
 Suboptimality: 0.0
-AStar path cost: 186 DBAStar path cost: 200
-Suboptimality: 7.526881720430101
-AStar path cost: 190 DBAStar path cost: 362
-Suboptimality: 90.52631578947367
-AStar path cost: 198 DBAStar path cost: 348
-Suboptimality: 75.75757575757575
+AStar path cost: 186 DBAStar path cost: 186
+Suboptimality: 0.0
+AStar path cost: 190 DBAStar path cost: 190
+Suboptimality: 0.0
+AStar path cost: 198 DBAStar path cost: 198
+Suboptimality: 0.0
 AStar path cost: 230 DBAStar path cost: 230
 Suboptimality: 0.0
-AStar path cost: 234 DBAStar path cost: 240
-Suboptimality: 2.564102564102555
-AStar path cost: 238 DBAStar path cost: 250
-Suboptimality: 5.042016806722693
-AStar path cost: 248 DBAStar path cost: 260
-Suboptimality: 4.8387096774193505
+AStar path cost: 234 DBAStar path cost: 234
+Suboptimality: 0.0
+AStar path cost: 238 DBAStar path cost: 238
+Suboptimality: 0.0
+AStar path cost: 248 DBAStar path cost: 248
+Suboptimality: 0.0
 AStar path cost: 298 DBAStar path cost: 458
 Suboptimality: 53.69127516778522
 AStar path cost: 308 DBAStar path cost: 448
@@ -5211,40 +5211,40 @@ AStar path cost: 212 DBAStar path cost: 278
 Suboptimality: 31.132075471698116
 AStar path cost: 208 DBAStar path cost: 288
 Suboptimality: 38.46153846153846
-AStar path cost: 204 DBAStar path cost: 216
-Suboptimality: 5.882352941176472
-AStar path cost: 200 DBAStar path cost: 206
-Suboptimality: 3.0000000000000027
-AStar path cost: 196 DBAStar path cost: 202
-Suboptimality: 3.0612244897959107
-AStar path cost: 192 DBAStar path cost: 206
-Suboptimality: 7.291666666666674
-AStar path cost: 188 DBAStar path cost: 216
-Suboptimality: 14.893617021276606
+AStar path cost: 204 DBAStar path cost: 204
+Suboptimality: 0.0
+AStar path cost: 200 DBAStar path cost: 200
+Suboptimality: 0.0
+AStar path cost: 196 DBAStar path cost: 196
+Suboptimality: 0.0
+AStar path cost: 192 DBAStar path cost: 192
+Suboptimality: 0.0
+AStar path cost: 188 DBAStar path cost: 188
+Suboptimality: 0.0
 AStar path cost: 172 DBAStar path cost: 172
 Suboptimality: 0.0
 AStar path cost: 168 DBAStar path cost: 168
 Suboptimality: 0.0
 AStar path cost: 164 DBAStar path cost: 164
 Suboptimality: 0.0
-AStar path cost: 172 DBAStar path cost: 186
-Suboptimality: 8.139534883720923
-AStar path cost: 176 DBAStar path cost: 196
-Suboptimality: 11.363636363636353
-AStar path cost: 180 DBAStar path cost: 358
-Suboptimality: 98.88888888888889
-AStar path cost: 184 DBAStar path cost: 348
-Suboptimality: 89.13043478260869
-AStar path cost: 188 DBAStar path cost: 338
-Suboptimality: 79.7872340425532
-AStar path cost: 216 DBAStar path cost: 244
-Suboptimality: 12.962962962962955
-AStar path cost: 220 DBAStar path cost: 240
-Suboptimality: 9.090909090909083
-AStar path cost: 224 DBAStar path cost: 244
-Suboptimality: 8.92857142857142
-AStar path cost: 234 DBAStar path cost: 254
-Suboptimality: 8.547008547008538
+AStar path cost: 172 DBAStar path cost: 172
+Suboptimality: 0.0
+AStar path cost: 176 DBAStar path cost: 176
+Suboptimality: 0.0
+AStar path cost: 180 DBAStar path cost: 180
+Suboptimality: 0.0
+AStar path cost: 184 DBAStar path cost: 184
+Suboptimality: 0.0
+AStar path cost: 188 DBAStar path cost: 188
+Suboptimality: 0.0
+AStar path cost: 216 DBAStar path cost: 216
+Suboptimality: 0.0
+AStar path cost: 220 DBAStar path cost: 220
+Suboptimality: 0.0
+AStar path cost: 224 DBAStar path cost: 224
+Suboptimality: 0.0
+AStar path cost: 234 DBAStar path cost: 234
+Suboptimality: 0.0
 AStar path cost: 284 DBAStar path cost: 472
 Suboptimality: 66.19718309859155
 AStar path cost: 294 DBAStar path cost: 462
@@ -5363,48 +5363,48 @@ AStar path cost: 208 DBAStar path cost: 274
 Suboptimality: 31.73076923076923
 AStar path cost: 198 DBAStar path cost: 284
 Suboptimality: 43.434343434343425
-AStar path cost: 194 DBAStar path cost: 212
-Suboptimality: 9.278350515463906
-AStar path cost: 190 DBAStar path cost: 202
-Suboptimality: 6.315789473684208
-AStar path cost: 186 DBAStar path cost: 192
-Suboptimality: 3.2258064516129004
-AStar path cost: 182 DBAStar path cost: 202
-Suboptimality: 10.989010989010994
-AStar path cost: 178 DBAStar path cost: 212
-Suboptimality: 19.10112359550562
-AStar path cost: 174 DBAStar path cost: 222
-Suboptimality: 27.586206896551737
+AStar path cost: 194 DBAStar path cost: 194
+Suboptimality: 0.0
+AStar path cost: 190 DBAStar path cost: 190
+Suboptimality: 0.0
+AStar path cost: 186 DBAStar path cost: 186
+Suboptimality: 0.0
+AStar path cost: 182 DBAStar path cost: 182
+Suboptimality: 0.0
+AStar path cost: 178 DBAStar path cost: 178
+Suboptimality: 0.0
+AStar path cost: 174 DBAStar path cost: 174
+Suboptimality: 0.0
 AStar path cost: 162 DBAStar path cost: 162
 Suboptimality: 0.0
 AStar path cost: 158 DBAStar path cost: 158
 Suboptimality: 0.0
 AStar path cost: 154 DBAStar path cost: 154
 Suboptimality: 0.0
-AStar path cost: 150 DBAStar path cost: 158
-Suboptimality: 5.333333333333323
-AStar path cost: 158 DBAStar path cost: 172
-Suboptimality: 8.860759493670889
-AStar path cost: 162 DBAStar path cost: 182
-Suboptimality: 12.34567901234569
-AStar path cost: 166 DBAStar path cost: 192
-Suboptimality: 15.662650602409634
-AStar path cost: 170 DBAStar path cost: 354
-Suboptimality: 108.23529411764707
-AStar path cost: 174 DBAStar path cost: 344
-Suboptimality: 97.70114942528735
-AStar path cost: 178 DBAStar path cost: 334
-Suboptimality: 87.64044943820224
-AStar path cost: 182 DBAStar path cost: 324
-Suboptimality: 78.02197802197801
-AStar path cost: 202 DBAStar path cost: 258
-Suboptimality: 27.722772277227726
-AStar path cost: 206 DBAStar path cost: 254
-Suboptimality: 23.300970873786397
-AStar path cost: 210 DBAStar path cost: 250
-Suboptimality: 19.047619047619047
-AStar path cost: 220 DBAStar path cost: 254
-Suboptimality: 15.454545454545453
+AStar path cost: 150 DBAStar path cost: 150
+Suboptimality: 0.0
+AStar path cost: 158 DBAStar path cost: 158
+Suboptimality: 0.0
+AStar path cost: 162 DBAStar path cost: 162
+Suboptimality: 0.0
+AStar path cost: 166 DBAStar path cost: 166
+Suboptimality: 0.0
+AStar path cost: 170 DBAStar path cost: 170
+Suboptimality: 0.0
+AStar path cost: 174 DBAStar path cost: 174
+Suboptimality: 0.0
+AStar path cost: 178 DBAStar path cost: 178
+Suboptimality: 0.0
+AStar path cost: 182 DBAStar path cost: 182
+Suboptimality: 0.0
+AStar path cost: 202 DBAStar path cost: 202
+Suboptimality: 0.0
+AStar path cost: 206 DBAStar path cost: 206
+Suboptimality: 0.0
+AStar path cost: 210 DBAStar path cost: 210
+Suboptimality: 0.0
+AStar path cost: 220 DBAStar path cost: 220
+Suboptimality: 0.0
 AStar path cost: 270 DBAStar path cost: 486
 Suboptimality: 80.0
 AStar path cost: 280 DBAStar path cost: 476
@@ -5525,50 +5525,50 @@ AStar path cost: 204 DBAStar path cost: 278
 Suboptimality: 36.274509803921575
 AStar path cost: 194 DBAStar path cost: 288
 Suboptimality: 48.453608247422686
-AStar path cost: 184 DBAStar path cost: 216
-Suboptimality: 17.391304347826097
-AStar path cost: 180 DBAStar path cost: 206
-Suboptimality: 14.444444444444438
-AStar path cost: 176 DBAStar path cost: 202
-Suboptimality: 14.77272727272727
-AStar path cost: 172 DBAStar path cost: 206
-Suboptimality: 19.767441860465105
-AStar path cost: 168 DBAStar path cost: 216
-Suboptimality: 28.57142857142858
-AStar path cost: 164 DBAStar path cost: 226
-Suboptimality: 37.80487804878048
+AStar path cost: 184 DBAStar path cost: 184
+Suboptimality: 0.0
+AStar path cost: 180 DBAStar path cost: 180
+Suboptimality: 0.0
+AStar path cost: 176 DBAStar path cost: 176
+Suboptimality: 0.0
+AStar path cost: 172 DBAStar path cost: 172
+Suboptimality: 0.0
+AStar path cost: 168 DBAStar path cost: 168
+Suboptimality: 0.0
+AStar path cost: 164 DBAStar path cost: 164
+Suboptimality: 0.0
 AStar path cost: 148 DBAStar path cost: 148
 Suboptimality: 0.0
 AStar path cost: 144 DBAStar path cost: 144
 Suboptimality: 0.0
-AStar path cost: 140 DBAStar path cost: 148
-Suboptimality: 5.714285714285716
-AStar path cost: 144 DBAStar path cost: 158
-Suboptimality: 9.722222222222232
-AStar path cost: 148 DBAStar path cost: 168
-Suboptimality: 13.513513513513509
-AStar path cost: 152 DBAStar path cost: 178
-Suboptimality: 17.105263157894733
-AStar path cost: 156 DBAStar path cost: 188
-Suboptimality: 20.512820512820507
-AStar path cost: 160 DBAStar path cost: 350
-Suboptimality: 118.75
-AStar path cost: 164 DBAStar path cost: 340
-Suboptimality: 107.31707317073172
-AStar path cost: 168 DBAStar path cost: 330
-Suboptimality: 96.42857142857142
-AStar path cost: 172 DBAStar path cost: 320
-Suboptimality: 86.04651162790698
-AStar path cost: 176 DBAStar path cost: 310
-Suboptimality: 76.13636363636364
-AStar path cost: 188 DBAStar path cost: 272
-Suboptimality: 44.6808510638298
-AStar path cost: 192 DBAStar path cost: 268
-Suboptimality: 39.58333333333333
-AStar path cost: 196 DBAStar path cost: 264
-Suboptimality: 34.6938775510204
-AStar path cost: 206 DBAStar path cost: 260
-Suboptimality: 26.21359223300972
+AStar path cost: 140 DBAStar path cost: 140
+Suboptimality: 0.0
+AStar path cost: 144 DBAStar path cost: 144
+Suboptimality: 0.0
+AStar path cost: 148 DBAStar path cost: 148
+Suboptimality: 0.0
+AStar path cost: 152 DBAStar path cost: 152
+Suboptimality: 0.0
+AStar path cost: 156 DBAStar path cost: 156
+Suboptimality: 0.0
+AStar path cost: 160 DBAStar path cost: 160
+Suboptimality: 0.0
+AStar path cost: 164 DBAStar path cost: 164
+Suboptimality: 0.0
+AStar path cost: 168 DBAStar path cost: 168
+Suboptimality: 0.0
+AStar path cost: 172 DBAStar path cost: 172
+Suboptimality: 0.0
+AStar path cost: 176 DBAStar path cost: 176
+Suboptimality: 0.0
+AStar path cost: 188 DBAStar path cost: 188
+Suboptimality: 0.0
+AStar path cost: 192 DBAStar path cost: 192
+Suboptimality: 0.0
+AStar path cost: 196 DBAStar path cost: 196
+Suboptimality: 0.0
+AStar path cost: 206 DBAStar path cost: 206
+Suboptimality: 0.0
 AStar path cost: 256 DBAStar path cost: 268
 Suboptimality: 4.6875
 AStar path cost: 266 DBAStar path cost: 490
@@ -5683,50 +5683,50 @@ AStar path cost: 218 DBAStar path cost: 272
 Suboptimality: 24.770642201834868
 AStar path cost: 208 DBAStar path cost: 282
 Suboptimality: 35.57692307692308
-AStar path cost: 170 DBAStar path cost: 216
-Suboptimality: 27.058823529411757
-AStar path cost: 166 DBAStar path cost: 212
-Suboptimality: 27.710843373493965
-AStar path cost: 162 DBAStar path cost: 216
-Suboptimality: 33.33333333333333
-AStar path cost: 158 DBAStar path cost: 220
-Suboptimality: 39.240506329113934
-AStar path cost: 154 DBAStar path cost: 230
-Suboptimality: 49.35064935064935
-AStar path cost: 150 DBAStar path cost: 240
-Suboptimality: 60.00000000000001
+AStar path cost: 170 DBAStar path cost: 170
+Suboptimality: 0.0
+AStar path cost: 166 DBAStar path cost: 166
+Suboptimality: 0.0
+AStar path cost: 162 DBAStar path cost: 162
+Suboptimality: 0.0
+AStar path cost: 158 DBAStar path cost: 158
+Suboptimality: 0.0
+AStar path cost: 154 DBAStar path cost: 154
+Suboptimality: 0.0
+AStar path cost: 150 DBAStar path cost: 150
+Suboptimality: 0.0
 AStar path cost: 134 DBAStar path cost: 134
 Suboptimality: 0.0
-AStar path cost: 130 DBAStar path cost: 144
-Suboptimality: 10.769230769230775
-AStar path cost: 134 DBAStar path cost: 154
-Suboptimality: 14.925373134328357
-AStar path cost: 138 DBAStar path cost: 164
-Suboptimality: 18.840579710144922
-AStar path cost: 142 DBAStar path cost: 174
-Suboptimality: 22.535211267605625
-AStar path cost: 146 DBAStar path cost: 184
-Suboptimality: 26.027397260273965
-AStar path cost: 150 DBAStar path cost: 346
-Suboptimality: 130.66666666666666
-AStar path cost: 154 DBAStar path cost: 336
-Suboptimality: 118.18181818181816
-AStar path cost: 158 DBAStar path cost: 326
-Suboptimality: 106.32911392405062
-AStar path cost: 162 DBAStar path cost: 316
-Suboptimality: 95.06172839506173
-AStar path cost: 166 DBAStar path cost: 306
-Suboptimality: 84.33734939759037
-AStar path cost: 170 DBAStar path cost: 296
-Suboptimality: 74.11764705882354
-AStar path cost: 174 DBAStar path cost: 286
-Suboptimality: 64.36781609195404
-AStar path cost: 178 DBAStar path cost: 282
-Suboptimality: 58.42696629213484
-AStar path cost: 182 DBAStar path cost: 278
-Suboptimality: 52.74725274725274
-AStar path cost: 192 DBAStar path cost: 274
-Suboptimality: 42.70833333333333
+AStar path cost: 130 DBAStar path cost: 130
+Suboptimality: 0.0
+AStar path cost: 134 DBAStar path cost: 134
+Suboptimality: 0.0
+AStar path cost: 138 DBAStar path cost: 138
+Suboptimality: 0.0
+AStar path cost: 142 DBAStar path cost: 142
+Suboptimality: 0.0
+AStar path cost: 146 DBAStar path cost: 146
+Suboptimality: 0.0
+AStar path cost: 150 DBAStar path cost: 150
+Suboptimality: 0.0
+AStar path cost: 154 DBAStar path cost: 154
+Suboptimality: 0.0
+AStar path cost: 158 DBAStar path cost: 158
+Suboptimality: 0.0
+AStar path cost: 162 DBAStar path cost: 162
+Suboptimality: 0.0
+AStar path cost: 166 DBAStar path cost: 166
+Suboptimality: 0.0
+AStar path cost: 170 DBAStar path cost: 170
+Suboptimality: 0.0
+AStar path cost: 174 DBAStar path cost: 174
+Suboptimality: 0.0
+AStar path cost: 178 DBAStar path cost: 178
+Suboptimality: 0.0
+AStar path cost: 182 DBAStar path cost: 182
+Suboptimality: 0.0
+AStar path cost: 192 DBAStar path cost: 192
+Suboptimality: 0.0
 AStar path cost: 242 DBAStar path cost: 254
 Suboptimality: 4.958677685950419
 AStar path cost: 252 DBAStar path cost: 258
@@ -5841,46 +5841,46 @@ AStar path cost: 222 DBAStar path cost: 282
 Suboptimality: 27.027027027027017
 AStar path cost: 218 DBAStar path cost: 286
 Suboptimality: 31.192660550458704
-AStar path cost: 156 DBAStar path cost: 222
-Suboptimality: 42.307692307692314
-AStar path cost: 152 DBAStar path cost: 226
-Suboptimality: 48.684210526315795
-AStar path cost: 148 DBAStar path cost: 230
-Suboptimality: 55.405405405405396
-AStar path cost: 144 DBAStar path cost: 234
-Suboptimality: 62.5
-AStar path cost: 140 DBAStar path cost: 244
-Suboptimality: 74.28571428571429
-AStar path cost: 124 DBAStar path cost: 144
-Suboptimality: 16.129032258064523
-AStar path cost: 120 DBAStar path cost: 148
-Suboptimality: 23.33333333333334
-AStar path cost: 124 DBAStar path cost: 158
-Suboptimality: 27.419354838709676
-AStar path cost: 128 DBAStar path cost: 168
-Suboptimality: 31.25
-AStar path cost: 132 DBAStar path cost: 178
-Suboptimality: 34.84848484848484
-AStar path cost: 136 DBAStar path cost: 188
-Suboptimality: 38.23529411764706
-AStar path cost: 140 DBAStar path cost: 350
-Suboptimality: 150.0
-AStar path cost: 144 DBAStar path cost: 340
-Suboptimality: 136.11111111111111
-AStar path cost: 148 DBAStar path cost: 330
-Suboptimality: 122.97297297297298
-AStar path cost: 152 DBAStar path cost: 320
-Suboptimality: 110.52631578947367
-AStar path cost: 156 DBAStar path cost: 310
-Suboptimality: 98.71794871794873
-AStar path cost: 160 DBAStar path cost: 300
-Suboptimality: 87.5
-AStar path cost: 164 DBAStar path cost: 296
-Suboptimality: 80.48780487804879
-AStar path cost: 168 DBAStar path cost: 292
-Suboptimality: 73.80952380952381
-AStar path cost: 178 DBAStar path cost: 288
-Suboptimality: 61.79775280898876
+AStar path cost: 156 DBAStar path cost: 156
+Suboptimality: 0.0
+AStar path cost: 152 DBAStar path cost: 152
+Suboptimality: 0.0
+AStar path cost: 148 DBAStar path cost: 148
+Suboptimality: 0.0
+AStar path cost: 144 DBAStar path cost: 144
+Suboptimality: 0.0
+AStar path cost: 140 DBAStar path cost: 140
+Suboptimality: 0.0
+AStar path cost: 124 DBAStar path cost: 124
+Suboptimality: 0.0
+AStar path cost: 120 DBAStar path cost: 120
+Suboptimality: 0.0
+AStar path cost: 124 DBAStar path cost: 124
+Suboptimality: 0.0
+AStar path cost: 128 DBAStar path cost: 128
+Suboptimality: 0.0
+AStar path cost: 132 DBAStar path cost: 132
+Suboptimality: 0.0
+AStar path cost: 136 DBAStar path cost: 136
+Suboptimality: 0.0
+AStar path cost: 140 DBAStar path cost: 140
+Suboptimality: 0.0
+AStar path cost: 144 DBAStar path cost: 144
+Suboptimality: 0.0
+AStar path cost: 148 DBAStar path cost: 148
+Suboptimality: 0.0
+AStar path cost: 152 DBAStar path cost: 152
+Suboptimality: 0.0
+AStar path cost: 156 DBAStar path cost: 156
+Suboptimality: 0.0
+AStar path cost: 160 DBAStar path cost: 160
+Suboptimality: 0.0
+AStar path cost: 164 DBAStar path cost: 164
+Suboptimality: 0.0
+AStar path cost: 168 DBAStar path cost: 168
+Suboptimality: 0.0
+AStar path cost: 178 DBAStar path cost: 178
+Suboptimality: 0.0
 AStar path cost: 228 DBAStar path cost: 240
 Suboptimality: 5.263157894736836
 AStar path cost: 238 DBAStar path cost: 244
@@ -5995,48 +5995,48 @@ AStar path cost: 228 DBAStar path cost: 296
 Suboptimality: 29.824561403508774
 AStar path cost: 232 DBAStar path cost: 300
 Suboptimality: 29.31034482758621
-AStar path cost: 146 DBAStar path cost: 232
-Suboptimality: 58.904109589041084
-AStar path cost: 142 DBAStar path cost: 236
-Suboptimality: 66.19718309859155
-AStar path cost: 138 DBAStar path cost: 240
-Suboptimality: 73.91304347826086
-AStar path cost: 134 DBAStar path cost: 244
-Suboptimality: 82.08955223880596
-AStar path cost: 130 DBAStar path cost: 248
-Suboptimality: 90.76923076923077
-AStar path cost: 126 DBAStar path cost: 258
-Suboptimality: 104.76190476190474
-AStar path cost: 118 DBAStar path cost: 158
-Suboptimality: 33.89830508474576
-AStar path cost: 114 DBAStar path cost: 154
-Suboptimality: 35.08771929824561
-AStar path cost: 110 DBAStar path cost: 158
-Suboptimality: 43.636363636363626
-AStar path cost: 114 DBAStar path cost: 162
-Suboptimality: 42.10526315789473
-AStar path cost: 118 DBAStar path cost: 172
-Suboptimality: 45.76271186440677
-AStar path cost: 122 DBAStar path cost: 182
-Suboptimality: 49.18032786885247
-AStar path cost: 126 DBAStar path cost: 192
-Suboptimality: 52.38095238095237
-AStar path cost: 130 DBAStar path cost: 354
-Suboptimality: 172.30769230769232
-AStar path cost: 134 DBAStar path cost: 344
-Suboptimality: 156.71641791044775
-AStar path cost: 138 DBAStar path cost: 334
-Suboptimality: 142.02898550724638
-AStar path cost: 142 DBAStar path cost: 324
-Suboptimality: 128.16901408450704
-AStar path cost: 146 DBAStar path cost: 314
-Suboptimality: 115.06849315068494
-AStar path cost: 150 DBAStar path cost: 310
-Suboptimality: 106.66666666666669
-AStar path cost: 154 DBAStar path cost: 306
-Suboptimality: 98.70129870129871
-AStar path cost: 164 DBAStar path cost: 302
-Suboptimality: 84.14634146341464
+AStar path cost: 146 DBAStar path cost: 146
+Suboptimality: 0.0
+AStar path cost: 142 DBAStar path cost: 142
+Suboptimality: 0.0
+AStar path cost: 138 DBAStar path cost: 138
+Suboptimality: 0.0
+AStar path cost: 134 DBAStar path cost: 134
+Suboptimality: 0.0
+AStar path cost: 130 DBAStar path cost: 130
+Suboptimality: 0.0
+AStar path cost: 126 DBAStar path cost: 126
+Suboptimality: 0.0
+AStar path cost: 118 DBAStar path cost: 118
+Suboptimality: 0.0
+AStar path cost: 114 DBAStar path cost: 114
+Suboptimality: 0.0
+AStar path cost: 110 DBAStar path cost: 110
+Suboptimality: 0.0
+AStar path cost: 114 DBAStar path cost: 114
+Suboptimality: 0.0
+AStar path cost: 118 DBAStar path cost: 118
+Suboptimality: 0.0
+AStar path cost: 122 DBAStar path cost: 122
+Suboptimality: 0.0
+AStar path cost: 126 DBAStar path cost: 126
+Suboptimality: 0.0
+AStar path cost: 130 DBAStar path cost: 130
+Suboptimality: 0.0
+AStar path cost: 134 DBAStar path cost: 134
+Suboptimality: 0.0
+AStar path cost: 138 DBAStar path cost: 138
+Suboptimality: 0.0
+AStar path cost: 142 DBAStar path cost: 142
+Suboptimality: 0.0
+AStar path cost: 146 DBAStar path cost: 146
+Suboptimality: 0.0
+AStar path cost: 150 DBAStar path cost: 150
+Suboptimality: 0.0
+AStar path cost: 154 DBAStar path cost: 154
+Suboptimality: 0.0
+AStar path cost: 164 DBAStar path cost: 164
+Suboptimality: 0.0
 AStar path cost: 214 DBAStar path cost: 226
 Suboptimality: 5.607476635514019
 AStar path cost: 224 DBAStar path cost: 230
@@ -6131,8 +6131,8 @@ AStar path cost: 330 DBAStar path cost: 430
 Suboptimality: 30.303030303030297
 AStar path cost: 326 DBAStar path cost: 434
 Suboptimality: 33.12883435582823
-AStar path cost: 322 DBAStar path cost: 338
-Suboptimality: 4.968944099378891
+AStar path cost: 322 DBAStar path cost: 322
+Suboptimality: 0.0
 AStar path cost: 290 DBAStar path cost: 316
 Suboptimality: 8.965517241379306
 AStar path cost: 280 DBAStar path cost: 306
@@ -6179,30 +6179,30 @@ AStar path cost: 112 DBAStar path cost: 112
 Suboptimality: 0.0
 AStar path cost: 116 DBAStar path cost: 116
 Suboptimality: 0.0
-AStar path cost: 120 DBAStar path cost: 296
-Suboptimality: 146.66666666666669
-AStar path cost: 124 DBAStar path cost: 292
-Suboptimality: 135.48387096774195
-AStar path cost: 128 DBAStar path cost: 288
-Suboptimality: 125.0
-AStar path cost: 132 DBAStar path cost: 284
-Suboptimality: 115.15151515151514
-AStar path cost: 136 DBAStar path cost: 280
-Suboptimality: 105.88235294117645
-AStar path cost: 140 DBAStar path cost: 284
-Suboptimality: 102.85714285714285
-AStar path cost: 150 DBAStar path cost: 288
-Suboptimality: 92.0
-AStar path cost: 200 DBAStar path cost: 292
-Suboptimality: 46.0
-AStar path cost: 210 DBAStar path cost: 296
-Suboptimality: 40.95238095238096
-AStar path cost: 220 DBAStar path cost: 300
-Suboptimality: 36.36363636363635
-AStar path cost: 230 DBAStar path cost: 310
-Suboptimality: 34.78260869565217
-AStar path cost: 240 DBAStar path cost: 320
-Suboptimality: 33.33333333333333
+AStar path cost: 120 DBAStar path cost: 120
+Suboptimality: 0.0
+AStar path cost: 124 DBAStar path cost: 124
+Suboptimality: 0.0
+AStar path cost: 128 DBAStar path cost: 128
+Suboptimality: 0.0
+AStar path cost: 132 DBAStar path cost: 132
+Suboptimality: 0.0
+AStar path cost: 136 DBAStar path cost: 136
+Suboptimality: 0.0
+AStar path cost: 140 DBAStar path cost: 140
+Suboptimality: 0.0
+AStar path cost: 150 DBAStar path cost: 150
+Suboptimality: 0.0
+AStar path cost: 200 DBAStar path cost: 200
+Suboptimality: 0.0
+AStar path cost: 210 DBAStar path cost: 210
+Suboptimality: 0.0
+AStar path cost: 220 DBAStar path cost: 220
+Suboptimality: 0.0
+AStar path cost: 230 DBAStar path cost: 230
+Suboptimality: 0.0
+AStar path cost: 240 DBAStar path cost: 240
+Suboptimality: 0.0
 AStar path cost: 250 DBAStar path cost: 250
 Suboptimality: 0.0
 AStar path cost: 260 DBAStar path cost: 260
@@ -6279,8 +6279,8 @@ AStar path cost: 326 DBAStar path cost: 420
 Suboptimality: 28.834355828220847
 AStar path cost: 316 DBAStar path cost: 424
 Suboptimality: 34.17721518987342
-AStar path cost: 312 DBAStar path cost: 328
-Suboptimality: 5.128205128205132
+AStar path cost: 312 DBAStar path cost: 312
+Suboptimality: 0.0
 AStar path cost: 284 DBAStar path cost: 310
 Suboptimality: 9.154929577464799
 AStar path cost: 274 DBAStar path cost: 300
@@ -6319,30 +6319,30 @@ AStar path cost: 102 DBAStar path cost: 102
 Suboptimality: 0.0
 AStar path cost: 106 DBAStar path cost: 106
 Suboptimality: 0.0
-AStar path cost: 110 DBAStar path cost: 286
-Suboptimality: 160.0
-AStar path cost: 114 DBAStar path cost: 282
-Suboptimality: 147.3684210526316
-AStar path cost: 118 DBAStar path cost: 278
-Suboptimality: 135.59322033898303
-AStar path cost: 122 DBAStar path cost: 274
-Suboptimality: 124.59016393442623
-AStar path cost: 126 DBAStar path cost: 270
-Suboptimality: 114.28571428571428
-AStar path cost: 136 DBAStar path cost: 274
-Suboptimality: 101.47058823529412
-AStar path cost: 186 DBAStar path cost: 278
-Suboptimality: 49.46236559139785
-AStar path cost: 196 DBAStar path cost: 282
-Suboptimality: 43.877551020408156
-AStar path cost: 206 DBAStar path cost: 286
-Suboptimality: 38.834951456310684
-AStar path cost: 216 DBAStar path cost: 296
-Suboptimality: 37.037037037037045
-AStar path cost: 226 DBAStar path cost: 306
-Suboptimality: 35.39823008849559
-AStar path cost: 236 DBAStar path cost: 316
-Suboptimality: 33.89830508474576
+AStar path cost: 110 DBAStar path cost: 110
+Suboptimality: 0.0
+AStar path cost: 114 DBAStar path cost: 114
+Suboptimality: 0.0
+AStar path cost: 118 DBAStar path cost: 118
+Suboptimality: 0.0
+AStar path cost: 122 DBAStar path cost: 122
+Suboptimality: 0.0
+AStar path cost: 126 DBAStar path cost: 126
+Suboptimality: 0.0
+AStar path cost: 136 DBAStar path cost: 136
+Suboptimality: 0.0
+AStar path cost: 186 DBAStar path cost: 186
+Suboptimality: 0.0
+AStar path cost: 196 DBAStar path cost: 196
+Suboptimality: 0.0
+AStar path cost: 206 DBAStar path cost: 206
+Suboptimality: 0.0
+AStar path cost: 216 DBAStar path cost: 216
+Suboptimality: 0.0
+AStar path cost: 226 DBAStar path cost: 226
+Suboptimality: 0.0
+AStar path cost: 236 DBAStar path cost: 236
+Suboptimality: 0.0
 AStar path cost: 246 DBAStar path cost: 246
 Suboptimality: 0.0
 AStar path cost: 256 DBAStar path cost: 256
@@ -6407,8 +6407,8 @@ AStar path cost: 322 DBAStar path cost: 410
 Suboptimality: 27.329192546583858
 AStar path cost: 312 DBAStar path cost: 414
 Suboptimality: 32.692307692307686
-AStar path cost: 302 DBAStar path cost: 318
-Suboptimality: 5.298013245033117
+AStar path cost: 302 DBAStar path cost: 302
+Suboptimality: 0.0
 AStar path cost: 270 DBAStar path cost: 296
 Suboptimality: 9.629629629629633
 AStar path cost: 266 DBAStar path cost: 300
@@ -6439,30 +6439,30 @@ AStar path cost: 92 DBAStar path cost: 92
 Suboptimality: 0.0
 AStar path cost: 96 DBAStar path cost: 96
 Suboptimality: 0.0
-AStar path cost: 100 DBAStar path cost: 282
-Suboptimality: 181.99999999999997
-AStar path cost: 104 DBAStar path cost: 272
-Suboptimality: 161.53846153846155
-AStar path cost: 108 DBAStar path cost: 268
-Suboptimality: 148.14814814814815
-AStar path cost: 112 DBAStar path cost: 264
-Suboptimality: 135.71428571428572
-AStar path cost: 122 DBAStar path cost: 260
-Suboptimality: 113.11475409836066
-AStar path cost: 172 DBAStar path cost: 264
-Suboptimality: 53.48837209302326
-AStar path cost: 182 DBAStar path cost: 268
-Suboptimality: 47.25274725274726
-AStar path cost: 192 DBAStar path cost: 272
-Suboptimality: 41.66666666666667
-AStar path cost: 202 DBAStar path cost: 282
-Suboptimality: 39.6039603960396
-AStar path cost: 212 DBAStar path cost: 292
-Suboptimality: 37.73584905660377
-AStar path cost: 222 DBAStar path cost: 302
-Suboptimality: 36.036036036036045
-AStar path cost: 232 DBAStar path cost: 312
-Suboptimality: 34.48275862068966
+AStar path cost: 100 DBAStar path cost: 100
+Suboptimality: 0.0
+AStar path cost: 104 DBAStar path cost: 104
+Suboptimality: 0.0
+AStar path cost: 108 DBAStar path cost: 108
+Suboptimality: 0.0
+AStar path cost: 112 DBAStar path cost: 112
+Suboptimality: 0.0
+AStar path cost: 122 DBAStar path cost: 122
+Suboptimality: 0.0
+AStar path cost: 172 DBAStar path cost: 172
+Suboptimality: 0.0
+AStar path cost: 182 DBAStar path cost: 182
+Suboptimality: 0.0
+AStar path cost: 192 DBAStar path cost: 192
+Suboptimality: 0.0
+AStar path cost: 202 DBAStar path cost: 202
+Suboptimality: 0.0
+AStar path cost: 212 DBAStar path cost: 212
+Suboptimality: 0.0
+AStar path cost: 222 DBAStar path cost: 222
+Suboptimality: 0.0
+AStar path cost: 232 DBAStar path cost: 232
+Suboptimality: 0.0
 AStar path cost: 242 DBAStar path cost: 242
 Suboptimality: 0.0
 AStar path cost: 252 DBAStar path cost: 252
@@ -6519,10 +6519,10 @@ AStar path cost: 318 DBAStar path cost: 400
 Suboptimality: 25.786163522012572
 AStar path cost: 308 DBAStar path cost: 404
 Suboptimality: 31.16883116883118
-AStar path cost: 298 DBAStar path cost: 314
-Suboptimality: 5.369127516778516
-AStar path cost: 288 DBAStar path cost: 304
-Suboptimality: 5.555555555555558
+AStar path cost: 298 DBAStar path cost: 298
+Suboptimality: 0.0
+AStar path cost: 288 DBAStar path cost: 288
+Suboptimality: 0.0
 AStar path cost: 138 DBAStar path cost: 138
 Suboptimality: 0.0
 AStar path cost: 134 DBAStar path cost: 134
@@ -6551,32 +6551,32 @@ AStar path cost: 82 DBAStar path cost: 82
 Suboptimality: 0.0
 AStar path cost: 86 DBAStar path cost: 86
 Suboptimality: 0.0
-AStar path cost: 90 DBAStar path cost: 278
-Suboptimality: 208.8888888888889
-AStar path cost: 94 DBAStar path cost: 268
-Suboptimality: 185.1063829787234
-AStar path cost: 98 DBAStar path cost: 258
-Suboptimality: 163.26530612244898
-AStar path cost: 108 DBAStar path cost: 254
-Suboptimality: 135.18518518518516
-AStar path cost: 118 DBAStar path cost: 250
-Suboptimality: 111.86440677966102
-AStar path cost: 158 DBAStar path cost: 250
-Suboptimality: 58.22784810126582
-AStar path cost: 168 DBAStar path cost: 254
-Suboptimality: 51.19047619047619
-AStar path cost: 178 DBAStar path cost: 258
-Suboptimality: 44.9438202247191
-AStar path cost: 188 DBAStar path cost: 268
-Suboptimality: 42.553191489361694
-AStar path cost: 198 DBAStar path cost: 278
-Suboptimality: 40.4040404040404
-AStar path cost: 208 DBAStar path cost: 288
-Suboptimality: 38.46153846153846
-AStar path cost: 218 DBAStar path cost: 298
-Suboptimality: 36.69724770642202
-AStar path cost: 228 DBAStar path cost: 308
-Suboptimality: 35.08771929824561
+AStar path cost: 90 DBAStar path cost: 90
+Suboptimality: 0.0
+AStar path cost: 94 DBAStar path cost: 94
+Suboptimality: 0.0
+AStar path cost: 98 DBAStar path cost: 98
+Suboptimality: 0.0
+AStar path cost: 108 DBAStar path cost: 108
+Suboptimality: 0.0
+AStar path cost: 118 DBAStar path cost: 118
+Suboptimality: 0.0
+AStar path cost: 158 DBAStar path cost: 158
+Suboptimality: 0.0
+AStar path cost: 168 DBAStar path cost: 168
+Suboptimality: 0.0
+AStar path cost: 178 DBAStar path cost: 178
+Suboptimality: 0.0
+AStar path cost: 188 DBAStar path cost: 188
+Suboptimality: 0.0
+AStar path cost: 198 DBAStar path cost: 198
+Suboptimality: 0.0
+AStar path cost: 208 DBAStar path cost: 208
+Suboptimality: 0.0
+AStar path cost: 218 DBAStar path cost: 218
+Suboptimality: 0.0
+AStar path cost: 228 DBAStar path cost: 228
+Suboptimality: 0.0
 AStar path cost: 238 DBAStar path cost: 238
 Suboptimality: 0.0
 AStar path cost: 248 DBAStar path cost: 248
@@ -6631,18 +6631,18 @@ AStar path cost: 314 DBAStar path cost: 390
 Suboptimality: 24.20382165605095
 AStar path cost: 304 DBAStar path cost: 400
 Suboptimality: 31.578947368421062
-AStar path cost: 294 DBAStar path cost: 310
-Suboptimality: 5.442176870748305
-AStar path cost: 284 DBAStar path cost: 300
-Suboptimality: 5.633802816901401
-AStar path cost: 274 DBAStar path cost: 290
-Suboptimality: 5.8394160583941535
-AStar path cost: 164 DBAStar path cost: 280
-Suboptimality: 70.73170731707317
-AStar path cost: 154 DBAStar path cost: 290
-Suboptimality: 88.31168831168831
-AStar path cost: 144 DBAStar path cost: 300
-Suboptimality: 108.33333333333334
+AStar path cost: 294 DBAStar path cost: 294
+Suboptimality: 0.0
+AStar path cost: 284 DBAStar path cost: 284
+Suboptimality: 0.0
+AStar path cost: 274 DBAStar path cost: 274
+Suboptimality: 0.0
+AStar path cost: 164 DBAStar path cost: 164
+Suboptimality: 0.0
+AStar path cost: 154 DBAStar path cost: 154
+Suboptimality: 0.0
+AStar path cost: 144 DBAStar path cost: 144
+Suboptimality: 0.0
 AStar path cost: 134 DBAStar path cost: 134
 Suboptimality: 0.0
 AStar path cost: 124 DBAStar path cost: 124
@@ -6671,36 +6671,36 @@ AStar path cost: 72 DBAStar path cost: 72
 Suboptimality: 0.0
 AStar path cost: 76 DBAStar path cost: 76
 Suboptimality: 0.0
-AStar path cost: 80 DBAStar path cost: 274
-Suboptimality: 242.49999999999997
-AStar path cost: 84 DBAStar path cost: 264
-Suboptimality: 214.28571428571428
-AStar path cost: 94 DBAStar path cost: 254
-Suboptimality: 170.21276595744678
-AStar path cost: 104 DBAStar path cost: 244
-Suboptimality: 134.6153846153846
-AStar path cost: 114 DBAStar path cost: 240
-Suboptimality: 110.52631578947367
-AStar path cost: 124 DBAStar path cost: 236
-Suboptimality: 90.3225806451613
-AStar path cost: 144 DBAStar path cost: 236
-Suboptimality: 63.888888888888886
-AStar path cost: 154 DBAStar path cost: 240
-Suboptimality: 55.84415584415585
-AStar path cost: 164 DBAStar path cost: 244
-Suboptimality: 48.78048780487805
-AStar path cost: 174 DBAStar path cost: 254
-Suboptimality: 45.977011494252885
-AStar path cost: 184 DBAStar path cost: 264
-Suboptimality: 43.47826086956521
-AStar path cost: 194 DBAStar path cost: 274
-Suboptimality: 41.237113402061865
-AStar path cost: 204 DBAStar path cost: 284
-Suboptimality: 39.2156862745098
-AStar path cost: 214 DBAStar path cost: 294
-Suboptimality: 37.383177570093466
-AStar path cost: 224 DBAStar path cost: 304
-Suboptimality: 35.71428571428572
+AStar path cost: 80 DBAStar path cost: 80
+Suboptimality: 0.0
+AStar path cost: 84 DBAStar path cost: 84
+Suboptimality: 0.0
+AStar path cost: 94 DBAStar path cost: 94
+Suboptimality: 0.0
+AStar path cost: 104 DBAStar path cost: 104
+Suboptimality: 0.0
+AStar path cost: 114 DBAStar path cost: 114
+Suboptimality: 0.0
+AStar path cost: 124 DBAStar path cost: 124
+Suboptimality: 0.0
+AStar path cost: 144 DBAStar path cost: 144
+Suboptimality: 0.0
+AStar path cost: 154 DBAStar path cost: 154
+Suboptimality: 0.0
+AStar path cost: 164 DBAStar path cost: 164
+Suboptimality: 0.0
+AStar path cost: 174 DBAStar path cost: 174
+Suboptimality: 0.0
+AStar path cost: 184 DBAStar path cost: 184
+Suboptimality: 0.0
+AStar path cost: 194 DBAStar path cost: 194
+Suboptimality: 0.0
+AStar path cost: 204 DBAStar path cost: 204
+Suboptimality: 0.0
+AStar path cost: 214 DBAStar path cost: 214
+Suboptimality: 0.0
+AStar path cost: 224 DBAStar path cost: 224
+Suboptimality: 0.0
 AStar path cost: 234 DBAStar path cost: 234
 Suboptimality: 0.0
 AStar path cost: 244 DBAStar path cost: 244
@@ -6755,22 +6755,22 @@ AStar path cost: 310 DBAStar path cost: 386
 Suboptimality: 24.51612903225806
 AStar path cost: 300 DBAStar path cost: 396
 Suboptimality: 32.00000000000001
-AStar path cost: 290 DBAStar path cost: 306
-Suboptimality: 5.517241379310356
-AStar path cost: 280 DBAStar path cost: 296
-Suboptimality: 5.714285714285716
-AStar path cost: 270 DBAStar path cost: 286
-Suboptimality: 5.9259259259259345
-AStar path cost: 260 DBAStar path cost: 276
-Suboptimality: 6.153846153846154
-AStar path cost: 170 DBAStar path cost: 266
-Suboptimality: 56.470588235294116
-AStar path cost: 160 DBAStar path cost: 276
-Suboptimality: 72.50000000000001
-AStar path cost: 150 DBAStar path cost: 286
-Suboptimality: 90.66666666666667
-AStar path cost: 140 DBAStar path cost: 296
-Suboptimality: 111.42857142857143
+AStar path cost: 290 DBAStar path cost: 290
+Suboptimality: 0.0
+AStar path cost: 280 DBAStar path cost: 280
+Suboptimality: 0.0
+AStar path cost: 270 DBAStar path cost: 270
+Suboptimality: 0.0
+AStar path cost: 260 DBAStar path cost: 260
+Suboptimality: 0.0
+AStar path cost: 170 DBAStar path cost: 170
+Suboptimality: 0.0
+AStar path cost: 160 DBAStar path cost: 160
+Suboptimality: 0.0
+AStar path cost: 150 DBAStar path cost: 150
+Suboptimality: 0.0
+AStar path cost: 140 DBAStar path cost: 140
+Suboptimality: 0.0
 AStar path cost: 130 DBAStar path cost: 130
 Suboptimality: 0.0
 AStar path cost: 120 DBAStar path cost: 120
@@ -6801,38 +6801,38 @@ AStar path cost: 62 DBAStar path cost: 62
 Suboptimality: 0.0
 AStar path cost: 66 DBAStar path cost: 66
 Suboptimality: 0.0
-AStar path cost: 70 DBAStar path cost: 270
-Suboptimality: 285.7142857142857
-AStar path cost: 80 DBAStar path cost: 260
-Suboptimality: 225.0
-AStar path cost: 90 DBAStar path cost: 250
-Suboptimality: 177.77777777777777
-AStar path cost: 100 DBAStar path cost: 240
-Suboptimality: 140.0
-AStar path cost: 110 DBAStar path cost: 230
-Suboptimality: 109.09090909090908
-AStar path cost: 120 DBAStar path cost: 226
-Suboptimality: 88.33333333333333
-AStar path cost: 130 DBAStar path cost: 222
-Suboptimality: 70.76923076923076
-AStar path cost: 140 DBAStar path cost: 226
-Suboptimality: 61.42857142857143
-AStar path cost: 150 DBAStar path cost: 230
-Suboptimality: 53.33333333333334
-AStar path cost: 160 DBAStar path cost: 240
-Suboptimality: 50.0
-AStar path cost: 170 DBAStar path cost: 250
-Suboptimality: 47.058823529411775
-AStar path cost: 180 DBAStar path cost: 260
-Suboptimality: 44.44444444444444
-AStar path cost: 190 DBAStar path cost: 270
-Suboptimality: 42.10526315789473
-AStar path cost: 200 DBAStar path cost: 280
-Suboptimality: 39.99999999999999
-AStar path cost: 210 DBAStar path cost: 290
-Suboptimality: 38.095238095238095
-AStar path cost: 220 DBAStar path cost: 300
-Suboptimality: 36.36363636363635
+AStar path cost: 70 DBAStar path cost: 70
+Suboptimality: 0.0
+AStar path cost: 80 DBAStar path cost: 80
+Suboptimality: 0.0
+AStar path cost: 90 DBAStar path cost: 90
+Suboptimality: 0.0
+AStar path cost: 100 DBAStar path cost: 100
+Suboptimality: 0.0
+AStar path cost: 110 DBAStar path cost: 110
+Suboptimality: 0.0
+AStar path cost: 120 DBAStar path cost: 120
+Suboptimality: 0.0
+AStar path cost: 130 DBAStar path cost: 130
+Suboptimality: 0.0
+AStar path cost: 140 DBAStar path cost: 140
+Suboptimality: 0.0
+AStar path cost: 150 DBAStar path cost: 150
+Suboptimality: 0.0
+AStar path cost: 160 DBAStar path cost: 160
+Suboptimality: 0.0
+AStar path cost: 170 DBAStar path cost: 170
+Suboptimality: 0.0
+AStar path cost: 180 DBAStar path cost: 180
+Suboptimality: 0.0
+AStar path cost: 190 DBAStar path cost: 190
+Suboptimality: 0.0
+AStar path cost: 200 DBAStar path cost: 200
+Suboptimality: 0.0
+AStar path cost: 210 DBAStar path cost: 210
+Suboptimality: 0.0
+AStar path cost: 220 DBAStar path cost: 220
+Suboptimality: 0.0
 AStar path cost: 230 DBAStar path cost: 230
 Suboptimality: 0.0
 AStar path cost: 240 DBAStar path cost: 240
@@ -6887,28 +6887,28 @@ AStar path cost: 306 DBAStar path cost: 382
 Suboptimality: 24.836601307189543
 AStar path cost: 296 DBAStar path cost: 392
 Suboptimality: 32.432432432432435
-AStar path cost: 286 DBAStar path cost: 302
-Suboptimality: 5.594405594405605
-AStar path cost: 276 DBAStar path cost: 292
-Suboptimality: 5.797101449275366
-AStar path cost: 266 DBAStar path cost: 282
-Suboptimality: 6.015037593984962
-AStar path cost: 256 DBAStar path cost: 272
-Suboptimality: 6.25
-AStar path cost: 246 DBAStar path cost: 262
-Suboptimality: 6.5040650406503975
-AStar path cost: 236 DBAStar path cost: 252
-Suboptimality: 6.779661016949157
-AStar path cost: 176 DBAStar path cost: 252
-Suboptimality: 43.18181818181819
-AStar path cost: 166 DBAStar path cost: 262
-Suboptimality: 57.83132530120483
-AStar path cost: 156 DBAStar path cost: 272
-Suboptimality: 74.35897435897436
-AStar path cost: 146 DBAStar path cost: 282
-Suboptimality: 93.15068493150685
-AStar path cost: 136 DBAStar path cost: 292
-Suboptimality: 114.70588235294117
+AStar path cost: 286 DBAStar path cost: 286
+Suboptimality: 0.0
+AStar path cost: 276 DBAStar path cost: 276
+Suboptimality: 0.0
+AStar path cost: 266 DBAStar path cost: 266
+Suboptimality: 0.0
+AStar path cost: 256 DBAStar path cost: 256
+Suboptimality: 0.0
+AStar path cost: 246 DBAStar path cost: 246
+Suboptimality: 0.0
+AStar path cost: 236 DBAStar path cost: 236
+Suboptimality: 0.0
+AStar path cost: 176 DBAStar path cost: 176
+Suboptimality: 0.0
+AStar path cost: 166 DBAStar path cost: 166
+Suboptimality: 0.0
+AStar path cost: 156 DBAStar path cost: 156
+Suboptimality: 0.0
+AStar path cost: 146 DBAStar path cost: 146
+Suboptimality: 0.0
+AStar path cost: 136 DBAStar path cost: 136
+Suboptimality: 0.0
 AStar path cost: 126 DBAStar path cost: 126
 Suboptimality: 0.0
 AStar path cost: 116 DBAStar path cost: 116
@@ -6941,38 +6941,38 @@ AStar path cost: 52 DBAStar path cost: 52
 Suboptimality: 0.0
 AStar path cost: 56 DBAStar path cost: 56
 Suboptimality: 0.0
-AStar path cost: 66 DBAStar path cost: 266
-Suboptimality: 303.030303030303
-AStar path cost: 76 DBAStar path cost: 256
-Suboptimality: 236.84210526315786
-AStar path cost: 86 DBAStar path cost: 246
-Suboptimality: 186.046511627907
-AStar path cost: 96 DBAStar path cost: 236
-Suboptimality: 145.83333333333334
-AStar path cost: 106 DBAStar path cost: 226
-Suboptimality: 113.20754716981133
-AStar path cost: 116 DBAStar path cost: 216
-Suboptimality: 86.20689655172413
-AStar path cost: 126 DBAStar path cost: 212
-Suboptimality: 68.25396825396825
-AStar path cost: 136 DBAStar path cost: 216
-Suboptimality: 58.823529411764696
-AStar path cost: 146 DBAStar path cost: 226
-Suboptimality: 54.794520547945204
-AStar path cost: 156 DBAStar path cost: 236
-Suboptimality: 51.28205128205128
-AStar path cost: 166 DBAStar path cost: 246
-Suboptimality: 48.19277108433735
-AStar path cost: 176 DBAStar path cost: 256
-Suboptimality: 45.45454545454546
-AStar path cost: 186 DBAStar path cost: 266
-Suboptimality: 43.01075268817205
-AStar path cost: 196 DBAStar path cost: 276
-Suboptimality: 40.816326530612244
-AStar path cost: 206 DBAStar path cost: 286
-Suboptimality: 38.834951456310684
-AStar path cost: 216 DBAStar path cost: 296
-Suboptimality: 37.037037037037045
+AStar path cost: 66 DBAStar path cost: 66
+Suboptimality: 0.0
+AStar path cost: 76 DBAStar path cost: 76
+Suboptimality: 0.0
+AStar path cost: 86 DBAStar path cost: 86
+Suboptimality: 0.0
+AStar path cost: 96 DBAStar path cost: 96
+Suboptimality: 0.0
+AStar path cost: 106 DBAStar path cost: 106
+Suboptimality: 0.0
+AStar path cost: 116 DBAStar path cost: 116
+Suboptimality: 0.0
+AStar path cost: 126 DBAStar path cost: 126
+Suboptimality: 0.0
+AStar path cost: 136 DBAStar path cost: 136
+Suboptimality: 0.0
+AStar path cost: 146 DBAStar path cost: 146
+Suboptimality: 0.0
+AStar path cost: 156 DBAStar path cost: 156
+Suboptimality: 0.0
+AStar path cost: 166 DBAStar path cost: 166
+Suboptimality: 0.0
+AStar path cost: 176 DBAStar path cost: 176
+Suboptimality: 0.0
+AStar path cost: 186 DBAStar path cost: 186
+Suboptimality: 0.0
+AStar path cost: 196 DBAStar path cost: 196
+Suboptimality: 0.0
+AStar path cost: 206 DBAStar path cost: 206
+Suboptimality: 0.0
+AStar path cost: 216 DBAStar path cost: 216
+Suboptimality: 0.0
 AStar path cost: 226 DBAStar path cost: 226
 Suboptimality: 0.0
 AStar path cost: 236 DBAStar path cost: 236
@@ -7035,32 +7035,32 @@ AStar path cost: 302 DBAStar path cost: 378
 Suboptimality: 25.16556291390728
 AStar path cost: 292 DBAStar path cost: 388
 Suboptimality: 32.87671232876712
-AStar path cost: 282 DBAStar path cost: 298
-Suboptimality: 5.673758865248235
-AStar path cost: 272 DBAStar path cost: 288
-Suboptimality: 5.882352941176472
-AStar path cost: 262 DBAStar path cost: 278
-Suboptimality: 6.106870229007644
-AStar path cost: 252 DBAStar path cost: 268
-Suboptimality: 6.349206349206349
-AStar path cost: 242 DBAStar path cost: 258
-Suboptimality: 6.6115702479338845
-AStar path cost: 232 DBAStar path cost: 248
-Suboptimality: 6.896551724137923
-AStar path cost: 222 DBAStar path cost: 238
-Suboptimality: 7.2072072072072
-AStar path cost: 182 DBAStar path cost: 238
-Suboptimality: 30.76923076923077
-AStar path cost: 172 DBAStar path cost: 248
-Suboptimality: 44.18604651162789
-AStar path cost: 162 DBAStar path cost: 258
-Suboptimality: 59.25925925925925
-AStar path cost: 152 DBAStar path cost: 268
-Suboptimality: 76.3157894736842
-AStar path cost: 142 DBAStar path cost: 278
-Suboptimality: 95.77464788732395
-AStar path cost: 132 DBAStar path cost: 288
-Suboptimality: 118.18181818181816
+AStar path cost: 282 DBAStar path cost: 282
+Suboptimality: 0.0
+AStar path cost: 272 DBAStar path cost: 272
+Suboptimality: 0.0
+AStar path cost: 262 DBAStar path cost: 262
+Suboptimality: 0.0
+AStar path cost: 252 DBAStar path cost: 252
+Suboptimality: 0.0
+AStar path cost: 242 DBAStar path cost: 242
+Suboptimality: 0.0
+AStar path cost: 232 DBAStar path cost: 232
+Suboptimality: 0.0
+AStar path cost: 222 DBAStar path cost: 222
+Suboptimality: 0.0
+AStar path cost: 182 DBAStar path cost: 182
+Suboptimality: 0.0
+AStar path cost: 172 DBAStar path cost: 172
+Suboptimality: 0.0
+AStar path cost: 162 DBAStar path cost: 162
+Suboptimality: 0.0
+AStar path cost: 152 DBAStar path cost: 152
+Suboptimality: 0.0
+AStar path cost: 142 DBAStar path cost: 142
+Suboptimality: 0.0
+AStar path cost: 132 DBAStar path cost: 132
+Suboptimality: 0.0
 AStar path cost: 122 DBAStar path cost: 122
 Suboptimality: 0.0
 AStar path cost: 112 DBAStar path cost: 112
@@ -7093,38 +7093,38 @@ AStar path cost: 42 DBAStar path cost: 42
 Suboptimality: 0.0
 AStar path cost: 52 DBAStar path cost: 52
 Suboptimality: 0.0
-AStar path cost: 62 DBAStar path cost: 262
-Suboptimality: 322.5806451612903
-AStar path cost: 72 DBAStar path cost: 252
-Suboptimality: 250.0
-AStar path cost: 82 DBAStar path cost: 242
-Suboptimality: 195.1219512195122
-AStar path cost: 92 DBAStar path cost: 232
-Suboptimality: 152.17391304347828
-AStar path cost: 102 DBAStar path cost: 222
-Suboptimality: 117.64705882352939
-AStar path cost: 112 DBAStar path cost: 212
-Suboptimality: 89.28571428571428
-AStar path cost: 122 DBAStar path cost: 202
-Suboptimality: 65.57377049180329
-AStar path cost: 132 DBAStar path cost: 212
-Suboptimality: 60.606060606060595
-AStar path cost: 142 DBAStar path cost: 222
-Suboptimality: 56.33802816901407
-AStar path cost: 152 DBAStar path cost: 232
-Suboptimality: 52.63157894736843
-AStar path cost: 162 DBAStar path cost: 242
-Suboptimality: 49.382716049382715
-AStar path cost: 172 DBAStar path cost: 252
-Suboptimality: 46.51162790697674
-AStar path cost: 182 DBAStar path cost: 262
-Suboptimality: 43.956043956043956
-AStar path cost: 192 DBAStar path cost: 272
-Suboptimality: 41.66666666666667
-AStar path cost: 202 DBAStar path cost: 282
-Suboptimality: 39.6039603960396
-AStar path cost: 212 DBAStar path cost: 292
-Suboptimality: 37.73584905660377
+AStar path cost: 62 DBAStar path cost: 62
+Suboptimality: 0.0
+AStar path cost: 72 DBAStar path cost: 72
+Suboptimality: 0.0
+AStar path cost: 82 DBAStar path cost: 82
+Suboptimality: 0.0
+AStar path cost: 92 DBAStar path cost: 92
+Suboptimality: 0.0
+AStar path cost: 102 DBAStar path cost: 102
+Suboptimality: 0.0
+AStar path cost: 112 DBAStar path cost: 112
+Suboptimality: 0.0
+AStar path cost: 122 DBAStar path cost: 122
+Suboptimality: 0.0
+AStar path cost: 132 DBAStar path cost: 132
+Suboptimality: 0.0
+AStar path cost: 142 DBAStar path cost: 142
+Suboptimality: 0.0
+AStar path cost: 152 DBAStar path cost: 152
+Suboptimality: 0.0
+AStar path cost: 162 DBAStar path cost: 162
+Suboptimality: 0.0
+AStar path cost: 172 DBAStar path cost: 172
+Suboptimality: 0.0
+AStar path cost: 182 DBAStar path cost: 182
+Suboptimality: 0.0
+AStar path cost: 192 DBAStar path cost: 192
+Suboptimality: 0.0
+AStar path cost: 202 DBAStar path cost: 202
+Suboptimality: 0.0
+AStar path cost: 212 DBAStar path cost: 212
+Suboptimality: 0.0
 AStar path cost: 222 DBAStar path cost: 222
 Suboptimality: 0.0
 AStar path cost: 390 DBAStar path cost: 428
@@ -7191,34 +7191,34 @@ AStar path cost: 316 DBAStar path cost: 372
 Suboptimality: 17.721518987341778
 AStar path cost: 306 DBAStar path cost: 382
 Suboptimality: 24.836601307189543
-AStar path cost: 268 DBAStar path cost: 284
-Suboptimality: 5.970149253731338
-AStar path cost: 258 DBAStar path cost: 274
-Suboptimality: 6.20155038759691
-AStar path cost: 248 DBAStar path cost: 264
-Suboptimality: 6.451612903225801
-AStar path cost: 238 DBAStar path cost: 254
-Suboptimality: 6.72268907563025
-AStar path cost: 228 DBAStar path cost: 244
-Suboptimality: 7.017543859649122
-AStar path cost: 218 DBAStar path cost: 234
-Suboptimality: 7.339449541284404
-AStar path cost: 208 DBAStar path cost: 224
-Suboptimality: 7.692307692307687
-AStar path cost: 188 DBAStar path cost: 224
-Suboptimality: 19.14893617021276
-AStar path cost: 178 DBAStar path cost: 234
-Suboptimality: 31.46067415730338
-AStar path cost: 168 DBAStar path cost: 244
-Suboptimality: 45.238095238095234
-AStar path cost: 158 DBAStar path cost: 254
-Suboptimality: 60.759493670886066
-AStar path cost: 148 DBAStar path cost: 264
-Suboptimality: 78.37837837837837
-AStar path cost: 138 DBAStar path cost: 274
-Suboptimality: 98.55072463768116
-AStar path cost: 128 DBAStar path cost: 284
-Suboptimality: 121.875
+AStar path cost: 268 DBAStar path cost: 268
+Suboptimality: 0.0
+AStar path cost: 258 DBAStar path cost: 258
+Suboptimality: 0.0
+AStar path cost: 248 DBAStar path cost: 248
+Suboptimality: 0.0
+AStar path cost: 238 DBAStar path cost: 238
+Suboptimality: 0.0
+AStar path cost: 228 DBAStar path cost: 228
+Suboptimality: 0.0
+AStar path cost: 218 DBAStar path cost: 218
+Suboptimality: 0.0
+AStar path cost: 208 DBAStar path cost: 208
+Suboptimality: 0.0
+AStar path cost: 188 DBAStar path cost: 188
+Suboptimality: 0.0
+AStar path cost: 178 DBAStar path cost: 178
+Suboptimality: 0.0
+AStar path cost: 168 DBAStar path cost: 168
+Suboptimality: 0.0
+AStar path cost: 158 DBAStar path cost: 158
+Suboptimality: 0.0
+AStar path cost: 148 DBAStar path cost: 148
+Suboptimality: 0.0
+AStar path cost: 138 DBAStar path cost: 138
+Suboptimality: 0.0
+AStar path cost: 128 DBAStar path cost: 128
+Suboptimality: 0.0
 AStar path cost: 118 DBAStar path cost: 118
 Suboptimality: 0.0
 AStar path cost: 108 DBAStar path cost: 108
@@ -7251,38 +7251,38 @@ AStar path cost: 38 DBAStar path cost: 38
 Suboptimality: 0.0
 AStar path cost: 48 DBAStar path cost: 48
 Suboptimality: 0.0
-AStar path cost: 58 DBAStar path cost: 266
-Suboptimality: 358.62068965517244
-AStar path cost: 68 DBAStar path cost: 256
-Suboptimality: 276.4705882352941
-AStar path cost: 78 DBAStar path cost: 246
-Suboptimality: 215.3846153846154
-AStar path cost: 88 DBAStar path cost: 236
-Suboptimality: 168.18181818181816
-AStar path cost: 98 DBAStar path cost: 226
-Suboptimality: 130.6122448979592
-AStar path cost: 108 DBAStar path cost: 216
-Suboptimality: 100.0
-AStar path cost: 118 DBAStar path cost: 212
-Suboptimality: 79.66101694915255
-AStar path cost: 128 DBAStar path cost: 216
-Suboptimality: 68.75
-AStar path cost: 138 DBAStar path cost: 226
-Suboptimality: 63.76811594202898
-AStar path cost: 148 DBAStar path cost: 236
-Suboptimality: 59.45945945945945
-AStar path cost: 158 DBAStar path cost: 246
-Suboptimality: 55.696202531645575
-AStar path cost: 168 DBAStar path cost: 256
-Suboptimality: 52.38095238095237
-AStar path cost: 178 DBAStar path cost: 266
-Suboptimality: 49.43820224719102
-AStar path cost: 188 DBAStar path cost: 276
-Suboptimality: 46.808510638297875
-AStar path cost: 198 DBAStar path cost: 286
-Suboptimality: 44.44444444444444
-AStar path cost: 208 DBAStar path cost: 296
-Suboptimality: 42.307692307692314
+AStar path cost: 58 DBAStar path cost: 58
+Suboptimality: 0.0
+AStar path cost: 68 DBAStar path cost: 68
+Suboptimality: 0.0
+AStar path cost: 78 DBAStar path cost: 78
+Suboptimality: 0.0
+AStar path cost: 88 DBAStar path cost: 88
+Suboptimality: 0.0
+AStar path cost: 98 DBAStar path cost: 98
+Suboptimality: 0.0
+AStar path cost: 108 DBAStar path cost: 108
+Suboptimality: 0.0
+AStar path cost: 118 DBAStar path cost: 118
+Suboptimality: 0.0
+AStar path cost: 128 DBAStar path cost: 128
+Suboptimality: 0.0
+AStar path cost: 138 DBAStar path cost: 138
+Suboptimality: 0.0
+AStar path cost: 148 DBAStar path cost: 148
+Suboptimality: 0.0
+AStar path cost: 158 DBAStar path cost: 158
+Suboptimality: 0.0
+AStar path cost: 168 DBAStar path cost: 168
+Suboptimality: 0.0
+AStar path cost: 178 DBAStar path cost: 178
+Suboptimality: 0.0
+AStar path cost: 188 DBAStar path cost: 188
+Suboptimality: 0.0
+AStar path cost: 198 DBAStar path cost: 198
+Suboptimality: 0.0
+AStar path cost: 208 DBAStar path cost: 208
+Suboptimality: 0.0
 AStar path cost: 376 DBAStar path cost: 414
 Suboptimality: 10.106382978723394
 AStar path cost: 380 DBAStar path cost: 418
@@ -7351,32 +7351,32 @@ AStar path cost: 330 DBAStar path cost: 372
 Suboptimality: 12.72727272727272
 AStar path cost: 320 DBAStar path cost: 376
 Suboptimality: 17.500000000000004
-AStar path cost: 244 DBAStar path cost: 260
-Suboptimality: 6.557377049180335
-AStar path cost: 234 DBAStar path cost: 250
-Suboptimality: 6.8376068376068355
-AStar path cost: 224 DBAStar path cost: 240
-Suboptimality: 7.14285714285714
-AStar path cost: 214 DBAStar path cost: 230
-Suboptimality: 7.476635514018692
-AStar path cost: 204 DBAStar path cost: 220
-Suboptimality: 7.843137254901955
-AStar path cost: 194 DBAStar path cost: 210
-Suboptimality: 8.247422680412363
-AStar path cost: 184 DBAStar path cost: 220
-Suboptimality: 19.565217391304344
-AStar path cost: 174 DBAStar path cost: 230
-Suboptimality: 32.18390804597702
-AStar path cost: 164 DBAStar path cost: 240
-Suboptimality: 46.34146341463414
-AStar path cost: 154 DBAStar path cost: 250
-Suboptimality: 62.33766233766234
-AStar path cost: 144 DBAStar path cost: 260
-Suboptimality: 80.55555555555556
-AStar path cost: 134 DBAStar path cost: 270
-Suboptimality: 101.49253731343282
-AStar path cost: 124 DBAStar path cost: 280
-Suboptimality: 125.80645161290325
+AStar path cost: 244 DBAStar path cost: 244
+Suboptimality: 0.0
+AStar path cost: 234 DBAStar path cost: 234
+Suboptimality: 0.0
+AStar path cost: 224 DBAStar path cost: 224
+Suboptimality: 0.0
+AStar path cost: 214 DBAStar path cost: 214
+Suboptimality: 0.0
+AStar path cost: 204 DBAStar path cost: 204
+Suboptimality: 0.0
+AStar path cost: 194 DBAStar path cost: 194
+Suboptimality: 0.0
+AStar path cost: 184 DBAStar path cost: 184
+Suboptimality: 0.0
+AStar path cost: 174 DBAStar path cost: 174
+Suboptimality: 0.0
+AStar path cost: 164 DBAStar path cost: 164
+Suboptimality: 0.0
+AStar path cost: 154 DBAStar path cost: 154
+Suboptimality: 0.0
+AStar path cost: 144 DBAStar path cost: 144
+Suboptimality: 0.0
+AStar path cost: 134 DBAStar path cost: 134
+Suboptimality: 0.0
+AStar path cost: 124 DBAStar path cost: 124
+Suboptimality: 0.0
 AStar path cost: 114 DBAStar path cost: 114
 Suboptimality: 0.0
 AStar path cost: 104 DBAStar path cost: 104
@@ -7409,36 +7409,36 @@ AStar path cost: 34 DBAStar path cost: 34
 Suboptimality: 0.0
 AStar path cost: 44 DBAStar path cost: 44
 Suboptimality: 0.0
-AStar path cost: 54 DBAStar path cost: 270
-Suboptimality: 400.0
-AStar path cost: 64 DBAStar path cost: 260
-Suboptimality: 306.25
-AStar path cost: 74 DBAStar path cost: 250
-Suboptimality: 237.83783783783784
-AStar path cost: 84 DBAStar path cost: 240
-Suboptimality: 185.71428571428572
-AStar path cost: 94 DBAStar path cost: 230
-Suboptimality: 144.68085106382978
-AStar path cost: 104 DBAStar path cost: 226
-Suboptimality: 117.30769230769229
-AStar path cost: 114 DBAStar path cost: 222
-Suboptimality: 94.73684210526316
-AStar path cost: 124 DBAStar path cost: 226
-Suboptimality: 82.25806451612902
-AStar path cost: 134 DBAStar path cost: 230
-Suboptimality: 71.64179104477613
-AStar path cost: 144 DBAStar path cost: 240
-Suboptimality: 66.66666666666667
-AStar path cost: 154 DBAStar path cost: 250
-Suboptimality: 62.33766233766234
-AStar path cost: 164 DBAStar path cost: 260
-Suboptimality: 58.53658536585367
-AStar path cost: 174 DBAStar path cost: 270
-Suboptimality: 55.172413793103445
-AStar path cost: 184 DBAStar path cost: 280
-Suboptimality: 52.17391304347827
-AStar path cost: 194 DBAStar path cost: 290
-Suboptimality: 49.48453608247423
+AStar path cost: 54 DBAStar path cost: 54
+Suboptimality: 0.0
+AStar path cost: 64 DBAStar path cost: 64
+Suboptimality: 0.0
+AStar path cost: 74 DBAStar path cost: 74
+Suboptimality: 0.0
+AStar path cost: 84 DBAStar path cost: 84
+Suboptimality: 0.0
+AStar path cost: 94 DBAStar path cost: 94
+Suboptimality: 0.0
+AStar path cost: 104 DBAStar path cost: 104
+Suboptimality: 0.0
+AStar path cost: 114 DBAStar path cost: 114
+Suboptimality: 0.0
+AStar path cost: 124 DBAStar path cost: 124
+Suboptimality: 0.0
+AStar path cost: 134 DBAStar path cost: 134
+Suboptimality: 0.0
+AStar path cost: 144 DBAStar path cost: 144
+Suboptimality: 0.0
+AStar path cost: 154 DBAStar path cost: 154
+Suboptimality: 0.0
+AStar path cost: 164 DBAStar path cost: 164
+Suboptimality: 0.0
+AStar path cost: 174 DBAStar path cost: 174
+Suboptimality: 0.0
+AStar path cost: 184 DBAStar path cost: 184
+Suboptimality: 0.0
+AStar path cost: 194 DBAStar path cost: 194
+Suboptimality: 0.0
 AStar path cost: 362 DBAStar path cost: 400
 Suboptimality: 10.497237569060779
 AStar path cost: 366 DBAStar path cost: 404
@@ -7519,30 +7519,30 @@ AStar path cost: 344 DBAStar path cost: 378
 Suboptimality: 9.883720930232553
 AStar path cost: 334 DBAStar path cost: 382
 Suboptimality: 14.371257485029943
-AStar path cost: 230 DBAStar path cost: 254
-Suboptimality: 10.43478260869566
-AStar path cost: 220 DBAStar path cost: 244
-Suboptimality: 10.909090909090914
-AStar path cost: 210 DBAStar path cost: 234
-Suboptimality: 11.428571428571432
-AStar path cost: 200 DBAStar path cost: 224
-Suboptimality: 12.00000000000001
-AStar path cost: 190 DBAStar path cost: 220
-Suboptimality: 15.789473684210531
-AStar path cost: 180 DBAStar path cost: 224
-Suboptimality: 24.444444444444446
-AStar path cost: 170 DBAStar path cost: 234
-Suboptimality: 37.64705882352941
-AStar path cost: 160 DBAStar path cost: 244
-Suboptimality: 52.49999999999999
-AStar path cost: 150 DBAStar path cost: 254
-Suboptimality: 69.33333333333334
-AStar path cost: 140 DBAStar path cost: 264
-Suboptimality: 88.57142857142857
-AStar path cost: 130 DBAStar path cost: 274
-Suboptimality: 110.76923076923077
-AStar path cost: 120 DBAStar path cost: 284
-Suboptimality: 136.66666666666666
+AStar path cost: 230 DBAStar path cost: 230
+Suboptimality: 0.0
+AStar path cost: 220 DBAStar path cost: 220
+Suboptimality: 0.0
+AStar path cost: 210 DBAStar path cost: 210
+Suboptimality: 0.0
+AStar path cost: 200 DBAStar path cost: 200
+Suboptimality: 0.0
+AStar path cost: 190 DBAStar path cost: 190
+Suboptimality: 0.0
+AStar path cost: 180 DBAStar path cost: 180
+Suboptimality: 0.0
+AStar path cost: 170 DBAStar path cost: 170
+Suboptimality: 0.0
+AStar path cost: 160 DBAStar path cost: 160
+Suboptimality: 0.0
+AStar path cost: 150 DBAStar path cost: 150
+Suboptimality: 0.0
+AStar path cost: 140 DBAStar path cost: 140
+Suboptimality: 0.0
+AStar path cost: 130 DBAStar path cost: 130
+Suboptimality: 0.0
+AStar path cost: 120 DBAStar path cost: 120
+Suboptimality: 0.0
 AStar path cost: 110 DBAStar path cost: 110
 Suboptimality: 0.0
 AStar path cost: 100 DBAStar path cost: 100
@@ -7573,34 +7573,34 @@ AStar path cost: 30 DBAStar path cost: 30
 Suboptimality: 0.0
 AStar path cost: 40 DBAStar path cost: 40
 Suboptimality: 0.0
-AStar path cost: 50 DBAStar path cost: 274
-Suboptimality: 448.00000000000006
-AStar path cost: 60 DBAStar path cost: 264
-Suboptimality: 340.00000000000006
-AStar path cost: 70 DBAStar path cost: 254
-Suboptimality: 262.85714285714283
-AStar path cost: 80 DBAStar path cost: 244
-Suboptimality: 204.99999999999997
-AStar path cost: 90 DBAStar path cost: 240
-Suboptimality: 166.66666666666666
-AStar path cost: 100 DBAStar path cost: 236
-Suboptimality: 136.0
-AStar path cost: 110 DBAStar path cost: 232
-Suboptimality: 110.90909090909089
-AStar path cost: 120 DBAStar path cost: 236
-Suboptimality: 96.66666666666666
-AStar path cost: 130 DBAStar path cost: 240
-Suboptimality: 84.61538461538463
-AStar path cost: 140 DBAStar path cost: 244
-Suboptimality: 74.28571428571429
-AStar path cost: 150 DBAStar path cost: 254
-Suboptimality: 69.33333333333334
-AStar path cost: 160 DBAStar path cost: 264
-Suboptimality: 64.99999999999999
-AStar path cost: 170 DBAStar path cost: 274
-Suboptimality: 61.1764705882353
-AStar path cost: 180 DBAStar path cost: 284
-Suboptimality: 57.77777777777777
+AStar path cost: 50 DBAStar path cost: 50
+Suboptimality: 0.0
+AStar path cost: 60 DBAStar path cost: 60
+Suboptimality: 0.0
+AStar path cost: 70 DBAStar path cost: 70
+Suboptimality: 0.0
+AStar path cost: 80 DBAStar path cost: 80
+Suboptimality: 0.0
+AStar path cost: 90 DBAStar path cost: 90
+Suboptimality: 0.0
+AStar path cost: 100 DBAStar path cost: 100
+Suboptimality: 0.0
+AStar path cost: 110 DBAStar path cost: 110
+Suboptimality: 0.0
+AStar path cost: 120 DBAStar path cost: 120
+Suboptimality: 0.0
+AStar path cost: 130 DBAStar path cost: 130
+Suboptimality: 0.0
+AStar path cost: 140 DBAStar path cost: 140
+Suboptimality: 0.0
+AStar path cost: 150 DBAStar path cost: 150
+Suboptimality: 0.0
+AStar path cost: 160 DBAStar path cost: 160
+Suboptimality: 0.0
+AStar path cost: 170 DBAStar path cost: 170
+Suboptimality: 0.0
+AStar path cost: 180 DBAStar path cost: 180
+Suboptimality: 0.0
 AStar path cost: 348 DBAStar path cost: 386
 Suboptimality: 10.919540229885062
 AStar path cost: 352 DBAStar path cost: 390
@@ -7683,28 +7683,28 @@ AStar path cost: 358 DBAStar path cost: 392
 Suboptimality: 9.49720670391061
 AStar path cost: 348 DBAStar path cost: 388
 Suboptimality: 11.494252873563227
-AStar path cost: 224 DBAStar path cost: 248
-Suboptimality: 10.71428571428572
-AStar path cost: 214 DBAStar path cost: 238
-Suboptimality: 11.214953271028039
-AStar path cost: 204 DBAStar path cost: 234
-Suboptimality: 14.705882352941169
-AStar path cost: 194 DBAStar path cost: 230
-Suboptimality: 18.556701030927837
-AStar path cost: 184 DBAStar path cost: 234
-Suboptimality: 27.173913043478272
-AStar path cost: 174 DBAStar path cost: 238
-Suboptimality: 36.7816091954023
-AStar path cost: 164 DBAStar path cost: 248
-Suboptimality: 51.21951219512195
-AStar path cost: 154 DBAStar path cost: 258
-Suboptimality: 67.53246753246754
-AStar path cost: 144 DBAStar path cost: 268
-Suboptimality: 86.11111111111111
-AStar path cost: 134 DBAStar path cost: 278
-Suboptimality: 107.46268656716418
-AStar path cost: 124 DBAStar path cost: 288
-Suboptimality: 132.25806451612905
+AStar path cost: 224 DBAStar path cost: 224
+Suboptimality: 0.0
+AStar path cost: 214 DBAStar path cost: 214
+Suboptimality: 0.0
+AStar path cost: 204 DBAStar path cost: 204
+Suboptimality: 0.0
+AStar path cost: 194 DBAStar path cost: 194
+Suboptimality: 0.0
+AStar path cost: 184 DBAStar path cost: 184
+Suboptimality: 0.0
+AStar path cost: 174 DBAStar path cost: 174
+Suboptimality: 0.0
+AStar path cost: 164 DBAStar path cost: 164
+Suboptimality: 0.0
+AStar path cost: 154 DBAStar path cost: 154
+Suboptimality: 0.0
+AStar path cost: 144 DBAStar path cost: 144
+Suboptimality: 0.0
+AStar path cost: 134 DBAStar path cost: 134
+Suboptimality: 0.0
+AStar path cost: 124 DBAStar path cost: 124
+Suboptimality: 0.0
 AStar path cost: 114 DBAStar path cost: 114
 Suboptimality: 0.0
 AStar path cost: 104 DBAStar path cost: 104
@@ -7737,32 +7737,32 @@ AStar path cost: 34 DBAStar path cost: 34
 Suboptimality: 0.0
 AStar path cost: 44 DBAStar path cost: 44
 Suboptimality: 0.0
-AStar path cost: 54 DBAStar path cost: 278
-Suboptimality: 414.8148148148148
-AStar path cost: 64 DBAStar path cost: 268
-Suboptimality: 318.75
-AStar path cost: 74 DBAStar path cost: 258
-Suboptimality: 248.64864864864865
-AStar path cost: 84 DBAStar path cost: 254
-Suboptimality: 202.38095238095238
-AStar path cost: 94 DBAStar path cost: 250
-Suboptimality: 165.95744680851064
-AStar path cost: 104 DBAStar path cost: 246
-Suboptimality: 136.53846153846155
-AStar path cost: 114 DBAStar path cost: 242
-Suboptimality: 112.28070175438596
-AStar path cost: 124 DBAStar path cost: 246
-Suboptimality: 98.38709677419355
-AStar path cost: 134 DBAStar path cost: 250
-Suboptimality: 86.56716417910448
-AStar path cost: 144 DBAStar path cost: 254
-Suboptimality: 76.38888888888889
-AStar path cost: 154 DBAStar path cost: 258
-Suboptimality: 67.53246753246754
-AStar path cost: 164 DBAStar path cost: 268
-Suboptimality: 63.414634146341456
-AStar path cost: 174 DBAStar path cost: 278
-Suboptimality: 59.77011494252873
+AStar path cost: 54 DBAStar path cost: 54
+Suboptimality: 0.0
+AStar path cost: 64 DBAStar path cost: 64
+Suboptimality: 0.0
+AStar path cost: 74 DBAStar path cost: 74
+Suboptimality: 0.0
+AStar path cost: 84 DBAStar path cost: 84
+Suboptimality: 0.0
+AStar path cost: 94 DBAStar path cost: 94
+Suboptimality: 0.0
+AStar path cost: 104 DBAStar path cost: 104
+Suboptimality: 0.0
+AStar path cost: 114 DBAStar path cost: 114
+Suboptimality: 0.0
+AStar path cost: 124 DBAStar path cost: 124
+Suboptimality: 0.0
+AStar path cost: 134 DBAStar path cost: 134
+Suboptimality: 0.0
+AStar path cost: 144 DBAStar path cost: 144
+Suboptimality: 0.0
+AStar path cost: 154 DBAStar path cost: 154
+Suboptimality: 0.0
+AStar path cost: 164 DBAStar path cost: 164
+Suboptimality: 0.0
+AStar path cost: 174 DBAStar path cost: 174
+Suboptimality: 0.0
 AStar path cost: 334 DBAStar path cost: 372
 Suboptimality: 11.377245508982025
 AStar path cost: 338 DBAStar path cost: 376
@@ -7845,26 +7845,26 @@ AStar path cost: 372 DBAStar path cost: 406
 Suboptimality: 9.139784946236551
 AStar path cost: 362 DBAStar path cost: 402
 Suboptimality: 11.049723756906072
-AStar path cost: 218 DBAStar path cost: 248
-Suboptimality: 13.761467889908264
-AStar path cost: 208 DBAStar path cost: 244
-Suboptimality: 17.307692307692314
-AStar path cost: 198 DBAStar path cost: 240
-Suboptimality: 21.212121212121215
-AStar path cost: 188 DBAStar path cost: 244
-Suboptimality: 29.78723404255319
-AStar path cost: 178 DBAStar path cost: 248
-Suboptimality: 39.32584269662922
-AStar path cost: 168 DBAStar path cost: 252
-Suboptimality: 50.0
-AStar path cost: 158 DBAStar path cost: 262
-Suboptimality: 65.82278481012658
-AStar path cost: 148 DBAStar path cost: 272
-Suboptimality: 83.78378378378379
-AStar path cost: 138 DBAStar path cost: 282
-Suboptimality: 104.34782608695654
-AStar path cost: 128 DBAStar path cost: 292
-Suboptimality: 128.125
+AStar path cost: 218 DBAStar path cost: 218
+Suboptimality: 0.0
+AStar path cost: 208 DBAStar path cost: 208
+Suboptimality: 0.0
+AStar path cost: 198 DBAStar path cost: 198
+Suboptimality: 0.0
+AStar path cost: 188 DBAStar path cost: 188
+Suboptimality: 0.0
+AStar path cost: 178 DBAStar path cost: 178
+Suboptimality: 0.0
+AStar path cost: 168 DBAStar path cost: 168
+Suboptimality: 0.0
+AStar path cost: 158 DBAStar path cost: 158
+Suboptimality: 0.0
+AStar path cost: 148 DBAStar path cost: 148
+Suboptimality: 0.0
+AStar path cost: 138 DBAStar path cost: 138
+Suboptimality: 0.0
+AStar path cost: 128 DBAStar path cost: 128
+Suboptimality: 0.0
 AStar path cost: 118 DBAStar path cost: 118
 Suboptimality: 0.0
 AStar path cost: 108 DBAStar path cost: 108
@@ -7897,30 +7897,30 @@ AStar path cost: 38 DBAStar path cost: 38
 Suboptimality: 0.0
 AStar path cost: 48 DBAStar path cost: 48
 Suboptimality: 0.0
-AStar path cost: 58 DBAStar path cost: 282
-Suboptimality: 386.2068965517241
-AStar path cost: 68 DBAStar path cost: 272
-Suboptimality: 300.0
-AStar path cost: 78 DBAStar path cost: 268
-Suboptimality: 243.58974358974356
-AStar path cost: 88 DBAStar path cost: 264
-Suboptimality: 200.0
-AStar path cost: 98 DBAStar path cost: 260
-Suboptimality: 165.30612244897958
-AStar path cost: 108 DBAStar path cost: 256
-Suboptimality: 137.037037037037
-AStar path cost: 118 DBAStar path cost: 252
-Suboptimality: 113.55932203389831
-AStar path cost: 128 DBAStar path cost: 256
-Suboptimality: 100.0
-AStar path cost: 138 DBAStar path cost: 260
-Suboptimality: 88.40579710144927
-AStar path cost: 148 DBAStar path cost: 264
-Suboptimality: 78.37837837837837
-AStar path cost: 158 DBAStar path cost: 268
-Suboptimality: 69.62025316455696
-AStar path cost: 168 DBAStar path cost: 272
-Suboptimality: 61.904761904761905
+AStar path cost: 58 DBAStar path cost: 58
+Suboptimality: 0.0
+AStar path cost: 68 DBAStar path cost: 68
+Suboptimality: 0.0
+AStar path cost: 78 DBAStar path cost: 78
+Suboptimality: 0.0
+AStar path cost: 88 DBAStar path cost: 88
+Suboptimality: 0.0
+AStar path cost: 98 DBAStar path cost: 98
+Suboptimality: 0.0
+AStar path cost: 108 DBAStar path cost: 108
+Suboptimality: 0.0
+AStar path cost: 118 DBAStar path cost: 118
+Suboptimality: 0.0
+AStar path cost: 128 DBAStar path cost: 128
+Suboptimality: 0.0
+AStar path cost: 138 DBAStar path cost: 138
+Suboptimality: 0.0
+AStar path cost: 148 DBAStar path cost: 148
+Suboptimality: 0.0
+AStar path cost: 158 DBAStar path cost: 158
+Suboptimality: 0.0
+AStar path cost: 168 DBAStar path cost: 168
+Suboptimality: 0.0
 AStar path cost: 320 DBAStar path cost: 358
 Suboptimality: 11.874999999999991
 AStar path cost: 324 DBAStar path cost: 362
@@ -8003,24 +8003,24 @@ AStar path cost: 376 DBAStar path cost: 416
 Suboptimality: 10.63829787234043
 AStar path cost: 372 DBAStar path cost: 412
 Suboptimality: 10.752688172043001
-AStar path cost: 212 DBAStar path cost: 254
-Suboptimality: 19.811320754716988
-AStar path cost: 202 DBAStar path cost: 250
-Suboptimality: 23.762376237623762
-AStar path cost: 192 DBAStar path cost: 254
-Suboptimality: 32.29166666666667
-AStar path cost: 182 DBAStar path cost: 258
-Suboptimality: 41.758241758241766
-AStar path cost: 172 DBAStar path cost: 262
-Suboptimality: 52.32558139534884
-AStar path cost: 162 DBAStar path cost: 266
-Suboptimality: 64.19753086419753
-AStar path cost: 152 DBAStar path cost: 276
-Suboptimality: 81.57894736842107
-AStar path cost: 142 DBAStar path cost: 286
-Suboptimality: 101.40845070422534
-AStar path cost: 132 DBAStar path cost: 296
-Suboptimality: 124.24242424242422
+AStar path cost: 212 DBAStar path cost: 212
+Suboptimality: 0.0
+AStar path cost: 202 DBAStar path cost: 202
+Suboptimality: 0.0
+AStar path cost: 192 DBAStar path cost: 192
+Suboptimality: 0.0
+AStar path cost: 182 DBAStar path cost: 182
+Suboptimality: 0.0
+AStar path cost: 172 DBAStar path cost: 172
+Suboptimality: 0.0
+AStar path cost: 162 DBAStar path cost: 162
+Suboptimality: 0.0
+AStar path cost: 152 DBAStar path cost: 152
+Suboptimality: 0.0
+AStar path cost: 142 DBAStar path cost: 142
+Suboptimality: 0.0
+AStar path cost: 132 DBAStar path cost: 132
+Suboptimality: 0.0
 AStar path cost: 122 DBAStar path cost: 122
 Suboptimality: 0.0
 AStar path cost: 112 DBAStar path cost: 112
@@ -8053,28 +8053,28 @@ AStar path cost: 42 DBAStar path cost: 42
 Suboptimality: 0.0
 AStar path cost: 52 DBAStar path cost: 52
 Suboptimality: 0.0
-AStar path cost: 62 DBAStar path cost: 286
-Suboptimality: 361.2903225806452
-AStar path cost: 72 DBAStar path cost: 282
-Suboptimality: 291.66666666666663
-AStar path cost: 82 DBAStar path cost: 278
-Suboptimality: 239.02439024390242
-AStar path cost: 92 DBAStar path cost: 274
-Suboptimality: 197.82608695652172
-AStar path cost: 102 DBAStar path cost: 270
-Suboptimality: 164.70588235294116
-AStar path cost: 112 DBAStar path cost: 266
-Suboptimality: 137.5
-AStar path cost: 122 DBAStar path cost: 262
-Suboptimality: 114.75409836065573
-AStar path cost: 132 DBAStar path cost: 266
-Suboptimality: 101.51515151515152
-AStar path cost: 142 DBAStar path cost: 270
-Suboptimality: 90.14084507042253
-AStar path cost: 152 DBAStar path cost: 274
-Suboptimality: 80.26315789473684
-AStar path cost: 162 DBAStar path cost: 278
-Suboptimality: 71.60493827160495
+AStar path cost: 62 DBAStar path cost: 62
+Suboptimality: 0.0
+AStar path cost: 72 DBAStar path cost: 72
+Suboptimality: 0.0
+AStar path cost: 82 DBAStar path cost: 82
+Suboptimality: 0.0
+AStar path cost: 92 DBAStar path cost: 92
+Suboptimality: 0.0
+AStar path cost: 102 DBAStar path cost: 102
+Suboptimality: 0.0
+AStar path cost: 112 DBAStar path cost: 112
+Suboptimality: 0.0
+AStar path cost: 122 DBAStar path cost: 122
+Suboptimality: 0.0
+AStar path cost: 132 DBAStar path cost: 132
+Suboptimality: 0.0
+AStar path cost: 142 DBAStar path cost: 142
+Suboptimality: 0.0
+AStar path cost: 152 DBAStar path cost: 152
+Suboptimality: 0.0
+AStar path cost: 162 DBAStar path cost: 162
+Suboptimality: 0.0
 AStar path cost: 306 DBAStar path cost: 344
 Suboptimality: 12.418300653594772
 AStar path cost: 310 DBAStar path cost: 348
@@ -8155,22 +8155,22 @@ AStar path cost: 400 DBAStar path cost: 434
 Suboptimality: 8.499999999999996
 AStar path cost: 390 DBAStar path cost: 430
 Suboptimality: 10.256410256410264
-AStar path cost: 206 DBAStar path cost: 260
-Suboptimality: 26.21359223300972
-AStar path cost: 196 DBAStar path cost: 264
-Suboptimality: 34.6938775510204
-AStar path cost: 186 DBAStar path cost: 268
-Suboptimality: 44.08602150537635
-AStar path cost: 176 DBAStar path cost: 272
-Suboptimality: 54.54545454545454
-AStar path cost: 166 DBAStar path cost: 276
-Suboptimality: 66.26506024096386
-AStar path cost: 156 DBAStar path cost: 280
-Suboptimality: 79.48717948717949
-AStar path cost: 146 DBAStar path cost: 290
-Suboptimality: 98.63013698630137
-AStar path cost: 136 DBAStar path cost: 300
-Suboptimality: 120.58823529411767
+AStar path cost: 206 DBAStar path cost: 206
+Suboptimality: 0.0
+AStar path cost: 196 DBAStar path cost: 196
+Suboptimality: 0.0
+AStar path cost: 186 DBAStar path cost: 186
+Suboptimality: 0.0
+AStar path cost: 176 DBAStar path cost: 176
+Suboptimality: 0.0
+AStar path cost: 166 DBAStar path cost: 166
+Suboptimality: 0.0
+AStar path cost: 156 DBAStar path cost: 156
+Suboptimality: 0.0
+AStar path cost: 146 DBAStar path cost: 146
+Suboptimality: 0.0
+AStar path cost: 136 DBAStar path cost: 136
+Suboptimality: 0.0
 AStar path cost: 126 DBAStar path cost: 126
 Suboptimality: 0.0
 AStar path cost: 116 DBAStar path cost: 116
@@ -8203,26 +8203,26 @@ AStar path cost: 52 DBAStar path cost: 52
 Suboptimality: 0.0
 AStar path cost: 56 DBAStar path cost: 56
 Suboptimality: 0.0
-AStar path cost: 66 DBAStar path cost: 296
-Suboptimality: 348.48484848484844
-AStar path cost: 76 DBAStar path cost: 292
-Suboptimality: 284.2105263157895
-AStar path cost: 86 DBAStar path cost: 288
-Suboptimality: 234.88372093023258
-AStar path cost: 96 DBAStar path cost: 284
-Suboptimality: 195.83333333333334
-AStar path cost: 106 DBAStar path cost: 280
-Suboptimality: 164.1509433962264
-AStar path cost: 116 DBAStar path cost: 276
-Suboptimality: 137.93103448275863
-AStar path cost: 126 DBAStar path cost: 272
-Suboptimality: 115.87301587301586
-AStar path cost: 136 DBAStar path cost: 276
-Suboptimality: 102.94117647058823
-AStar path cost: 146 DBAStar path cost: 280
-Suboptimality: 91.78082191780821
-AStar path cost: 156 DBAStar path cost: 284
-Suboptimality: 82.05128205128204
+AStar path cost: 66 DBAStar path cost: 66
+Suboptimality: 0.0
+AStar path cost: 76 DBAStar path cost: 76
+Suboptimality: 0.0
+AStar path cost: 86 DBAStar path cost: 86
+Suboptimality: 0.0
+AStar path cost: 96 DBAStar path cost: 96
+Suboptimality: 0.0
+AStar path cost: 106 DBAStar path cost: 106
+Suboptimality: 0.0
+AStar path cost: 116 DBAStar path cost: 116
+Suboptimality: 0.0
+AStar path cost: 126 DBAStar path cost: 126
+Suboptimality: 0.0
+AStar path cost: 136 DBAStar path cost: 136
+Suboptimality: 0.0
+AStar path cost: 146 DBAStar path cost: 146
+Suboptimality: 0.0
+AStar path cost: 156 DBAStar path cost: 156
+Suboptimality: 0.0
 AStar path cost: 292 DBAStar path cost: 330
 Suboptimality: 13.013698630136993
 AStar path cost: 296 DBAStar path cost: 334
@@ -8301,24 +8301,24 @@ AStar path cost: 414 DBAStar path cost: 448
 Suboptimality: 8.212560386473422
 AStar path cost: 404 DBAStar path cost: 444
 Suboptimality: 9.90099009900991
-AStar path cost: 220 DBAStar path cost: 282
-Suboptimality: 28.181818181818173
-AStar path cost: 210 DBAStar path cost: 270
-Suboptimality: 28.57142857142858
-AStar path cost: 200 DBAStar path cost: 274
-Suboptimality: 37.000000000000014
-AStar path cost: 190 DBAStar path cost: 278
-Suboptimality: 46.31578947368422
-AStar path cost: 180 DBAStar path cost: 282
-Suboptimality: 56.666666666666664
-AStar path cost: 170 DBAStar path cost: 286
-Suboptimality: 68.23529411764706
-AStar path cost: 160 DBAStar path cost: 290
-Suboptimality: 81.25
-AStar path cost: 150 DBAStar path cost: 294
-Suboptimality: 96.0
-AStar path cost: 140 DBAStar path cost: 304
-Suboptimality: 117.14285714285712
+AStar path cost: 220 DBAStar path cost: 220
+Suboptimality: 0.0
+AStar path cost: 210 DBAStar path cost: 210
+Suboptimality: 0.0
+AStar path cost: 200 DBAStar path cost: 200
+Suboptimality: 0.0
+AStar path cost: 190 DBAStar path cost: 190
+Suboptimality: 0.0
+AStar path cost: 180 DBAStar path cost: 180
+Suboptimality: 0.0
+AStar path cost: 170 DBAStar path cost: 170
+Suboptimality: 0.0
+AStar path cost: 160 DBAStar path cost: 160
+Suboptimality: 0.0
+AStar path cost: 150 DBAStar path cost: 150
+Suboptimality: 0.0
+AStar path cost: 140 DBAStar path cost: 140
+Suboptimality: 0.0
 AStar path cost: 130 DBAStar path cost: 130
 Suboptimality: 0.0
 AStar path cost: 120 DBAStar path cost: 120
@@ -8351,24 +8351,24 @@ AStar path cost: 62 DBAStar path cost: 62
 Suboptimality: 0.0
 AStar path cost: 66 DBAStar path cost: 66
 Suboptimality: 0.0
-AStar path cost: 70 DBAStar path cost: 306
-Suboptimality: 337.1428571428571
-AStar path cost: 80 DBAStar path cost: 302
-Suboptimality: 277.5
-AStar path cost: 90 DBAStar path cost: 298
-Suboptimality: 231.1111111111111
-AStar path cost: 100 DBAStar path cost: 294
-Suboptimality: 194.0
-AStar path cost: 110 DBAStar path cost: 290
-Suboptimality: 163.63636363636363
-AStar path cost: 120 DBAStar path cost: 286
-Suboptimality: 138.33333333333334
-AStar path cost: 130 DBAStar path cost: 282
-Suboptimality: 116.9230769230769
-AStar path cost: 140 DBAStar path cost: 286
-Suboptimality: 104.28571428571428
-AStar path cost: 150 DBAStar path cost: 290
-Suboptimality: 93.33333333333333
+AStar path cost: 70 DBAStar path cost: 70
+Suboptimality: 0.0
+AStar path cost: 80 DBAStar path cost: 80
+Suboptimality: 0.0
+AStar path cost: 90 DBAStar path cost: 90
+Suboptimality: 0.0
+AStar path cost: 100 DBAStar path cost: 100
+Suboptimality: 0.0
+AStar path cost: 110 DBAStar path cost: 110
+Suboptimality: 0.0
+AStar path cost: 120 DBAStar path cost: 120
+Suboptimality: 0.0
+AStar path cost: 130 DBAStar path cost: 130
+Suboptimality: 0.0
+AStar path cost: 140 DBAStar path cost: 140
+Suboptimality: 0.0
+AStar path cost: 150 DBAStar path cost: 150
+Suboptimality: 0.0
 AStar path cost: 278 DBAStar path cost: 316
 Suboptimality: 13.669064748201443
 AStar path cost: 282 DBAStar path cost: 320
@@ -8449,78 +8449,78 @@ AStar path cost: 414 DBAStar path cost: 438
 Suboptimality: 5.797101449275366
 AStar path cost: 418 DBAStar path cost: 442
 Suboptimality: 5.741626794258381
-AStar path cost: 244 DBAStar path cost: 340
-Suboptimality: 39.34426229508197
-AStar path cost: 234 DBAStar path cost: 344
-Suboptimality: 47.00854700854702
-AStar path cost: 224 DBAStar path cost: 348
-Suboptimality: 55.35714285714286
-AStar path cost: 214 DBAStar path cost: 352
-Suboptimality: 64.48598130841121
-AStar path cost: 204 DBAStar path cost: 356
-Suboptimality: 74.50980392156863
-AStar path cost: 194 DBAStar path cost: 366
-Suboptimality: 88.65979381443299
-AStar path cost: 184 DBAStar path cost: 376
-Suboptimality: 104.34782608695654
-AStar path cost: 174 DBAStar path cost: 386
-Suboptimality: 121.83908045977012
-AStar path cost: 164 DBAStar path cost: 396
-Suboptimality: 141.46341463414635
-AStar path cost: 154 DBAStar path cost: 406
-Suboptimality: 163.63636363636363
-AStar path cost: 144 DBAStar path cost: 416
-Suboptimality: 188.88888888888889
-AStar path cost: 134 DBAStar path cost: 290
-Suboptimality: 116.41791044776117
-AStar path cost: 124 DBAStar path cost: 286
-Suboptimality: 130.6451612903226
-AStar path cost: 114 DBAStar path cost: 282
-Suboptimality: 147.3684210526316
-AStar path cost: 104 DBAStar path cost: 278
-Suboptimality: 167.3076923076923
-AStar path cost: 94 DBAStar path cost: 274
-Suboptimality: 191.48936170212764
-AStar path cost: 84 DBAStar path cost: 270
-Suboptimality: 221.42857142857144
-AStar path cost: 80 DBAStar path cost: 266
-Suboptimality: 232.50000000000003
-AStar path cost: 76 DBAStar path cost: 270
-Suboptimality: 255.26315789473685
-AStar path cost: 72 DBAStar path cost: 274
-Suboptimality: 280.55555555555554
-AStar path cost: 68 DBAStar path cost: 278
-Suboptimality: 308.8235294117647
-AStar path cost: 64 DBAStar path cost: 282
-Suboptimality: 340.625
-AStar path cost: 60 DBAStar path cost: 286
-Suboptimality: 376.6666666666667
-AStar path cost: 64 DBAStar path cost: 290
-Suboptimality: 353.125
-AStar path cost: 68 DBAStar path cost: 300
-Suboptimality: 341.1764705882353
-AStar path cost: 72 DBAStar path cost: 310
-Suboptimality: 330.55555555555554
-AStar path cost: 76 DBAStar path cost: 320
-Suboptimality: 321.05263157894734
-AStar path cost: 80 DBAStar path cost: 374
-Suboptimality: 367.5
-AStar path cost: 84 DBAStar path cost: 370
-Suboptimality: 340.4761904761905
-AStar path cost: 94 DBAStar path cost: 366
-Suboptimality: 289.3617021276596
-AStar path cost: 104 DBAStar path cost: 362
-Suboptimality: 248.0769230769231
-AStar path cost: 114 DBAStar path cost: 358
-Suboptimality: 214.03508771929825
-AStar path cost: 124 DBAStar path cost: 354
-Suboptimality: 185.48387096774195
-AStar path cost: 134 DBAStar path cost: 350
-Suboptimality: 161.1940298507463
-AStar path cost: 144 DBAStar path cost: 346
-Suboptimality: 140.27777777777777
-AStar path cost: 154 DBAStar path cost: 350
-Suboptimality: 127.2727272727273
+AStar path cost: 244 DBAStar path cost: 244
+Suboptimality: 0.0
+AStar path cost: 234 DBAStar path cost: 234
+Suboptimality: 0.0
+AStar path cost: 224 DBAStar path cost: 224
+Suboptimality: 0.0
+AStar path cost: 214 DBAStar path cost: 214
+Suboptimality: 0.0
+AStar path cost: 204 DBAStar path cost: 204
+Suboptimality: 0.0
+AStar path cost: 194 DBAStar path cost: 194
+Suboptimality: 0.0
+AStar path cost: 184 DBAStar path cost: 184
+Suboptimality: 0.0
+AStar path cost: 174 DBAStar path cost: 174
+Suboptimality: 0.0
+AStar path cost: 164 DBAStar path cost: 164
+Suboptimality: 0.0
+AStar path cost: 154 DBAStar path cost: 154
+Suboptimality: 0.0
+AStar path cost: 144 DBAStar path cost: 144
+Suboptimality: 0.0
+AStar path cost: 134 DBAStar path cost: 134
+Suboptimality: 0.0
+AStar path cost: 124 DBAStar path cost: 124
+Suboptimality: 0.0
+AStar path cost: 114 DBAStar path cost: 114
+Suboptimality: 0.0
+AStar path cost: 104 DBAStar path cost: 104
+Suboptimality: 0.0
+AStar path cost: 94 DBAStar path cost: 94
+Suboptimality: 0.0
+AStar path cost: 84 DBAStar path cost: 84
+Suboptimality: 0.0
+AStar path cost: 80 DBAStar path cost: 80
+Suboptimality: 0.0
+AStar path cost: 76 DBAStar path cost: 76
+Suboptimality: 0.0
+AStar path cost: 72 DBAStar path cost: 72
+Suboptimality: 0.0
+AStar path cost: 68 DBAStar path cost: 68
+Suboptimality: 0.0
+AStar path cost: 64 DBAStar path cost: 64
+Suboptimality: 0.0
+AStar path cost: 60 DBAStar path cost: 60
+Suboptimality: 0.0
+AStar path cost: 64 DBAStar path cost: 64
+Suboptimality: 0.0
+AStar path cost: 68 DBAStar path cost: 68
+Suboptimality: 0.0
+AStar path cost: 72 DBAStar path cost: 72
+Suboptimality: 0.0
+AStar path cost: 76 DBAStar path cost: 76
+Suboptimality: 0.0
+AStar path cost: 80 DBAStar path cost: 80
+Suboptimality: 0.0
+AStar path cost: 84 DBAStar path cost: 84
+Suboptimality: 0.0
+AStar path cost: 94 DBAStar path cost: 94
+Suboptimality: 0.0
+AStar path cost: 104 DBAStar path cost: 104
+Suboptimality: 0.0
+AStar path cost: 114 DBAStar path cost: 114
+Suboptimality: 0.0
+AStar path cost: 124 DBAStar path cost: 124
+Suboptimality: 0.0
+AStar path cost: 134 DBAStar path cost: 134
+Suboptimality: 0.0
+AStar path cost: 144 DBAStar path cost: 144
+Suboptimality: 0.0
+AStar path cost: 154 DBAStar path cost: 154
+Suboptimality: 0.0
 AStar path cost: 264 DBAStar path cost: 492
 Suboptimality: 86.36363636363636
 AStar path cost: 268 DBAStar path cost: 488
@@ -8609,80 +8609,80 @@ AStar path cost: 428 DBAStar path cost: 452
 Suboptimality: 5.607476635514019
 AStar path cost: 432 DBAStar path cost: 456
 Suboptimality: 5.555555555555558
-AStar path cost: 258 DBAStar path cost: 334
-Suboptimality: 29.45736434108528
-AStar path cost: 248 DBAStar path cost: 330
-Suboptimality: 33.06451612903225
-AStar path cost: 238 DBAStar path cost: 334
-Suboptimality: 40.336134453781504
-AStar path cost: 228 DBAStar path cost: 338
-Suboptimality: 48.24561403508771
-AStar path cost: 218 DBAStar path cost: 342
-Suboptimality: 56.88073394495412
-AStar path cost: 188 DBAStar path cost: 380
-Suboptimality: 102.1276595744681
-AStar path cost: 178 DBAStar path cost: 390
-Suboptimality: 119.1011235955056
-AStar path cost: 168 DBAStar path cost: 400
-Suboptimality: 138.0952380952381
-AStar path cost: 158 DBAStar path cost: 410
-Suboptimality: 159.49367088607596
-AStar path cost: 148 DBAStar path cost: 420
-Suboptimality: 183.78378378378378
-AStar path cost: 138 DBAStar path cost: 286
-Suboptimality: 107.24637681159419
-AStar path cost: 128 DBAStar path cost: 276
-Suboptimality: 115.625
-AStar path cost: 118 DBAStar path cost: 272
-Suboptimality: 130.5084745762712
-AStar path cost: 108 DBAStar path cost: 268
-Suboptimality: 148.14814814814815
-AStar path cost: 98 DBAStar path cost: 264
-Suboptimality: 169.3877551020408
-AStar path cost: 94 DBAStar path cost: 260
-Suboptimality: 176.59574468085108
-AStar path cost: 90 DBAStar path cost: 256
-Suboptimality: 184.44444444444446
-AStar path cost: 86 DBAStar path cost: 260
-Suboptimality: 202.32558139534885
-AStar path cost: 82 DBAStar path cost: 264
-Suboptimality: 221.95121951219514
-AStar path cost: 78 DBAStar path cost: 268
-Suboptimality: 243.58974358974356
-AStar path cost: 74 DBAStar path cost: 272
-Suboptimality: 267.5675675675676
-AStar path cost: 70 DBAStar path cost: 276
-Suboptimality: 294.28571428571433
-AStar path cost: 74 DBAStar path cost: 286
-Suboptimality: 286.4864864864865
-AStar path cost: 78 DBAStar path cost: 296
-Suboptimality: 279.48717948717945
-AStar path cost: 82 DBAStar path cost: 306
-Suboptimality: 273.1707317073171
-AStar path cost: 86 DBAStar path cost: 316
-Suboptimality: 267.4418604651163
-AStar path cost: 90 DBAStar path cost: 370
-Suboptimality: 311.1111111111111
-AStar path cost: 94 DBAStar path cost: 360
-Suboptimality: 282.97872340425533
-AStar path cost: 98 DBAStar path cost: 356
-Suboptimality: 263.265306122449
-AStar path cost: 108 DBAStar path cost: 352
-Suboptimality: 225.9259259259259
-AStar path cost: 118 DBAStar path cost: 348
-Suboptimality: 194.91525423728814
-AStar path cost: 128 DBAStar path cost: 344
-Suboptimality: 168.75
-AStar path cost: 138 DBAStar path cost: 340
-Suboptimality: 146.37681159420288
-AStar path cost: 148 DBAStar path cost: 336
-Suboptimality: 127.02702702702702
-AStar path cost: 158 DBAStar path cost: 340
-Suboptimality: 115.18987341772151
-AStar path cost: 168 DBAStar path cost: 344
-Suboptimality: 104.76190476190474
-AStar path cost: 220 DBAStar path cost: 356
-Suboptimality: 61.81818181818181
+AStar path cost: 258 DBAStar path cost: 258
+Suboptimality: 0.0
+AStar path cost: 248 DBAStar path cost: 248
+Suboptimality: 0.0
+AStar path cost: 238 DBAStar path cost: 238
+Suboptimality: 0.0
+AStar path cost: 228 DBAStar path cost: 228
+Suboptimality: 0.0
+AStar path cost: 218 DBAStar path cost: 218
+Suboptimality: 0.0
+AStar path cost: 188 DBAStar path cost: 188
+Suboptimality: 0.0
+AStar path cost: 178 DBAStar path cost: 178
+Suboptimality: 0.0
+AStar path cost: 168 DBAStar path cost: 168
+Suboptimality: 0.0
+AStar path cost: 158 DBAStar path cost: 158
+Suboptimality: 0.0
+AStar path cost: 148 DBAStar path cost: 148
+Suboptimality: 0.0
+AStar path cost: 138 DBAStar path cost: 138
+Suboptimality: 0.0
+AStar path cost: 128 DBAStar path cost: 128
+Suboptimality: 0.0
+AStar path cost: 118 DBAStar path cost: 118
+Suboptimality: 0.0
+AStar path cost: 108 DBAStar path cost: 108
+Suboptimality: 0.0
+AStar path cost: 98 DBAStar path cost: 98
+Suboptimality: 0.0
+AStar path cost: 94 DBAStar path cost: 94
+Suboptimality: 0.0
+AStar path cost: 90 DBAStar path cost: 90
+Suboptimality: 0.0
+AStar path cost: 86 DBAStar path cost: 86
+Suboptimality: 0.0
+AStar path cost: 82 DBAStar path cost: 82
+Suboptimality: 0.0
+AStar path cost: 78 DBAStar path cost: 78
+Suboptimality: 0.0
+AStar path cost: 74 DBAStar path cost: 74
+Suboptimality: 0.0
+AStar path cost: 70 DBAStar path cost: 70
+Suboptimality: 0.0
+AStar path cost: 74 DBAStar path cost: 74
+Suboptimality: 0.0
+AStar path cost: 78 DBAStar path cost: 78
+Suboptimality: 0.0
+AStar path cost: 82 DBAStar path cost: 82
+Suboptimality: 0.0
+AStar path cost: 86 DBAStar path cost: 86
+Suboptimality: 0.0
+AStar path cost: 90 DBAStar path cost: 90
+Suboptimality: 0.0
+AStar path cost: 94 DBAStar path cost: 94
+Suboptimality: 0.0
+AStar path cost: 98 DBAStar path cost: 98
+Suboptimality: 0.0
+AStar path cost: 108 DBAStar path cost: 108
+Suboptimality: 0.0
+AStar path cost: 118 DBAStar path cost: 118
+Suboptimality: 0.0
+AStar path cost: 128 DBAStar path cost: 128
+Suboptimality: 0.0
+AStar path cost: 138 DBAStar path cost: 138
+Suboptimality: 0.0
+AStar path cost: 148 DBAStar path cost: 148
+Suboptimality: 0.0
+AStar path cost: 158 DBAStar path cost: 158
+Suboptimality: 0.0
+AStar path cost: 168 DBAStar path cost: 168
+Suboptimality: 0.0
+AStar path cost: 220 DBAStar path cost: 220
+Suboptimality: 0.0
 AStar path cost: 254 DBAStar path cost: 482
 Suboptimality: 89.76377952755905
 AStar path cost: 264 DBAStar path cost: 478
@@ -8763,86 +8763,86 @@ AStar path cost: 438 DBAStar path cost: 462
 Suboptimality: 5.47945205479452
 AStar path cost: 442 DBAStar path cost: 466
 Suboptimality: 5.429864253393668
-AStar path cost: 272 DBAStar path cost: 328
-Suboptimality: 20.58823529411764
-AStar path cost: 262 DBAStar path cost: 324
-Suboptimality: 23.664122137404586
-AStar path cost: 252 DBAStar path cost: 320
-Suboptimality: 26.984126984126977
-AStar path cost: 242 DBAStar path cost: 324
-Suboptimality: 33.88429752066116
-AStar path cost: 232 DBAStar path cost: 328
-Suboptimality: 41.37931034482758
-AStar path cost: 182 DBAStar path cost: 394
-Suboptimality: 116.48351648351647
-AStar path cost: 172 DBAStar path cost: 404
-Suboptimality: 134.88372093023258
-AStar path cost: 162 DBAStar path cost: 414
-Suboptimality: 155.55555555555554
-AStar path cost: 152 DBAStar path cost: 424
-Suboptimality: 178.9473684210526
-AStar path cost: 142 DBAStar path cost: 282
-Suboptimality: 98.59154929577466
-AStar path cost: 132 DBAStar path cost: 272
-Suboptimality: 106.06060606060606
-AStar path cost: 122 DBAStar path cost: 262
-Suboptimality: 114.75409836065573
-AStar path cost: 112 DBAStar path cost: 258
-Suboptimality: 130.35714285714283
-AStar path cost: 108 DBAStar path cost: 254
-Suboptimality: 135.18518518518516
-AStar path cost: 104 DBAStar path cost: 250
-Suboptimality: 140.3846153846154
-AStar path cost: 100 DBAStar path cost: 246
-Suboptimality: 146.0
-AStar path cost: 96 DBAStar path cost: 250
-Suboptimality: 160.41666666666666
-AStar path cost: 92 DBAStar path cost: 254
-Suboptimality: 176.08695652173913
-AStar path cost: 88 DBAStar path cost: 258
-Suboptimality: 193.18181818181816
-AStar path cost: 84 DBAStar path cost: 262
-Suboptimality: 211.9047619047619
-AStar path cost: 80 DBAStar path cost: 272
-Suboptimality: 240.0
-AStar path cost: 84 DBAStar path cost: 282
-Suboptimality: 235.71428571428572
-AStar path cost: 88 DBAStar path cost: 292
-Suboptimality: 231.81818181818184
-AStar path cost: 92 DBAStar path cost: 302
-Suboptimality: 228.26086956521738
-AStar path cost: 96 DBAStar path cost: 312
-Suboptimality: 225.0
-AStar path cost: 100 DBAStar path cost: 366
-Suboptimality: 266.0
-AStar path cost: 104 DBAStar path cost: 356
-Suboptimality: 242.3076923076923
-AStar path cost: 108 DBAStar path cost: 346
-Suboptimality: 220.37037037037038
-AStar path cost: 112 DBAStar path cost: 342
-Suboptimality: 205.35714285714283
-AStar path cost: 122 DBAStar path cost: 338
-Suboptimality: 177.04918032786887
-AStar path cost: 132 DBAStar path cost: 334
-Suboptimality: 153.03030303030303
-AStar path cost: 142 DBAStar path cost: 330
-Suboptimality: 132.3943661971831
-AStar path cost: 152 DBAStar path cost: 326
-Suboptimality: 114.47368421052633
-AStar path cost: 162 DBAStar path cost: 330
-Suboptimality: 103.70370370370372
-AStar path cost: 172 DBAStar path cost: 334
-Suboptimality: 94.1860465116279
-AStar path cost: 182 DBAStar path cost: 338
-Suboptimality: 85.71428571428572
-AStar path cost: 210 DBAStar path cost: 346
-Suboptimality: 64.76190476190476
-AStar path cost: 220 DBAStar path cost: 356
-Suboptimality: 61.81818181818181
-AStar path cost: 230 DBAStar path cost: 366
-Suboptimality: 59.13043478260869
-AStar path cost: 240 DBAStar path cost: 376
-Suboptimality: 56.666666666666664
+AStar path cost: 272 DBAStar path cost: 272
+Suboptimality: 0.0
+AStar path cost: 262 DBAStar path cost: 262
+Suboptimality: 0.0
+AStar path cost: 252 DBAStar path cost: 252
+Suboptimality: 0.0
+AStar path cost: 242 DBAStar path cost: 242
+Suboptimality: 0.0
+AStar path cost: 232 DBAStar path cost: 232
+Suboptimality: 0.0
+AStar path cost: 182 DBAStar path cost: 182
+Suboptimality: 0.0
+AStar path cost: 172 DBAStar path cost: 172
+Suboptimality: 0.0
+AStar path cost: 162 DBAStar path cost: 162
+Suboptimality: 0.0
+AStar path cost: 152 DBAStar path cost: 152
+Suboptimality: 0.0
+AStar path cost: 142 DBAStar path cost: 142
+Suboptimality: 0.0
+AStar path cost: 132 DBAStar path cost: 132
+Suboptimality: 0.0
+AStar path cost: 122 DBAStar path cost: 122
+Suboptimality: 0.0
+AStar path cost: 112 DBAStar path cost: 112
+Suboptimality: 0.0
+AStar path cost: 108 DBAStar path cost: 108
+Suboptimality: 0.0
+AStar path cost: 104 DBAStar path cost: 104
+Suboptimality: 0.0
+AStar path cost: 100 DBAStar path cost: 100
+Suboptimality: 0.0
+AStar path cost: 96 DBAStar path cost: 96
+Suboptimality: 0.0
+AStar path cost: 92 DBAStar path cost: 92
+Suboptimality: 0.0
+AStar path cost: 88 DBAStar path cost: 88
+Suboptimality: 0.0
+AStar path cost: 84 DBAStar path cost: 84
+Suboptimality: 0.0
+AStar path cost: 80 DBAStar path cost: 80
+Suboptimality: 0.0
+AStar path cost: 84 DBAStar path cost: 84
+Suboptimality: 0.0
+AStar path cost: 88 DBAStar path cost: 88
+Suboptimality: 0.0
+AStar path cost: 92 DBAStar path cost: 92
+Suboptimality: 0.0
+AStar path cost: 96 DBAStar path cost: 96
+Suboptimality: 0.0
+AStar path cost: 100 DBAStar path cost: 100
+Suboptimality: 0.0
+AStar path cost: 104 DBAStar path cost: 104
+Suboptimality: 0.0
+AStar path cost: 108 DBAStar path cost: 108
+Suboptimality: 0.0
+AStar path cost: 112 DBAStar path cost: 112
+Suboptimality: 0.0
+AStar path cost: 122 DBAStar path cost: 122
+Suboptimality: 0.0
+AStar path cost: 132 DBAStar path cost: 132
+Suboptimality: 0.0
+AStar path cost: 142 DBAStar path cost: 142
+Suboptimality: 0.0
+AStar path cost: 152 DBAStar path cost: 152
+Suboptimality: 0.0
+AStar path cost: 162 DBAStar path cost: 162
+Suboptimality: 0.0
+AStar path cost: 172 DBAStar path cost: 172
+Suboptimality: 0.0
+AStar path cost: 182 DBAStar path cost: 182
+Suboptimality: 0.0
+AStar path cost: 210 DBAStar path cost: 210
+Suboptimality: 0.0
+AStar path cost: 220 DBAStar path cost: 220
+Suboptimality: 0.0
+AStar path cost: 230 DBAStar path cost: 230
+Suboptimality: 0.0
+AStar path cost: 240 DBAStar path cost: 240
+Suboptimality: 0.0
 AStar path cost: 250 DBAStar path cost: 478
 Suboptimality: 91.19999999999999
 AStar path cost: 260 DBAStar path cost: 468
@@ -8917,86 +8917,86 @@ AStar path cost: 452 DBAStar path cost: 476
 Suboptimality: 5.3097345132743445
 AStar path cost: 456 DBAStar path cost: 554
 Suboptimality: 21.491228070175428
-AStar path cost: 286 DBAStar path cost: 334
-Suboptimality: 16.783216783216794
-AStar path cost: 276 DBAStar path cost: 324
-Suboptimality: 17.391304347826097
-AStar path cost: 266 DBAStar path cost: 314
-Suboptimality: 18.045112781954884
-AStar path cost: 256 DBAStar path cost: 310
-Suboptimality: 21.09375
-AStar path cost: 246 DBAStar path cost: 314
-Suboptimality: 27.642276422764223
-AStar path cost: 176 DBAStar path cost: 408
-Suboptimality: 131.81818181818184
-AStar path cost: 166 DBAStar path cost: 418
-Suboptimality: 151.80722891566262
-AStar path cost: 156 DBAStar path cost: 428
-Suboptimality: 174.35897435897436
-AStar path cost: 146 DBAStar path cost: 278
-Suboptimality: 90.41095890410959
-AStar path cost: 136 DBAStar path cost: 268
-Suboptimality: 97.05882352941177
-AStar path cost: 126 DBAStar path cost: 258
-Suboptimality: 104.76190476190474
-AStar path cost: 122 DBAStar path cost: 248
-Suboptimality: 103.27868852459017
-AStar path cost: 118 DBAStar path cost: 244
-Suboptimality: 106.77966101694913
-AStar path cost: 114 DBAStar path cost: 240
-Suboptimality: 110.52631578947367
-AStar path cost: 110 DBAStar path cost: 236
-Suboptimality: 114.54545454545455
-AStar path cost: 106 DBAStar path cost: 240
-Suboptimality: 126.41509433962264
-AStar path cost: 102 DBAStar path cost: 244
-Suboptimality: 139.2156862745098
-AStar path cost: 98 DBAStar path cost: 248
-Suboptimality: 153.06122448979593
-AStar path cost: 94 DBAStar path cost: 258
-Suboptimality: 174.468085106383
-AStar path cost: 90 DBAStar path cost: 268
-Suboptimality: 197.77777777777777
-AStar path cost: 94 DBAStar path cost: 278
-Suboptimality: 195.74468085106383
-AStar path cost: 98 DBAStar path cost: 288
-Suboptimality: 193.8775510204082
-AStar path cost: 102 DBAStar path cost: 298
-Suboptimality: 192.156862745098
-AStar path cost: 106 DBAStar path cost: 308
-Suboptimality: 190.56603773584902
-AStar path cost: 110 DBAStar path cost: 362
-Suboptimality: 229.0909090909091
-AStar path cost: 114 DBAStar path cost: 352
-Suboptimality: 208.7719298245614
-AStar path cost: 118 DBAStar path cost: 342
-Suboptimality: 189.83050847457625
-AStar path cost: 122 DBAStar path cost: 332
-Suboptimality: 172.1311475409836
-AStar path cost: 126 DBAStar path cost: 328
-Suboptimality: 160.31746031746033
-AStar path cost: 136 DBAStar path cost: 324
-Suboptimality: 138.23529411764704
-AStar path cost: 146 DBAStar path cost: 320
-Suboptimality: 119.17808219178082
-AStar path cost: 156 DBAStar path cost: 316
-Suboptimality: 102.56410256410255
-AStar path cost: 166 DBAStar path cost: 320
-Suboptimality: 92.7710843373494
-AStar path cost: 176 DBAStar path cost: 324
-Suboptimality: 84.09090909090908
-AStar path cost: 186 DBAStar path cost: 328
-Suboptimality: 76.34408602150538
-AStar path cost: 196 DBAStar path cost: 332
-Suboptimality: 69.38775510204083
-AStar path cost: 206 DBAStar path cost: 342
-Suboptimality: 66.01941747572815
-AStar path cost: 216 DBAStar path cost: 352
-Suboptimality: 62.962962962962955
-AStar path cost: 226 DBAStar path cost: 362
-Suboptimality: 60.17699115044248
-AStar path cost: 236 DBAStar path cost: 372
-Suboptimality: 57.6271186440678
+AStar path cost: 286 DBAStar path cost: 286
+Suboptimality: 0.0
+AStar path cost: 276 DBAStar path cost: 276
+Suboptimality: 0.0
+AStar path cost: 266 DBAStar path cost: 266
+Suboptimality: 0.0
+AStar path cost: 256 DBAStar path cost: 256
+Suboptimality: 0.0
+AStar path cost: 246 DBAStar path cost: 246
+Suboptimality: 0.0
+AStar path cost: 176 DBAStar path cost: 176
+Suboptimality: 0.0
+AStar path cost: 166 DBAStar path cost: 166
+Suboptimality: 0.0
+AStar path cost: 156 DBAStar path cost: 156
+Suboptimality: 0.0
+AStar path cost: 146 DBAStar path cost: 146
+Suboptimality: 0.0
+AStar path cost: 136 DBAStar path cost: 136
+Suboptimality: 0.0
+AStar path cost: 126 DBAStar path cost: 126
+Suboptimality: 0.0
+AStar path cost: 122 DBAStar path cost: 122
+Suboptimality: 0.0
+AStar path cost: 118 DBAStar path cost: 118
+Suboptimality: 0.0
+AStar path cost: 114 DBAStar path cost: 114
+Suboptimality: 0.0
+AStar path cost: 110 DBAStar path cost: 110
+Suboptimality: 0.0
+AStar path cost: 106 DBAStar path cost: 106
+Suboptimality: 0.0
+AStar path cost: 102 DBAStar path cost: 102
+Suboptimality: 0.0
+AStar path cost: 98 DBAStar path cost: 98
+Suboptimality: 0.0
+AStar path cost: 94 DBAStar path cost: 94
+Suboptimality: 0.0
+AStar path cost: 90 DBAStar path cost: 90
+Suboptimality: 0.0
+AStar path cost: 94 DBAStar path cost: 94
+Suboptimality: 0.0
+AStar path cost: 98 DBAStar path cost: 98
+Suboptimality: 0.0
+AStar path cost: 102 DBAStar path cost: 102
+Suboptimality: 0.0
+AStar path cost: 106 DBAStar path cost: 106
+Suboptimality: 0.0
+AStar path cost: 110 DBAStar path cost: 110
+Suboptimality: 0.0
+AStar path cost: 114 DBAStar path cost: 114
+Suboptimality: 0.0
+AStar path cost: 118 DBAStar path cost: 118
+Suboptimality: 0.0
+AStar path cost: 122 DBAStar path cost: 122
+Suboptimality: 0.0
+AStar path cost: 126 DBAStar path cost: 126
+Suboptimality: 0.0
+AStar path cost: 136 DBAStar path cost: 136
+Suboptimality: 0.0
+AStar path cost: 146 DBAStar path cost: 146
+Suboptimality: 0.0
+AStar path cost: 156 DBAStar path cost: 156
+Suboptimality: 0.0
+AStar path cost: 166 DBAStar path cost: 166
+Suboptimality: 0.0
+AStar path cost: 176 DBAStar path cost: 176
+Suboptimality: 0.0
+AStar path cost: 186 DBAStar path cost: 186
+Suboptimality: 0.0
+AStar path cost: 196 DBAStar path cost: 196
+Suboptimality: 0.0
+AStar path cost: 206 DBAStar path cost: 206
+Suboptimality: 0.0
+AStar path cost: 216 DBAStar path cost: 216
+Suboptimality: 0.0
+AStar path cost: 226 DBAStar path cost: 226
+Suboptimality: 0.0
+AStar path cost: 236 DBAStar path cost: 236
+Suboptimality: 0.0
 AStar path cost: 246 DBAStar path cost: 474
 Suboptimality: 92.68292682926828
 AStar path cost: 256 DBAStar path cost: 464
@@ -9063,84 +9063,84 @@ AStar path cost: 462 DBAStar path cost: 486
 Suboptimality: 5.1948051948051965
 AStar path cost: 466 DBAStar path cost: 550
 Suboptimality: 18.025751072961384
-AStar path cost: 300 DBAStar path cost: 340
-Suboptimality: 13.33333333333333
-AStar path cost: 290 DBAStar path cost: 330
-Suboptimality: 13.793103448275868
-AStar path cost: 280 DBAStar path cost: 320
-Suboptimality: 14.28571428571428
-AStar path cost: 270 DBAStar path cost: 310
-Suboptimality: 14.814814814814813
-AStar path cost: 260 DBAStar path cost: 300
-Suboptimality: 15.384615384615374
-AStar path cost: 170 DBAStar path cost: 422
-Suboptimality: 148.23529411764707
-AStar path cost: 160 DBAStar path cost: 432
-Suboptimality: 170.00000000000003
-AStar path cost: 150 DBAStar path cost: 274
-Suboptimality: 82.66666666666667
-AStar path cost: 140 DBAStar path cost: 264
-Suboptimality: 88.57142857142857
-AStar path cost: 136 DBAStar path cost: 254
-Suboptimality: 86.76470588235294
-AStar path cost: 132 DBAStar path cost: 244
-Suboptimality: 84.84848484848484
-AStar path cost: 128 DBAStar path cost: 234
-Suboptimality: 82.8125
-AStar path cost: 124 DBAStar path cost: 230
-Suboptimality: 85.48387096774192
-AStar path cost: 120 DBAStar path cost: 226
-Suboptimality: 88.33333333333333
-AStar path cost: 116 DBAStar path cost: 230
-Suboptimality: 98.27586206896552
-AStar path cost: 112 DBAStar path cost: 234
-Suboptimality: 108.92857142857144
-AStar path cost: 108 DBAStar path cost: 244
-Suboptimality: 125.92592592592591
-AStar path cost: 104 DBAStar path cost: 254
-Suboptimality: 144.23076923076925
-AStar path cost: 100 DBAStar path cost: 264
-Suboptimality: 164.0
-AStar path cost: 104 DBAStar path cost: 274
-Suboptimality: 163.46153846153845
-AStar path cost: 108 DBAStar path cost: 284
-Suboptimality: 162.962962962963
-AStar path cost: 112 DBAStar path cost: 294
-Suboptimality: 162.5
-AStar path cost: 116 DBAStar path cost: 304
-Suboptimality: 162.06896551724137
-AStar path cost: 120 DBAStar path cost: 358
-Suboptimality: 198.33333333333334
-AStar path cost: 124 DBAStar path cost: 348
-Suboptimality: 180.6451612903226
-AStar path cost: 128 DBAStar path cost: 338
-Suboptimality: 164.0625
-AStar path cost: 132 DBAStar path cost: 328
-Suboptimality: 148.4848484848485
-AStar path cost: 136 DBAStar path cost: 318
-Suboptimality: 133.82352941176472
-AStar path cost: 140 DBAStar path cost: 314
-Suboptimality: 124.28571428571429
-AStar path cost: 150 DBAStar path cost: 310
-Suboptimality: 106.66666666666669
-AStar path cost: 160 DBAStar path cost: 306
-Suboptimality: 91.25000000000001
-AStar path cost: 170 DBAStar path cost: 310
-Suboptimality: 82.35294117647058
-AStar path cost: 180 DBAStar path cost: 314
-Suboptimality: 74.44444444444444
-AStar path cost: 190 DBAStar path cost: 318
-Suboptimality: 67.36842105263159
-AStar path cost: 200 DBAStar path cost: 328
-Suboptimality: 63.99999999999999
-AStar path cost: 210 DBAStar path cost: 338
-Suboptimality: 60.952380952380956
-AStar path cost: 220 DBAStar path cost: 348
-Suboptimality: 58.18181818181818
-AStar path cost: 230 DBAStar path cost: 358
-Suboptimality: 55.65217391304347
-AStar path cost: 240 DBAStar path cost: 368
-Suboptimality: 53.33333333333334
+AStar path cost: 300 DBAStar path cost: 300
+Suboptimality: 0.0
+AStar path cost: 290 DBAStar path cost: 290
+Suboptimality: 0.0
+AStar path cost: 280 DBAStar path cost: 280
+Suboptimality: 0.0
+AStar path cost: 270 DBAStar path cost: 270
+Suboptimality: 0.0
+AStar path cost: 260 DBAStar path cost: 260
+Suboptimality: 0.0
+AStar path cost: 170 DBAStar path cost: 170
+Suboptimality: 0.0
+AStar path cost: 160 DBAStar path cost: 160
+Suboptimality: 0.0
+AStar path cost: 150 DBAStar path cost: 150
+Suboptimality: 0.0
+AStar path cost: 140 DBAStar path cost: 140
+Suboptimality: 0.0
+AStar path cost: 136 DBAStar path cost: 136
+Suboptimality: 0.0
+AStar path cost: 132 DBAStar path cost: 132
+Suboptimality: 0.0
+AStar path cost: 128 DBAStar path cost: 128
+Suboptimality: 0.0
+AStar path cost: 124 DBAStar path cost: 124
+Suboptimality: 0.0
+AStar path cost: 120 DBAStar path cost: 120
+Suboptimality: 0.0
+AStar path cost: 116 DBAStar path cost: 116
+Suboptimality: 0.0
+AStar path cost: 112 DBAStar path cost: 112
+Suboptimality: 0.0
+AStar path cost: 108 DBAStar path cost: 108
+Suboptimality: 0.0
+AStar path cost: 104 DBAStar path cost: 104
+Suboptimality: 0.0
+AStar path cost: 100 DBAStar path cost: 100
+Suboptimality: 0.0
+AStar path cost: 104 DBAStar path cost: 104
+Suboptimality: 0.0
+AStar path cost: 108 DBAStar path cost: 108
+Suboptimality: 0.0
+AStar path cost: 112 DBAStar path cost: 112
+Suboptimality: 0.0
+AStar path cost: 116 DBAStar path cost: 116
+Suboptimality: 0.0
+AStar path cost: 120 DBAStar path cost: 120
+Suboptimality: 0.0
+AStar path cost: 124 DBAStar path cost: 124
+Suboptimality: 0.0
+AStar path cost: 128 DBAStar path cost: 128
+Suboptimality: 0.0
+AStar path cost: 132 DBAStar path cost: 132
+Suboptimality: 0.0
+AStar path cost: 136 DBAStar path cost: 136
+Suboptimality: 0.0
+AStar path cost: 140 DBAStar path cost: 140
+Suboptimality: 0.0
+AStar path cost: 150 DBAStar path cost: 150
+Suboptimality: 0.0
+AStar path cost: 160 DBAStar path cost: 160
+Suboptimality: 0.0
+AStar path cost: 170 DBAStar path cost: 170
+Suboptimality: 0.0
+AStar path cost: 180 DBAStar path cost: 180
+Suboptimality: 0.0
+AStar path cost: 190 DBAStar path cost: 190
+Suboptimality: 0.0
+AStar path cost: 200 DBAStar path cost: 200
+Suboptimality: 0.0
+AStar path cost: 210 DBAStar path cost: 210
+Suboptimality: 0.0
+AStar path cost: 220 DBAStar path cost: 220
+Suboptimality: 0.0
+AStar path cost: 230 DBAStar path cost: 230
+Suboptimality: 0.0
+AStar path cost: 240 DBAStar path cost: 240
+Suboptimality: 0.0
 AStar path cost: 250 DBAStar path cost: 470
 Suboptimality: 87.99999999999999
 AStar path cost: 260 DBAStar path cost: 460
@@ -9207,80 +9207,80 @@ AStar path cost: 468 DBAStar path cost: 492
 Suboptimality: 5.128205128205132
 AStar path cost: 472 DBAStar path cost: 496
 Suboptimality: 5.084745762711873
-AStar path cost: 304 DBAStar path cost: 344
-Suboptimality: 13.157894736842103
-AStar path cost: 294 DBAStar path cost: 334
-Suboptimality: 13.605442176870742
-AStar path cost: 284 DBAStar path cost: 324
-Suboptimality: 14.084507042253524
-AStar path cost: 274 DBAStar path cost: 314
-Suboptimality: 14.598540145985407
-AStar path cost: 164 DBAStar path cost: 436
-Suboptimality: 165.85365853658539
-AStar path cost: 154 DBAStar path cost: 270
-Suboptimality: 75.32467532467533
-AStar path cost: 150 DBAStar path cost: 260
-Suboptimality: 73.33333333333334
-AStar path cost: 146 DBAStar path cost: 250
-Suboptimality: 71.23287671232876
-AStar path cost: 142 DBAStar path cost: 240
-Suboptimality: 69.01408450704226
-AStar path cost: 138 DBAStar path cost: 230
-Suboptimality: 66.66666666666667
-AStar path cost: 134 DBAStar path cost: 220
-Suboptimality: 64.17910447761194
-AStar path cost: 130 DBAStar path cost: 216
-Suboptimality: 66.15384615384616
-AStar path cost: 126 DBAStar path cost: 220
-Suboptimality: 74.60317460317461
-AStar path cost: 122 DBAStar path cost: 230
-Suboptimality: 88.52459016393443
-AStar path cost: 118 DBAStar path cost: 240
-Suboptimality: 103.38983050847457
-AStar path cost: 114 DBAStar path cost: 250
-Suboptimality: 119.2982456140351
-AStar path cost: 110 DBAStar path cost: 260
-Suboptimality: 136.36363636363637
-AStar path cost: 114 DBAStar path cost: 270
-Suboptimality: 136.84210526315786
-AStar path cost: 118 DBAStar path cost: 280
-Suboptimality: 137.28813559322032
-AStar path cost: 122 DBAStar path cost: 290
-Suboptimality: 137.7049180327869
-AStar path cost: 126 DBAStar path cost: 300
-Suboptimality: 138.0952380952381
-AStar path cost: 130 DBAStar path cost: 354
-Suboptimality: 172.30769230769232
-AStar path cost: 134 DBAStar path cost: 344
-Suboptimality: 156.71641791044775
-AStar path cost: 138 DBAStar path cost: 334
-Suboptimality: 142.02898550724638
-AStar path cost: 142 DBAStar path cost: 324
-Suboptimality: 128.16901408450704
-AStar path cost: 146 DBAStar path cost: 314
-Suboptimality: 115.06849315068494
-AStar path cost: 150 DBAStar path cost: 304
-Suboptimality: 102.66666666666669
-AStar path cost: 154 DBAStar path cost: 300
-Suboptimality: 94.8051948051948
-AStar path cost: 164 DBAStar path cost: 296
-Suboptimality: 80.48780487804879
-AStar path cost: 174 DBAStar path cost: 300
-Suboptimality: 72.41379310344827
-AStar path cost: 184 DBAStar path cost: 304
-Suboptimality: 65.21739130434783
-AStar path cost: 194 DBAStar path cost: 314
-Suboptimality: 61.855670103092784
-AStar path cost: 204 DBAStar path cost: 324
-Suboptimality: 58.823529411764696
-AStar path cost: 214 DBAStar path cost: 334
-Suboptimality: 56.07476635514019
-AStar path cost: 224 DBAStar path cost: 344
-Suboptimality: 53.571428571428584
-AStar path cost: 234 DBAStar path cost: 354
-Suboptimality: 51.28205128205128
-AStar path cost: 244 DBAStar path cost: 364
-Suboptimality: 49.18032786885247
+AStar path cost: 304 DBAStar path cost: 304
+Suboptimality: 0.0
+AStar path cost: 294 DBAStar path cost: 294
+Suboptimality: 0.0
+AStar path cost: 284 DBAStar path cost: 284
+Suboptimality: 0.0
+AStar path cost: 274 DBAStar path cost: 274
+Suboptimality: 0.0
+AStar path cost: 164 DBAStar path cost: 164
+Suboptimality: 0.0
+AStar path cost: 154 DBAStar path cost: 154
+Suboptimality: 0.0
+AStar path cost: 150 DBAStar path cost: 150
+Suboptimality: 0.0
+AStar path cost: 146 DBAStar path cost: 146
+Suboptimality: 0.0
+AStar path cost: 142 DBAStar path cost: 142
+Suboptimality: 0.0
+AStar path cost: 138 DBAStar path cost: 138
+Suboptimality: 0.0
+AStar path cost: 134 DBAStar path cost: 134
+Suboptimality: 0.0
+AStar path cost: 130 DBAStar path cost: 130
+Suboptimality: 0.0
+AStar path cost: 126 DBAStar path cost: 126
+Suboptimality: 0.0
+AStar path cost: 122 DBAStar path cost: 122
+Suboptimality: 0.0
+AStar path cost: 118 DBAStar path cost: 118
+Suboptimality: 0.0
+AStar path cost: 114 DBAStar path cost: 114
+Suboptimality: 0.0
+AStar path cost: 110 DBAStar path cost: 110
+Suboptimality: 0.0
+AStar path cost: 114 DBAStar path cost: 114
+Suboptimality: 0.0
+AStar path cost: 118 DBAStar path cost: 118
+Suboptimality: 0.0
+AStar path cost: 122 DBAStar path cost: 122
+Suboptimality: 0.0
+AStar path cost: 126 DBAStar path cost: 126
+Suboptimality: 0.0
+AStar path cost: 130 DBAStar path cost: 130
+Suboptimality: 0.0
+AStar path cost: 134 DBAStar path cost: 134
+Suboptimality: 0.0
+AStar path cost: 138 DBAStar path cost: 138
+Suboptimality: 0.0
+AStar path cost: 142 DBAStar path cost: 142
+Suboptimality: 0.0
+AStar path cost: 146 DBAStar path cost: 146
+Suboptimality: 0.0
+AStar path cost: 150 DBAStar path cost: 150
+Suboptimality: 0.0
+AStar path cost: 154 DBAStar path cost: 154
+Suboptimality: 0.0
+AStar path cost: 164 DBAStar path cost: 164
+Suboptimality: 0.0
+AStar path cost: 174 DBAStar path cost: 174
+Suboptimality: 0.0
+AStar path cost: 184 DBAStar path cost: 184
+Suboptimality: 0.0
+AStar path cost: 194 DBAStar path cost: 194
+Suboptimality: 0.0
+AStar path cost: 204 DBAStar path cost: 204
+Suboptimality: 0.0
+AStar path cost: 214 DBAStar path cost: 214
+Suboptimality: 0.0
+AStar path cost: 224 DBAStar path cost: 224
+Suboptimality: 0.0
+AStar path cost: 234 DBAStar path cost: 234
+Suboptimality: 0.0
+AStar path cost: 244 DBAStar path cost: 244
+Suboptimality: 0.0
 AStar path cost: 254 DBAStar path cost: 466
 Suboptimality: 83.46456692913387
 AStar path cost: 264 DBAStar path cost: 456
@@ -9345,76 +9345,76 @@ AStar path cost: 474 DBAStar path cost: 498
 Suboptimality: 5.063291139240511
 AStar path cost: 478 DBAStar path cost: 502
 Suboptimality: 5.020920502092041
-AStar path cost: 308 DBAStar path cost: 348
-Suboptimality: 12.987012987012992
-AStar path cost: 298 DBAStar path cost: 338
-Suboptimality: 13.422818791946312
-AStar path cost: 288 DBAStar path cost: 328
-Suboptimality: 13.888888888888884
-AStar path cost: 164 DBAStar path cost: 266
-Suboptimality: 62.19512195121952
-AStar path cost: 160 DBAStar path cost: 256
-Suboptimality: 60.00000000000001
-AStar path cost: 156 DBAStar path cost: 246
-Suboptimality: 57.692307692307686
-AStar path cost: 152 DBAStar path cost: 236
-Suboptimality: 55.263157894736835
-AStar path cost: 148 DBAStar path cost: 226
-Suboptimality: 52.702702702702695
-AStar path cost: 144 DBAStar path cost: 216
-Suboptimality: 50.0
-AStar path cost: 140 DBAStar path cost: 206
-Suboptimality: 47.14285714285715
-AStar path cost: 136 DBAStar path cost: 216
-Suboptimality: 58.823529411764696
-AStar path cost: 132 DBAStar path cost: 226
-Suboptimality: 71.21212121212122
-AStar path cost: 128 DBAStar path cost: 236
-Suboptimality: 84.375
-AStar path cost: 124 DBAStar path cost: 246
-Suboptimality: 98.38709677419355
-AStar path cost: 120 DBAStar path cost: 256
-Suboptimality: 113.33333333333333
-AStar path cost: 124 DBAStar path cost: 266
-Suboptimality: 114.51612903225805
-AStar path cost: 128 DBAStar path cost: 276
-Suboptimality: 115.625
-AStar path cost: 132 DBAStar path cost: 286
-Suboptimality: 116.66666666666666
-AStar path cost: 136 DBAStar path cost: 296
-Suboptimality: 117.64705882352939
-AStar path cost: 140 DBAStar path cost: 350
-Suboptimality: 150.0
-AStar path cost: 144 DBAStar path cost: 340
-Suboptimality: 136.11111111111111
-AStar path cost: 148 DBAStar path cost: 330
-Suboptimality: 122.97297297297298
-AStar path cost: 152 DBAStar path cost: 320
-Suboptimality: 110.52631578947367
-AStar path cost: 156 DBAStar path cost: 310
-Suboptimality: 98.71794871794873
-AStar path cost: 160 DBAStar path cost: 300
-Suboptimality: 87.5
-AStar path cost: 164 DBAStar path cost: 290
-Suboptimality: 76.82926829268293
-AStar path cost: 168 DBAStar path cost: 286
-Suboptimality: 70.23809523809523
-AStar path cost: 178 DBAStar path cost: 290
-Suboptimality: 62.92134831460674
-AStar path cost: 188 DBAStar path cost: 300
-Suboptimality: 59.57446808510638
-AStar path cost: 198 DBAStar path cost: 310
-Suboptimality: 56.565656565656575
-AStar path cost: 208 DBAStar path cost: 320
-Suboptimality: 53.846153846153854
-AStar path cost: 218 DBAStar path cost: 330
-Suboptimality: 51.37614678899083
-AStar path cost: 228 DBAStar path cost: 340
-Suboptimality: 49.122807017543856
-AStar path cost: 238 DBAStar path cost: 350
-Suboptimality: 47.058823529411775
-AStar path cost: 248 DBAStar path cost: 360
-Suboptimality: 45.16129032258065
+AStar path cost: 308 DBAStar path cost: 308
+Suboptimality: 0.0
+AStar path cost: 298 DBAStar path cost: 298
+Suboptimality: 0.0
+AStar path cost: 288 DBAStar path cost: 288
+Suboptimality: 0.0
+AStar path cost: 164 DBAStar path cost: 164
+Suboptimality: 0.0
+AStar path cost: 160 DBAStar path cost: 160
+Suboptimality: 0.0
+AStar path cost: 156 DBAStar path cost: 156
+Suboptimality: 0.0
+AStar path cost: 152 DBAStar path cost: 152
+Suboptimality: 0.0
+AStar path cost: 148 DBAStar path cost: 148
+Suboptimality: 0.0
+AStar path cost: 144 DBAStar path cost: 144
+Suboptimality: 0.0
+AStar path cost: 140 DBAStar path cost: 140
+Suboptimality: 0.0
+AStar path cost: 136 DBAStar path cost: 136
+Suboptimality: 0.0
+AStar path cost: 132 DBAStar path cost: 132
+Suboptimality: 0.0
+AStar path cost: 128 DBAStar path cost: 128
+Suboptimality: 0.0
+AStar path cost: 124 DBAStar path cost: 124
+Suboptimality: 0.0
+AStar path cost: 120 DBAStar path cost: 120
+Suboptimality: 0.0
+AStar path cost: 124 DBAStar path cost: 124
+Suboptimality: 0.0
+AStar path cost: 128 DBAStar path cost: 128
+Suboptimality: 0.0
+AStar path cost: 132 DBAStar path cost: 132
+Suboptimality: 0.0
+AStar path cost: 136 DBAStar path cost: 136
+Suboptimality: 0.0
+AStar path cost: 140 DBAStar path cost: 140
+Suboptimality: 0.0
+AStar path cost: 144 DBAStar path cost: 144
+Suboptimality: 0.0
+AStar path cost: 148 DBAStar path cost: 148
+Suboptimality: 0.0
+AStar path cost: 152 DBAStar path cost: 152
+Suboptimality: 0.0
+AStar path cost: 156 DBAStar path cost: 156
+Suboptimality: 0.0
+AStar path cost: 160 DBAStar path cost: 160
+Suboptimality: 0.0
+AStar path cost: 164 DBAStar path cost: 164
+Suboptimality: 0.0
+AStar path cost: 168 DBAStar path cost: 168
+Suboptimality: 0.0
+AStar path cost: 178 DBAStar path cost: 178
+Suboptimality: 0.0
+AStar path cost: 188 DBAStar path cost: 188
+Suboptimality: 0.0
+AStar path cost: 198 DBAStar path cost: 198
+Suboptimality: 0.0
+AStar path cost: 208 DBAStar path cost: 208
+Suboptimality: 0.0
+AStar path cost: 218 DBAStar path cost: 218
+Suboptimality: 0.0
+AStar path cost: 228 DBAStar path cost: 228
+Suboptimality: 0.0
+AStar path cost: 238 DBAStar path cost: 238
+Suboptimality: 0.0
+AStar path cost: 248 DBAStar path cost: 248
+Suboptimality: 0.0
 AStar path cost: 258 DBAStar path cost: 462
 Suboptimality: 79.06976744186048
 AStar path cost: 268 DBAStar path cost: 452
@@ -9479,74 +9479,74 @@ AStar path cost: 484 DBAStar path cost: 508
 Suboptimality: 4.958677685950419
 AStar path cost: 332 DBAStar path cost: 498
 Suboptimality: 50.0
-AStar path cost: 322 DBAStar path cost: 362
-Suboptimality: 12.422360248447205
-AStar path cost: 312 DBAStar path cost: 352
-Suboptimality: 12.82051282051282
-AStar path cost: 302 DBAStar path cost: 342
-Suboptimality: 13.245033112582782
-AStar path cost: 170 DBAStar path cost: 260
-Suboptimality: 52.941176470588225
-AStar path cost: 166 DBAStar path cost: 250
-Suboptimality: 50.60240963855422
-AStar path cost: 162 DBAStar path cost: 240
-Suboptimality: 48.14814814814814
-AStar path cost: 158 DBAStar path cost: 230
-Suboptimality: 45.56962025316456
-AStar path cost: 154 DBAStar path cost: 220
-Suboptimality: 42.85714285714286
-AStar path cost: 150 DBAStar path cost: 216
-Suboptimality: 43.99999999999999
-AStar path cost: 146 DBAStar path cost: 220
-Suboptimality: 50.68493150684932
-AStar path cost: 142 DBAStar path cost: 230
-Suboptimality: 61.9718309859155
-AStar path cost: 138 DBAStar path cost: 240
-Suboptimality: 73.91304347826086
-AStar path cost: 134 DBAStar path cost: 250
-Suboptimality: 86.56716417910448
-AStar path cost: 130 DBAStar path cost: 260
-Suboptimality: 100.0
-AStar path cost: 134 DBAStar path cost: 270
-Suboptimality: 101.49253731343282
-AStar path cost: 138 DBAStar path cost: 280
-Suboptimality: 102.89855072463769
-AStar path cost: 142 DBAStar path cost: 290
-Suboptimality: 104.22535211267605
-AStar path cost: 146 DBAStar path cost: 300
-Suboptimality: 105.47945205479454
-AStar path cost: 150 DBAStar path cost: 346
-Suboptimality: 130.66666666666666
-AStar path cost: 154 DBAStar path cost: 336
-Suboptimality: 118.18181818181816
-AStar path cost: 158 DBAStar path cost: 326
-Suboptimality: 106.32911392405062
-AStar path cost: 162 DBAStar path cost: 316
-Suboptimality: 95.06172839506173
-AStar path cost: 166 DBAStar path cost: 306
-Suboptimality: 84.33734939759037
-AStar path cost: 170 DBAStar path cost: 296
-Suboptimality: 74.11764705882354
-AStar path cost: 174 DBAStar path cost: 286
-Suboptimality: 64.36781609195404
-AStar path cost: 178 DBAStar path cost: 276
-Suboptimality: 55.0561797752809
-AStar path cost: 182 DBAStar path cost: 286
-Suboptimality: 57.14285714285714
-AStar path cost: 192 DBAStar path cost: 296
-Suboptimality: 54.16666666666667
-AStar path cost: 202 DBAStar path cost: 306
-Suboptimality: 51.48514851485149
-AStar path cost: 212 DBAStar path cost: 316
-Suboptimality: 49.0566037735849
-AStar path cost: 222 DBAStar path cost: 326
-Suboptimality: 46.84684684684686
-AStar path cost: 232 DBAStar path cost: 336
-Suboptimality: 44.827586206896555
-AStar path cost: 242 DBAStar path cost: 346
-Suboptimality: 42.975206611570236
-AStar path cost: 252 DBAStar path cost: 356
-Suboptimality: 41.26984126984128
+AStar path cost: 322 DBAStar path cost: 322
+Suboptimality: 0.0
+AStar path cost: 312 DBAStar path cost: 312
+Suboptimality: 0.0
+AStar path cost: 302 DBAStar path cost: 302
+Suboptimality: 0.0
+AStar path cost: 170 DBAStar path cost: 170
+Suboptimality: 0.0
+AStar path cost: 166 DBAStar path cost: 166
+Suboptimality: 0.0
+AStar path cost: 162 DBAStar path cost: 162
+Suboptimality: 0.0
+AStar path cost: 158 DBAStar path cost: 158
+Suboptimality: 0.0
+AStar path cost: 154 DBAStar path cost: 154
+Suboptimality: 0.0
+AStar path cost: 150 DBAStar path cost: 150
+Suboptimality: 0.0
+AStar path cost: 146 DBAStar path cost: 146
+Suboptimality: 0.0
+AStar path cost: 142 DBAStar path cost: 142
+Suboptimality: 0.0
+AStar path cost: 138 DBAStar path cost: 138
+Suboptimality: 0.0
+AStar path cost: 134 DBAStar path cost: 134
+Suboptimality: 0.0
+AStar path cost: 130 DBAStar path cost: 130
+Suboptimality: 0.0
+AStar path cost: 134 DBAStar path cost: 134
+Suboptimality: 0.0
+AStar path cost: 138 DBAStar path cost: 138
+Suboptimality: 0.0
+AStar path cost: 142 DBAStar path cost: 142
+Suboptimality: 0.0
+AStar path cost: 146 DBAStar path cost: 146
+Suboptimality: 0.0
+AStar path cost: 150 DBAStar path cost: 150
+Suboptimality: 0.0
+AStar path cost: 154 DBAStar path cost: 154
+Suboptimality: 0.0
+AStar path cost: 158 DBAStar path cost: 158
+Suboptimality: 0.0
+AStar path cost: 162 DBAStar path cost: 162
+Suboptimality: 0.0
+AStar path cost: 166 DBAStar path cost: 166
+Suboptimality: 0.0
+AStar path cost: 170 DBAStar path cost: 170
+Suboptimality: 0.0
+AStar path cost: 174 DBAStar path cost: 174
+Suboptimality: 0.0
+AStar path cost: 178 DBAStar path cost: 178
+Suboptimality: 0.0
+AStar path cost: 182 DBAStar path cost: 182
+Suboptimality: 0.0
+AStar path cost: 192 DBAStar path cost: 192
+Suboptimality: 0.0
+AStar path cost: 202 DBAStar path cost: 202
+Suboptimality: 0.0
+AStar path cost: 212 DBAStar path cost: 212
+Suboptimality: 0.0
+AStar path cost: 222 DBAStar path cost: 222
+Suboptimality: 0.0
+AStar path cost: 232 DBAStar path cost: 232
+Suboptimality: 0.0
+AStar path cost: 242 DBAStar path cost: 242
+Suboptimality: 0.0
+AStar path cost: 252 DBAStar path cost: 252
+Suboptimality: 0.0
 AStar path cost: 262 DBAStar path cost: 466
 Suboptimality: 77.86259541984732
 AStar path cost: 272 DBAStar path cost: 456
@@ -9607,74 +9607,74 @@ AStar path cost: 346 DBAStar path cost: 484
 Suboptimality: 39.88439306358382
 AStar path cost: 336 DBAStar path cost: 488
 Suboptimality: 45.238095238095234
-AStar path cost: 326 DBAStar path cost: 366
-Suboptimality: 12.269938650306745
-AStar path cost: 316 DBAStar path cost: 356
-Suboptimality: 12.658227848101266
-AStar path cost: 312 DBAStar path cost: 352
-Suboptimality: 12.82051282051282
-AStar path cost: 180 DBAStar path cost: 264
-Suboptimality: 46.66666666666666
-AStar path cost: 176 DBAStar path cost: 254
-Suboptimality: 44.31818181818181
-AStar path cost: 172 DBAStar path cost: 244
-Suboptimality: 41.86046511627908
-AStar path cost: 168 DBAStar path cost: 234
-Suboptimality: 39.28571428571428
-AStar path cost: 164 DBAStar path cost: 230
-Suboptimality: 40.24390243902438
-AStar path cost: 160 DBAStar path cost: 226
-Suboptimality: 41.25000000000001
-AStar path cost: 156 DBAStar path cost: 230
-Suboptimality: 47.435897435897445
-AStar path cost: 152 DBAStar path cost: 234
-Suboptimality: 53.94736842105263
-AStar path cost: 148 DBAStar path cost: 244
-Suboptimality: 64.86486486486487
-AStar path cost: 144 DBAStar path cost: 254
-Suboptimality: 76.38888888888889
-AStar path cost: 140 DBAStar path cost: 264
-Suboptimality: 88.57142857142857
-AStar path cost: 144 DBAStar path cost: 274
-Suboptimality: 90.27777777777777
-AStar path cost: 148 DBAStar path cost: 284
-Suboptimality: 91.89189189189189
-AStar path cost: 152 DBAStar path cost: 294
-Suboptimality: 93.42105263157893
-AStar path cost: 156 DBAStar path cost: 304
-Suboptimality: 94.87179487179486
-AStar path cost: 160 DBAStar path cost: 350
-Suboptimality: 118.75
-AStar path cost: 164 DBAStar path cost: 340
-Suboptimality: 107.31707317073172
-AStar path cost: 168 DBAStar path cost: 330
-Suboptimality: 96.42857142857142
-AStar path cost: 172 DBAStar path cost: 320
-Suboptimality: 86.04651162790698
-AStar path cost: 176 DBAStar path cost: 310
-Suboptimality: 76.13636363636364
-AStar path cost: 180 DBAStar path cost: 300
-Suboptimality: 66.66666666666667
-AStar path cost: 184 DBAStar path cost: 290
-Suboptimality: 57.6086956521739
-AStar path cost: 188 DBAStar path cost: 286
-Suboptimality: 52.127659574468076
-AStar path cost: 192 DBAStar path cost: 290
-Suboptimality: 51.04166666666667
-AStar path cost: 196 DBAStar path cost: 300
-Suboptimality: 53.06122448979591
-AStar path cost: 206 DBAStar path cost: 310
-Suboptimality: 50.48543689320388
-AStar path cost: 216 DBAStar path cost: 320
-Suboptimality: 48.14814814814814
-AStar path cost: 226 DBAStar path cost: 330
-Suboptimality: 46.01769911504425
-AStar path cost: 236 DBAStar path cost: 340
-Suboptimality: 44.06779661016949
-AStar path cost: 246 DBAStar path cost: 350
-Suboptimality: 42.27642276422765
-AStar path cost: 256 DBAStar path cost: 360
-Suboptimality: 40.625
+AStar path cost: 326 DBAStar path cost: 326
+Suboptimality: 0.0
+AStar path cost: 316 DBAStar path cost: 316
+Suboptimality: 0.0
+AStar path cost: 312 DBAStar path cost: 312
+Suboptimality: 0.0
+AStar path cost: 180 DBAStar path cost: 180
+Suboptimality: 0.0
+AStar path cost: 176 DBAStar path cost: 176
+Suboptimality: 0.0
+AStar path cost: 172 DBAStar path cost: 172
+Suboptimality: 0.0
+AStar path cost: 168 DBAStar path cost: 168
+Suboptimality: 0.0
+AStar path cost: 164 DBAStar path cost: 164
+Suboptimality: 0.0
+AStar path cost: 160 DBAStar path cost: 160
+Suboptimality: 0.0
+AStar path cost: 156 DBAStar path cost: 156
+Suboptimality: 0.0
+AStar path cost: 152 DBAStar path cost: 152
+Suboptimality: 0.0
+AStar path cost: 148 DBAStar path cost: 148
+Suboptimality: 0.0
+AStar path cost: 144 DBAStar path cost: 144
+Suboptimality: 0.0
+AStar path cost: 140 DBAStar path cost: 140
+Suboptimality: 0.0
+AStar path cost: 144 DBAStar path cost: 144
+Suboptimality: 0.0
+AStar path cost: 148 DBAStar path cost: 148
+Suboptimality: 0.0
+AStar path cost: 152 DBAStar path cost: 152
+Suboptimality: 0.0
+AStar path cost: 156 DBAStar path cost: 156
+Suboptimality: 0.0
+AStar path cost: 160 DBAStar path cost: 160
+Suboptimality: 0.0
+AStar path cost: 164 DBAStar path cost: 164
+Suboptimality: 0.0
+AStar path cost: 168 DBAStar path cost: 168
+Suboptimality: 0.0
+AStar path cost: 172 DBAStar path cost: 172
+Suboptimality: 0.0
+AStar path cost: 176 DBAStar path cost: 176
+Suboptimality: 0.0
+AStar path cost: 180 DBAStar path cost: 180
+Suboptimality: 0.0
+AStar path cost: 184 DBAStar path cost: 184
+Suboptimality: 0.0
+AStar path cost: 188 DBAStar path cost: 188
+Suboptimality: 0.0
+AStar path cost: 192 DBAStar path cost: 192
+Suboptimality: 0.0
+AStar path cost: 196 DBAStar path cost: 196
+Suboptimality: 0.0
+AStar path cost: 206 DBAStar path cost: 206
+Suboptimality: 0.0
+AStar path cost: 216 DBAStar path cost: 216
+Suboptimality: 0.0
+AStar path cost: 226 DBAStar path cost: 226
+Suboptimality: 0.0
+AStar path cost: 236 DBAStar path cost: 236
+Suboptimality: 0.0
+AStar path cost: 246 DBAStar path cost: 246
+Suboptimality: 0.0
+AStar path cost: 256 DBAStar path cost: 256
+Suboptimality: 0.0
 AStar path cost: 266 DBAStar path cost: 478
 Suboptimality: 79.69924812030075
 AStar path cost: 286 DBAStar path cost: 450
@@ -9727,72 +9727,72 @@ AStar path cost: 350 DBAStar path cost: 474
 Suboptimality: 35.42857142857143
 AStar path cost: 340 DBAStar path cost: 484
 Suboptimality: 42.352941176470594
-AStar path cost: 330 DBAStar path cost: 370
-Suboptimality: 12.12121212121211
-AStar path cost: 326 DBAStar path cost: 366
-Suboptimality: 12.269938650306745
-AStar path cost: 194 DBAStar path cost: 278
-Suboptimality: 43.29896907216495
-AStar path cost: 190 DBAStar path cost: 268
-Suboptimality: 41.05263157894736
-AStar path cost: 186 DBAStar path cost: 258
-Suboptimality: 38.70967741935485
-AStar path cost: 182 DBAStar path cost: 248
-Suboptimality: 36.26373626373627
-AStar path cost: 178 DBAStar path cost: 244
-Suboptimality: 37.07865168539326
-AStar path cost: 174 DBAStar path cost: 240
-Suboptimality: 37.93103448275863
-AStar path cost: 170 DBAStar path cost: 236
-Suboptimality: 38.8235294117647
-AStar path cost: 166 DBAStar path cost: 240
-Suboptimality: 44.57831325301205
-AStar path cost: 162 DBAStar path cost: 244
-Suboptimality: 50.617283950617285
-AStar path cost: 158 DBAStar path cost: 248
-Suboptimality: 56.96202531645569
-AStar path cost: 154 DBAStar path cost: 258
-Suboptimality: 67.53246753246754
-AStar path cost: 150 DBAStar path cost: 268
-Suboptimality: 78.66666666666666
-AStar path cost: 154 DBAStar path cost: 278
-Suboptimality: 80.51948051948052
-AStar path cost: 162 DBAStar path cost: 306
-Suboptimality: 88.88888888888889
-AStar path cost: 166 DBAStar path cost: 316
-Suboptimality: 90.36144578313252
-AStar path cost: 170 DBAStar path cost: 354
-Suboptimality: 108.23529411764707
-AStar path cost: 174 DBAStar path cost: 344
-Suboptimality: 97.70114942528735
-AStar path cost: 178 DBAStar path cost: 334
-Suboptimality: 87.64044943820224
-AStar path cost: 182 DBAStar path cost: 324
-Suboptimality: 78.02197802197801
-AStar path cost: 186 DBAStar path cost: 314
-Suboptimality: 68.81720430107528
-AStar path cost: 190 DBAStar path cost: 304
-Suboptimality: 60.00000000000001
-AStar path cost: 194 DBAStar path cost: 300
-Suboptimality: 54.639175257731964
-AStar path cost: 198 DBAStar path cost: 296
-Suboptimality: 49.4949494949495
-AStar path cost: 202 DBAStar path cost: 300
-Suboptimality: 48.51485148514851
-AStar path cost: 206 DBAStar path cost: 304
-Suboptimality: 47.57281553398058
-AStar path cost: 210 DBAStar path cost: 314
-Suboptimality: 49.523809523809526
-AStar path cost: 220 DBAStar path cost: 324
-Suboptimality: 47.272727272727266
-AStar path cost: 230 DBAStar path cost: 334
-Suboptimality: 45.21739130434783
-AStar path cost: 240 DBAStar path cost: 344
-Suboptimality: 43.333333333333336
-AStar path cost: 250 DBAStar path cost: 354
-Suboptimality: 41.599999999999994
-AStar path cost: 260 DBAStar path cost: 364
-Suboptimality: 39.99999999999999
+AStar path cost: 330 DBAStar path cost: 330
+Suboptimality: 0.0
+AStar path cost: 326 DBAStar path cost: 326
+Suboptimality: 0.0
+AStar path cost: 194 DBAStar path cost: 194
+Suboptimality: 0.0
+AStar path cost: 190 DBAStar path cost: 190
+Suboptimality: 0.0
+AStar path cost: 186 DBAStar path cost: 186
+Suboptimality: 0.0
+AStar path cost: 182 DBAStar path cost: 182
+Suboptimality: 0.0
+AStar path cost: 178 DBAStar path cost: 178
+Suboptimality: 0.0
+AStar path cost: 174 DBAStar path cost: 174
+Suboptimality: 0.0
+AStar path cost: 170 DBAStar path cost: 170
+Suboptimality: 0.0
+AStar path cost: 166 DBAStar path cost: 166
+Suboptimality: 0.0
+AStar path cost: 162 DBAStar path cost: 162
+Suboptimality: 0.0
+AStar path cost: 158 DBAStar path cost: 158
+Suboptimality: 0.0
+AStar path cost: 154 DBAStar path cost: 154
+Suboptimality: 0.0
+AStar path cost: 150 DBAStar path cost: 150
+Suboptimality: 0.0
+AStar path cost: 154 DBAStar path cost: 154
+Suboptimality: 0.0
+AStar path cost: 162 DBAStar path cost: 162
+Suboptimality: 0.0
+AStar path cost: 166 DBAStar path cost: 166
+Suboptimality: 0.0
+AStar path cost: 170 DBAStar path cost: 170
+Suboptimality: 0.0
+AStar path cost: 174 DBAStar path cost: 174
+Suboptimality: 0.0
+AStar path cost: 178 DBAStar path cost: 178
+Suboptimality: 0.0
+AStar path cost: 182 DBAStar path cost: 182
+Suboptimality: 0.0
+AStar path cost: 186 DBAStar path cost: 186
+Suboptimality: 0.0
+AStar path cost: 190 DBAStar path cost: 190
+Suboptimality: 0.0
+AStar path cost: 194 DBAStar path cost: 194
+Suboptimality: 0.0
+AStar path cost: 198 DBAStar path cost: 198
+Suboptimality: 0.0
+AStar path cost: 202 DBAStar path cost: 202
+Suboptimality: 0.0
+AStar path cost: 206 DBAStar path cost: 206
+Suboptimality: 0.0
+AStar path cost: 210 DBAStar path cost: 210
+Suboptimality: 0.0
+AStar path cost: 220 DBAStar path cost: 220
+Suboptimality: 0.0
+AStar path cost: 230 DBAStar path cost: 230
+Suboptimality: 0.0
+AStar path cost: 240 DBAStar path cost: 240
+Suboptimality: 0.0
+AStar path cost: 250 DBAStar path cost: 250
+Suboptimality: 0.0
+AStar path cost: 260 DBAStar path cost: 260
+Suboptimality: 0.0
 AStar path cost: 270 DBAStar path cost: 480
 Suboptimality: 77.77777777777777
 AStar path cost: 300 DBAStar path cost: 450
@@ -9837,72 +9837,72 @@ AStar path cost: 354 DBAStar path cost: 470
 Suboptimality: 32.768361581920914
 AStar path cost: 344 DBAStar path cost: 480
 Suboptimality: 39.53488372093024
-AStar path cost: 340 DBAStar path cost: 380
-Suboptimality: 11.764705882352944
-AStar path cost: 336 DBAStar path cost: 376
-Suboptimality: 11.904761904761907
-AStar path cost: 340 DBAStar path cost: 380
-Suboptimality: 11.764705882352944
+AStar path cost: 340 DBAStar path cost: 340
+Suboptimality: 0.0
+AStar path cost: 336 DBAStar path cost: 336
+Suboptimality: 0.0
+AStar path cost: 340 DBAStar path cost: 340
+Suboptimality: 0.0
 AStar path cost: 208 DBAStar path cost: 382
 Suboptimality: 83.65384615384615
-AStar path cost: 204 DBAStar path cost: 282
-Suboptimality: 38.23529411764706
-AStar path cost: 200 DBAStar path cost: 272
-Suboptimality: 36.00000000000001
-AStar path cost: 196 DBAStar path cost: 262
-Suboptimality: 33.673469387755105
-AStar path cost: 192 DBAStar path cost: 258
-Suboptimality: 34.375
-AStar path cost: 188 DBAStar path cost: 254
-Suboptimality: 35.106382978723396
-AStar path cost: 184 DBAStar path cost: 250
-Suboptimality: 35.86956521739131
-AStar path cost: 180 DBAStar path cost: 246
-Suboptimality: 36.66666666666667
-AStar path cost: 176 DBAStar path cost: 250
-Suboptimality: 42.04545454545454
-AStar path cost: 172 DBAStar path cost: 254
-Suboptimality: 47.67441860465116
-AStar path cost: 168 DBAStar path cost: 258
-Suboptimality: 53.571428571428584
-AStar path cost: 164 DBAStar path cost: 262
-Suboptimality: 59.75609756097562
-AStar path cost: 160 DBAStar path cost: 272
-Suboptimality: 70.0
-AStar path cost: 176 DBAStar path cost: 328
-Suboptimality: 86.36363636363636
-AStar path cost: 180 DBAStar path cost: 358
-Suboptimality: 98.88888888888889
-AStar path cost: 184 DBAStar path cost: 348
-Suboptimality: 89.13043478260869
-AStar path cost: 188 DBAStar path cost: 338
-Suboptimality: 79.7872340425532
-AStar path cost: 192 DBAStar path cost: 328
-Suboptimality: 70.83333333333333
-AStar path cost: 196 DBAStar path cost: 318
-Suboptimality: 62.24489795918367
-AStar path cost: 200 DBAStar path cost: 314
-Suboptimality: 57.00000000000001
-AStar path cost: 204 DBAStar path cost: 310
-Suboptimality: 51.96078431372548
-AStar path cost: 208 DBAStar path cost: 306
-Suboptimality: 47.11538461538463
-AStar path cost: 212 DBAStar path cost: 310
-Suboptimality: 46.22641509433962
-AStar path cost: 216 DBAStar path cost: 314
-Suboptimality: 45.370370370370374
-AStar path cost: 220 DBAStar path cost: 318
-Suboptimality: 44.545454545454554
-AStar path cost: 224 DBAStar path cost: 328
-Suboptimality: 46.428571428571416
-AStar path cost: 234 DBAStar path cost: 338
-Suboptimality: 44.44444444444444
-AStar path cost: 244 DBAStar path cost: 348
-Suboptimality: 42.622950819672134
-AStar path cost: 254 DBAStar path cost: 358
-Suboptimality: 40.94488188976377
-AStar path cost: 264 DBAStar path cost: 368
-Suboptimality: 39.393939393939405
+AStar path cost: 204 DBAStar path cost: 204
+Suboptimality: 0.0
+AStar path cost: 200 DBAStar path cost: 200
+Suboptimality: 0.0
+AStar path cost: 196 DBAStar path cost: 196
+Suboptimality: 0.0
+AStar path cost: 192 DBAStar path cost: 192
+Suboptimality: 0.0
+AStar path cost: 188 DBAStar path cost: 188
+Suboptimality: 0.0
+AStar path cost: 184 DBAStar path cost: 184
+Suboptimality: 0.0
+AStar path cost: 180 DBAStar path cost: 180
+Suboptimality: 0.0
+AStar path cost: 176 DBAStar path cost: 176
+Suboptimality: 0.0
+AStar path cost: 172 DBAStar path cost: 172
+Suboptimality: 0.0
+AStar path cost: 168 DBAStar path cost: 168
+Suboptimality: 0.0
+AStar path cost: 164 DBAStar path cost: 164
+Suboptimality: 0.0
+AStar path cost: 160 DBAStar path cost: 160
+Suboptimality: 0.0
+AStar path cost: 176 DBAStar path cost: 176
+Suboptimality: 0.0
+AStar path cost: 180 DBAStar path cost: 180
+Suboptimality: 0.0
+AStar path cost: 184 DBAStar path cost: 184
+Suboptimality: 0.0
+AStar path cost: 188 DBAStar path cost: 188
+Suboptimality: 0.0
+AStar path cost: 192 DBAStar path cost: 192
+Suboptimality: 0.0
+AStar path cost: 196 DBAStar path cost: 196
+Suboptimality: 0.0
+AStar path cost: 200 DBAStar path cost: 200
+Suboptimality: 0.0
+AStar path cost: 204 DBAStar path cost: 204
+Suboptimality: 0.0
+AStar path cost: 208 DBAStar path cost: 208
+Suboptimality: 0.0
+AStar path cost: 212 DBAStar path cost: 212
+Suboptimality: 0.0
+AStar path cost: 216 DBAStar path cost: 216
+Suboptimality: 0.0
+AStar path cost: 220 DBAStar path cost: 220
+Suboptimality: 0.0
+AStar path cost: 224 DBAStar path cost: 224
+Suboptimality: 0.0
+AStar path cost: 234 DBAStar path cost: 234
+Suboptimality: 0.0
+AStar path cost: 244 DBAStar path cost: 244
+Suboptimality: 0.0
+AStar path cost: 254 DBAStar path cost: 254
+Suboptimality: 0.0
+AStar path cost: 264 DBAStar path cost: 264
+Suboptimality: 0.0
 AStar path cost: 274 DBAStar path cost: 490
 Suboptimality: 78.83211678832116
 AStar path cost: 284 DBAStar path cost: 494
@@ -9947,72 +9947,72 @@ AStar path cost: 358 DBAStar path cost: 466
 Suboptimality: 30.16759776536313
 AStar path cost: 354 DBAStar path cost: 476
 Suboptimality: 34.463276836158194
-AStar path cost: 350 DBAStar path cost: 390
-Suboptimality: 11.428571428571432
-AStar path cost: 346 DBAStar path cost: 386
-Suboptimality: 11.560693641618492
-AStar path cost: 350 DBAStar path cost: 390
-Suboptimality: 11.428571428571432
-AStar path cost: 354 DBAStar path cost: 394
-Suboptimality: 11.299435028248595
+AStar path cost: 350 DBAStar path cost: 350
+Suboptimality: 0.0
+AStar path cost: 346 DBAStar path cost: 346
+Suboptimality: 0.0
+AStar path cost: 350 DBAStar path cost: 350
+Suboptimality: 0.0
+AStar path cost: 354 DBAStar path cost: 354
+Suboptimality: 0.0
 AStar path cost: 222 DBAStar path cost: 368
 Suboptimality: 65.76576576576576
 AStar path cost: 218 DBAStar path cost: 372
 Suboptimality: 70.64220183486239
-AStar path cost: 214 DBAStar path cost: 286
-Suboptimality: 33.64485981308412
-AStar path cost: 210 DBAStar path cost: 276
-Suboptimality: 31.428571428571427
-AStar path cost: 206 DBAStar path cost: 272
-Suboptimality: 32.038834951456316
-AStar path cost: 202 DBAStar path cost: 268
-Suboptimality: 32.67326732673268
-AStar path cost: 198 DBAStar path cost: 264
-Suboptimality: 33.33333333333333
-AStar path cost: 194 DBAStar path cost: 260
-Suboptimality: 34.020618556701024
-AStar path cost: 190 DBAStar path cost: 256
-Suboptimality: 34.73684210526316
-AStar path cost: 186 DBAStar path cost: 260
-Suboptimality: 39.78494623655915
-AStar path cost: 182 DBAStar path cost: 264
-Suboptimality: 45.05494505494505
-AStar path cost: 178 DBAStar path cost: 268
-Suboptimality: 50.56179775280898
-AStar path cost: 174 DBAStar path cost: 272
-Suboptimality: 56.32183908045978
-AStar path cost: 190 DBAStar path cost: 362
-Suboptimality: 90.52631578947367
-AStar path cost: 194 DBAStar path cost: 352
-Suboptimality: 81.44329896907216
-AStar path cost: 198 DBAStar path cost: 342
-Suboptimality: 72.72727272727273
-AStar path cost: 202 DBAStar path cost: 332
-Suboptimality: 64.35643564356435
-AStar path cost: 206 DBAStar path cost: 328
-Suboptimality: 59.22330097087378
-AStar path cost: 210 DBAStar path cost: 324
-Suboptimality: 54.28571428571429
-AStar path cost: 214 DBAStar path cost: 320
-Suboptimality: 49.53271028037383
-AStar path cost: 218 DBAStar path cost: 316
-Suboptimality: 44.95412844036697
-AStar path cost: 222 DBAStar path cost: 320
-Suboptimality: 44.144144144144136
-AStar path cost: 226 DBAStar path cost: 324
-Suboptimality: 43.36283185840708
-AStar path cost: 230 DBAStar path cost: 328
-Suboptimality: 42.608695652173914
-AStar path cost: 234 DBAStar path cost: 332
-Suboptimality: 41.88034188034189
-AStar path cost: 238 DBAStar path cost: 342
-Suboptimality: 43.69747899159664
-AStar path cost: 248 DBAStar path cost: 352
-Suboptimality: 41.93548387096775
-AStar path cost: 258 DBAStar path cost: 362
-Suboptimality: 40.31007751937985
-AStar path cost: 268 DBAStar path cost: 372
-Suboptimality: 38.80597014925373
+AStar path cost: 214 DBAStar path cost: 214
+Suboptimality: 0.0
+AStar path cost: 210 DBAStar path cost: 210
+Suboptimality: 0.0
+AStar path cost: 206 DBAStar path cost: 206
+Suboptimality: 0.0
+AStar path cost: 202 DBAStar path cost: 202
+Suboptimality: 0.0
+AStar path cost: 198 DBAStar path cost: 198
+Suboptimality: 0.0
+AStar path cost: 194 DBAStar path cost: 194
+Suboptimality: 0.0
+AStar path cost: 190 DBAStar path cost: 190
+Suboptimality: 0.0
+AStar path cost: 186 DBAStar path cost: 186
+Suboptimality: 0.0
+AStar path cost: 182 DBAStar path cost: 182
+Suboptimality: 0.0
+AStar path cost: 178 DBAStar path cost: 178
+Suboptimality: 0.0
+AStar path cost: 174 DBAStar path cost: 174
+Suboptimality: 0.0
+AStar path cost: 190 DBAStar path cost: 190
+Suboptimality: 0.0
+AStar path cost: 194 DBAStar path cost: 194
+Suboptimality: 0.0
+AStar path cost: 198 DBAStar path cost: 198
+Suboptimality: 0.0
+AStar path cost: 202 DBAStar path cost: 202
+Suboptimality: 0.0
+AStar path cost: 206 DBAStar path cost: 206
+Suboptimality: 0.0
+AStar path cost: 210 DBAStar path cost: 210
+Suboptimality: 0.0
+AStar path cost: 214 DBAStar path cost: 214
+Suboptimality: 0.0
+AStar path cost: 218 DBAStar path cost: 218
+Suboptimality: 0.0
+AStar path cost: 222 DBAStar path cost: 222
+Suboptimality: 0.0
+AStar path cost: 226 DBAStar path cost: 226
+Suboptimality: 0.0
+AStar path cost: 230 DBAStar path cost: 230
+Suboptimality: 0.0
+AStar path cost: 234 DBAStar path cost: 234
+Suboptimality: 0.0
+AStar path cost: 238 DBAStar path cost: 238
+Suboptimality: 0.0
+AStar path cost: 248 DBAStar path cost: 248
+Suboptimality: 0.0
+AStar path cost: 258 DBAStar path cost: 258
+Suboptimality: 0.0
+AStar path cost: 268 DBAStar path cost: 268
+Suboptimality: 0.0
 AStar path cost: 278 DBAStar path cost: 500
 Suboptimality: 79.85611510791367
 AStar path cost: 288 DBAStar path cost: 504
@@ -10051,68 +10051,68 @@ AStar path cost: 368 DBAStar path cost: 462
 Suboptimality: 25.543478260869556
 AStar path cost: 364 DBAStar path cost: 472
 Suboptimality: 29.670329670329675
-AStar path cost: 360 DBAStar path cost: 400
-Suboptimality: 11.111111111111116
-AStar path cost: 356 DBAStar path cost: 396
-Suboptimality: 11.23595505617978
-AStar path cost: 360 DBAStar path cost: 400
-Suboptimality: 11.111111111111116
-AStar path cost: 364 DBAStar path cost: 404
-Suboptimality: 10.989010989010994
+AStar path cost: 360 DBAStar path cost: 360
+Suboptimality: 0.0
+AStar path cost: 356 DBAStar path cost: 356
+Suboptimality: 0.0
+AStar path cost: 360 DBAStar path cost: 360
+Suboptimality: 0.0
+AStar path cost: 364 DBAStar path cost: 364
+Suboptimality: 0.0
 AStar path cost: 236 DBAStar path cost: 354
 Suboptimality: 50.0
 AStar path cost: 232 DBAStar path cost: 358
 Suboptimality: 54.310344827586206
 AStar path cost: 228 DBAStar path cost: 368
 Suboptimality: 61.403508771929815
-AStar path cost: 224 DBAStar path cost: 290
-Suboptimality: 29.464285714285722
-AStar path cost: 220 DBAStar path cost: 286
-Suboptimality: 30.000000000000004
-AStar path cost: 216 DBAStar path cost: 282
-Suboptimality: 30.555555555555557
-AStar path cost: 212 DBAStar path cost: 278
-Suboptimality: 31.132075471698116
-AStar path cost: 208 DBAStar path cost: 274
-Suboptimality: 31.73076923076923
-AStar path cost: 204 DBAStar path cost: 270
-Suboptimality: 32.35294117647059
-AStar path cost: 200 DBAStar path cost: 266
-Suboptimality: 33.00000000000001
-AStar path cost: 196 DBAStar path cost: 270
-Suboptimality: 37.75510204081633
-AStar path cost: 192 DBAStar path cost: 274
-Suboptimality: 42.70833333333333
-AStar path cost: 188 DBAStar path cost: 278
-Suboptimality: 47.872340425531924
-AStar path cost: 200 DBAStar path cost: 366
-Suboptimality: 83.0
-AStar path cost: 204 DBAStar path cost: 356
-Suboptimality: 74.50980392156863
-AStar path cost: 208 DBAStar path cost: 346
-Suboptimality: 66.34615384615385
-AStar path cost: 212 DBAStar path cost: 342
-Suboptimality: 61.32075471698113
-AStar path cost: 216 DBAStar path cost: 338
-Suboptimality: 56.48148148148149
-AStar path cost: 220 DBAStar path cost: 334
-Suboptimality: 51.818181818181806
-AStar path cost: 224 DBAStar path cost: 330
-Suboptimality: 47.321428571428584
-AStar path cost: 228 DBAStar path cost: 326
-Suboptimality: 42.98245614035088
-AStar path cost: 232 DBAStar path cost: 330
-Suboptimality: 42.24137931034482
-AStar path cost: 236 DBAStar path cost: 334
-Suboptimality: 41.52542372881356
-AStar path cost: 240 DBAStar path cost: 338
-Suboptimality: 40.83333333333334
-AStar path cost: 252 DBAStar path cost: 356
-Suboptimality: 41.26984126984128
-AStar path cost: 262 DBAStar path cost: 366
-Suboptimality: 39.69465648854962
-AStar path cost: 272 DBAStar path cost: 376
-Suboptimality: 38.23529411764706
+AStar path cost: 224 DBAStar path cost: 224
+Suboptimality: 0.0
+AStar path cost: 220 DBAStar path cost: 220
+Suboptimality: 0.0
+AStar path cost: 216 DBAStar path cost: 216
+Suboptimality: 0.0
+AStar path cost: 212 DBAStar path cost: 212
+Suboptimality: 0.0
+AStar path cost: 208 DBAStar path cost: 208
+Suboptimality: 0.0
+AStar path cost: 204 DBAStar path cost: 204
+Suboptimality: 0.0
+AStar path cost: 200 DBAStar path cost: 200
+Suboptimality: 0.0
+AStar path cost: 196 DBAStar path cost: 196
+Suboptimality: 0.0
+AStar path cost: 192 DBAStar path cost: 192
+Suboptimality: 0.0
+AStar path cost: 188 DBAStar path cost: 188
+Suboptimality: 0.0
+AStar path cost: 200 DBAStar path cost: 200
+Suboptimality: 0.0
+AStar path cost: 204 DBAStar path cost: 204
+Suboptimality: 0.0
+AStar path cost: 208 DBAStar path cost: 208
+Suboptimality: 0.0
+AStar path cost: 212 DBAStar path cost: 212
+Suboptimality: 0.0
+AStar path cost: 216 DBAStar path cost: 216
+Suboptimality: 0.0
+AStar path cost: 220 DBAStar path cost: 220
+Suboptimality: 0.0
+AStar path cost: 224 DBAStar path cost: 224
+Suboptimality: 0.0
+AStar path cost: 228 DBAStar path cost: 228
+Suboptimality: 0.0
+AStar path cost: 232 DBAStar path cost: 232
+Suboptimality: 0.0
+AStar path cost: 236 DBAStar path cost: 236
+Suboptimality: 0.0
+AStar path cost: 240 DBAStar path cost: 240
+Suboptimality: 0.0
+AStar path cost: 252 DBAStar path cost: 252
+Suboptimality: 0.0
+AStar path cost: 262 DBAStar path cost: 262
+Suboptimality: 0.0
+AStar path cost: 272 DBAStar path cost: 272
+Suboptimality: 0.0
 AStar path cost: 282 DBAStar path cost: 510
 Suboptimality: 80.85106382978724
 AStar path cost: 292 DBAStar path cost: 514
@@ -10155,14 +10155,14 @@ AStar path cost: 378 DBAStar path cost: 466
 Suboptimality: 23.28042328042328
 AStar path cost: 374 DBAStar path cost: 476
 Suboptimality: 27.27272727272727
-AStar path cost: 370 DBAStar path cost: 410
-Suboptimality: 10.81081081081081
-AStar path cost: 366 DBAStar path cost: 406
-Suboptimality: 10.92896174863387
-AStar path cost: 370 DBAStar path cost: 410
-Suboptimality: 10.81081081081081
-AStar path cost: 374 DBAStar path cost: 414
-Suboptimality: 10.6951871657754
+AStar path cost: 370 DBAStar path cost: 370
+Suboptimality: 0.0
+AStar path cost: 366 DBAStar path cost: 366
+Suboptimality: 0.0
+AStar path cost: 370 DBAStar path cost: 370
+Suboptimality: 0.0
+AStar path cost: 374 DBAStar path cost: 374
+Suboptimality: 0.0
 AStar path cost: 250 DBAStar path cost: 354
 Suboptimality: 41.599999999999994
 AStar path cost: 246 DBAStar path cost: 344
@@ -10171,48 +10171,48 @@ AStar path cost: 242 DBAStar path cost: 354
 Suboptimality: 46.28099173553719
 AStar path cost: 238 DBAStar path cost: 364
 Suboptimality: 52.941176470588225
-AStar path cost: 234 DBAStar path cost: 300
-Suboptimality: 28.205128205128215
-AStar path cost: 230 DBAStar path cost: 296
-Suboptimality: 28.695652173913032
-AStar path cost: 226 DBAStar path cost: 292
-Suboptimality: 29.20353982300885
-AStar path cost: 222 DBAStar path cost: 288
-Suboptimality: 29.729729729729737
-AStar path cost: 218 DBAStar path cost: 284
-Suboptimality: 30.27522935779816
-AStar path cost: 214 DBAStar path cost: 280
-Suboptimality: 30.841121495327094
-AStar path cost: 210 DBAStar path cost: 276
-Suboptimality: 31.428571428571427
-AStar path cost: 206 DBAStar path cost: 280
-Suboptimality: 35.92233009708738
-AStar path cost: 202 DBAStar path cost: 284
-Suboptimality: 40.594059405940584
-AStar path cost: 210 DBAStar path cost: 370
-Suboptimality: 76.19047619047619
-AStar path cost: 214 DBAStar path cost: 360
-Suboptimality: 68.22429906542055
-AStar path cost: 218 DBAStar path cost: 356
-Suboptimality: 63.30275229357798
-AStar path cost: 222 DBAStar path cost: 352
-Suboptimality: 58.55855855855856
-AStar path cost: 226 DBAStar path cost: 348
-Suboptimality: 53.98230088495575
-AStar path cost: 230 DBAStar path cost: 344
-Suboptimality: 49.56521739130435
-AStar path cost: 234 DBAStar path cost: 340
-Suboptimality: 45.299145299145295
-AStar path cost: 238 DBAStar path cost: 336
-Suboptimality: 41.176470588235304
-AStar path cost: 242 DBAStar path cost: 340
-Suboptimality: 40.49586776859504
-AStar path cost: 246 DBAStar path cost: 344
-Suboptimality: 39.837398373983746
-AStar path cost: 266 DBAStar path cost: 370
-Suboptimality: 39.097744360902254
-AStar path cost: 276 DBAStar path cost: 380
-Suboptimality: 37.681159420289845
+AStar path cost: 234 DBAStar path cost: 234
+Suboptimality: 0.0
+AStar path cost: 230 DBAStar path cost: 230
+Suboptimality: 0.0
+AStar path cost: 226 DBAStar path cost: 226
+Suboptimality: 0.0
+AStar path cost: 222 DBAStar path cost: 222
+Suboptimality: 0.0
+AStar path cost: 218 DBAStar path cost: 218
+Suboptimality: 0.0
+AStar path cost: 214 DBAStar path cost: 214
+Suboptimality: 0.0
+AStar path cost: 210 DBAStar path cost: 210
+Suboptimality: 0.0
+AStar path cost: 206 DBAStar path cost: 206
+Suboptimality: 0.0
+AStar path cost: 202 DBAStar path cost: 202
+Suboptimality: 0.0
+AStar path cost: 210 DBAStar path cost: 210
+Suboptimality: 0.0
+AStar path cost: 214 DBAStar path cost: 214
+Suboptimality: 0.0
+AStar path cost: 218 DBAStar path cost: 218
+Suboptimality: 0.0
+AStar path cost: 222 DBAStar path cost: 222
+Suboptimality: 0.0
+AStar path cost: 226 DBAStar path cost: 226
+Suboptimality: 0.0
+AStar path cost: 230 DBAStar path cost: 230
+Suboptimality: 0.0
+AStar path cost: 234 DBAStar path cost: 234
+Suboptimality: 0.0
+AStar path cost: 238 DBAStar path cost: 238
+Suboptimality: 0.0
+AStar path cost: 242 DBAStar path cost: 242
+Suboptimality: 0.0
+AStar path cost: 246 DBAStar path cost: 246
+Suboptimality: 0.0
+AStar path cost: 266 DBAStar path cost: 266
+Suboptimality: 0.0
+AStar path cost: 276 DBAStar path cost: 276
+Suboptimality: 0.0
 AStar path cost: 286 DBAStar path cost: 520
 Suboptimality: 81.81818181818181
 AStar path cost: 296 DBAStar path cost: 516
@@ -10257,12 +10257,12 @@ AStar path cost: 388 DBAStar path cost: 470
 Suboptimality: 21.134020618556693
 AStar path cost: 384 DBAStar path cost: 480
 Suboptimality: 25.0
-AStar path cost: 380 DBAStar path cost: 420
-Suboptimality: 10.526315789473696
-AStar path cost: 376 DBAStar path cost: 416
-Suboptimality: 10.63829787234043
-AStar path cost: 380 DBAStar path cost: 420
-Suboptimality: 10.526315789473696
+AStar path cost: 380 DBAStar path cost: 380
+Suboptimality: 0.0
+AStar path cost: 376 DBAStar path cost: 376
+Suboptimality: 0.0
+AStar path cost: 380 DBAStar path cost: 380
+Suboptimality: 0.0
 AStar path cost: 264 DBAStar path cost: 368
 Suboptimality: 39.393939393939405
 AStar path cost: 260 DBAStar path cost: 358
@@ -10273,50 +10273,50 @@ AStar path cost: 252 DBAStar path cost: 358
 Suboptimality: 42.06349206349207
 AStar path cost: 248 DBAStar path cost: 368
 Suboptimality: 48.38709677419355
-AStar path cost: 244 DBAStar path cost: 310
-Suboptimality: 27.04918032786885
-AStar path cost: 240 DBAStar path cost: 306
-Suboptimality: 27.499999999999993
-AStar path cost: 236 DBAStar path cost: 302
-Suboptimality: 27.966101694915245
-AStar path cost: 232 DBAStar path cost: 298
-Suboptimality: 28.44827586206897
-AStar path cost: 228 DBAStar path cost: 294
-Suboptimality: 28.947368421052634
-AStar path cost: 224 DBAStar path cost: 290
-Suboptimality: 29.464285714285722
-AStar path cost: 220 DBAStar path cost: 286
-Suboptimality: 30.000000000000004
-AStar path cost: 216 DBAStar path cost: 290
-Suboptimality: 34.25925925925925
+AStar path cost: 244 DBAStar path cost: 244
+Suboptimality: 0.0
+AStar path cost: 240 DBAStar path cost: 240
+Suboptimality: 0.0
+AStar path cost: 236 DBAStar path cost: 236
+Suboptimality: 0.0
+AStar path cost: 232 DBAStar path cost: 232
+Suboptimality: 0.0
+AStar path cost: 228 DBAStar path cost: 228
+Suboptimality: 0.0
+AStar path cost: 224 DBAStar path cost: 224
+Suboptimality: 0.0
+AStar path cost: 220 DBAStar path cost: 220
+Suboptimality: 0.0
+AStar path cost: 216 DBAStar path cost: 216
+Suboptimality: 0.0
 AStar path cost: 234 DBAStar path cost: 332
 Suboptimality: 41.88034188034189
 AStar path cost: 224 DBAStar path cost: 342
 Suboptimality: 52.678571428571416
-AStar path cost: 220 DBAStar path cost: 374
-Suboptimality: 70.0
-AStar path cost: 224 DBAStar path cost: 370
-Suboptimality: 65.17857142857142
-AStar path cost: 228 DBAStar path cost: 366
-Suboptimality: 60.52631578947369
-AStar path cost: 232 DBAStar path cost: 362
-Suboptimality: 56.03448275862068
-AStar path cost: 236 DBAStar path cost: 358
-Suboptimality: 51.69491525423729
-AStar path cost: 240 DBAStar path cost: 354
-Suboptimality: 47.50000000000001
-AStar path cost: 244 DBAStar path cost: 350
-Suboptimality: 43.44262295081967
-AStar path cost: 248 DBAStar path cost: 346
-Suboptimality: 39.51612903225807
-AStar path cost: 252 DBAStar path cost: 350
-Suboptimality: 38.888888888888886
-AStar path cost: 256 DBAStar path cost: 354
-Suboptimality: 38.28125
-AStar path cost: 276 DBAStar path cost: 380
-Suboptimality: 37.681159420289845
-AStar path cost: 280 DBAStar path cost: 384
-Suboptimality: 37.142857142857146
+AStar path cost: 220 DBAStar path cost: 220
+Suboptimality: 0.0
+AStar path cost: 224 DBAStar path cost: 224
+Suboptimality: 0.0
+AStar path cost: 228 DBAStar path cost: 228
+Suboptimality: 0.0
+AStar path cost: 232 DBAStar path cost: 232
+Suboptimality: 0.0
+AStar path cost: 236 DBAStar path cost: 236
+Suboptimality: 0.0
+AStar path cost: 240 DBAStar path cost: 240
+Suboptimality: 0.0
+AStar path cost: 244 DBAStar path cost: 244
+Suboptimality: 0.0
+AStar path cost: 248 DBAStar path cost: 248
+Suboptimality: 0.0
+AStar path cost: 252 DBAStar path cost: 252
+Suboptimality: 0.0
+AStar path cost: 256 DBAStar path cost: 256
+Suboptimality: 0.0
+AStar path cost: 276 DBAStar path cost: 276
+Suboptimality: 0.0
+AStar path cost: 280 DBAStar path cost: 280
+Suboptimality: 0.0
 AStar path cost: 290 DBAStar path cost: 530
 Suboptimality: 82.75862068965519
 AStar path cost: 300 DBAStar path cost: 520
@@ -10361,10 +10361,10 @@ AStar path cost: 398 DBAStar path cost: 474
 Suboptimality: 19.095477386934668
 AStar path cost: 394 DBAStar path cost: 484
 Suboptimality: 22.842639593908622
-AStar path cost: 390 DBAStar path cost: 430
-Suboptimality: 10.256410256410264
-AStar path cost: 386 DBAStar path cost: 426
-Suboptimality: 10.362694300518127
+AStar path cost: 390 DBAStar path cost: 390
+Suboptimality: 0.0
+AStar path cost: 386 DBAStar path cost: 386
+Suboptimality: 0.0
 AStar path cost: 274 DBAStar path cost: 372
 Suboptimality: 35.76642335766422
 AStar path cost: 270 DBAStar path cost: 368
@@ -10375,54 +10375,54 @@ AStar path cost: 262 DBAStar path cost: 368
 Suboptimality: 40.45801526717556
 AStar path cost: 258 DBAStar path cost: 372
 Suboptimality: 44.18604651162789
-AStar path cost: 254 DBAStar path cost: 320
-Suboptimality: 25.984251968503933
-AStar path cost: 250 DBAStar path cost: 316
-Suboptimality: 26.400000000000002
-AStar path cost: 246 DBAStar path cost: 312
-Suboptimality: 26.82926829268293
-AStar path cost: 242 DBAStar path cost: 308
-Suboptimality: 27.27272727272727
-AStar path cost: 238 DBAStar path cost: 304
-Suboptimality: 27.73109243697478
-AStar path cost: 234 DBAStar path cost: 300
-Suboptimality: 28.205128205128215
-AStar path cost: 230 DBAStar path cost: 296
-Suboptimality: 28.695652173913032
+AStar path cost: 254 DBAStar path cost: 254
+Suboptimality: 0.0
+AStar path cost: 250 DBAStar path cost: 250
+Suboptimality: 0.0
+AStar path cost: 246 DBAStar path cost: 246
+Suboptimality: 0.0
+AStar path cost: 242 DBAStar path cost: 242
+Suboptimality: 0.0
+AStar path cost: 238 DBAStar path cost: 238
+Suboptimality: 0.0
+AStar path cost: 234 DBAStar path cost: 234
+Suboptimality: 0.0
+AStar path cost: 230 DBAStar path cost: 230
+Suboptimality: 0.0
 AStar path cost: 248 DBAStar path cost: 346
 Suboptimality: 39.51612903225807
 AStar path cost: 238 DBAStar path cost: 342
 Suboptimality: 43.69747899159664
 AStar path cost: 234 DBAStar path cost: 346
 Suboptimality: 47.86324786324787
-AStar path cost: 230 DBAStar path cost: 384
-Suboptimality: 66.95652173913042
-AStar path cost: 234 DBAStar path cost: 380
-Suboptimality: 62.39316239316239
-AStar path cost: 238 DBAStar path cost: 376
-Suboptimality: 57.98319327731092
-AStar path cost: 242 DBAStar path cost: 372
-Suboptimality: 53.71900826446281
-AStar path cost: 246 DBAStar path cost: 368
-Suboptimality: 49.59349593495934
-AStar path cost: 250 DBAStar path cost: 364
-Suboptimality: 45.599999999999994
-AStar path cost: 254 DBAStar path cost: 360
-Suboptimality: 41.73228346456692
-AStar path cost: 258 DBAStar path cost: 356
-Suboptimality: 37.98449612403101
-AStar path cost: 262 DBAStar path cost: 360
-Suboptimality: 37.40458015267176
-AStar path cost: 266 DBAStar path cost: 364
-Suboptimality: 36.8421052631579
-AStar path cost: 270 DBAStar path cost: 376
-Suboptimality: 39.25925925925926
-AStar path cost: 290 DBAStar path cost: 394
-Suboptimality: 35.862068965517246
-AStar path cost: 286 DBAStar path cost: 390
-Suboptimality: 36.36363636363635
-AStar path cost: 290 DBAStar path cost: 394
-Suboptimality: 35.862068965517246
+AStar path cost: 230 DBAStar path cost: 230
+Suboptimality: 0.0
+AStar path cost: 234 DBAStar path cost: 234
+Suboptimality: 0.0
+AStar path cost: 238 DBAStar path cost: 238
+Suboptimality: 0.0
+AStar path cost: 242 DBAStar path cost: 242
+Suboptimality: 0.0
+AStar path cost: 246 DBAStar path cost: 246
+Suboptimality: 0.0
+AStar path cost: 250 DBAStar path cost: 250
+Suboptimality: 0.0
+AStar path cost: 254 DBAStar path cost: 254
+Suboptimality: 0.0
+AStar path cost: 258 DBAStar path cost: 258
+Suboptimality: 0.0
+AStar path cost: 262 DBAStar path cost: 262
+Suboptimality: 0.0
+AStar path cost: 266 DBAStar path cost: 266
+Suboptimality: 0.0
+AStar path cost: 270 DBAStar path cost: 270
+Suboptimality: 0.0
+AStar path cost: 290 DBAStar path cost: 290
+Suboptimality: 0.0
+AStar path cost: 286 DBAStar path cost: 286
+Suboptimality: 0.0
+AStar path cost: 290 DBAStar path cost: 290
+Suboptimality: 0.0
 AStar path cost: 294 DBAStar path cost: 534
 Suboptimality: 81.63265306122449
 AStar path cost: 304 DBAStar path cost: 540
@@ -12349,5 +12349,5 @@ AStar path cost: 508 DBAStar path cost: 564
 Suboptimality: 11.023622047244096
 AStar path cost: 512 DBAStar path cost: 568
 Suboptimality: 10.9375
-Average suboptimality: 25.371100245206932
-Max. suboptimality: 448.00000000000006 for path from 13411 to 13416
+Average suboptimality: 11.727547763039679
+Max. suboptimality: 123.13432835820896 for path from 13411 to 16655

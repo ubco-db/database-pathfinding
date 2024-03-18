@@ -51,9 +51,14 @@ public class DBAStar implements SearchAlgorithm {
         int startRegionId = map.getRegionFromState(start.id);
         int goalRegionId = map.getRegionFromState(goal.id);
 
-        if (startRegionId == goalRegionId) {
-            path = astar.computePath(start, goal, stats);
-            return path;
+
+        try {
+            if (startRegionId == goalRegionId || map.getGroups().get(startRegionId).getNeighborIds().contains(goalRegionId)) {
+                path = astar.computePath(start, goal, stats);
+                return path;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
 
         SearchState startRegionCenter = new SearchState(map.getRegionRepFromState(start.getId()));
