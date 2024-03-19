@@ -16,8 +16,8 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
     private int[][] neighborLoc;        // neighborLoc[i] stores list of neighbors for i. neighborLoc[i][j] is location in neighbourLoc of jth neighbor of i.
     private int[][] lowestCost;         // Lowest cost for DP table. lowestCost[i][j] is the cost of the lowest path from region i to region neighborId[i][j]
     private int[][][] paths;            // paths[i][j] is array representing a compressed path of state ids from region i to region neighborId[i][j] of lowest cost path
-    private int[] freeSpace;
-    private int freeSpaceCount;
+    private int[] freeSpace;            // stores free array locations offset by GameMap.START_NUM = stores region ids that are not taken
+    private int freeSpaceCount;         // stores index of last element in free space
 
     private static final Logger logger = LogManager.getLogger(SubgoalDynamicDB3.class);
 
@@ -26,8 +26,6 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
      * Record produced dynamically from data in DP table by combining base paths between regions (non-real-time).
      */
     public ArrayList<SubgoalDBRecord> findNearest(SearchProblem problem, int startGroupId, int goalGroupId, SearchAlgorithm searchAlg, StatsRecord stats) {
-        // TODO: Check whether this actually works
-
         ArrayList<SubgoalDBRecord> result = new ArrayList<>(1);
 
         // Need to calculate record as will not be stored
@@ -50,8 +48,6 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             pathSize = GameDB.mergePaths4(startGroupId, goalGroupId, this.paths, this.lowestCost, this.neighborLoc, path);
         }
 
-        // System.out.println(Arrays.toString(path));
-
         if (pathSize == 0) return null; // No path between two states
         int startId = path[0];
         int goalId = path[pathSize - 1];
@@ -59,7 +55,6 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         subgoals = SearchUtil.computeSubgoalsBinaryByIds(path, searchAlg, tmp, pathSize);
 
         SubgoalDBRecord rec = new SubgoalDBRecord(startId, goalId, subgoals, 0);
-        // System.out.println("Created record between: "+startId+" and "+goalId+" Record: "+rec.toString(problem));
         result.add(rec);
         return result;
     }
@@ -173,13 +168,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         this.freeSpaceCount = arraySize - numGroups;
         // Initialize free space to contain indices of final 10% for arrays of length arraySize (in reverse order)
         for (int i = 0; i < this.freeSpaceCount; i++) {
-            this.freeSpace[i] = arraySize - (i + 1);
-        }
-
-        // TODO: Currently doing this because freeSpace stores locations which can be 0, so initializing to -1
-        // Ideally would add offset of GameMap.START_NUM to avoid this
-        for (int i = freeSpaceCount; i < freeSpace.length; i++) {
-            freeSpace[i] = -1;
+            this.freeSpace[i] = arraySize - (i + 1) + GameMap.START_NUM;
         }
 
         logger.debug("Initial free space allocation: " + Arrays.toString(freeSpace));
@@ -705,12 +694,12 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         // Return lowest freeSpace index from the end of the array
         logger.debug("Free space before popping: " + Arrays.toString(this.freeSpace));
         logger.debug("Free space count: " + freeSpaceCount);
-        if (freeSpace[freeSpaceCount - 1] == -1) {
+        if (freeSpace[freeSpaceCount - 1] == 0) {
             throw new Exception("Indexing is off");
         }
         this.numGroups++;
-        int temp = freeSpace[freeSpaceCount - 1] + GameMap.START_NUM;
-        this.freeSpace[--freeSpaceCount] = -1;
+        int temp = freeSpace[freeSpaceCount - 1];
+        this.freeSpace[--freeSpaceCount] = 0;
         logger.debug("Free space after popping: " + Arrays.toString(this.freeSpace));
         logger.debug("Free space count: " + freeSpaceCount);
         return temp;
@@ -723,12 +712,12 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
     public void pushFreeSpace(int regionId) throws Exception {
         logger.debug("Free space before pushing: " + Arrays.toString(this.freeSpace));
         logger.debug("Free space count: " + this.freeSpaceCount);
-        if (this.freeSpace[this.freeSpaceCount] != -1) {
+        if (this.freeSpace[this.freeSpaceCount] != 0) {
             throw new Exception("Overwriting existing free space!");
         }
         // Write into freeSpace
         this.numGroups--;
-        this.freeSpace[this.freeSpaceCount++] = regionId - GameMap.START_NUM;
+        this.freeSpace[this.freeSpaceCount++] = regionId;
         logger.debug("Free space after pushing: " + Arrays.toString(this.freeSpace));
         logger.debug("Free space count: " + this.freeSpaceCount);
     }
