@@ -297,6 +297,14 @@ public class DBAStarUtil {
                     neighboursOfEx.remove(REGION_ID);
 
                     dbBW.recomputeCornerBlocker(REGION_ID, neighbourRegion);
+
+                    // If region rep in corner:
+                    int newRegionRep = map.recomputeCentroid(REGION_ID, groupRecord, START_ROW, END_ROW, START_COL, END_COL);
+
+                    if (REGION_REP != newRegionRep) {
+                        logger.info("Addition: Moved region rep from " + groupRecord.groupRepId + " to " + newRegionRep);
+                        dbBW.recomputeBasePaths(REGION_ID, problem, groups);
+                    }
                     return;
                 }
 
@@ -638,6 +646,14 @@ public class DBAStarUtil {
 
                     // Database changes
                     dbBW.recomputeUnblocker(regionId, neighbourRegion, problem, groups);
+
+                    // If region rep in corner:
+                    int newRegionRep = map.recomputeCentroid(regionId, groupRecord, START_ROW, END_ROW, START_COL, END_COL);
+
+                    if (groupRecord.groupRepId != newRegionRep) {
+                        logger.info("Removal: Moved region rep from " + groupRecord.groupRepId + " to " + newRegionRep);
+                        dbBW.recomputeBasePaths(regionId, problem, groups);
+                    }
                 } else {
                     // If our wall touches more than two regions that are in the same sector, we have a region merge case
                     logger.info("Removal: Region Merge Case (wall at " + wallLoc + ")");
@@ -888,6 +904,14 @@ public class DBAStarUtil {
                     neighboursOfEx.remove(REGION_ID);
 
                     dbBW.recomputeCornerBlocker(REGION_ID, neighbourRegion);
+
+                    // If region rep in corner:
+                    int newRegionRep = map.recomputeCentroid(REGION_ID, groupRecord, START_ROW, END_ROW, START_COL, END_COL);
+
+                    if (REGION_REP != newRegionRep) {
+                        dbBW.recomputeBasePaths(REGION_ID, problem, groups);
+                    }
+
                     return;
                 }
 
@@ -1205,6 +1229,13 @@ public class DBAStarUtil {
 
                     // Database changes
                     dbBW.recomputeUnblocker(regionId, neighbourRegion, problem, groups);
+
+                    // If region rep in corner:
+                    int newRegionRep = map.recomputeCentroid(regionId, groupRecord, START_ROW, END_ROW, START_COL, END_COL);
+
+                    if (groupRecord.groupRepId != newRegionRep) {
+                        dbBW.recomputeBasePaths(regionId, problem, groups);
+                    }
                 } else {
                     // If our wall touches more than two regions that are in the same sector, we have a region merge case
 
