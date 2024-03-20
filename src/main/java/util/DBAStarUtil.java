@@ -626,35 +626,35 @@ public class DBAStarUtil {
 
                 // The wall does not have multiple neighbours in different regions in the same sector
                 // and only has one neighbour out of the sector
-                if (neighbouringRegionsInSameSector.size() == 1 && neighbouringRegions.size() == 1) {
-                    // Unblocker case
-                    logger.info("Removal: Path Unblocker Case (wall at " + wallLoc + ")");
-
-                    Iterator<Integer> iterator = neighbouringRegions.iterator();
-                    int neighbourRegion = iterator.next();
-
-                    // Get the neighbours of the region
-                    HashSet<Integer> neighbours = groupRecord.getNeighborIds();
-                    // Update region’s neighbourhood in groups map
-                    neighbours.remove(neighbourRegion);
-
-                    // Get the neighbours of its soon-to-be ex-neighbor
-                    GroupRecord neighborRecord = groups.get(neighbourRegion);
-                    HashSet<Integer> neighboursOfEx = neighborRecord.getNeighborIds();
-                    // Update old neighbour’s neighbourhood in groups map
-                    neighboursOfEx.remove(regionId);
-
-                    // Database changes
-                    dbBW.recomputeUnblocker(regionId, neighbourRegion, problem, groups);
-
-                    // If region rep in corner:
-                    int newRegionRep = map.recomputeCentroid(regionId, groupRecord, START_ROW, END_ROW, START_COL, END_COL);
-
-                    if (groupRecord.groupRepId != newRegionRep) {
-                        logger.info("Removal: Moved region rep from " + groupRecord.groupRepId + " to " + newRegionRep);
-                        dbBW.recomputeBasePaths(regionId, problem, groups);
-                    }
-                } else {
+//                if (neighbouringRegionsInSameSector.size() == 1 && neighbouringRegions.size() == 1) {
+//                    // Unblocker case
+//                    logger.info("Removal: Path Unblocker Case (wall at " + wallLoc + ")");
+//
+//                    Iterator<Integer> iterator = neighbouringRegions.iterator();
+//                    int neighbourRegion = iterator.next();
+//
+//                    // Get the neighbours of the region
+//                    HashSet<Integer> neighbours = groupRecord.getNeighborIds();
+//                    // Update region’s neighbourhood in groups map
+//                    neighbours.remove(neighbourRegion);
+//
+//                    // Get the neighbours of its soon-to-be ex-neighbor
+//                    GroupRecord neighborRecord = groups.get(neighbourRegion);
+//                    HashSet<Integer> neighboursOfEx = neighborRecord.getNeighborIds();
+//                    // Update old neighbour’s neighbourhood in groups map
+//                    neighboursOfEx.remove(regionId);
+//
+//                    // Database changes
+//                    dbBW.recomputeUnblocker(regionId, neighbourRegion, problem, groups);
+//
+//                    // If region rep in corner:
+//                    int newRegionRep = map.recomputeCentroid(regionId, groupRecord, START_ROW, END_ROW, START_COL, END_COL);
+//
+//                    if (groupRecord.groupRepId != newRegionRep) {
+//                        logger.info("Removal: Moved region rep from " + groupRecord.groupRepId + " to " + newRegionRep);
+//                        dbBW.recomputeBasePaths(regionId, problem, groups);
+//                    }
+//                } else {
                     // If our wall touches more than two regions that are in the same sector, we have a region merge case
                     logger.info("Removal: Region Merge Case (wall at " + wallLoc + ")");
 
@@ -729,7 +729,7 @@ public class DBAStarUtil {
 
                     // Database changes
                     dbBW.recomputeBasePathsAfterPartition(problem, groups, neighborIds);
-                }
+//                }
                 return;
             }
 
@@ -1211,32 +1211,32 @@ public class DBAStarUtil {
 
                 // The wall does not have multiple neighbours in different regions in the same sector
                 // and only has one neighbour out of the sector
-                if (neighbouringRegionsInSameSector.size() == 1 && neighbouringRegions.size() == 1) {
-                    // Unblocker case
-                    Iterator<Integer> iterator = neighbouringRegions.iterator();
-                    int neighbourRegion = iterator.next();
-
-                    // Get the neighbours of the region
-                    HashSet<Integer> neighbours = groupRecord.getNeighborIds();
-                    // Update region’s neighbourhood in groups map
-                    neighbours.remove(neighbourRegion);
-
-                    // Get the neighbours of its soon-to-be ex-neighbor
-                    GroupRecord neighborRecord = groups.get(neighbourRegion);
-                    HashSet<Integer> neighboursOfEx = neighborRecord.getNeighborIds();
-                    // Update old neighbour’s neighbourhood in groups map
-                    neighboursOfEx.remove(regionId);
-
-                    // Database changes
-                    dbBW.recomputeUnblocker(regionId, neighbourRegion, problem, groups);
-
-                    // If region rep in corner:
-                    int newRegionRep = map.recomputeCentroid(regionId, groupRecord, START_ROW, END_ROW, START_COL, END_COL);
-
-                    if (groupRecord.groupRepId != newRegionRep) {
-                        dbBW.recomputeBasePaths(regionId, problem, groups);
-                    }
-                } else {
+//                if (neighbouringRegionsInSameSector.size() == 1 && neighbouringRegions.size() == 1) {
+//                    // Unblocker case
+//                    Iterator<Integer> iterator = neighbouringRegions.iterator();
+//                    int neighbourRegion = iterator.next();
+//
+//                    // Get the neighbours of the region
+//                    HashSet<Integer> neighbours = groupRecord.getNeighborIds();
+//                    // Update region’s neighbourhood in groups map
+//                    neighbours.remove(neighbourRegion);
+//
+//                    // Get the neighbours of its soon-to-be ex-neighbor
+//                    GroupRecord neighborRecord = groups.get(neighbourRegion);
+//                    HashSet<Integer> neighboursOfEx = neighborRecord.getNeighborIds();
+//                    // Update old neighbour’s neighbourhood in groups map
+//                    neighboursOfEx.remove(regionId);
+//
+//                    // Database changes
+//                    dbBW.recomputeUnblocker(regionId, neighbourRegion, problem, groups);
+//
+//                    // If region rep in corner:
+//                    int newRegionRep = map.recomputeCentroid(regionId, groupRecord, START_ROW, END_ROW, START_COL, END_COL);
+//
+//                    if (groupRecord.groupRepId != newRegionRep) {
+//                        dbBW.recomputeBasePaths(regionId, problem, groups);
+//                    }
+//                } else {
                     // If our wall touches more than two regions that are in the same sector, we have a region merge case
 
                     // Iterate over old regions inside squares array and ‘erase’ them (assign ‘32’ instead of the old region ids)
@@ -1307,7 +1307,7 @@ public class DBAStarUtil {
 
                     // Database changes
                     dbBW.recomputeBasePathsAfterPartition(problem, groups, neighborIds);
-                }
+//                }
                 return;
             }
 
