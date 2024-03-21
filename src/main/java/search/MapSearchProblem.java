@@ -129,9 +129,4 @@ public class MapSearchProblem extends SearchProblem {
         map.getNeighbors(map.getRow(stateId), map.getCol(stateId), neighbors);
     }
 
-    public boolean isNeighbor(int fromStateId, int toStateId) {
-        // Is a neighbor if heuristic distance is <= 14 (one move)
-        int dist = computeDistance(fromStateId, toStateId);
-        return (dist < 14);
-    }
 }
