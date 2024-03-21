@@ -69,3 +69,40 @@ Time taken for AStar pathfinding: 1048
 
 Average time taken for DBAStar pathfinding = 5217.5
 Average time taken for AStar pathfinding = 1034.1
+
+
+Just finding DBAStar path:
+
+Number of goals: 6175
+Time taken for DBAStar pathfinding: 129
+Time taken for AStar pathfinding: 1016
+Number of goals: 6175
+Time taken for DBAStar pathfinding: 132
+Time taken for AStar pathfinding: 1019
+Number of goals: 6175
+Time taken for DBAStar pathfinding: 136
+Time taken for AStar pathfinding: 1036
+Number of goals: 6175
+Time taken for DBAStar pathfinding: 137
+Time taken for AStar pathfinding: 1000
+Number of goals: 6175
+Time taken for DBAStar pathfinding: 125
+Time taken for AStar pathfinding: 1034
+Number of goals: 6175
+Time taken for DBAStar pathfinding: 140
+Time taken for AStar pathfinding: 1011
+Number of goals: 6175
+Time taken for DBAStar pathfinding: 122
+Time taken for AStar pathfinding: 1011
+Number of goals: 6175
+Time taken for DBAStar pathfinding: 130
+Time taken for AStar pathfinding: 1006
+Number of goals: 6175
+Time taken for DBAStar pathfinding: 146
+Time taken for AStar pathfinding: 1008
+Number of goals: 6175
+Time taken for DBAStar pathfinding: 128
+Time taken for AStar pathfinding: 1065
+
+Average time taken for DBAStar pathfinding = 131.5
+Average time taken for AStar pathfinding = 1021.6
