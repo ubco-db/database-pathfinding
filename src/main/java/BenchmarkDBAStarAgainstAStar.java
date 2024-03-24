@@ -1,10 +1,7 @@
 import map.GameMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import search.AStar;
-import search.DBAStar;
-import search.SearchState;
-import search.StatsRecord;
+import search.*;
 import util.DBAStarUtil;
 
 import java.util.ArrayList;
@@ -21,10 +18,8 @@ public class BenchmarkDBAStarAgainstAStar {
     final static int GRID_SIZE = 16;
 
     private static final Logger logger = LogManager.getLogger(BenchmarkDBAStarAgainstAStar.class);
-    public static void main(String[] args) throws Exception {
-        // Fix start
-        int startId = 13411;
 
+    public static void main(String[] args) throws Exception {
         GameMap startingMap = new GameMap(PATH_TO_MAP, GRID_SIZE);
 
         ArrayList<Integer> goalIds = new ArrayList<>();
@@ -36,9 +31,6 @@ public class BenchmarkDBAStarAgainstAStar {
             }
         }
 
-        // Remove startStateId from list of goals
-        goalIds.remove((Integer) startId);
-
         // Print number of goals
         logger.info("Number of goals: " + goalIds.size());
 
@@ -46,18 +38,24 @@ public class BenchmarkDBAStarAgainstAStar {
         DBAStar dbaStar = dbaStarUtil.computeDBAStarDatabase(startingMap, "");
 
         long startTimeDBAStar = System.currentTimeMillis();
-        for (int goalId: goalIds) {
-            StatsRecord dbaStats = new StatsRecord();
-            dbaStar.computePath(new SearchState(startId), new SearchState(goalId), dbaStats);
+
+        for (int startId : goalIds) {
+            for (int goalId : goalIds) {
+                dbaStarUtil.recomputeWallAdditionNoLogging(goalId, dbaStar);
+                dbaStarUtil.recomputeWallRemovalNoLogging(goalId, dbaStar);
+                dbaStar.computePath(new SearchState(startId), new SearchState(goalId), new StatsRecord());
+            }
         }
+
         logger.info("Time taken for DBAStar pathfinding: " + (System.currentTimeMillis() - startTimeDBAStar));
 
         AStar aStar = new AStar(dbaStar.getProblem());
 
         long startTimeAStar = System.currentTimeMillis();
-        for (int goalId: goalIds) {
-            StatsRecord aStarStats = new StatsRecord();
-            aStar.computePath(new SearchState(startId), new SearchState(goalId), aStarStats);
+        for (int startId : goalIds) {
+            for (int goalId : goalIds) {
+                aStar.computePath(new SearchState(startId), new SearchState(goalId), new StatsRecord());
+            }
         }
         logger.info("Time taken for AStar pathfinding: " + (System.currentTimeMillis() - startTimeAStar));
     }
