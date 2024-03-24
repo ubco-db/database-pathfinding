@@ -1,62 +1,108 @@
+Adding and removing wall on goal (no logging) before finding path:
+
 Number of goals: 6175
-Time taken for DBAStar pathfinding: 130
-Time taken for AStar pathfinding: 1064
+Time taken for DBAStar pathfinding: 1373
+Time taken for AStar pathfinding: 1043
 Number of goals: 6175
-Time taken for DBAStar pathfinding: 135
-Time taken for AStar pathfinding: 1004
+Time taken for DBAStar pathfinding: 1312
+Time taken for AStar pathfinding: 1017
 Number of goals: 6175
-Time taken for DBAStar pathfinding: 125
-Time taken for AStar pathfinding: 995
+Time taken for DBAStar pathfinding: 1354
+Time taken for AStar pathfinding: 1024
 Number of goals: 6175
-Time taken for DBAStar pathfinding: 140
+Time taken for DBAStar pathfinding: 1278
+Time taken for AStar pathfinding: 994
+Number of goals: 6175
+Time taken for DBAStar pathfinding: 1301
 Time taken for AStar pathfinding: 1007
 Number of goals: 6175
-Time taken for DBAStar pathfinding: 133
-Time taken for AStar pathfinding: 998
+Time taken for DBAStar pathfinding: 1299
+Time taken for AStar pathfinding: 991
 Number of goals: 6175
-Time taken for DBAStar pathfinding: 138
-Time taken for AStar pathfinding: 1041
+Time taken for DBAStar pathfinding: 1325
+Time taken for AStar pathfinding: 1021
 Number of goals: 6175
-Time taken for DBAStar pathfinding: 136
-Time taken for AStar pathfinding: 996
+Time taken for DBAStar pathfinding: 1295
+Time taken for AStar pathfinding: 1009
 Number of goals: 6175
-Time taken for DBAStar pathfinding: 131
-Time taken for AStar pathfinding: 996
+Time taken for DBAStar pathfinding: 1387
+Time taken for AStar pathfinding: 1043
 Number of goals: 6175
-Time taken for DBAStar pathfinding: 129
-Time taken for AStar pathfinding: 996
-Number of goals: 6175
-Time taken for DBAStar pathfinding: 121
-Time taken for AStar pathfinding: 1024
+Time taken for DBAStar pathfinding: 1291
+Time taken for AStar pathfinding: 999
 
+Average time taken for DBAStar pathfinding = 1301.5
+Average time taken for AStar pathfinding = 1014.8
+
+Adding and removing wall on goal (no logging, no cases) before finding path:
 
 Number of goals: 6175
-Time taken for DBAStar pathfinding: 137
-Time taken for AStar pathfinding: 1040
-Number of goals: 6175
-Time taken for DBAStar pathfinding: 125
-Time taken for AStar pathfinding: 1096
-Number of goals: 6175
-Time taken for DBAStar pathfinding: 146
-Time taken for AStar pathfinding: 1015
-Number of goals: 6175
-Time taken for DBAStar pathfinding: 136
+Time taken for DBAStar pathfinding: 5165
 Time taken for AStar pathfinding: 1017
 Number of goals: 6175
-Time taken for DBAStar pathfinding: 125
+Time taken for DBAStar pathfinding: 5281
+Time taken for AStar pathfinding: 1009
+Number of goals: 6175
+Time taken for DBAStar pathfinding: 5132
+Time taken for AStar pathfinding: 1018
+Number of goals: 6175
+Time taken for DBAStar pathfinding: 5184
+Time taken for AStar pathfinding: 1016
+Number of goals: 6175
+Time taken for DBAStar pathfinding: 5237
+Time taken for AStar pathfinding: 1048
+Number of goals: 6175
+Time taken for DBAStar pathfinding: 5271
+Time taken for AStar pathfinding: 1057
+Number of goals: 6175
+Time taken for DBAStar pathfinding: 5309
 Time taken for AStar pathfinding: 1050
 Number of goals: 6175
+Time taken for DBAStar pathfinding: 5130
+Time taken for AStar pathfinding: 1021
+Number of goals: 6175
+Time taken for DBAStar pathfinding: 5313
+Time taken for AStar pathfinding: 1057
+Number of goals: 6175
+Time taken for DBAStar pathfinding: 5253
+Time taken for AStar pathfinding: 1048
+
+Average time taken for DBAStar pathfinding = 5217.5
+Average time taken for AStar pathfinding = 1034.1
+
+
+Just finding DBAStar path:
+
+Number of goals: 6175
+Time taken for DBAStar pathfinding: 129
+Time taken for AStar pathfinding: 1016
+Number of goals: 6175
 Time taken for DBAStar pathfinding: 132
-Time taken for AStar pathfinding: 1017
+Time taken for AStar pathfinding: 1019
 Number of goals: 6175
 Time taken for DBAStar pathfinding: 136
-Time taken for AStar pathfinding: 1026
+Time taken for AStar pathfinding: 1036
 Number of goals: 6175
-Time taken for DBAStar pathfinding: 134
-Time taken for AStar pathfinding: 1060
+Time taken for DBAStar pathfinding: 137
+Time taken for AStar pathfinding: 1000
 Number of goals: 6175
-Time taken for DBAStar pathfinding: 135
+Time taken for DBAStar pathfinding: 125
+Time taken for AStar pathfinding: 1034
+Number of goals: 6175
+Time taken for DBAStar pathfinding: 140
+Time taken for AStar pathfinding: 1011
+Number of goals: 6175
+Time taken for DBAStar pathfinding: 122
+Time taken for AStar pathfinding: 1011
+Number of goals: 6175
+Time taken for DBAStar pathfinding: 130
+Time taken for AStar pathfinding: 1006
+Number of goals: 6175
+Time taken for DBAStar pathfinding: 146
 Time taken for AStar pathfinding: 1008
 Number of goals: 6175
-Time taken for DBAStar pathfinding: 119
-Time taken for AStar pathfinding: 1021
+Time taken for DBAStar pathfinding: 128
+Time taken for AStar pathfinding: 1065
+
+Average time taken for DBAStar pathfinding = 131.5
+Average time taken for AStar pathfinding = 1021.6
