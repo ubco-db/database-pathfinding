@@ -106,3 +106,15 @@ Time taken for AStar pathfinding: 1065
 
 Average time taken for DBAStar pathfinding = 131.5
 Average time taken for AStar pathfinding = 1021.6
+
+
+Just finding DBAStar path (all starts, all goals):
+
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 485661
+Time taken for AStar pathfinding: 17562462
+
+Adding and removing wall on goal (all starts, all goals, no checks) before finding path:
+
+Time taken for DBAStar pathfinding: 81232479
+Time taken for AStar pathfinding: 11575723
