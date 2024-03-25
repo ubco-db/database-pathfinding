@@ -425,13 +425,13 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         }
     }
 
-    public void recomputeBasePathsAfterPartition(int oldRegionId, MapSearchProblem problem, TreeMap<Integer, GroupRecord> groups, GroupRecord[] newRecs, HashSet<Integer> oldNeighbours) {
+    public void recomputeBasePathsAfterPartition(int oldRegionId, MapSearchProblem problem, TreeMap<Integer, GroupRecord> groups, GroupRecord[] newRecs, HashSet<Integer> oldNeighbourIds) throws Exception {
         // In partition case:
         // Given new recs, compute the paths to all of them, and back
 
         System.out.println("Old region id: " + (oldRegionId - GameMap.START_NUM));
         System.out.println("New recs: " + Arrays.toString(newRecs));
-        System.out.println("Old neighbours: " + oldNeighbours);
+        System.out.println("Old neighbour ids: " + oldNeighbourIds);
 
         // Iterate over new regions
         for (GroupRecord newRec: newRecs) {
@@ -456,9 +456,8 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         }
 
         // Iterate over old neighbours to check if their number of neighbours has changed
-        // TODO: numNeighbours could increase or decrease
-        for (int oldNeighbour : oldNeighbours) {
-            int neighbourLoc = oldNeighbour - GameMap.START_NUM;
+        for (int oldNeighbourId : oldNeighbourIds) {
+            int neighbourLoc = oldNeighbourId - GameMap.START_NUM;
 
             // Shuffle region that was partitioned to the end of database arrays
             int numNeighbours = this.neighbors[neighbourLoc].length;
@@ -471,11 +470,27 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
                 }
             }
 
-            // Now, if there are less neighbours after partition: Remove 1 from end
-            // If more, add to end
-            // Front of array can stay
-            if (groups.get(oldNeighbour).getNeighborIds().size() != this.neighbors[neighbourLoc].length) {
-                System.out.println("Num neighbours of " + oldNeighbour + " changed from " + this.neighbors[neighbourLoc].length + " to " + groups.get(oldNeighbour).getNeighborIds().size());
+            int numNeighboursBeforePartition = this.neighbors[neighbourLoc].length;
+            int numNeighboursAfterPartition = groups.get(oldNeighbourId).getNeighborIds().size();
+
+            // If the number of neighbours before and after the partition differ
+            if (numNeighboursAfterPartition != numNeighboursBeforePartition) {
+                System.out.println("Num neighbours of " + oldNeighbourId + " changed from " + this.neighbors[neighbourLoc].length + " to " + groups.get(oldNeighbourId).getNeighborIds().size());
+                if (numNeighboursAfterPartition < numNeighboursBeforePartition) {
+                    // If there are fewer neighbours after the partition than before
+                    if ((numNeighboursAfterPartition - 1) != numNeighboursBeforePartition) {
+                        throw new Exception("There is an issue with the neighbours of region: " + oldNeighbourId);
+                    }
+
+                    decreaseArrayLengthBy1AtIndex(this.neighbors, neighbourLoc, numNeighboursAfterPartition);
+                    decreaseArrayLengthBy1AtIndex(this.lowestCost, neighbourLoc, numNeighboursAfterPartition);
+                    decreaseArrayLengthBy1AtIndex(this.paths, neighbourLoc, numNeighboursAfterPartition);
+                } else {
+                    // If there are more neighbours after the partition than before
+                    increaseArrayLengthToLenAtIndex(this.neighbors, neighbourLoc, numNeighboursAfterPartition);
+                    increaseArrayLengthToLenAtIndex(this.lowestCost, neighbourLoc, numNeighboursAfterPartition);
+                    increaseArrayLengthToLenAtIndex(this.paths, neighbourLoc, numNeighboursAfterPartition);
+                }
             }
         }
 
@@ -851,9 +866,35 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         array[index] = resizedArray;
     }
 
-    private int[] increaseArrayLengthToLen(int[] array, int len) throws Exception {
+    private void decreaseArrayLengthBy1AtIndex(int[][] array, int index, int len) throws Exception {
+        if (len != array[index].length) {
+            throw new Exception("Error! Unequal array lengths");
+        }
+
+        int[] resizedArray = new int[len - 1];
+        System.arraycopy(array[index], 0, resizedArray, 0, len);
+        array[index] = resizedArray;
+    }
+
+    private void decreaseArrayLengthBy1AtIndex(int[][][] array, int index, int len) throws Exception {
+        if (len != array[index].length) {
+            throw new Exception("Error! Unequal array lengths");
+        }
+
+        int[][] resizedArray = new int[len - 1][];
+        System.arraycopy(array[index], 0, resizedArray, 0, len);
+        array[index] = resizedArray;
+    }
+
+    private void increaseArrayLengthToLenAtIndex(int[][] array, int index, int len) {
         int[] resizedArray = new int[len];
-        System.arraycopy(array, 0, resizedArray, 0, len);
-        return array;
+        System.arraycopy(array[index], 0, resizedArray, 0, len);
+        array[index] = resizedArray;
+    }
+
+    private void increaseArrayLengthToLenAtIndex(int[][][] array, int index, int len) {
+        int[][] resizedArray = new int[len][];
+        System.arraycopy(array[index], 0, resizedArray, 0, len);
+        array[index] = resizedArray;
     }
 }
