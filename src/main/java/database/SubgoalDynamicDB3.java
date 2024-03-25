@@ -429,13 +429,20 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         // In partition case:
         // Given new recs, compute the paths to all of them, and back
 
+        // If we have run out of free space, increase the size of the arrays
+        resizeFreeSpace();
+
         System.out.println("Old region id: " + (oldRegionId - GameMap.START_NUM));
         System.out.println("New recs: " + Arrays.toString(newRecs));
         System.out.println("Old neighbour ids: " + oldNeighbourIds);
 
-        // Iterate over new regions
-        for (GroupRecord newRec: newRecs) {
+        HashSet<Integer> newRegionIds = new HashSet<>(newRecs.length);
+
+        // Iterate over new regions to make neighbour arrays correct and make lowest cost and paths have the correct lengths
+        for (GroupRecord newRec : newRecs) {
             int groupLoc = newRec.groupId - GameMap.START_NUM;
+
+            newRegionIds.add(newRec.groupId);
 
             // Get neighbours of the new/surrounding regions (updated in map.recomputeNeighbors)
             HashSet<Integer> neighbours = groups.get(newRec.groupId).getNeighborIds();
@@ -455,7 +462,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             this.paths[groupLoc] = new int[neighbours.size()][];
         }
 
-        // Iterate over old neighbours to check if their number of neighbours has changed
+        // Iterate over old neighbours to shrink or grow their arrays and fill them with the correct neighbours
         for (int oldNeighbourId : oldNeighbourIds) {
             int neighbourLoc = oldNeighbourId - GameMap.START_NUM;
 
@@ -481,7 +488,6 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
                     if ((numNeighboursAfterPartition - 1) != numNeighboursBeforePartition) {
                         throw new Exception("There is an issue with the neighbours of region: " + oldNeighbourId);
                     }
-
                     decreaseArrayLengthBy1AtIndex(this.neighbors, neighbourLoc, numNeighboursAfterPartition);
                     decreaseArrayLengthBy1AtIndex(this.lowestCost, neighbourLoc, numNeighboursAfterPartition);
                     decreaseArrayLengthBy1AtIndex(this.paths, neighbourLoc, numNeighboursAfterPartition);
@@ -490,11 +496,56 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
                     increaseArrayLengthToLenAtIndex(this.neighbors, neighbourLoc, numNeighboursAfterPartition);
                     increaseArrayLengthToLenAtIndex(this.lowestCost, neighbourLoc, numNeighboursAfterPartition);
                     increaseArrayLengthToLenAtIndex(this.paths, neighbourLoc, numNeighboursAfterPartition);
+
+                    // Need to fill the end of the array with the relevant neighbours: get all newRegion ids that are in
+                    // the correct region ids, append them to the end of the array
+                    HashSet<Integer> neighbourIds = groups.get(oldNeighbourId).getNeighborIds();
+                    for (int neighbourId: neighbourIds) {
+                        if (newRegionIds.contains(neighbourId)) {
+                            this.neighbors[neighbourLoc][numNeighboursBeforePartition++ - 1] = neighbourId;
+                        }
+                    }
                 }
+                continue;
+            }
+
+            // If the number of neighbours are the same before and after the partition: Need to make sure the last neighbour is correct
+            int lastNeighbour = this.neighbors[neighbourLoc][numNeighboursBeforePartition - 1];
+
+            HashSet<Integer> neighbourIds = groups.get(oldNeighbourId).getNeighborIds();
+            // If the last neighbour is incorrect (neighbour ids does not contain the element that is currently the last neighbour in the array):
+            if (!neighbourIds.contains(lastNeighbour)) {
+                neighbourIds.retainAll(newRegionIds);
+                if (neighbourIds.size() != 1) {
+                    throw new Exception("Something went wrong!");
+                }
+                this.neighbors[neighbourLoc][numNeighboursBeforePartition - 1] = newRegionIds.iterator().next();
             }
         }
 
+        // TODO: Ensure neighbours are correct
 
+        // Need to fill end of array with applicable new regions
+
+        AStar astar = new AStar(problem);
+        StatsRecord stats = new StatsRecord();
+        ArrayList<SearchState> path;
+
+        int numNewRegions = newRecs.length;
+
+        for (GroupRecord newRec : newRecs) {
+            int groupLoc = newRec.groupId - GameMap.START_NUM;
+
+            for (int i = 0; i < this.neighbors[groupLoc].length; i++) {
+                int neighbourLoc = this.neighbors[groupLoc][i];
+
+                // Compute path to neighbour and back, will only need to adapt last few places in neighbour array,
+                // depending on how many new regions the partition has split things into, newRecs.length
+                path = astar.computePath(new SearchState(newRec.groupRepId), new SearchState(groups.get(neighbourLoc + GameMap.START_NUM).groupRepId), stats);
+                SearchUtil.computePathCost(path, stats, problem);
+                int pathCost = stats.getPathCost();
+            }
+        }
     }
 
     private void shuffleToEnd(int numNeighbours, int i, int[] arr) {
@@ -770,7 +821,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             // are not neighbours in the neighborId array
             throw new Exception("There is an issue with the neighbours of region: " + regionId);
         }
-        
+
         this.neighbors[groupLoc] = copyArrayExceptIndex(this.neighbors[groupLoc], indexOfNeighborLoc);
         this.lowestCost[groupLoc] = copyArrayExceptIndex(this.lowestCost[groupLoc], indexOfNeighborLoc);
         this.paths[groupLoc][indexOfNeighborLoc] = null;
@@ -888,13 +939,13 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
 
     private void increaseArrayLengthToLenAtIndex(int[][] array, int index, int len) {
         int[] resizedArray = new int[len];
-        System.arraycopy(array[index], 0, resizedArray, 0, len);
+        System.arraycopy(array[index], 0, resizedArray, 0, array[index].length);
         array[index] = resizedArray;
     }
 
     private void increaseArrayLengthToLenAtIndex(int[][][] array, int index, int len) {
         int[][] resizedArray = new int[len][];
-        System.arraycopy(array[index], 0, resizedArray, 0, len);
+        System.arraycopy(array[index], 0, resizedArray, 0, array[index].length);
         array[index] = resizedArray;
     }
 }
