@@ -425,6 +425,81 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         }
     }
 
+    public void recomputeBasePathsAfterPartition(int oldRegionId, MapSearchProblem problem, TreeMap<Integer, GroupRecord> groups, GroupRecord[] newRecs, HashSet<Integer> oldNeighbours) {
+        // In partition case:
+        // Given new recs, compute the paths to all of them, and back
+
+        System.out.println("Old region id: " + (oldRegionId - GameMap.START_NUM));
+        System.out.println("New recs: " + Arrays.toString(newRecs));
+        System.out.println("Old neighbours: " + oldNeighbours);
+
+        // Iterate over new regions
+        for (GroupRecord newRec: newRecs) {
+            int groupLoc = newRec.groupId - GameMap.START_NUM;
+
+            // Get neighbours of the new/surrounding regions (updated in map.recomputeNeighbors)
+            HashSet<Integer> neighbours = groups.get(newRec.groupId).getNeighborIds();
+            // Create an int array with the same size as the HashSet
+            int[] neighbourArray = new int[neighbours.size()];
+
+            // Iterate through the HashSet and copy its elements to the array
+            int index = 0;
+            for (Integer neighbour : neighbours) {
+                neighbourArray[index++] = neighbour - GameMap.START_NUM;
+            }
+
+            this.neighbors[groupLoc] = neighbourArray;
+
+            // Create int arrays for lowest costs and paths
+            this.lowestCost[groupLoc] = new int[neighbours.size()];
+            this.paths[groupLoc] = new int[neighbours.size()][];
+        }
+
+        // Iterate over old neighbours to check if their number of neighbours has changed
+        // TODO: numNeighbours could increase or decrease
+        for (int oldNeighbour : oldNeighbours) {
+            int neighbourLoc = oldNeighbour - GameMap.START_NUM;
+
+            // Shuffle region that was partitioned to the end of database arrays
+            int numNeighbours = this.neighbors[neighbourLoc].length;
+            for (int i = 0; i < numNeighbours - 1; i++) {
+                if (this.neighbors[neighbourLoc][i] == (oldRegionId - GameMap.START_NUM)) {
+                    shuffleToEnd(numNeighbours, i, this.neighbors[neighbourLoc]);
+                    shuffleToEnd(numNeighbours, i, this.lowestCost[neighbourLoc]);
+                    shuffleToEnd(numNeighbours, i, this.paths[neighbourLoc]);
+                    break;
+                }
+            }
+
+            // Now, if there are less neighbours after partition: Remove 1 from end
+            // If more, add to end
+            // Front of array can stay
+            if (groups.get(oldNeighbour).getNeighborIds().size() != this.neighbors[neighbourLoc].length) {
+                System.out.println("Num neighbours of " + oldNeighbour + " changed from " + this.neighbors[neighbourLoc].length + " to " + groups.get(oldNeighbour).getNeighborIds().size());
+            }
+        }
+
+
+    }
+
+    private void shuffleToEnd(int numNeighbours, int i, int[] arr) {
+        // Store last element in array
+        int temp = arr[numNeighbours - 1];
+        // Put region that was partitioned at the end of the array
+        arr[numNeighbours - 1] = arr[i];
+        // Put last element in array where region that was partitioned was
+        arr[i] = temp;
+    }
+
+    private void shuffleToEnd(int numNeighbours, int i, int[][] arr) {
+        // Store last element in array
+        int[] temp = arr[numNeighbours - 1];
+        // Put region that was partitioned at the end of the array
+        arr[numNeighbours - 1] = arr[i];
+        // Put last element in array where region that was partitioned was
+        arr[i] = temp;
+    }
+
     /**
      * @param regionId region id where wall was added
      * @param problem  MapSearchProblem used in A*
@@ -774,5 +849,11 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         int[][] resizedArray = new int[len + 1][];
         System.arraycopy(array[index], 0, resizedArray, 0, len);
         array[index] = resizedArray;
+    }
+
+    private int[] increaseArrayLengthToLen(int[] array, int len) throws Exception {
+        int[] resizedArray = new int[len];
+        System.arraycopy(array, 0, resizedArray, 0, len);
+        return array;
     }
 }
