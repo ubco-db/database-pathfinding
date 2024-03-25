@@ -8,15 +8,15 @@
 <!--            <LevelRangeFilter minLevel="ERROR" maxLevel="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>-->
             <PatternLayout pattern="${layout}"/>
         </Console>
-        <File name="LogFile" fileName="app.log">
+        <File name="LogFile" fileName="BenchmarkDBAStarAgainstAStar.log">
             <PatternLayout>
-                <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
+                <Pattern>%m%n</Pattern>
             </PatternLayout>
         </File>
     </Appenders>
     <Loggers>
-        <Root level="error">
-            <AppenderRef ref="Console"/>
+        <Root level="info">
+            <AppenderRef ref="LogFile"/>
         </Root>
     </Loggers>
 </Configuration>
