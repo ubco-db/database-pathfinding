@@ -124,3 +124,6 @@ Adding and removing wall on goal (all starts, all goals) before finding path:
 Number of goals: 6176
 Time taken for DBAStar pathfinding: 12247553
 Time taken for AStar pathfinding: 10887820
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 13998193
+Time taken for AStar pathfinding: 11333187
