@@ -425,7 +425,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         }
     }
 
-    public void recomputeBasePathsAfterPartition(int oldRegionId, MapSearchProblem problem, TreeMap<Integer, GroupRecord> groups, GroupRecord[] newRecs, HashSet<Integer> oldNeighbourIds) throws Exception {
+    public void recomputeBasePathsAfterPartition(int oldRegionId, MapSearchProblem problem, TreeMap<Integer, GroupRecord> groups, GroupRecord[] newRecs, HashSet<Integer> oldNeighbourIds, ArrayList<Integer> neighborIds) throws Exception {
         // In partition case:
         // Given new recs, compute the paths to all of them, and back
 
@@ -438,7 +438,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
 
         HashSet<Integer> newRegionIds = new HashSet<>(newRecs.length);
 
-        // Iterate over new regions to make neighbour arrays correct and make lowest cost and paths have the correct lengths
+        // Iterate over new regions to make neighbour arrays correct and make sure lowest cost and paths have the correct lengths
         for (GroupRecord newRec : newRecs) {
             int groupLoc = newRec.groupId - GameMap.START_NUM;
 
@@ -491,59 +491,91 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
                     decreaseArrayLengthBy1AtIndex(this.neighbors, neighbourLoc, numNeighboursAfterPartition);
                     decreaseArrayLengthBy1AtIndex(this.lowestCost, neighbourLoc, numNeighboursAfterPartition);
                     decreaseArrayLengthBy1AtIndex(this.paths, neighbourLoc, numNeighboursAfterPartition);
+                    // TODO: Need to deal with neighbour that's been cut off
+                    System.out.println("TODO");
                 } else {
-                    // If there are more neighbours after the partition than before
                     increaseArrayLengthToLenAtIndex(this.neighbors, neighbourLoc, numNeighboursAfterPartition);
                     increaseArrayLengthToLenAtIndex(this.lowestCost, neighbourLoc, numNeighboursAfterPartition);
                     increaseArrayLengthToLenAtIndex(this.paths, neighbourLoc, numNeighboursAfterPartition);
 
+                    // TODO: Does this always work?
                     // Need to fill the end of the array with the relevant neighbours: get all newRegion ids that are in
                     // the correct region ids, append them to the end of the array
                     HashSet<Integer> neighbourIds = groups.get(oldNeighbourId).getNeighborIds();
                     for (int neighbourId: neighbourIds) {
                         if (newRegionIds.contains(neighbourId)) {
-                            this.neighbors[neighbourLoc][numNeighboursBeforePartition++ - 1] = neighbourId;
+                            this.neighbors[neighbourLoc][numNeighboursBeforePartition - 1] = neighbourId - GameMap.START_NUM;
+                            this.lowestCost[neighbourLoc][numNeighboursBeforePartition - 1] = -1;
+                            this.paths[neighbourLoc][numNeighboursBeforePartition++ - 1] = null;
                         }
                     }
                 }
                 continue;
             }
 
-            // If the number of neighbours are the same before and after the partition: Need to make sure the last neighbour is correct
-            int lastNeighbour = this.neighbors[neighbourLoc][numNeighboursBeforePartition - 1];
-
+            // If the number of neighbours are the same before and after the partition: Need to make sure neighbours are correct
             HashSet<Integer> neighbourIds = groups.get(oldNeighbourId).getNeighborIds();
-            // If the last neighbour is incorrect (neighbour ids does not contain the element that is currently the last neighbour in the array):
-            if (!neighbourIds.contains(lastNeighbour)) {
-                neighbourIds.retainAll(newRegionIds);
-                if (neighbourIds.size() != 1) {
-                    throw new Exception("Something went wrong!");
+            for (int neighbourId: neighbourIds) {
+                if (newRegionIds.contains(neighbourId)) {
+                    this.neighbors[neighbourLoc][numNeighboursBeforePartition - 1] = neighbourId - GameMap.START_NUM;
+                    this.lowestCost[neighbourLoc][numNeighboursBeforePartition - 1] = -1;
+                    this.paths[neighbourLoc][numNeighboursBeforePartition++ - 1] = null;
                 }
-                this.neighbors[neighbourLoc][numNeighboursBeforePartition - 1] = newRegionIds.iterator().next();
             }
         }
 
-        // TODO: Ensure neighbours are correct
-
-        // Need to fill end of array with applicable new regions
+        // Neighbours should now be correct in the arrays. Will now need to recompute paths.
 
         AStar astar = new AStar(problem);
         StatsRecord stats = new StatsRecord();
         ArrayList<SearchState> path;
 
-        int numNewRegions = newRecs.length;
-
         for (GroupRecord newRec : newRecs) {
             int groupLoc = newRec.groupId - GameMap.START_NUM;
 
+            System.out.println("Neighbours of groupLoc " + groupLoc + ": " + Arrays.toString(this.neighbors[groupLoc]));
             for (int i = 0; i < this.neighbors[groupLoc].length; i++) {
                 int neighbourLoc = this.neighbors[groupLoc][i];
+                System.out.println("Neighbourloc " + neighbourLoc);
+                int[] tmp = new int[5000];
+                // TODO: May want to pass this as parameter
+                SearchAlgorithm searchAlg = new HillClimbing(problem, 10000);
 
-                // Compute path to neighbour and back, will only need to adapt last few places in neighbour array,
-                // depending on how many new regions the partition has split things into, newRecs.length
+                // Compute path from new centroid to neighbour
                 path = astar.computePath(new SearchState(newRec.groupRepId), new SearchState(groups.get(neighbourLoc + GameMap.START_NUM).groupRepId), stats);
                 SearchUtil.computePathCost(path, stats, problem);
                 int pathCost = stats.getPathCost();
+
+                // Update lowestCost of region
+                this.lowestCost[groupLoc][i] = pathCost;
+                // Update path to neighbour
+                this.paths[groupLoc][i] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
+
+                int indexToUpdate = -1;
+                System.out.println(Arrays.toString(this.neighbors[neighbourLoc]));
+                System.out.println(groupLoc);
+                for (int j = this.neighbors[neighbourLoc].length - 1; j >= this.neighbors[neighbourLoc].length - newRecs.length; j--) {
+                    if (this.neighbors[neighbourLoc][j] == groupLoc) {
+                        indexToUpdate = j;
+                        break;
+                    }
+                }
+
+                System.out.println(indexToUpdate);
+
+                if (indexToUpdate == -1) {
+                    throw new Exception("Something went wrong!");
+                }
+
+                // Compute path from neighbour to new centroid
+                path = astar.computePath(new SearchState(groups.get(neighbourLoc + GameMap.START_NUM).groupRepId), new SearchState(newRec.groupRepId), stats);
+                SearchUtil.computePathCost(path, stats, problem);
+                pathCost = stats.getPathCost();
+
+                // Update lowestCost of neighbour
+                this.lowestCost[neighbourLoc][indexToUpdate] = pathCost;
+                // Update path to region
+                this.paths[neighbourLoc][indexToUpdate] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
             }
         }
     }
@@ -601,11 +633,8 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             // Update lowestCost of region
             this.lowestCost[groupLoc][i] = pathCost;
             // Update path to region
-            this.paths[groupLoc][i] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
-
-            path = astar.computePath(new SearchState(groups.get(neighbourLoc + GameMap.START_NUM).groupRepId), new SearchState(groups.get(regionId).groupRepId), stats);
-            SearchUtil.computePathCost(path, stats, problem);
-            pathCost = stats.getPathCost();
+            int[] compressedPath = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
+            this.paths[groupLoc][i] = compressedPath;
 
             // Need to find correct neighborId to update
             int indexToUpdate = -1;
@@ -629,7 +658,8 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             // Update lowestCost of neighbour
             this.lowestCost[neighbourLoc][indexToUpdate] = pathCost;
             // Update path to neighbour
-            this.paths[neighbourLoc][indexToUpdate] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(new ArrayList<>(path)), searchAlg, tmp, path.size());
+            path = new ArrayList<>(path.reversed());
+            this.paths[neighbourLoc][indexToUpdate] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
         }
     }
 
