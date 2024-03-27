@@ -469,7 +469,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             // Shuffle region that was partitioned to the end of database arrays
             int numNeighbours = this.neighbors[neighbourLoc].length;
             for (int i = 0; i < numNeighbours - 1; i++) {
-                if (this.neighbors[neighbourLoc][i] == (oldRegionId - GameMap.START_NUM)) {
+                if (this.neighbors[neighbourLoc][i] == neighbourLoc) {
                     shuffleToEnd(numNeighbours, i, this.neighbors[neighbourLoc]);
                     shuffleToEnd(numNeighbours, i, this.lowestCost[neighbourLoc]);
                     shuffleToEnd(numNeighbours, i, this.paths[neighbourLoc]);
@@ -578,6 +578,21 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
                 this.paths[neighbourLoc][indexToUpdate] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
             }
         }
+    }
+
+    public void recomputeBasePathsAfterMerge(GroupRecord newRec, TreeSet<Integer> oldRegionIds) {
+        // Need to delete other regions
+        // Iterate over them to delete from database
+        for (int oldRegionId: oldRegionIds) {
+            int oldRegionLoc = oldRegionId - GameMap.START_NUM;
+            neighbors[oldRegionLoc] = null;
+            lowestCost[oldRegionLoc] = null;
+            paths[oldRegionLoc] = null;
+            // TODO: has this been added to free space?
+        }
+
+        // Neighbours may lose neighbours/gain new neighbours
+        newRec.getNeighborIds();
     }
 
     private void shuffleToEnd(int numNeighbours, int i, int[] arr) {
@@ -891,6 +906,13 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         logger.debug("Free space after popping: " + Arrays.toString(this.freeSpace));
         logger.debug("Free space count: " + freeSpaceCount);
         return temp;
+    }
+
+    public int peekFreeSpace() throws Exception {
+        if (freeSpace[freeSpaceCount - 1] == 0) {
+            throw new Exception("Indexing is off");
+        }
+        return freeSpace[freeSpaceCount - 1];
     }
 
     /**
