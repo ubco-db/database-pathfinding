@@ -425,7 +425,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         }
     }
 
-    public void recomputeBasePathsAfterPartition(int oldRegionId, MapSearchProblem problem, TreeMap<Integer, GroupRecord> groups, GroupRecord[] newRecs, HashSet<Integer> oldNeighbourIds, ArrayList<Integer> neighborIds) throws Exception {
+    public void recomputeBasePathsAfterPartition(int oldRegionId, MapSearchProblem problem, TreeMap<Integer, GroupRecord> groups, GroupRecord[] newRecs, HashSet<Integer> oldNeighbourIds) throws Exception {
         // In partition case:
         // Given new recs, compute the paths to all of them, and back
 
@@ -445,7 +445,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             newRegionIds.add(newRec.groupId);
 
             // Get neighbours of the new/surrounding regions (updated in map.recomputeNeighbors)
-            HashSet<Integer> neighbours = groups.get(newRec.groupId).getNeighborIds();
+            HashSet<Integer> neighbours = newRec.getNeighborIds();
             // Create an int array with the same size as the HashSet
             int[] neighbourArray = new int[neighbours.size()];
 
@@ -581,8 +581,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
     }
 
     public void recomputeBasePathsAfterMerge(GroupRecord newRec, TreeSet<Integer> oldRegionIds) {
-        // Need to delete other regions
-        // Iterate over them to delete from database
+        // Iterate over old regions to delete from the database
         for (int oldRegionId: oldRegionIds) {
             int oldRegionLoc = oldRegionId - GameMap.START_NUM;
             neighbors[oldRegionLoc] = null;
@@ -591,8 +590,24 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             // TODO: has this been added to free space?
         }
 
-        // Neighbours may lose neighbours/gain new neighbours
-        newRec.getNeighborIds();
+        int groupLoc = newRec.groupId - GameMap.START_NUM;
+
+        // Get neighbours of the new/surrounding regions (updated in map.recomputeNeighbors)
+        HashSet<Integer> neighbours = newRec.getNeighborIds();
+        // Create an int array with the same size as the HashSet
+        int[] neighbourArray = new int[neighbours.size()];
+
+        // Iterate through the HashSet and copy its elements to the array
+        int index = 0;
+        for (Integer neighbour : neighbours) {
+            neighbourArray[index++] = neighbour - GameMap.START_NUM;
+        }
+
+        this.neighbors[groupLoc] = neighbourArray;
+
+        // Create int arrays for lowest costs and paths
+        this.lowestCost[groupLoc] = new int[neighbours.size()];
+        this.paths[groupLoc] = new int[neighbours.size()][];
     }
 
     private void shuffleToEnd(int numNeighbours, int i, int[] arr) {
