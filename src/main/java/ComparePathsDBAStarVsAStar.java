@@ -17,7 +17,7 @@ public class ComparePathsDBAStarVsAStar {
     final static String PATH_TO_MAP = MAP_FILE_PATH + MAP_FILE_NAME;
     final static int GRID_SIZE = 16;
 
-    private static final Logger logger = LogManager.getLogger(BenchmarkDBAStarAgainstAStar.class);
+    private static final Logger logger = LogManager.getLogger(ComparePathsDBAStarVsAStar.class);
 
     public static void main(String[] args) throws Exception {
         // Fix start

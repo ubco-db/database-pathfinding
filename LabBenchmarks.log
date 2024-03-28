@@ -1,0 +1,33 @@
+Adding and removing wall on goal (all starts, all goals, 012.map) before finding path:
+
+
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 9029099
+Time taken for AStar pathfinding: 6483676
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 8979095
+Time taken for AStar pathfinding: 6493620
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 8955790
+Time taken for AStar pathfinding: 6489819
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 8975214
+Time taken for AStar pathfinding: 6472180
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 8974305
+Time taken for AStar pathfinding: 6480160
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 8962215
+Time taken for AStar pathfinding: 6478236
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 8966367
+Time taken for AStar pathfinding: 6494082
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 8936873
+Time taken for AStar pathfinding: 6479032
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 8960513
+Time taken for AStar pathfinding: 6498074
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 8952942
+Time taken for AStar pathfinding: 6496378

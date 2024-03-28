@@ -31,32 +31,35 @@ public class BenchmarkDBAStarAgainstAStar {
             }
         }
 
-        // Print number of goals
-        logger.info("Number of goals: " + goalIds.size());
+        for (int i = 0; i < 10; i++) {
+            // Print number of goals
+            logger.info("Number of goals: " + goalIds.size());
 
-        DBAStarUtil dbaStarUtil = new DBAStarUtil(1, MAP_FILE_NAME, DBA_STAR_DB_PATH);
-        DBAStar dbaStar = dbaStarUtil.computeDBAStarDatabase(startingMap, "");
+            DBAStarUtil dbaStarUtil = new DBAStarUtil(1, MAP_FILE_NAME, DBA_STAR_DB_PATH);
+            DBAStar dbaStar = dbaStarUtil.computeDBAStarDatabase(startingMap, "");
 
-        long startTimeDBAStar = System.currentTimeMillis();
+            long startTimeDBAStar = System.currentTimeMillis();
 
-        for (int startId : goalIds) {
-            for (int goalId : goalIds) {
-                dbaStarUtil.recomputeWallAdditionNoLogging(goalId, dbaStar);
-                dbaStarUtil.recomputeWallRemovalNoLogging(goalId, dbaStar);
-                dbaStar.computePath(new SearchState(startId), new SearchState(goalId), new StatsRecord());
+            for (int startId : goalIds) {
+                for (int goalId : goalIds) {
+                    dbaStarUtil.recomputeWallAdditionNoLogging(goalId, dbaStar);
+                    dbaStarUtil.recomputeWallRemovalNoLogging(goalId, dbaStar);
+                    dbaStar.computePath(new SearchState(startId), new SearchState(goalId), new StatsRecord());
+                }
             }
-        }
 
-        logger.info("Time taken for DBAStar pathfinding: " + (System.currentTimeMillis() - startTimeDBAStar));
+            logger.info("Time taken for DBAStar pathfinding: " + (System.currentTimeMillis() - startTimeDBAStar));
 
-        AStar aStar = new AStar(dbaStar.getProblem());
+            AStar aStar = new AStar(dbaStar.getProblem());
 
-        long startTimeAStar = System.currentTimeMillis();
-        for (int startId : goalIds) {
-            for (int goalId : goalIds) {
-                aStar.computePath(new SearchState(startId), new SearchState(goalId), new StatsRecord());
+            long startTimeAStar = System.currentTimeMillis();
+            for (int startId : goalIds) {
+                for (int goalId : goalIds) {
+                    aStar.computePath(new SearchState(startId), new SearchState(goalId), new StatsRecord());
+                }
             }
+            logger.info("Time taken for AStar pathfinding: " + (System.currentTimeMillis() - startTimeAStar));
+
         }
-        logger.info("Time taken for AStar pathfinding: " + (System.currentTimeMillis() - startTimeAStar));
     }
 }
