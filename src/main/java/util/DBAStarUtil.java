@@ -1418,6 +1418,7 @@ public class DBAStarUtil {
                         newRec.groupId = groupId;
                         newRec.groupRepId = map.getId(row, col);
                         newRec.setNumStates(1);
+                        newRec.setNeighborIds(new HashSet<>());
                         map.addGroup(groupId, newRec);
                         newRecs[count++] = newRec;
                     } else {    // Update group
@@ -1435,7 +1436,7 @@ public class DBAStarUtil {
         }
 
         // Recompute neighbourhood
-        map.recomputeNeighbors(START_ROW, START_COL, END_ROW, END_COL, neighborIds);
+        map.recomputeNeighbors(neighbouringRegionsInSameSector, START_ROW, START_COL, END_ROW, END_COL, neighborIds);
 
         // Database changes
         dbBW.recomputeBasePathsAfterPartition(problem, groups, neighborIds);
@@ -1507,6 +1508,7 @@ public class DBAStarUtil {
                         newRec.groupId = groupId;
                         newRec.groupRepId = map.getId(row, col);
                         newRec.setNumStates(1);
+                        newRec.setNeighborIds(new HashSet<>());
                         map.addGroup(groupId, newRec);
                         newRecs[count++] = newRec;
                     } else {    // Update group
