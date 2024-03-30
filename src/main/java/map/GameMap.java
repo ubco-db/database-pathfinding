@@ -777,13 +777,24 @@ public class GameMap {
         logger.debug("Time to recompute neighbors: " + (endTime - currentTime));
     }
 
-    public void recomputeNeighbors(int regionId, int startRow, int startCol, int endRow, int endCol, ArrayList<Integer> neighborIds) {    // Only computes the neighbor group ids for each group not the list of neighbor cells
-        // IDEA: Perform one pass through map updating group records everytime encounter new neighbor
+    public void recomputeNeighbors(TreeSet<Integer> oldRegionIds, int startRow, int startCol, int endRow, int endCol, ArrayList<Integer> neighborIds) {
+        for (int neighborId : neighborIds) {
+            groups.get(neighborId).getNeighborIds().removeAll(oldRegionIds);
+        }
+        recomputeNeighborsEfficiently(startRow, startCol, endRow, endCol);
+    }
 
+    public void recomputeNeighbors(int regionId, int startRow, int startCol, int endRow, int endCol, ArrayList<Integer> neighborIds) {
         // Remove regionId from neighbors
         for (int neighborId : neighborIds) {
             groups.get(neighborId).getNeighborIds().remove(regionId);
         }
+
+        recomputeNeighborsEfficiently(startRow, startCol, endRow, endCol);
+    }
+
+    public void recomputeNeighborsEfficiently(int startRow, int startCol, int endRow, int endCol) {    // Only computes the neighbor group ids for each group not the list of neighbor cells
+        // IDEA: Perform one pass through map updating group records everytime encounter new neighbor
 
         long currentTime = System.currentTimeMillis();
 
@@ -792,6 +803,10 @@ public class GameMap {
             for (int c = startCol; c < endCol; c++) {
                 if (!isWall(r, c)) {
                     int val = squares[r][c];
+                    if (isWall(val)) {
+                        continue;
+                    }
+
                     GroupRecord rec = groups.get(val);
                     if (rec == null) {
                         logger.warn("Unable to find group: " + val + " for row: " + r + " col: " + c + " id: " + getId(r, c));
@@ -820,7 +835,10 @@ public class GameMap {
         // Iterate along top of sector
         for (int c = startCol; c < endCol; c++) {
             int val = squares[startRow - 1][c];
-            // TODO: Check that val != 42?
+            if (isWall(val)) {
+                continue;
+            }
+
             GroupRecord rec = groups.get(val);
             if (rec == null) {
                 logger.warn("Unable to find group: " + val + " for row: " + startRow + " col: " + c + " id: " + getId(startRow, c));
@@ -834,6 +852,10 @@ public class GameMap {
         // Iterate along RHS of sector
         for (int r = startRow; r < endRow; r++) {
             int val = squares[r][endCol + 1];
+            if (isWall(val)) {
+                continue;
+            }
+
             GroupRecord rec = groups.get(val);
             if (rec == null) {
                 logger.warn("Unable to find group: " + val + " for row: " + r + " col: " + endCol + " id: " + getId(r, endCol));
@@ -847,6 +869,10 @@ public class GameMap {
         // Iterate along bottom of sector
         for (int c = startCol; c < endCol; c++) {
             int val = squares[endRow + 1][c];
+            if (isWall(val)) {
+                continue;
+            }
+
             GroupRecord rec = groups.get(val);
             if (rec == null) {
                 logger.warn("Unable to find group: " + val + " for row: " + startRow + " col: " + c + " id: " + getId(startRow, c));
@@ -860,6 +886,10 @@ public class GameMap {
         // Iterate along LHS of sector
         for (int r = startRow; r < endRow; r++) {
             int val = squares[r][startCol - 1];
+            if (isWall(val)) {
+                continue;
+            }
+
             GroupRecord rec = groups.get(val);
             if (rec == null) {
                 logger.warn("Unable to find group: " + val + " for row: " + r + " col: " + endCol + " id: " + getId(r, endCol));
