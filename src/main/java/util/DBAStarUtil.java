@@ -1020,7 +1020,7 @@ public class DBAStarUtil {
                 }
 
                 // Recompute neighbourhood
-                map.recomputeNeighbors(START_ROW, START_COL, END_ROW, END_COL, neighborIds);
+                map.recomputeNeighbors(REGION_ID, START_ROW, START_COL, END_ROW, END_COL, neighborIds);
 
                 // Database changes
                 dbBW.recomputeBasePathsAfterPartition(problem, groups, neighborIds); // 40ms
@@ -1303,7 +1303,7 @@ public class DBAStarUtil {
                     }
 
                     // Recompute neighbourhood
-                    map.recomputeNeighbors(START_ROW, START_COL, END_ROW, END_COL, neighborIds);
+                    map.recomputeNeighbors(neighbouringRegionsInSameSector, START_ROW, START_COL, END_ROW, END_COL, neighborIds);
 
                     // Database changes
                     dbBW.recomputeBasePathsAfterPartition(problem, groups, neighborIds);

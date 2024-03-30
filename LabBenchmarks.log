@@ -64,3 +64,8 @@ Time taken for AStar pathfinding: 6608293
 Number of goals: 6176
 Time taken for DBAStar pathfinding: 5567708
 Time taken for AStar pathfinding: 6606551
+
+
+Adding and removing wall on goal (all starts, all goals, 012.map) before finding path (reverse base paths and improved neighbor recomp):
+
+Number of goals: 6176

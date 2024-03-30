@@ -31,7 +31,7 @@ public class BenchmarkDBAStarAgainstAStar {
             }
         }
 
-        for (int i = 0; i < 10; i++) {
+//        for (int i = 0; i < 10; i++) {
             // Print number of goals
             logger.info("Number of goals: " + goalIds.size());
 
@@ -60,6 +60,6 @@ public class BenchmarkDBAStarAgainstAStar {
             }
             logger.info("Time taken for AStar pathfinding: " + (System.currentTimeMillis() - startTimeAStar));
 
-        }
+//        }
     }
 }
