@@ -22,6 +22,8 @@ public class BenchmarkDBAStarAgainstAStar {
     public static void main(String[] args) throws Exception {
         GameMap startingMap = new GameMap(PATH_TO_MAP, GRID_SIZE);
 
+        int startId = 14325;
+
         ArrayList<Integer> goalIds = new ArrayList<>();
         for (int i = 16; i < startingMap.rows; i++) {
             for (int j = 0; j < startingMap.cols; j++) {
@@ -39,24 +41,24 @@ public class BenchmarkDBAStarAgainstAStar {
 
         long startTimeDBAStar = System.currentTimeMillis();
 
-        for (int startId : goalIds) {
+//        for (int startId : goalIds) {
             for (int goalId : goalIds) {
-                dbaStarUtil.recomputeWallAdditionNoLogging(goalId, dbaStar);
-                dbaStarUtil.recomputeWallRemovalNoLogging(goalId, dbaStar);
+                dbaStarUtil.recomputeWallAdditionNoChecks(goalId, dbaStar);
+                dbaStarUtil.recomputeWallRemovalNoChecks(goalId, dbaStar);
                 dbaStar.computePath(new SearchState(startId), new SearchState(goalId), new StatsRecord());
             }
-        }
+//        }
 
         logger.info("Time taken for DBAStar pathfinding: " + (System.currentTimeMillis() - startTimeDBAStar));
 
         AStar aStar = new AStar(dbaStar.getProblem());
 
         long startTimeAStar = System.currentTimeMillis();
-        for (int startId : goalIds) {
+//        for (int startId : goalIds) {
             for (int goalId : goalIds) {
                 aStar.computePath(new SearchState(startId), new SearchState(goalId), new StatsRecord());
             }
-        }
+//        }
         logger.info("Time taken for AStar pathfinding: " + (System.currentTimeMillis() - startTimeAStar));
     }
 }
