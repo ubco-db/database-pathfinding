@@ -797,11 +797,8 @@ public class GameMap {
         long currentTime = System.currentTimeMillis();
 
         // Iterate over sector where wall change happened and update regions inside
-        // SearchState[] searchStates = new SearchState[(endRow - startRow )*(endCol - startCol)];
-        // int i = 0;
         for (int r = startRow; r < endRow; r++) {
             for (int c = startCol; c < endCol; c++) {
-                // searchStates[i++] = new SearchState(this.getId(r, c));
                 int val = squares[r][c];
 
                 if (isWall(val)) {
@@ -833,10 +830,7 @@ public class GameMap {
             }
         }
 
-        // this.drawPoints("neighborRecomp.png", searchStates, Color.YELLOW);
-
         // Iterate along top of sector
-        // searchStates = new SearchState[endCol - startCol];
         for (int c = startCol; c < endCol; c++) {
             int val = squares[startRow - 1][c];
             // searchStates[c - startCol] = new SearchState(this.getId(startRow - 1, c));
@@ -854,13 +848,9 @@ public class GameMap {
             }
         }
 
-        // this.drawPoints("neighborRecompTop.png", searchStates, Color.YELLOW);
-
         // Iterate along RHS of sector
-        // searchStates = new SearchState[endRow - startRow];
         for (int r = startRow; r < endRow; r++) {
             int val = squares[r][endCol];
-            // searchStates[r - startRow] = new SearchState(this.getId(r, endCol));
 
             if (isWall(val)) {
                 continue;
@@ -876,13 +866,9 @@ public class GameMap {
             }
         }
 
-        // this.drawPoints("neighborRecompRHS.png", searchStates, Color.RED);
-
         // Iterate along bottom of sector
-        // searchStates = new SearchState[endCol- startCol];
         for (int c = startCol; c < endCol; c++) {
             int val = squares[endRow][c];
-            // searchStates[c - startCol] = new SearchState(this.getId(endRow, c));
 
             if (isWall(val)) {
                 continue;
@@ -898,13 +884,9 @@ public class GameMap {
             }
         }
 
-        // this.drawPoints("neighborRecompBottom.png", searchStates, Color.GREEN);
-
         // Iterate along LHS of sector
-        // searchStates = new SearchState[endRow - startRow];
         for (int r = startRow; r < endRow; r++) {
             int val = squares[r][startCol - 1];
-            // searchStates[r - startRow] = new SearchState(this.getId(r, startCol - 1));
 
             if (isWall(val)) {
                 continue;
@@ -919,8 +901,6 @@ public class GameMap {
                 rec.getNeighborIds().add(squares[r][startCol]);
             }
         }
-
-        // this.drawPoints("neighborRecompLHS.png", searchStates, Color.BLUE);
 
         long endTime = System.currentTimeMillis();
         logger.debug("Time to recompute neighbors: " + (endTime - currentTime));
