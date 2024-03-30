@@ -221,11 +221,11 @@ public class DBAStarUtil {
 
             // Need to check boundaries for bottom row of map (if not on map, treat square as wall)
             // TODO: Do I really need to check all of these?
-            int NEIGHBOR_NE = map.isValid(WALL_ROW - 1, WALL_COL + 1) ? map.squares[WALL_ROW - 1][WALL_COL + 1] : GameMap.WALL_CHAR;
-            int NEIGHBOR_E = map.isValid(WALL_ROW, WALL_COL + 1) ? map.squares[WALL_ROW][WALL_COL + 1] : GameMap.WALL_CHAR;
-            int NEIGHBOR_SE = map.isValid(WALL_ROW + 1, WALL_COL + 1) ? map.squares[WALL_ROW + 1][WALL_COL + 1] : GameMap.WALL_CHAR;
-            int NEIGHBOR_S = map.isValid(WALL_ROW + 1, WALL_COL) ? map.squares[WALL_ROW + 1][WALL_COL] : GameMap.WALL_CHAR;
-            int NEIGHBOR_SW = map.isValid(WALL_ROW + 1, WALL_COL - 1) ? map.squares[WALL_ROW + 1][WALL_COL - 1] : GameMap.WALL_CHAR;
+            int NEIGHBOR_NE = map.isInBounds(WALL_ROW - 1, WALL_COL + 1) ? map.squares[WALL_ROW - 1][WALL_COL + 1] : GameMap.WALL_CHAR;
+            int NEIGHBOR_E = map.isInBounds(WALL_ROW, WALL_COL + 1) ? map.squares[WALL_ROW][WALL_COL + 1] : GameMap.WALL_CHAR;
+            int NEIGHBOR_SE = map.isInBounds(WALL_ROW + 1, WALL_COL + 1) ? map.squares[WALL_ROW + 1][WALL_COL + 1] : GameMap.WALL_CHAR;
+            int NEIGHBOR_S = map.isInBounds(WALL_ROW + 1, WALL_COL) ? map.squares[WALL_ROW + 1][WALL_COL] : GameMap.WALL_CHAR;
+            int NEIGHBOR_SW = map.isInBounds(WALL_ROW + 1, WALL_COL - 1) ? map.squares[WALL_ROW + 1][WALL_COL - 1] : GameMap.WALL_CHAR;
 
             int NEIGHBOR_W = map.squares[WALL_ROW][WALL_COL - 1];
             int NEIGHBOR_NW = map.squares[WALL_ROW - 1][WALL_COL - 1];
@@ -830,11 +830,11 @@ public class DBAStarUtil {
 
             // Need to check boundaries for bottom row of map (if not on map, treat square as wall)
             // TODO: Do I really need to check all of these?
-            int NEIGHBOR_NE = map.isValid(WALL_ROW - 1, WALL_COL + 1) ? map.squares[WALL_ROW - 1][WALL_COL + 1] : GameMap.WALL_CHAR;
-            int NEIGHBOR_E = map.isValid(WALL_ROW, WALL_COL + 1) ? map.squares[WALL_ROW][WALL_COL + 1] : GameMap.WALL_CHAR;
-            int NEIGHBOR_SE = map.isValid(WALL_ROW + 1, WALL_COL + 1) ? map.squares[WALL_ROW + 1][WALL_COL + 1] : GameMap.WALL_CHAR;
-            int NEIGHBOR_S = map.isValid(WALL_ROW + 1, WALL_COL) ? map.squares[WALL_ROW + 1][WALL_COL] : GameMap.WALL_CHAR;
-            int NEIGHBOR_SW = map.isValid(WALL_ROW + 1, WALL_COL - 1) ? map.squares[WALL_ROW + 1][WALL_COL - 1] : GameMap.WALL_CHAR;
+            int NEIGHBOR_NE = map.isInBounds(WALL_ROW - 1, WALL_COL + 1) ? map.squares[WALL_ROW - 1][WALL_COL + 1] : GameMap.WALL_CHAR;
+            int NEIGHBOR_E = map.isInBounds(WALL_ROW, WALL_COL + 1) ? map.squares[WALL_ROW][WALL_COL + 1] : GameMap.WALL_CHAR;
+            int NEIGHBOR_SE = map.isInBounds(WALL_ROW + 1, WALL_COL + 1) ? map.squares[WALL_ROW + 1][WALL_COL + 1] : GameMap.WALL_CHAR;
+            int NEIGHBOR_S = map.isInBounds(WALL_ROW + 1, WALL_COL) ? map.squares[WALL_ROW + 1][WALL_COL] : GameMap.WALL_CHAR;
+            int NEIGHBOR_SW = map.isInBounds(WALL_ROW + 1, WALL_COL - 1) ? map.squares[WALL_ROW + 1][WALL_COL - 1] : GameMap.WALL_CHAR;
 
             int NEIGHBOR_W = map.squares[WALL_ROW][WALL_COL - 1];
             int NEIGHBOR_NW = map.squares[WALL_ROW - 1][WALL_COL - 1];
@@ -1418,6 +1418,7 @@ public class DBAStarUtil {
                         newRec.groupId = groupId;
                         newRec.groupRepId = map.getId(row, col);
                         newRec.setNumStates(1);
+                        newRec.setNeighborIds(new HashSet<>());
                         map.addGroup(groupId, newRec);
                         newRecs[count++] = newRec;
                     } else {    // Update group
@@ -1435,7 +1436,7 @@ public class DBAStarUtil {
         }
 
         // Recompute neighbourhood
-        map.recomputeNeighbors(START_ROW, START_COL, END_ROW, END_COL, neighborIds);
+        map.recomputeNeighbors(neighbouringRegionsInSameSector, START_ROW, START_COL, END_ROW, END_COL, neighborIds);
 
         // Database changes
         dbBW.recomputeBasePathsAfterPartition(problem, groups, neighborIds);
@@ -1507,6 +1508,7 @@ public class DBAStarUtil {
                         newRec.groupId = groupId;
                         newRec.groupRepId = map.getId(row, col);
                         newRec.setNumStates(1);
+                        newRec.setNeighborIds(new HashSet<>());
                         map.addGroup(groupId, newRec);
                         newRecs[count++] = newRec;
                     } else {    // Update group
@@ -1524,7 +1526,7 @@ public class DBAStarUtil {
         }
 
         // Recompute neighbourhood
-        map.recomputeNeighbors(START_ROW, START_COL, END_ROW, END_COL, neighborIds);
+        map.recomputeNeighbors(REGION_ID, START_ROW, START_COL, END_ROW, END_COL, neighborIds);
 
         // Database changes
         dbBW.recomputeBasePathsAfterPartition(problem, groups, neighborIds);

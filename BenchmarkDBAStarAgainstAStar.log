@@ -127,3 +127,48 @@ Time taken for AStar pathfinding: 10887820
 Number of goals: 6176
 Time taken for DBAStar pathfinding: 13998193
 Time taken for AStar pathfinding: 11333187
+
+
+Neighbourhood recomp optimized:
+
+After:
+
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 4829
+Time taken for AStar pathfinding: 1654
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 4908
+Time taken for AStar pathfinding: 1678
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 4935
+Time taken for AStar pathfinding: 1735
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 4856
+Time taken for AStar pathfinding: 1650
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 4820
+Time taken for AStar pathfinding: 1703
+
+Average time taken for DBAStar: 4869.6
+Average time taken for AStar: 1683.8
+
+Before:
+
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 5331
+Time taken for AStar pathfinding: 1629
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 5256
+Time taken for AStar pathfinding: 1644
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 5110
+Time taken for AStar pathfinding: 1657
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 5198
+Time taken for AStar pathfinding: 1683
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 5205
+Time taken for AStar pathfinding: 1669
+
+Average time taken for DBAStar: 5220
+Average time taken for AStar: 1656.4

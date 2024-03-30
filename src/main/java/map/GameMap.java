@@ -347,11 +347,11 @@ public class GameMap {
         return currentMask;
     }
 
-    public boolean isValid(int r, int c) {
+    public boolean isInBounds(int r, int c) {
         return (c >= 0 && r >= 0 && r < rows && c < cols);
     }
 
-    public boolean isValid(int id) {
+    public boolean isInBounds(int id) {
         return (getCol(id) >= 0 && getRow(id) >= 0 && getRow(id) < rows && getCol(id) < cols);
     }
 
@@ -417,35 +417,35 @@ public class GameMap {
                 // Add check to make sure square is not already assigned
                 if (dest.squares[r][c] == ' ') dest.squares[r][c] = destval;
 
-            if (source.isValid(r - 1, c) && !source.isWall(r - 1, c))
+            if (source.isInBounds(r - 1, c) && !source.isWall(r - 1, c))
                 if (source.squares[r - 1][c] == sourceval)    // Above
                     currentSet.add(new MapPoint(r - 1, c));
 
-            if (source.isValid(r - 1, c + 1) && !source.isWall(r - 1, c + 1))
+            if (source.isInBounds(r - 1, c + 1) && !source.isWall(r - 1, c + 1))
                 if (source.squares[r - 1][c + 1] == sourceval) // Top right
                     currentSet.add(new MapPoint(r - 1, c + 1));
 
-            if (source.isValid(r, c + 1) && !source.isWall(r, c + 1))
+            if (source.isInBounds(r, c + 1) && !source.isWall(r, c + 1))
                 if (source.squares[r][c + 1] == sourceval) // Right
                     currentSet.add(new MapPoint(r, c + 1));
 
-            if (source.isValid(r + 1, c + 1) && !source.isWall(r + 1, c + 1))
+            if (source.isInBounds(r + 1, c + 1) && !source.isWall(r + 1, c + 1))
                 if (source.squares[r + 1][c + 1] == sourceval) // Bottom right
                     currentSet.add(new MapPoint(r + 1, c + 1));
 
-            if (source.isValid(r + 1, c) && !source.isWall(r + 1, c))
+            if (source.isInBounds(r + 1, c) && !source.isWall(r + 1, c))
                 if (source.squares[r + 1][c] == sourceval) // Bottom
                     currentSet.add(new MapPoint(r + 1, c));
 
-            if (source.isValid(r + 1, c - 1) && !source.isWall(r + 1, c - 1))
+            if (source.isInBounds(r + 1, c - 1) && !source.isWall(r + 1, c - 1))
                 if (squares[r + 1][c - 1] == sourceval) // Bottom left
                     currentSet.add(new MapPoint(r + 1, c - 1));
 
-            if (source.isValid(r, c - 1) && !source.isWall(r, c - 1))
+            if (source.isInBounds(r, c - 1) && !source.isWall(r, c - 1))
                 if (source.squares[r][c - 1] == sourceval) // Left
                     currentSet.add(new MapPoint(r, c - 1));
 
-            if (source.isValid(r - 1, c - 1) && !source.isWall(r - 1, c - 1))
+            if (source.isInBounds(r - 1, c - 1) && !source.isWall(r - 1, c - 1))
                 if (source.squares[r - 1][c - 1] == sourceval) // Top left
                     currentSet.add(new MapPoint(r - 1, c - 1));
         }
@@ -461,21 +461,21 @@ public class GameMap {
         for (int r = 0; r < rows; r++)
             for (int c = 0; c < cols; c++)
                 if (squares[r][c] == val) {    // Check all eight neighbours
-                    if (isValid(r - 1, c) && !isWall(r - 1, c) && squares[r - 1][c] != val)    // Above
+                    if (isInBounds(r - 1, c) && !isWall(r - 1, c) && squares[r - 1][c] != val)    // Above
                         result.add(squares[r - 1][c]);
-                    if (isValid(r - 1, c + 1) && !isWall(r - 1, c + 1) && squares[r - 1][c + 1] != val) // Top right
+                    if (isInBounds(r - 1, c + 1) && !isWall(r - 1, c + 1) && squares[r - 1][c + 1] != val) // Top right
                         result.add(squares[r - 1][c + 1]);
-                    if (isValid(r, c + 1) && !isWall(r, c + 1) && squares[r][c + 1] != val) // Right
+                    if (isInBounds(r, c + 1) && !isWall(r, c + 1) && squares[r][c + 1] != val) // Right
                         result.add(squares[r][c + 1]);
-                    if (isValid(r + 1, c + 1) && !isWall(r + 1, c + 1) && squares[r + 1][c + 1] != val) // Bottom right
+                    if (isInBounds(r + 1, c + 1) && !isWall(r + 1, c + 1) && squares[r + 1][c + 1] != val) // Bottom right
                         result.add(squares[r + 1][c + 1]);
-                    if (isValid(r + 1, c) && !isWall(r + 1, c) && squares[r + 1][c] != val) // Bottom
+                    if (isInBounds(r + 1, c) && !isWall(r + 1, c) && squares[r + 1][c] != val) // Bottom
                         result.add(squares[r + 1][c]);
-                    if (isValid(r + 1, c - 1) && !isWall(r + 1, c - 1) && squares[r + 1][c - 1] != val) // Bottom left
+                    if (isInBounds(r + 1, c - 1) && !isWall(r + 1, c - 1) && squares[r + 1][c - 1] != val) // Bottom left
                         result.add(squares[r + 1][c - 1]);
-                    if (isValid(r, c - 1) && !isWall(r, c - 1) && squares[r][c - 1] != val) // Left
+                    if (isInBounds(r, c - 1) && !isWall(r, c - 1) && squares[r][c - 1] != val) // Left
                         result.add(squares[r][c - 1]);
-                    if (isValid(r - 1, c - 1) && !isWall(r - 1, c - 1) && squares[r - 1][c - 1] != val) // Top left
+                    if (isInBounds(r - 1, c - 1) && !isWall(r - 1, c - 1) && squares[r - 1][c - 1] != val) // Top left
                         result.add(squares[r - 1][c - 1]);
 
                 }
@@ -623,42 +623,42 @@ public class GameMap {
     public ArrayList<SearchState> getNeighbors(int r, int c) {
         // 8-way pathfinding
         result.clear();
-        if (isValid(r - 1, c - 1) && !isWall(r - 1, c - 1)) // Top left
+        if (isInBounds(r - 1, c - 1) && !isWall(r - 1, c - 1)) // Top left
             result.add(getState(this.getId(r - 1, c - 1)));
-        if (isValid(r - 1, c) && !isWall(r - 1, c))    // Above
+        if (isInBounds(r - 1, c) && !isWall(r - 1, c))    // Above
             result.add(getState(this.getId(r - 1, c)));
-        if (isValid(r - 1, c + 1) && !isWall(r - 1, c + 1)) // Top right
+        if (isInBounds(r - 1, c + 1) && !isWall(r - 1, c + 1)) // Top right
             result.add(getState(this.getId(r - 1, c + 1)));
-        if (isValid(r + 1, c - 1) && !isWall(r + 1, c - 1)) // Bottom left
+        if (isInBounds(r + 1, c - 1) && !isWall(r + 1, c - 1)) // Bottom left
             result.add(getState(this.getId(r + 1, c - 1)));
-        if (isValid(r + 1, c) && !isWall(r + 1, c))// Bottom
+        if (isInBounds(r + 1, c) && !isWall(r + 1, c))// Bottom
             result.add(getState(this.getId(r + 1, c)));
-        if (isValid(r + 1, c + 1) && !isWall(r + 1, c + 1)) // Bottom right
+        if (isInBounds(r + 1, c + 1) && !isWall(r + 1, c + 1)) // Bottom right
             result.add(getState(this.getId(r + 1, c + 1)));
-        if (isValid(r, c - 1) && !isWall(r, c - 1)) // Left
+        if (isInBounds(r, c - 1) && !isWall(r, c - 1)) // Left
             result.add(getState(this.getId(r, c - 1)));
-        if (isValid(r, c + 1) && !isWall(r, c + 1)) // Right
+        if (isInBounds(r, c + 1) && !isWall(r, c + 1)) // Right
             result.add(getState(this.getId(r, c + 1)));
         return result;
     }
 
     public int[] getNeighborIds(int r, int c) {
         int[] result = new int[8];
-        if (isValid(r - 1, c - 1) && !isWall(r - 1, c - 1)) // Top left
+        if (isInBounds(r - 1, c - 1) && !isWall(r - 1, c - 1)) // Top left
             result[0] = this.getId(r - 1, c - 1);
-        if (isValid(r - 1, c) && !isWall(r - 1, c)) // Above
+        if (isInBounds(r - 1, c) && !isWall(r - 1, c)) // Above
             result[1] = this.getId(r - 1, c);
-        if (isValid(r - 1, c + 1) && !isWall(r - 1, c + 1)) // Top right
+        if (isInBounds(r - 1, c + 1) && !isWall(r - 1, c + 1)) // Top right
             result[2] = this.getId(r - 1, c + 1);
-        if (isValid(r + 1, c - 1) && !isWall(r + 1, c - 1)) // Bottom left
+        if (isInBounds(r + 1, c - 1) && !isWall(r + 1, c - 1)) // Bottom left
             result[3] = this.getId(r + 1, c - 1);
-        if (isValid(r + 1, c) && !isWall(r + 1, c)) // Bottom
+        if (isInBounds(r + 1, c) && !isWall(r + 1, c)) // Bottom
             result[4] = this.getId(r + 1, c);
-        if (isValid(r + 1, c + 1) && !isWall(r + 1, c + 1)) // Bottom right
+        if (isInBounds(r + 1, c + 1) && !isWall(r + 1, c + 1)) // Bottom right
             result[5] = this.getId(r + 1, c + 1);
-        if (isValid(r, c - 1) && !isWall(r, c - 1)) // Left
+        if (isInBounds(r, c - 1) && !isWall(r, c - 1)) // Left
             result[6] = this.getId(r, c - 1);
-        if (isValid(r, c + 1) && !isWall(r, c + 1)) // Right
+        if (isInBounds(r, c + 1) && !isWall(r, c + 1)) // Right
             result[7] = this.getId(r, c + 1);
         return result;
     }
@@ -666,21 +666,21 @@ public class GameMap {
     // This version always diagonal traversal even if just have opening on diagonal but not in two cardinal directions.
     public void getNeighbors(int r, int c, ExpandArray result) {
         result.clear();
-        if (isValid(r - 1, c - 1) && !isWall(r - 1, c - 1)) // Top left
+        if (isInBounds(r - 1, c - 1) && !isWall(r - 1, c - 1)) // Top left
             result.add(this.getId(r - 1, c - 1));
-        if (isValid(r - 1, c) && !isWall(r - 1, c))    // Above
+        if (isInBounds(r - 1, c) && !isWall(r - 1, c))    // Above
             result.add(this.getId(r - 1, c));
-        if (isValid(r - 1, c + 1) && !isWall(r - 1, c + 1)) // Top right
+        if (isInBounds(r - 1, c + 1) && !isWall(r - 1, c + 1)) // Top right
             result.add(this.getId(r - 1, c + 1));
-        if (isValid(r + 1, c - 1) && !isWall(r + 1, c - 1)) // Bottom left
+        if (isInBounds(r + 1, c - 1) && !isWall(r + 1, c - 1)) // Bottom left
             result.add(this.getId(r + 1, c - 1));
-        if (isValid(r + 1, c) && !isWall(r + 1, c))// Bottom
+        if (isInBounds(r + 1, c) && !isWall(r + 1, c))// Bottom
             result.add(this.getId(r + 1, c));
-        if (isValid(r + 1, c + 1) && !isWall(r + 1, c + 1)) // Bottom right
+        if (isInBounds(r + 1, c + 1) && !isWall(r + 1, c + 1)) // Bottom right
             result.add(this.getId(r + 1, c + 1));
-        if (isValid(r, c - 1) && !isWall(r, c - 1)) // Left
+        if (isInBounds(r, c - 1) && !isWall(r, c - 1)) // Left
             result.add(this.getId(r, c - 1));
-        if (isValid(r, c + 1) && !isWall(r, c + 1)) // Right
+        if (isInBounds(r, c + 1) && !isWall(r, c + 1)) // Right
             result.add(this.getId(r, c + 1));
     }
 
@@ -703,21 +703,21 @@ public class GameMap {
                         logger.warn("Unable to find group: " + val + " for row: " + r + " col: " + c + " id: " + getId(r, c));
                         continue;
                     }
-                    if (isValid(r - 1, c) && !isWall(r - 1, c) && squares[r - 1][c] != val)    // Above
+                    if (isInBounds(r - 1, c) && !isWall(r - 1, c) && squares[r - 1][c] != val)    // Above
                         rec.getNeighborIds().add(squares[r - 1][c]);
-                    if (isValid(r - 1, c + 1) && !isWall(r - 1, c + 1) && squares[r - 1][c + 1] != val) // Top right
+                    if (isInBounds(r - 1, c + 1) && !isWall(r - 1, c + 1) && squares[r - 1][c + 1] != val) // Top right
                         rec.getNeighborIds().add(squares[r - 1][c + 1]);
-                    if (isValid(r, c + 1) && !isWall(r, c + 1) && squares[r][c + 1] != val) // Right
+                    if (isInBounds(r, c + 1) && !isWall(r, c + 1) && squares[r][c + 1] != val) // Right
                         rec.getNeighborIds().add(squares[r][c + 1]);
-                    if (isValid(r + 1, c + 1) && !isWall(r + 1, c + 1) && squares[r + 1][c + 1] != val) // Bottom right
+                    if (isInBounds(r + 1, c + 1) && !isWall(r + 1, c + 1) && squares[r + 1][c + 1] != val) // Bottom right
                         rec.getNeighborIds().add(squares[r + 1][c + 1]);
-                    if (isValid(r + 1, c) && !isWall(r + 1, c) && squares[r + 1][c] != val) // Bottom
+                    if (isInBounds(r + 1, c) && !isWall(r + 1, c) && squares[r + 1][c] != val) // Bottom
                         rec.getNeighborIds().add(squares[r + 1][c]);
-                    if (isValid(r + 1, c - 1) && !isWall(r + 1, c - 1) && squares[r + 1][c - 1] != val) // Bottom left
+                    if (isInBounds(r + 1, c - 1) && !isWall(r + 1, c - 1) && squares[r + 1][c - 1] != val) // Bottom left
                         rec.getNeighborIds().add(squares[r + 1][c - 1]);
-                    if (isValid(r, c - 1) && !isWall(r, c - 1) && squares[r][c - 1] != val) // Left
+                    if (isInBounds(r, c - 1) && !isWall(r, c - 1) && squares[r][c - 1] != val) // Left
                         rec.getNeighborIds().add(squares[r][c - 1]);
-                    if (isValid(r - 1, c - 1) && !isWall(r - 1, c - 1) && squares[r - 1][c - 1] != val) // Top left
+                    if (isInBounds(r - 1, c - 1) && !isWall(r - 1, c - 1) && squares[r - 1][c - 1] != val) // Top left
                         rec.getNeighborIds().add(squares[r - 1][c - 1]);
                 }
             }
@@ -754,25 +754,88 @@ public class GameMap {
                         logger.warn("Unable to find group: " + val + " for row: " + r + " col: " + c + " id: " + getId(r, c));
                         continue;
                     }
-                    if (isValid(r - 1, c) && !isWall(r - 1, c) && squares[r - 1][c] != val)    // Above
+                    if (isInBounds(r - 1, c) && !isWall(r - 1, c) && squares[r - 1][c] != val)    // Above
                         rec.getNeighborIds().add(squares[r - 1][c]);
-                    if (isValid(r - 1, c + 1) && !isWall(r - 1, c + 1) && squares[r - 1][c + 1] != val) // Top right
+                    if (isInBounds(r - 1, c + 1) && !isWall(r - 1, c + 1) && squares[r - 1][c + 1] != val) // Top right
                         rec.getNeighborIds().add(squares[r - 1][c + 1]);
-                    if (isValid(r, c + 1) && !isWall(r, c + 1) && squares[r][c + 1] != val) // Right
+                    if (isInBounds(r, c + 1) && !isWall(r, c + 1) && squares[r][c + 1] != val) // Right
                         rec.getNeighborIds().add(squares[r][c + 1]);
-                    if (isValid(r + 1, c + 1) && !isWall(r + 1, c + 1) && squares[r + 1][c + 1] != val) // Bottom right
+                    if (isInBounds(r + 1, c + 1) && !isWall(r + 1, c + 1) && squares[r + 1][c + 1] != val) // Bottom right
                         rec.getNeighborIds().add(squares[r + 1][c + 1]);
-                    if (isValid(r + 1, c) && !isWall(r + 1, c) && squares[r + 1][c] != val) // Bottom
+                    if (isInBounds(r + 1, c) && !isWall(r + 1, c) && squares[r + 1][c] != val) // Bottom
                         rec.getNeighborIds().add(squares[r + 1][c]);
-                    if (isValid(r + 1, c - 1) && !isWall(r + 1, c - 1) && squares[r + 1][c - 1] != val) // Bottom left
+                    if (isInBounds(r + 1, c - 1) && !isWall(r + 1, c - 1) && squares[r + 1][c - 1] != val) // Bottom left
                         rec.getNeighborIds().add(squares[r + 1][c - 1]);
-                    if (isValid(r, c - 1) && !isWall(r, c - 1) && squares[r][c - 1] != val) // Left
+                    if (isInBounds(r, c - 1) && !isWall(r, c - 1) && squares[r][c - 1] != val) // Left
                         rec.getNeighborIds().add(squares[r][c - 1]);
-                    if (isValid(r - 1, c - 1) && !isWall(r - 1, c - 1) && squares[r - 1][c - 1] != val) // Top left
+                    if (isInBounds(r - 1, c - 1) && !isWall(r - 1, c - 1) && squares[r - 1][c - 1] != val) // Top left
                         rec.getNeighborIds().add(squares[r - 1][c - 1]);
                 }
             }
         }
+        long endTime = System.currentTimeMillis();
+        logger.debug("Time to recompute neighbors: " + (endTime - currentTime));
+    }
+
+    public void recomputeNeighbors(TreeSet<Integer> oldRegionIds, int startRow, int startCol, int endRow, int endCol, ArrayList<Integer> neighborIds) {
+        for (int neighborId : neighborIds) {
+            groups.get(neighborId).getNeighborIds().removeAll(oldRegionIds);
+        }
+        recomputeNeighborsEfficiently(startRow, startCol, endRow, endCol);
+    }
+
+    public void recomputeNeighbors(int regionId, int startRow, int startCol, int endRow, int endCol, ArrayList<Integer> neighborIds) {
+        // Remove regionId from neighbors
+        for (int neighborId : neighborIds) {
+            groups.get(neighborId).getNeighborIds().remove(regionId);
+        }
+
+        recomputeNeighborsEfficiently(startRow, startCol, endRow, endCol);
+    }
+
+    public void recomputeNeighborsEfficiently(int startRow, int startCol, int endRow, int endCol) {
+        long currentTime = System.currentTimeMillis();
+
+        // Make sure I am within bounds
+        int startOuterLoop = Math.max(startRow - 1, 0);
+        int endOuterLoop = Math.min(endRow + 1, rows);
+        int startInnerLoop = Math.max(startCol - 1, 0);
+        int endInnerLoop = Math.min(endCol + 1, cols);
+
+        // Iterate over sector where wall change happened and its borders
+        for (int r = startOuterLoop; r < endOuterLoop; r++) {
+            for (int c = startInnerLoop; c < endInnerLoop; c++) {
+                int val = squares[r][c];
+
+                if (isWall(r, c)) {
+                    continue;
+                }
+
+                GroupRecord rec = groups.get(val);
+                if (rec == null) {
+                    logger.warn("Unable to find group: " + val + " for row: " + r + " col: " + c + " id: " + getId(r, c));
+                    continue;
+                }
+
+                if (isInBounds(r - 1, c) && !isWall(r - 1, c) && squares[r - 1][c] != val)    // Above
+                    rec.getNeighborIds().add(squares[r - 1][c]);
+                if (isInBounds(r - 1, c + 1) && !isWall(r - 1, c + 1) && squares[r - 1][c + 1] != val) // Top right
+                    rec.getNeighborIds().add(squares[r - 1][c + 1]);
+                if (isInBounds(r, c + 1) && !isWall(r, c + 1) && squares[r][c + 1] != val) // Right
+                    rec.getNeighborIds().add(squares[r][c + 1]);
+                if (isInBounds(r + 1, c + 1) && !isWall(r + 1, c + 1) && squares[r + 1][c + 1] != val) // Bottom right
+                    rec.getNeighborIds().add(squares[r + 1][c + 1]);
+                if (isInBounds(r + 1, c) && !isWall(r + 1, c) && squares[r + 1][c] != val) // Bottom
+                    rec.getNeighborIds().add(squares[r + 1][c]);
+                if (isInBounds(r + 1, c - 1) && !isWall(r + 1, c - 1) && squares[r + 1][c - 1] != val) // Bottom left
+                    rec.getNeighborIds().add(squares[r + 1][c - 1]);
+                if (isInBounds(r, c - 1) && !isWall(r, c - 1) && squares[r][c - 1] != val) // Left
+                    rec.getNeighborIds().add(squares[r][c - 1]);
+                if (isInBounds(r - 1, c - 1) && !isWall(r - 1, c - 1) && squares[r - 1][c - 1] != val) // Top left
+                    rec.getNeighborIds().add(squares[r - 1][c - 1]);
+            }
+        }
+
         long endTime = System.currentTimeMillis();
         logger.debug("Time to recompute neighbors: " + (endTime - currentTime));
     }
@@ -800,7 +863,7 @@ public class GameMap {
     }
 
 
-	// This version has no cutoff and inserts random seeds.
+    // This version has no cutoff and inserts random seeds.
     public GameMap reachableAbstract(SearchAbstractAlgorithm searchAlg, DBStatsRecord dbstat) {
         // Idea: Keep adding squares to current one until no longer all elements are reachable in greedy fashion
         int currentNum = 0;
@@ -872,7 +935,6 @@ public class GameMap {
     }
 
 
-
     /**
      * This code iterates over the map and uses BFS within each sector (sectors are gridSize x gridSize squares) to
      * compute regions and mark them on the baseMap (number them starting at START_NUM = 50)
@@ -908,7 +970,7 @@ public class GameMap {
                         int col = startCol + c; // pointer to a col
 
                         // If this state is valid and isn't a wall and is ' '
-                        if (baseMap.isValid(row, col) && !baseMap.isWall(row, col) && baseMap.squares[row][col] == ' ') {
+                        if (baseMap.isInBounds(row, col) && !baseMap.isWall(row, col) && baseMap.squares[row][col] == ' ') {
                             // Open cell for abstraction - perform constrained BFS within this sector to label all nodes in sector
                             currentNum++;
                             numRegionsInSector++;
@@ -989,7 +1051,7 @@ public class GameMap {
 
                 // if this state is valid and isn't a wall and is in the region to be recomputed:
                 // open cell for abstraction - perform constrained BFS within this sector to label all nodes in sector
-                if (map.isValid(row, col) && !map.isWall(row, col) && map.squares[row][col] == ' ') {
+                if (map.isInBounds(row, col) && !map.isWall(row, col) && map.squares[row][col] == ' ') {
                     // grab next free spot from the database
                     currentNum = dbBW.popFreeSpace();
                     numRegionsInSector++;
@@ -1242,14 +1304,9 @@ public class GameMap {
         }
     }
 
-    public void drawPoints(String fileName, SearchState[] points) {
+    public void drawPoints(String fileName, SearchState[] points, Color color) {
         if (points != null) {    // Make a mask for the map for the path
-            Color color;
             SparseMask currentMask = new SparseMask();
-            HashMap<String, String> used = new HashMap<>();
-
-            // colour point in red
-            color = Color.RED;
 
             for (SearchState point : points) {
                 ChangeRecord rec = new ChangeRecord(getRow(point.getId()), getCol(point.getId()), color, 1);
