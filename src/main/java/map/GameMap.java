@@ -796,12 +796,12 @@ public class GameMap {
     public void recomputeNeighborsEfficiently(int startRow, int startCol, int endRow, int endCol) {
         long currentTime = System.currentTimeMillis();
 
-        // Iterate over sector where wall change happened and update regions inside
-        for (int r = startRow; r < endRow; r++) {
-            for (int c = startCol; c < endCol; c++) {
+        // Iterate over sector where wall change happened and its borders
+        for (int r = startRow - 1; r < endRow + 1; r++) {
+            for (int c = startCol - 1; c < endCol + 1; c++) {
                 int val = squares[r][c];
 
-                if (isWall(val)) {
+                if (isWall(r, c)) {
                     continue;
                 }
 
@@ -810,6 +810,7 @@ public class GameMap {
                     logger.warn("Unable to find group: " + val + " for row: " + r + " col: " + c + " id: " + getId(r, c));
                     continue;
                 }
+
                 if (isInBounds(r - 1, c) && !isWall(r - 1, c) && squares[r - 1][c] != val)    // Above
                     rec.getNeighborIds().add(squares[r - 1][c]);
                 if (isInBounds(r - 1, c + 1) && !isWall(r - 1, c + 1) && squares[r - 1][c + 1] != val) // Top right
@@ -826,79 +827,6 @@ public class GameMap {
                     rec.getNeighborIds().add(squares[r][c - 1]);
                 if (isInBounds(r - 1, c - 1) && !isWall(r - 1, c - 1) && squares[r - 1][c - 1] != val) // Top left
                     rec.getNeighborIds().add(squares[r - 1][c - 1]);
-
-            }
-        }
-
-        // Iterate along top of sector
-        for (int c = startCol; c < endCol; c++) {
-            int val = squares[startRow - 1][c];
-            // searchStates[c - startCol] = new SearchState(this.getId(startRow - 1, c));
-            if (isWall(val)) {
-                continue;
-            }
-
-            GroupRecord rec = groups.get(val);
-            if (rec == null) {
-                logger.warn("Unable to find group: " + val + " for row: " + startRow + " col: " + c + " id: " + getId(startRow, c));
-                continue;
-            }
-            if (isInBounds(startRow, c) && !isWall(startRow, c) && squares[startRow][c] != val) {
-                rec.getNeighborIds().add(squares[startRow][c]);
-            }
-        }
-
-        // Iterate along RHS of sector
-        for (int r = startRow; r < endRow; r++) {
-            int val = squares[r][endCol];
-
-            if (isWall(val)) {
-                continue;
-            }
-
-            GroupRecord rec = groups.get(val);
-            if (rec == null) {
-                logger.warn("Unable to find group: " + val + " for row: " + r + " col: " + endCol + " id: " + getId(r, endCol));
-                continue;
-            }
-            if (isInBounds(r, endCol - 1) && !isWall(r, endCol - 1) && squares[r][endCol - 1] != val) {
-                rec.getNeighborIds().add(squares[r][endCol - 1]);
-            }
-        }
-
-        // Iterate along bottom of sector
-        for (int c = startCol; c < endCol; c++) {
-            int val = squares[endRow][c];
-
-            if (isWall(val)) {
-                continue;
-            }
-
-            GroupRecord rec = groups.get(val);
-            if (rec == null) {
-                logger.warn("Unable to find group: " + val + " for row: " + startRow + " col: " + c + " id: " + getId(startRow, c));
-                continue;
-            }
-            if (isInBounds(endRow - 1, c) && !isWall(endRow - 1, c) && squares[endRow - 1][c] != val) {
-                rec.getNeighborIds().add(squares[endRow - 1][c]);
-            }
-        }
-
-        // Iterate along LHS of sector
-        for (int r = startRow; r < endRow; r++) {
-            int val = squares[r][startCol - 1];
-
-            if (isWall(val)) {
-                continue;
-            }
-
-            GroupRecord rec = groups.get(val);
-            if (rec == null) {
-                logger.warn("Unable to find group: " + val + " for row: " + r + " col: " + endCol + " id: " + getId(r, endCol));
-                continue;
-            }
-            if (isInBounds(r, startCol) && !isWall(r, startCol) && squares[r][startCol] != val) {
-                rec.getNeighborIds().add(squares[r][startCol]);
             }
         }
 
