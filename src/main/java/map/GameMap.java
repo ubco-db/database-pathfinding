@@ -796,9 +796,15 @@ public class GameMap {
     public void recomputeNeighborsEfficiently(int startRow, int startCol, int endRow, int endCol) {
         long currentTime = System.currentTimeMillis();
 
+        // Make sure I am within bounds
+        int startOuterLoop = Math.max(startRow - 1, 0);
+        int endOuterLoop = Math.min(endRow + 1, rows);
+        int startInnerLoop = Math.max(startCol - 1, 0);
+        int endInnerLoop = Math.min(endCol + 1, cols);
+
         // Iterate over sector where wall change happened and its borders
-        for (int r = startRow - 1; r < endRow + 1; r++) {
-            for (int c = startCol - 1; c < endCol + 1; c++) {
+        for (int r = startOuterLoop; r < endOuterLoop; r++) {
+            for (int c = startInnerLoop; c < endInnerLoop; c++) {
                 int val = squares[r][c];
 
                 if (isWall(r, c)) {
