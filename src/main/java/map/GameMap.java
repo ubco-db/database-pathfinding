@@ -793,48 +793,53 @@ public class GameMap {
         recomputeNeighborsEfficiently(startRow, startCol, endRow, endCol);
     }
 
-    public void recomputeNeighborsEfficiently(int startRow, int startCol, int endRow, int endCol) {    // Only computes the neighbor group ids for each group not the list of neighbor cells
-        // IDEA: Perform one pass through map updating group records everytime encounter new neighbor
-
+    public void recomputeNeighborsEfficiently(int startRow, int startCol, int endRow, int endCol) {
         long currentTime = System.currentTimeMillis();
 
         // Iterate over sector where wall change happened and update regions inside
+        // SearchState[] searchStates = new SearchState[(endRow - startRow )*(endCol - startCol)];
+        // int i = 0;
         for (int r = startRow; r < endRow; r++) {
             for (int c = startCol; c < endCol; c++) {
-                if (!isWall(r, c)) {
-                    int val = squares[r][c];
-                    if (isWall(val)) {
-                        continue;
-                    }
+                // searchStates[i++] = new SearchState(this.getId(r, c));
+                int val = squares[r][c];
 
-                    GroupRecord rec = groups.get(val);
-                    if (rec == null) {
-                        logger.warn("Unable to find group: " + val + " for row: " + r + " col: " + c + " id: " + getId(r, c));
-                        continue;
-                    }
-                    if (isInBounds(r - 1, c) && !isWall(r - 1, c) && squares[r - 1][c] != val)    // Above
-                        rec.getNeighborIds().add(squares[r - 1][c]);
-                    if (isInBounds(r - 1, c + 1) && !isWall(r - 1, c + 1) && squares[r - 1][c + 1] != val) // Top right
-                        rec.getNeighborIds().add(squares[r - 1][c + 1]);
-                    if (isInBounds(r, c + 1) && !isWall(r, c + 1) && squares[r][c + 1] != val) // Right
-                        rec.getNeighborIds().add(squares[r][c + 1]);
-                    if (isInBounds(r + 1, c + 1) && !isWall(r + 1, c + 1) && squares[r + 1][c + 1] != val) // Bottom right
-                        rec.getNeighborIds().add(squares[r + 1][c + 1]);
-                    if (isInBounds(r + 1, c) && !isWall(r + 1, c) && squares[r + 1][c] != val) // Bottom
-                        rec.getNeighborIds().add(squares[r + 1][c]);
-                    if (isInBounds(r + 1, c - 1) && !isWall(r + 1, c - 1) && squares[r + 1][c - 1] != val) // Bottom left
-                        rec.getNeighborIds().add(squares[r + 1][c - 1]);
-                    if (isInBounds(r, c - 1) && !isWall(r, c - 1) && squares[r][c - 1] != val) // Left
-                        rec.getNeighborIds().add(squares[r][c - 1]);
-                    if (isInBounds(r - 1, c - 1) && !isWall(r - 1, c - 1) && squares[r - 1][c - 1] != val) // Top left
-                        rec.getNeighborIds().add(squares[r - 1][c - 1]);
+                if (isWall(val)) {
+                    continue;
                 }
+
+                GroupRecord rec = groups.get(val);
+                if (rec == null) {
+                    logger.warn("Unable to find group: " + val + " for row: " + r + " col: " + c + " id: " + getId(r, c));
+                    continue;
+                }
+                if (isInBounds(r - 1, c) && !isWall(r - 1, c) && squares[r - 1][c] != val)    // Above
+                    rec.getNeighborIds().add(squares[r - 1][c]);
+                if (isInBounds(r - 1, c + 1) && !isWall(r - 1, c + 1) && squares[r - 1][c + 1] != val) // Top right
+                    rec.getNeighborIds().add(squares[r - 1][c + 1]);
+                if (isInBounds(r, c + 1) && !isWall(r, c + 1) && squares[r][c + 1] != val) // Right
+                    rec.getNeighborIds().add(squares[r][c + 1]);
+                if (isInBounds(r + 1, c + 1) && !isWall(r + 1, c + 1) && squares[r + 1][c + 1] != val) // Bottom right
+                    rec.getNeighborIds().add(squares[r + 1][c + 1]);
+                if (isInBounds(r + 1, c) && !isWall(r + 1, c) && squares[r + 1][c] != val) // Bottom
+                    rec.getNeighborIds().add(squares[r + 1][c]);
+                if (isInBounds(r + 1, c - 1) && !isWall(r + 1, c - 1) && squares[r + 1][c - 1] != val) // Bottom left
+                    rec.getNeighborIds().add(squares[r + 1][c - 1]);
+                if (isInBounds(r, c - 1) && !isWall(r, c - 1) && squares[r][c - 1] != val) // Left
+                    rec.getNeighborIds().add(squares[r][c - 1]);
+                if (isInBounds(r - 1, c - 1) && !isWall(r - 1, c - 1) && squares[r - 1][c - 1] != val) // Top left
+                    rec.getNeighborIds().add(squares[r - 1][c - 1]);
+
             }
         }
 
+        // this.drawPoints("neighborRecomp.png", searchStates, Color.YELLOW);
+
         // Iterate along top of sector
+        // searchStates = new SearchState[endCol - startCol];
         for (int c = startCol; c < endCol; c++) {
             int val = squares[startRow - 1][c];
+            // searchStates[c - startCol] = new SearchState(this.getId(startRow - 1, c));
             if (isWall(val)) {
                 continue;
             }
@@ -849,9 +854,14 @@ public class GameMap {
             }
         }
 
+        // this.drawPoints("neighborRecompTop.png", searchStates, Color.YELLOW);
+
         // Iterate along RHS of sector
+        // searchStates = new SearchState[endRow - startRow];
         for (int r = startRow; r < endRow; r++) {
-            int val = squares[r][endCol + 1];
+            int val = squares[r][endCol];
+            // searchStates[r - startRow] = new SearchState(this.getId(r, endCol));
+
             if (isWall(val)) {
                 continue;
             }
@@ -861,14 +871,19 @@ public class GameMap {
                 logger.warn("Unable to find group: " + val + " for row: " + r + " col: " + endCol + " id: " + getId(r, endCol));
                 continue;
             }
-            if (isInBounds(r, endCol) && !isWall(r, endCol) && squares[r][endCol] != val) {
-                rec.getNeighborIds().add(squares[r][endCol]);
+            if (isInBounds(r, endCol - 1) && !isWall(r, endCol - 1) && squares[r][endCol - 1] != val) {
+                rec.getNeighborIds().add(squares[r][endCol - 1]);
             }
         }
 
+        // this.drawPoints("neighborRecompRHS.png", searchStates, Color.RED);
+
         // Iterate along bottom of sector
+        // searchStates = new SearchState[endCol- startCol];
         for (int c = startCol; c < endCol; c++) {
-            int val = squares[endRow + 1][c];
+            int val = squares[endRow][c];
+            // searchStates[c - startCol] = new SearchState(this.getId(endRow, c));
+
             if (isWall(val)) {
                 continue;
             }
@@ -878,14 +893,19 @@ public class GameMap {
                 logger.warn("Unable to find group: " + val + " for row: " + startRow + " col: " + c + " id: " + getId(startRow, c));
                 continue;
             }
-            if (isInBounds(endRow, c) && !isWall(endRow, c) && squares[endRow][c] != val) {
-                rec.getNeighborIds().add(squares[endRow][c]);
+            if (isInBounds(endRow - 1, c) && !isWall(endRow - 1, c) && squares[endRow - 1][c] != val) {
+                rec.getNeighborIds().add(squares[endRow - 1][c]);
             }
         }
 
+        // this.drawPoints("neighborRecompBottom.png", searchStates, Color.GREEN);
+
         // Iterate along LHS of sector
+        // searchStates = new SearchState[endRow - startRow];
         for (int r = startRow; r < endRow; r++) {
             int val = squares[r][startCol - 1];
+            // searchStates[r - startRow] = new SearchState(this.getId(r, startCol - 1));
+
             if (isWall(val)) {
                 continue;
             }
@@ -899,6 +919,8 @@ public class GameMap {
                 rec.getNeighborIds().add(squares[r][startCol]);
             }
         }
+
+        // this.drawPoints("neighborRecompLHS.png", searchStates, Color.BLUE);
 
         long endTime = System.currentTimeMillis();
         logger.debug("Time to recompute neighbors: " + (endTime - currentTime));
@@ -1368,14 +1390,9 @@ public class GameMap {
         }
     }
 
-    public void drawPoints(String fileName, SearchState[] points) {
+    public void drawPoints(String fileName, SearchState[] points, Color color) {
         if (points != null) {    // Make a mask for the map for the path
-            Color color;
             SparseMask currentMask = new SparseMask();
-            HashMap<String, String> used = new HashMap<>();
-
-            // colour point in red
-            color = Color.RED;
 
             for (SearchState point : points) {
                 ChangeRecord rec = new ChangeRecord(getRow(point.getId()), getCol(point.getId()), color, 1);
