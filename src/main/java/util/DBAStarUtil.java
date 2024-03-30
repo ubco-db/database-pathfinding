@@ -1003,6 +1003,7 @@ public class DBAStarUtil {
                                 newRec.groupId = groupId;
                                 newRec.groupRepId = map.getId(row, col);
                                 newRec.setNumStates(1);
+                                newRec.setNeighborIds(new HashSet<>());
                                 map.addGroup(groupId, newRec);
                                 newRecs[count++] = newRec;
                             } else {    // Update group
@@ -1286,6 +1287,7 @@ public class DBAStarUtil {
                                     newRec.groupId = groupId;
                                     newRec.groupRepId = map.getId(row, col);
                                     newRec.setNumStates(1);
+                                    newRec.setNeighborIds(new HashSet<>());
                                     map.addGroup(groupId, newRec);
                                     newRecs[count++] = newRec;
                                 } else {    // Update group
