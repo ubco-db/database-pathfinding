@@ -577,10 +577,8 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             // Assign neighbourId
             this.neighbors[neighbourLoc][len] = groupLoc;
 
-            path = astar.computePath(new SearchState(groups.get(neighbourLoc + GameMap.START_NUM).groupRepId), new SearchState(groups.get(regionId).groupRepId), stats);
-            SearchUtil.computePathCost(path, stats, problem);
-            pathCost = stats.getPathCost();
-
+            // Reverse path
+            path = new ArrayList<>(path.reversed());
             // Assign lowest cost and new path
             this.lowestCost[neighbourLoc][len] = pathCost;
             this.paths[neighbourLoc][len] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
