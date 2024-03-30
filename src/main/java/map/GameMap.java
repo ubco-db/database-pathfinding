@@ -777,6 +777,103 @@ public class GameMap {
         logger.debug("Time to recompute neighbors: " + (endTime - currentTime));
     }
 
+    public void recomputeNeighbors(int regionId, int startRow, int startCol, int endRow, int endCol, ArrayList<Integer> neighborIds) {    // Only computes the neighbor group ids for each group not the list of neighbor cells
+        // IDEA: Perform one pass through map updating group records everytime encounter new neighbor
+
+        // Remove regionId from neighbors
+        for (int neighborId : neighborIds) {
+            groups.get(neighborId).getNeighborIds().remove(regionId);
+        }
+
+        long currentTime = System.currentTimeMillis();
+
+        // Iterate over sector where wall change happened and update regions inside
+        for (int r = startRow; r < endRow; r++) {
+            for (int c = startCol; c < endCol; c++) {
+                if (!isWall(r, c)) {
+                    int val = squares[r][c];
+                    GroupRecord rec = groups.get(val);
+                    if (rec == null) {
+                        logger.warn("Unable to find group: " + val + " for row: " + r + " col: " + c + " id: " + getId(r, c));
+                        continue;
+                    }
+                    if (isInBounds(r - 1, c) && !isWall(r - 1, c) && squares[r - 1][c] != val)    // Above
+                        rec.getNeighborIds().add(squares[r - 1][c]);
+                    if (isInBounds(r - 1, c + 1) && !isWall(r - 1, c + 1) && squares[r - 1][c + 1] != val) // Top right
+                        rec.getNeighborIds().add(squares[r - 1][c + 1]);
+                    if (isInBounds(r, c + 1) && !isWall(r, c + 1) && squares[r][c + 1] != val) // Right
+                        rec.getNeighborIds().add(squares[r][c + 1]);
+                    if (isInBounds(r + 1, c + 1) && !isWall(r + 1, c + 1) && squares[r + 1][c + 1] != val) // Bottom right
+                        rec.getNeighborIds().add(squares[r + 1][c + 1]);
+                    if (isInBounds(r + 1, c) && !isWall(r + 1, c) && squares[r + 1][c] != val) // Bottom
+                        rec.getNeighborIds().add(squares[r + 1][c]);
+                    if (isInBounds(r + 1, c - 1) && !isWall(r + 1, c - 1) && squares[r + 1][c - 1] != val) // Bottom left
+                        rec.getNeighborIds().add(squares[r + 1][c - 1]);
+                    if (isInBounds(r, c - 1) && !isWall(r, c - 1) && squares[r][c - 1] != val) // Left
+                        rec.getNeighborIds().add(squares[r][c - 1]);
+                    if (isInBounds(r - 1, c - 1) && !isWall(r - 1, c - 1) && squares[r - 1][c - 1] != val) // Top left
+                        rec.getNeighborIds().add(squares[r - 1][c - 1]);
+                }
+            }
+        }
+
+        // Iterate along top of sector
+        for (int c = startCol; c < endCol; c++) {
+            int val = squares[startRow - 1][c];
+            // TODO: Check that val != 42?
+            GroupRecord rec = groups.get(val);
+            if (rec == null) {
+                logger.warn("Unable to find group: " + val + " for row: " + startRow + " col: " + c + " id: " + getId(startRow, c));
+                continue;
+            }
+            if (isInBounds(startRow, c) && !isWall(startRow, c) && squares[startRow][c] != val) {
+                rec.getNeighborIds().add(squares[startRow][c]);
+            }
+        }
+
+        // Iterate along RHS of sector
+        for (int r = startRow; r < endRow; r++) {
+            int val = squares[r][endCol + 1];
+            GroupRecord rec = groups.get(val);
+            if (rec == null) {
+                logger.warn("Unable to find group: " + val + " for row: " + r + " col: " + endCol + " id: " + getId(r, endCol));
+                continue;
+            }
+            if (isInBounds(r, endCol) && !isWall(r, endCol) && squares[r][endCol] != val) {
+                rec.getNeighborIds().add(squares[r][endCol]);
+            }
+        }
+
+        // Iterate along bottom of sector
+        for (int c = startCol; c < endCol; c++) {
+            int val = squares[endRow + 1][c];
+            GroupRecord rec = groups.get(val);
+            if (rec == null) {
+                logger.warn("Unable to find group: " + val + " for row: " + startRow + " col: " + c + " id: " + getId(startRow, c));
+                continue;
+            }
+            if (isInBounds(endRow, c) && !isWall(endRow, c) && squares[endRow][c] != val) {
+                rec.getNeighborIds().add(squares[endRow][c]);
+            }
+        }
+
+        // Iterate along LHS of sector
+        for (int r = startRow; r < endRow; r++) {
+            int val = squares[r][startCol - 1];
+            GroupRecord rec = groups.get(val);
+            if (rec == null) {
+                logger.warn("Unable to find group: " + val + " for row: " + r + " col: " + endCol + " id: " + getId(r, endCol));
+                continue;
+            }
+            if (isInBounds(r, startCol) && !isWall(r, startCol) && squares[r][startCol] != val) {
+                rec.getNeighborIds().add(squares[r][startCol]);
+            }
+        }
+
+        long endTime = System.currentTimeMillis();
+        logger.debug("Time to recompute neighbors: " + (endTime - currentTime));
+    }
+
     public int generateRandomState() {
         int r, c;
         do {
