@@ -780,7 +780,7 @@ public class DBAStarUtil {
         }
 
         // Get representative of region wall was placed in
-        final int REGION_REP = map.getRegionRepFromRegionId(REGION_ID);
+        final int REGION_REP = map.getRegionRepFromRegionId(REGION_ID); // 8424
 
         // If the region rep is tombstoned
         if (REGION_REP == -1) {
@@ -909,7 +909,7 @@ public class DBAStarUtil {
                     int newRegionRep = map.recomputeCentroid(REGION_ID, groupRecord, START_ROW, END_ROW, START_COL, END_COL);
 
                     if (REGION_REP != newRegionRep) {
-                        dbBW.recomputeBasePaths(REGION_ID, problem, groups);
+                        dbBW.recomputeBasePaths(REGION_ID, problem, groups); // 1016
                     }
 
                     return;
@@ -927,12 +927,12 @@ public class DBAStarUtil {
             // TODO: Do the start points for these paths make sense?
             if (isVerticalWall || isBetweenVertical) {
                 // Check that we can still reach west to east without leaving the region
-                verticalPartition = !isPathPossible(map.squares, new int[]{WALL_ROW, WALL_COL - 1}, new int[]{WALL_ROW, WALL_COL + 1}, REGION_ID);
+                verticalPartition = !isPathPossible(map.squares, new int[]{WALL_ROW, WALL_COL - 1}, new int[]{WALL_ROW, WALL_COL + 1}, REGION_ID); // 2062
             }
 
             if (isHorizontalWall || isBetweenHorizontal) {
                 // Check that we can still reach north to south without leaving the region
-                horizontalPartition = !isPathPossible(map.squares, new int[]{WALL_ROW - 1, WALL_COL}, new int[]{WALL_ROW + 1, WALL_COL}, REGION_ID);
+                horizontalPartition = !isPathPossible(map.squares, new int[]{WALL_ROW - 1, WALL_COL}, new int[]{WALL_ROW + 1, WALL_COL}, REGION_ID); // 2594
             }
 
             // If the diagonal state is open, but the cardinal ones surrounding it are not, we may have partition
@@ -980,13 +980,13 @@ public class DBAStarUtil {
                 }
 
                 // Adding the regionId to the freeSpace array in the database
-                dbBW.pushFreeSpace(REGION_ID);
+                dbBW.pushFreeSpace(REGION_ID); // 1117
 
                 // Perform abstraction (go over sector and recompute regions), this updates free space
-                int numRegionsInSector = map.sectorReAbstractWithFreeSpace(START_ROW, START_COL, END_ROW, END_COL, REGION_ID, map, dbBW);
+                int numRegionsInSector = map.sectorReAbstractWithFreeSpace(START_ROW, START_COL, END_ROW, END_COL, REGION_ID, map, dbBW); // 6324
 
                 // Tombstone group record in groups map (recreate it later)
-                map.addGroup(REGION_ID, null);
+                map.addGroup(REGION_ID, null); // 16158
 
                 int count = 0;
                 GroupRecord[] newRecs = new GroupRecord[numRegionsInSector];
@@ -1004,7 +1004,7 @@ public class DBAStarUtil {
                                 newRec.groupRepId = map.getId(row, col);
                                 newRec.setNumStates(1);
                                 newRec.setNeighborIds(new HashSet<>());
-                                map.addGroup(groupId, newRec);
+                                map.addGroup(groupId, newRec); // 13656
                                 newRecs[count++] = newRec;
                             } else {    // Update group
                                 rec.incrementNumStates();
@@ -1021,20 +1021,20 @@ public class DBAStarUtil {
                 }
 
                 // Recompute neighbourhood
-                map.recomputeNeighbors(REGION_ID, START_ROW, START_COL, END_ROW, END_COL, neighborIds);
+                map.recomputeNeighbors(REGION_ID, START_ROW, START_COL, END_ROW, END_COL, neighborIds); // 7160
 
                 // Database changes
-                dbBW.recomputeBasePathsAfterPartition(problem, groups, neighborIds); // 40ms
+                dbBW.recomputeBasePathsAfterPartition(problem, groups, neighborIds); // 262039
                 return;
             }
 
             groupRecord.decrementNumStates();
 
             // Compute newRegionRep (it may or may not be the same as before)
-            map.recomputeCentroid(REGION_ID, groupRecord, START_ROW, END_ROW, START_COL, END_COL);
+            map.recomputeCentroid(REGION_ID, groupRecord, START_ROW, END_ROW, START_COL, END_COL); // 15504
 
             // Database changes
-            dbBW.recomputeBasePaths(REGION_ID, problem, groups); // 600ms
+            dbBW.recomputeBasePaths(REGION_ID, problem, groups); // 2085714
         }
     }
 
@@ -1122,7 +1122,7 @@ public class DBAStarUtil {
                     // Get region id of current neighbour state of wall (if it is not a wall)
                     int neighbourRegion = map.getRegionFromState(neighbourState);
                     // Store neighbour regions in set
-                    neighbouringRegions.add(neighbourRegion);
+                    neighbouringRegions.add(neighbourRegion); // 10782
                     // If the neighbour state is in the same sector as the wall
                     if (neighbourSector == SECTOR_ID) {
                         // If there is multiple regions with the same sector id touching the wall being removed, we would have a merge case
@@ -1166,7 +1166,7 @@ public class DBAStarUtil {
                 map.addGroup(regionId, newRec);
 
                 // Database changes
-                dbBW.recomputeBasePathsIfConnected(regionId, problem, groups, neighbouringRegions);
+                dbBW.recomputeBasePathsIfConnected(regionId, problem, groups, neighbouringRegions); // 1034
                 return;
             }
 
@@ -1204,7 +1204,7 @@ public class DBAStarUtil {
             HashSet<Integer> neighboursFromGroupRec = groupRecord.getNeighborIds();
             // Removing the set of neighbours of the region from the neighbour states of the wall. If there are any elements
             // left, the wall must have at least one neighbour state that is not currently considered a neighbour
-            neighbouringRegions.removeAll(neighboursFromGroupRec);
+            neighbouringRegions.removeAll(neighboursFromGroupRec); // 3456
             neighbouringRegions.remove(regionId);
             if (!neighbouringRegions.isEmpty()) {
                 // neighbouringRegions contains all regions the removed wall was touching
@@ -1258,7 +1258,7 @@ public class DBAStarUtil {
                             neighborIdsSet.addAll(groups.get(neighbouringRegionInSameSector).getNeighborIds());
                         }
                         // Tombstone group record in groups map (recreate it later)
-                        map.addGroup(neighbouringRegionInSameSector, null);
+                        map.addGroup(neighbouringRegionInSameSector, null); // 6186
                     }
 
                     // Remove regions that will merge
@@ -1270,7 +1270,7 @@ public class DBAStarUtil {
 
                     // Perform abstraction (go over sector and recompute regions), this updates free space
                     // TODO: Should I even pass regionId here?
-                    int numRegionsInSector = map.sectorReAbstractWithFreeSpace(START_ROW, START_COL, END_ROW, END_COL, regionId, map, dbBW);
+                    int numRegionsInSector = map.sectorReAbstractWithFreeSpace(START_ROW, START_COL, END_ROW, END_COL, regionId, map, dbBW); // 2422
 
                     int count = 0;
                     GroupRecord[] newRecs = new GroupRecord[numRegionsInSector];
@@ -1288,7 +1288,7 @@ public class DBAStarUtil {
                                     newRec.groupRepId = map.getId(row, col);
                                     newRec.setNumStates(1);
                                     newRec.setNeighborIds(new HashSet<>());
-                                    map.addGroup(groupId, newRec);
+                                    map.addGroup(groupId, newRec); // 4041
                                     newRecs[count++] = newRec;
                                 } else {    // Update group
                                     rec.incrementNumStates();
@@ -1305,10 +1305,10 @@ public class DBAStarUtil {
                     }
 
                     // Recompute neighbourhood
-                    map.recomputeNeighbors(neighbouringRegionsInSameSector, START_ROW, START_COL, END_ROW, END_COL, neighborIds);
+                    map.recomputeNeighbors(neighbouringRegionsInSameSector, START_ROW, START_COL, END_ROW, END_COL, neighborIds); // 2283
 
                     // Database changes
-                    dbBW.recomputeBasePathsAfterPartition(problem, groups, neighborIds);
+                    dbBW.recomputeBasePathsAfterPartition(problem, groups, neighborIds); // 103651
 //                }
                 return;
             }
@@ -1316,10 +1316,10 @@ public class DBAStarUtil {
             groupRecord.incrementNumStates();
 
             // Compute newRegionRep (it may or may not be the same as before)
-            map.recomputeCentroid(regionId, groupRecord, START_ROW, END_ROW, START_COL, END_COL);
+            map.recomputeCentroid(regionId, groupRecord, START_ROW, END_ROW, START_COL, END_COL); // 14090
 
             // Database changes
-            dbBW.recomputeBasePaths(regionId, problem, groups); // 590ms
+            dbBW.recomputeBasePaths(regionId, problem, groups); // 1990480
         }
     }
 
