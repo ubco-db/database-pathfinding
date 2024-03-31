@@ -503,6 +503,8 @@ public class DBAStarUtil {
             // Group rep id does not need to be computed using compute centroids logic since it must be where the wall was removed
             newRec.groupRepId = map.getId(WALL_ROW, WALL_COL);
             newRec.setNumStates(1);
+            newRec.setNeighborIds(new HashSet<>());
+
             // Add the new group record to the groups map
             map.addGroup(regionId, newRec);
 
@@ -706,6 +708,7 @@ public class DBAStarUtil {
                                     newRec.groupId = groupId;
                                     newRec.groupRepId = map.getId(row, col);
                                     newRec.setNumStates(1);
+                                    newRec.setNeighborIds(new HashSet<>());
                                     map.addGroup(groupId, newRec);
                                     newRecs[count++] = newRec;
                                 } else {    // Update group
@@ -1098,6 +1101,7 @@ public class DBAStarUtil {
             // Group rep id does not need to be computed using compute centroids logic since it must be where the wall was removed
             newRec.groupRepId = map.getId(WALL_ROW, WALL_COL);
             newRec.setNumStates(1);
+            newRec.setNeighborIds(new HashSet<>());
             // Add the new group record to the groups map
             map.addGroup(regionId, newRec);
 
