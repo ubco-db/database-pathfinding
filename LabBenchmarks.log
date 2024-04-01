@@ -69,3 +69,39 @@ Time taken for AStar pathfinding: 6606551
 Adding and removing wall on goal (all starts, all goals, 012.map) before finding path (reverse base paths and improved neighbor recomp):
 
 Number of goals: 6176
+Time taken for DBAStar pathfinding: 5601545
+Time taken for AStar pathfinding: 6651323
+
+
+No map changes (all starts, all goals, 012.map) before finding path:
+
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 551920
+Time taken for AStar pathfinding: 6831679
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 552752
+Time taken for AStar pathfinding: 6820106
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 554231
+Time taken for AStar pathfinding: 6818808
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 552984
+Time taken for AStar pathfinding: 6814802
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 553892
+Time taken for AStar pathfinding: 6862273
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 554231
+Time taken for AStar pathfinding: 6853892
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 555759
+Time taken for AStar pathfinding: 6913315
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 557126
+Time taken for AStar pathfinding: 6874180
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 554833
+Time taken for AStar pathfinding: 6868357
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 555855
+Time taken for AStar pathfinding: 6870310

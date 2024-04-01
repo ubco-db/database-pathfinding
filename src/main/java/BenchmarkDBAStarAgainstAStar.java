@@ -31,7 +31,7 @@ public class BenchmarkDBAStarAgainstAStar {
             }
         }
 
-//        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10; i++) {
             // Print number of goals
             logger.info("Number of goals: " + goalIds.size());
 
@@ -42,8 +42,8 @@ public class BenchmarkDBAStarAgainstAStar {
 
             for (int startId : goalIds) {
                 for (int goalId : goalIds) {
-                    dbaStarUtil.recomputeWallAdditionNoLogging(goalId, dbaStar);
-                    dbaStarUtil.recomputeWallRemovalNoLogging(goalId, dbaStar);
+//                    dbaStarUtil.recomputeWallAdditionNoLogging(goalId, dbaStar);
+//                    dbaStarUtil.recomputeWallRemovalNoLogging(goalId, dbaStar);
                     dbaStar.computePath(new SearchState(startId), new SearchState(goalId), new StatsRecord());
                 }
             }
@@ -60,6 +60,6 @@ public class BenchmarkDBAStarAgainstAStar {
             }
             logger.info("Time taken for AStar pathfinding: " + (System.currentTimeMillis() - startTimeAStar));
 
-//        }
+        }
     }
 }
