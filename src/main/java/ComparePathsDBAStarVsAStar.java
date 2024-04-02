@@ -7,8 +7,6 @@ import search.SearchState;
 import search.StatsRecord;
 import util.DBAStarUtil;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 
 public class ComparePathsDBAStarVsAStar {
@@ -54,11 +52,11 @@ public class ComparePathsDBAStarVsAStar {
             int goalIdWithMaxSuboptimalityLocal = -1;
             int startIdWithMaxSuboptimalityLocal = -1;
 
-            for (int startId: goalIds) {
+            for (int startId : goalIds) {
                 if (startId != goalId) {
                     StatsRecord dbaStats = new StatsRecord();
-//                dbaStarUtil.recomputeWallAdditionNoLogging(goalId, dbaStar);
-//                dbaStarUtil.recomputeWallRemovalNoLogging(goalId, dbaStar);
+                    dbaStarUtil.recomputeWallAdditionNoLogging(goalId, dbaStar);
+                    dbaStarUtil.recomputeWallRemovalNoLogging(goalId, dbaStar);
                     ArrayList<SearchState> path = dbaStar.computePath(new SearchState(startId), new SearchState(goalId), dbaStats);
 
                     StatsRecord aStarStats = new StatsRecord();
@@ -87,7 +85,7 @@ public class ComparePathsDBAStarVsAStar {
 
             if (maxSuboptimalityGlobal < maxSuboptimalityLocal) {
                 maxSuboptimalityGlobal = maxSuboptimalityLocal;
-                goalIdWithMaxSuboptimalityGlobal= goalIdWithMaxSuboptimalityLocal;
+                goalIdWithMaxSuboptimalityGlobal = goalIdWithMaxSuboptimalityLocal;
                 startIdWithMaxSuboptimalityGlobal = startIdWithMaxSuboptimalityLocal;
             }
 
