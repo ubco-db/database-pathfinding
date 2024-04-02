@@ -7,6 +7,8 @@ import search.SearchState;
 import search.StatsRecord;
 import util.DBAStarUtil;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 
 public class ComparePathsDBAStarVsAStar {
@@ -20,9 +22,6 @@ public class ComparePathsDBAStarVsAStar {
     private static final Logger logger = LogManager.getLogger(ComparePathsDBAStarVsAStar.class);
 
     public static void main(String[] args) throws Exception {
-        // Fix start
-        int startId = 13411;
-
         GameMap startingMap = new GameMap(PATH_TO_MAP, GRID_SIZE);
 
         ArrayList<Integer> goalIds = new ArrayList<>();
@@ -34,9 +33,6 @@ public class ComparePathsDBAStarVsAStar {
             }
         }
 
-        // Remove startStateId from list of goals
-        goalIds.remove((Integer) startId);
-
         // Print number of goals
         logger.info("Number of goals: " + goalIds.size());
 
@@ -44,40 +40,48 @@ public class ComparePathsDBAStarVsAStar {
         DBAStar dbaStar = dbaStarUtil.computeDBAStarDatabase(startingMap, "");
         AStar aStar = new AStar(dbaStar.getProblem());
 
+        // Map is used to generate images
         GameMap map = dbaStar.getMap();
 
         double maxSuboptimality = -1;
-        double averageSuboptimality = 0;
+        BigDecimal averageSuboptimality = new BigDecimal(0);
 
         int goalIdWithMaxSuboptimality = -1;
+        int startIdWithMaxSuboptimality = -1;
 
         for (int goalId : goalIds) {
-            StatsRecord dbaStats = new StatsRecord();
+            for (int startId: goalIds) {
 //            dbaStarUtil.recomputeWallAdditionNoLogging(goalId, dbaStar);
 //            dbaStarUtil.recomputeWallRemovalNoLogging(goalId, dbaStar);
-            dbaStarUtil.recomputeWallAdditionNoChecks(goalId, dbaStar);
-            dbaStarUtil.recomputeWallRemovalNoChecks(goalId, dbaStar);
-            ArrayList<SearchState> path = dbaStar.computePath(new SearchState(startId), new SearchState(goalId), dbaStats);
-            StatsRecord aStarStats = new StatsRecord();
-            ArrayList<SearchState> optimalPath = aStar.computePath(new SearchState(startId), new SearchState(goalId), aStarStats);
-            logger.info("AStar path cost: " + aStarStats.getPathCost() + " DBAStar path cost: " + dbaStats.getPathCost());
-            double subOptimality = ((((double) dbaStats.getPathCost()) / aStarStats.getPathCost()) - 1) * 100.0;
-            logger.info("Suboptimality: " + subOptimality);
-            averageSuboptimality += subOptimality;
 
-            if (maxSuboptimality < subOptimality) {
-                maxSuboptimality = subOptimality;
-                goalIdWithMaxSuboptimality = goalId;
-            }
+                StatsRecord dbaStats = new StatsRecord();
+                dbaStarUtil.recomputeWallAdditionNoChecks(goalId, dbaStar);
+                dbaStarUtil.recomputeWallRemovalNoChecks(goalId, dbaStar);
+                ArrayList<SearchState> path = dbaStar.computePath(new SearchState(startId), new SearchState(goalId), dbaStats);
 
-            if (path == null || path.isEmpty()) {
-                logger.warn(String.format("No path was found between %d and %d!", startId, goalId));
-                // map.computeCentroidMap().outputImage(DBA_STAR_DB_PATH  + "path_" + startId + "_" + goalId + ".png", path, dbaStar.getSubgoals());
-                map.computeCentroidMap().outputImage(DBA_STAR_DB_PATH + "optimal_path_" + startId + "_" + goalId + ".png", optimalPath, dbaStar.getSubgoals());
+                StatsRecord aStarStats = new StatsRecord();
+                ArrayList<SearchState> optimalPath = aStar.computePath(new SearchState(startId), new SearchState(goalId), aStarStats);
+                logger.info("AStar path cost: " + aStarStats.getPathCost() + " DBAStar path cost: " + dbaStats.getPathCost());
+
+                double subOptimality = ((((double) dbaStats.getPathCost()) / aStarStats.getPathCost()) - 1) * 100.0;
+                logger.info("Suboptimality: " + subOptimality);
+                averageSuboptimality = averageSuboptimality.add(BigDecimal.valueOf(subOptimality));
+
+                if (maxSuboptimality < subOptimality) {
+                    maxSuboptimality = subOptimality;
+                    goalIdWithMaxSuboptimality = goalId;
+                    startIdWithMaxSuboptimality = startId;
+                }
+
+                if (path == null || path.isEmpty()) {
+                    logger.warn(String.format("No path was found between %d and %d!", startId, goalId));
+                    // map.computeCentroidMap().outputImage(DBA_STAR_DB_PATH  + "path_" + startId + "_" + goalId + ".png", path, dbaStar.getSubgoals());
+                    map.computeCentroidMap().outputImage(DBA_STAR_DB_PATH + "optimal_path_" + startId + "_" + goalId + ".png", optimalPath, dbaStar.getSubgoals());
+                }
             }
         }
 
-        logger.info("Average suboptimality: " + averageSuboptimality / goalIds.size());
-        logger.info("Max. suboptimality: " + maxSuboptimality + " for path from " + startId + " to " + goalIdWithMaxSuboptimality);
+        logger.info("Average suboptimality: " + averageSuboptimality.divide(BigDecimal.valueOf(goalIds.size()),5, RoundingMode.HALF_UP));
+        logger.info("Max. suboptimality: " + maxSuboptimality + " for path from " + startIdWithMaxSuboptimality + " to " + goalIdWithMaxSuboptimality);
     }
 }
