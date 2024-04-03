@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import search.*;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -418,6 +419,10 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
 
                 if (path == null) {
                     logger.error("Path from " + neighbourLoc + " to " + groupLoc + " is null");
+                    SearchState[] searchStates = new SearchState[2];
+                    searchStates[0] = new SearchState(groups.get(neighbourLoc + GameMap.START_NUM).groupRepId);
+                    searchStates[1] = new SearchState(groups.get(groupLoc + GameMap.START_NUM).groupRepId);
+                    problem.getMap().drawPoints("erroneousPath.png", searchStates, Color.YELLOW);
                 }
 
                 this.paths[groupLoc][i] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
@@ -481,10 +486,18 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
                 throw new Exception("There is an issue with the neighbours of region: " + regionId + ", region rep: " + groups.get(regionId).groupRepId);
             }
 
+            // Path
+            path = astar.computePath(new SearchState(groups.get(neighbourLoc + GameMap.START_NUM).groupRepId), new SearchState(groups.get(regionId).groupRepId), stats);
+            SearchUtil.computePathCost(path, stats, problem);
+            pathCost = stats.getPathCost();
+
             // Update lowestCost of neighbour
             this.lowestCost[neighbourLoc][indexToUpdate] = pathCost;
             // Update path to neighbour
-            path = new ArrayList<>(path.reversed());
+
+            // Reverse path
+            // path = new ArrayList<>(path.reversed());
+
             this.paths[neighbourLoc][indexToUpdate] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(new ArrayList<>(path)), searchAlg, tmp, path.size());
         }
     }
@@ -578,7 +591,13 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             this.neighbors[neighbourLoc][len] = groupLoc;
 
             // Reverse path
-            path = new ArrayList<>(path.reversed());
+            // path = new ArrayList<>(path.reversed());
+
+            // Path
+            path = astar.computePath(new SearchState(groups.get(neighbourLoc + GameMap.START_NUM).groupRepId), new SearchState(groups.get(regionId).groupRepId), stats);
+            SearchUtil.computePathCost(path, stats, problem);
+            pathCost = stats.getPathCost();
+
             // Assign lowest cost and new path
             this.lowestCost[neighbourLoc][len] = pathCost;
             this.paths[neighbourLoc][len] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
