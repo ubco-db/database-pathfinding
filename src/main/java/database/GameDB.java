@@ -216,16 +216,16 @@ public class GameDB {
         return baseTime;
     }
 
-    public SubgoalDynamicDB3 computeDynamicDBUsingSubgoalDynamicDB3(SubgoalDynamicDB3 db, SearchAbstractAlgorithm searchAlg, DBStatsRecord dbstats, int numLevels) {
+    public SubgoalDynamicDB3 computeDynamicDBUsingSubgoalDynamicDB3(SubgoalDynamicDB3 db, SearchAbstractAlgorithm searchAlg, int numLevels) {
         groups = problem.getGroups();
 
-        long current = System.currentTimeMillis();
+        // long current = System.currentTimeMillis();
         problem.computeNeighbors();
-        long neighborTime = System.currentTimeMillis() - current;
-        dbstats.addStat(18, neighborTime);
+        // long neighborTime = System.currentTimeMillis() - current;
+        // dbstats.addStat(18, neighborTime);
 
         // Generate subgoal databases using the groups
-        db.compute(problem, groups, searchAlg, dbstats, numLevels);
+        db.compute(problem, groups, searchAlg, numLevels);
 
         return db;
     }

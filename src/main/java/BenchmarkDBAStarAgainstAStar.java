@@ -35,6 +35,19 @@ public class BenchmarkDBAStarAgainstAStar {
             // Print number of goals
             logger.info("Number of goals: " + goalIds.size());
 
+            DBAStarUtil dbaStarUtil1 = new DBAStarUtil(1, MAP_FILE_NAME, DBA_STAR_DB_PATH);
+
+            long startTimeFullDBAStar = System.currentTimeMillis();
+
+            for (int startId : goalIds) {
+                for (int goalId : goalIds) {
+                    DBAStar dbaStar1 = dbaStarUtil1.computeDBAStarDatabase(startingMap, "");
+                    dbaStar1.computePath(new SearchState(startId), new SearchState(goalId), new StatsRecord());
+                }
+            }
+
+            logger.info("Time taken for full DBAStar pathfinding: " + (System.currentTimeMillis() - startTimeFullDBAStar));
+
             DBAStarUtil dbaStarUtil = new DBAStarUtil(1, MAP_FILE_NAME, DBA_STAR_DB_PATH);
             DBAStar dbaStar = dbaStarUtil.computeDBAStarDatabase(startingMap, "");
 
@@ -53,13 +66,13 @@ public class BenchmarkDBAStarAgainstAStar {
             AStar aStar = new AStar(dbaStar.getProblem());
 
             long startTimeAStar = System.currentTimeMillis();
+
             for (int startId : goalIds) {
                 for (int goalId : goalIds) {
                     aStar.computePath(new SearchState(startId), new SearchState(goalId), new StatsRecord());
                 }
             }
             logger.info("Time taken for AStar pathfinding: " + (System.currentTimeMillis() - startTimeAStar));
-
         }
     }
 }

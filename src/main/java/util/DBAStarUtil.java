@@ -35,53 +35,53 @@ public class DBAStarUtil {
     }
 
     public DBAStar computeDBAStarDatabase(GameMap map, String wallStatus) throws Exception {
-        long currentTime;
+        // long currentTime;
 
         SearchProblem problem = new MapSearchProblem(map);
         HillClimbing pathCompressAlgDba = new HillClimbing(problem, 10000);
 
         // Load abstract map and database
-        logger.debug("Loading database.");
+        // logger.debug("Loading database.");
 
         SubgoalDynamicDB3 database = new SubgoalDynamicDB3(); // DP matrix in adjacency list representation (computed at run-time)
 
         // String fileName = getDBName(wallStatus, map.getGridSize());
 
-        logger.debug("Loading map and performing abstraction...");
+        // logger.debug("Loading map and performing abstraction...");
 
         // GreedyHC map abstraction
-        DBStats dbStats = new DBStats();
-        DBStats.init(dbStats);
+//        DBStats dbStats = new DBStats();
+//        DBStats.init(dbStats);
 
-        DBStatsRecord rec = new DBStatsRecord(dbStats.getSize());
-        rec.addStat(0, "dbaStar (" + numNeighbourLevels + ")");
-        rec.addStat(1, map.getGridSize());
-        rec.addStat(3, cutoff);
-        rec.addStat(4, mapFileName);
-        rec.addStat(5, map.rows);
-        rec.addStat(6, map.cols);
+//        DBStatsRecord rec = new DBStatsRecord(dbStats.getSize());
+//        rec.addStat(0, "dbaStar (" + numNeighbourLevels + ")");
+//        rec.addStat(1, map.getGridSize());
+//        rec.addStat(3, cutoff);
+//        rec.addStat(4, mapFileName);
+//        rec.addStat(5, map.rows);
+//        rec.addStat(6, map.cols);
 
-        currentTime = System.currentTimeMillis();
+        // currentTime = System.currentTimeMillis();
         map = map.sectorAbstract2();
 
-        long resultTime = System.currentTimeMillis() - currentTime;
-        rec.addStat(12, resultTime);
-        rec.addStat(10, resultTime);
-        dbStats.addRecord(rec);
+        // long resultTime = System.currentTimeMillis() - currentTime;
+        // rec.addStat(12, resultTime);
+        // rec.addStat(10, resultTime);
+        // dbStats.addRecord(rec);
 
         SearchProblem tmpProb = new MapSearchProblem(map);
         GameDB gameDB = new GameDB(tmpProb);
 
-        logger.debug("Generating gameDB.");
-        currentTime = System.currentTimeMillis();
+        // logger.debug("Generating gameDB.");
+        // currentTime = System.currentTimeMillis();
 
-        database = gameDB.computeDynamicDBUsingSubgoalDynamicDB3(database, pathCompressAlgDba, rec, numNeighbourLevels);
-        logger.debug("Time to compute DBAStar gameDB: " + (System.currentTimeMillis() - currentTime));
+        database = gameDB.computeDynamicDBUsingSubgoalDynamicDB3(database, pathCompressAlgDba, numNeighbourLevels);
+        // logger.debug("Time to compute DBAStar gameDB: " + (System.currentTimeMillis() - currentTime));
 
-        dbStats.addRecord(rec);
+        // dbStats.addRecord(rec);
         database.setProblem(problem);
 
-        logger.debug("Databases loaded.");
+        // logger.debug("Databases loaded.");
 
         return new DBAStar(problem, map, database);
     }

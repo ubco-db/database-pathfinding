@@ -8,7 +8,7 @@
 <!--            <LevelRangeFilter minLevel="ERROR" maxLevel="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>-->
             <PatternLayout pattern="${layout}"/>
         </Console>
-        <File name="LogFile" fileName="ComparePathsDBAStarVsAStarAllStartsAllGoals.log">
+        <File name="LogFile" fileName="Test.log">
             <PatternLayout>
                 <Pattern>%m%n</Pattern>
             </PatternLayout>

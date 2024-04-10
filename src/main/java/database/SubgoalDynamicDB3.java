@@ -156,7 +156,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         }
     }
 
-    public void compute(SearchProblem problem, TreeMap<Integer, GroupRecord> groups, SearchAlgorithm searchAlg, DBStatsRecord dbStats, int numLevels) {
+    public void compute(SearchProblem problem, TreeMap<Integer, GroupRecord> groups, SearchAlgorithm searchAlg, int numLevels) {
         numGroups = groups.size();
         // Allocate arrays 10% larger than the current numRegions
         int arraySize = (int) (numGroups * 1.1);
@@ -172,18 +172,18 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             this.freeSpace[i] = arraySize - (i + 1) + GameMap.START_NUM;
         }
 
-        logger.debug("Initial free space allocation: " + Arrays.toString(freeSpace));
+        // logger.debug("Initial free space allocation: " + Arrays.toString(freeSpace));
 
-        long startTime = System.currentTimeMillis();
+        // long startTime = System.currentTimeMillis();
 
-        long baseTime = computeBasePaths2(problem, groups, searchAlg, numGroups, numLevels, true, dbStats);
+        computeBasePaths2(problem, groups, searchAlg, numGroups, numLevels, true);
 
-        long endTime = System.currentTimeMillis();
+        // long endTime = System.currentTimeMillis();
 
-        dbStats.addStat(16, baseTime);
-        long overallTime = endTime - startTime;
-        logger.debug("Total DB compute time: " + overallTime);
-        dbStats.addStat(10, overallTime);
+        // dbStats.addStat(16, baseTime);
+        // long overallTime = endTime - startTime;
+        // logger.debug("Total DB compute time: " + overallTime);
+        // dbStats.addStat(10, overallTime);
     }
 
     /**
@@ -193,24 +193,23 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
      * @param problem
      * @param groups
      * @param searchAlg
-     * @param dbStats
      * @param numLevels
      */
-    public long computeBasePaths2(SearchProblem problem, TreeMap<Integer, GroupRecord> groups, SearchAlgorithm searchAlg, int numGroups, int numLevels, boolean asSubgoals, DBStatsRecord dbStats) {
+    public void computeBasePaths2(SearchProblem problem, TreeMap<Integer, GroupRecord> groups, SearchAlgorithm searchAlg, int numGroups, int numLevels, boolean asSubgoals) {
         int goalGroupLoc, startGroupLoc;
         GroupRecord startGroup, goalGroup;
         HashSet<Integer> neighbors;
         AStar astar = new AStar(problem);
         ArrayList<SearchState> path;
         StatsRecord stats = new StatsRecord();
-        int numBase = 0;
+//        int numBase = 0;
 
-        logger.debug("Number of groups: " + numGroups);
-        long currentTime = System.currentTimeMillis();
+        // logger.debug("Number of groups: " + numGroups);
+//        long currentTime = System.currentTimeMillis();
 
         int[] tmp = new int[5000];
-        logger.debug("Creating base paths to neighbors.");
-        int numStates = 0;
+        // logger.debug("Creating base paths to neighbors.");
+//        int numStates = 0;
 
         for (int i = 0; i < numGroups; i++) {
             startGroup = groups.get(i + GameMap.START_NUM);
@@ -234,7 +233,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
                 goalGroup = groups.get(goalGroupId);
 
                 path = astar.computePath(new SearchState(startGroup.groupRepId), new SearchState(goalGroup.groupRepId), stats);
-                numBase++; // Is this the number of paths?
+//                numBase++; // Is this the number of paths?
 
                 goalGroupLoc = goalGroupId - GameMap.START_NUM;
 
@@ -247,22 +246,22 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
                 if (asSubgoals) { // This is always true?
                     this.paths[startGroupLoc][count] = SubgoalDB.convertPathToIds(path);
                     this.paths[startGroupLoc][count] = SearchUtil.compressPath(this.paths[startGroupLoc][count], searchAlg, tmp, path.size());
-                    numStates += this.paths[startGroupLoc][count].length;
+                    // numStates += this.paths[startGroupLoc][count].length;
                 } else {
                     this.paths[startGroupLoc][count] = SubgoalDB.convertPathToIds(path);
-                    numStates += path.size();
+                    // numStates += path.size();
                 }
                 count++;
             }
         }
 
-        long endTime = System.currentTimeMillis();
-        long baseTime = endTime - currentTime;
-        logger.debug("Time to compute base paths: " + (baseTime));
-        logger.debug("Base neighbors generated paths: " + numBase + " Number of states: " + numStates);
-        dbStats.addStat(9, numStates);        // Set number of subgoals.  Will be changed by a version that pre-computes all paths but will not be changed for the dynamic version.
-        dbStats.addStat(8, numBase);          // # of records (only corresponds to base paths)
-        return baseTime;
+//        long endTime = System.currentTimeMillis();
+//        long baseTime = endTime - currentTime;
+//        logger.debug("Time to compute base paths: " + (baseTime));
+//        logger.debug("Base neighbors generated paths: " + numBase + " Number of states: " + numStates);
+//        dbStats.addStat(9, numStates);        // Set number of subgoals.  Will be changed by a version that pre-computes all paths but will not be changed for the dynamic version.
+//        dbStats.addStat(8, numBase);          // # of records (only corresponds to base paths)
+//        return baseTime;
     }
 
     private void resizeFreeSpace() {
