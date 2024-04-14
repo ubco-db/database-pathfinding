@@ -59,7 +59,6 @@ public class BenchmarkDBAStarAgainstAStar {
                 }
             }
             logger.info("Time taken for AStar pathfinding: " + (System.currentTimeMillis() - startTimeAStar));
-
         }
     }
 }

@@ -14,7 +14,7 @@ public class RandomStartsAndGoals {
     final static String DB_PATH = "dynamic/databases/";
     final static String DBA_STAR_DB_PATH = DB_PATH + "checking_unequal_paths/";
     final static String MAP_FILE_PATH = "maps/dMap/";
-    final static String MAP_FILE_NAME = "012.map";
+    final static String MAP_FILE_NAME = "701.map";
     final static String PATH_TO_MAP = MAP_FILE_PATH + MAP_FILE_NAME;
     final static int GRID_SIZE = 16;
 
