@@ -326,8 +326,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             // Copying into smaller arrays here
             this.neighbors[neighbourLoc] = copyArrayExceptIndex(this.neighbors[neighbourLoc], indexOfRegionToEliminate);
             this.lowestCost[neighbourLoc] = copyArrayExceptIndex(this.lowestCost[neighbourLoc], indexOfRegionToEliminate);
-            // Simply setting path to null (not copying paths array)
-            this.paths[neighbourLoc][indexOfRegionToEliminate] = null;
+            this.paths[neighbourLoc] = copyArrayExceptIndex(this.paths[neighbourLoc], indexOfRegionToEliminate);
         }
         // Tombstone eliminated region
         this.neighbors[groupLoc] = null;
@@ -678,7 +677,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         
         this.neighbors[groupLoc] = copyArrayExceptIndex(this.neighbors[groupLoc], indexOfNeighborLoc);
         this.lowestCost[groupLoc] = copyArrayExceptIndex(this.lowestCost[groupLoc], indexOfNeighborLoc);
-        this.paths[groupLoc][indexOfNeighborLoc] = null;
+        this.paths[groupLoc] = copyArrayExceptIndex(this.paths[groupLoc], indexOfNeighborLoc);
 
         int indexOfGroupLoc = -1;
         for (int i = 0; i < this.neighbors[neighbourLoc].length; i++) {
@@ -695,7 +694,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
 
         this.neighbors[neighbourLoc] = copyArrayExceptIndex(this.neighbors[neighbourLoc], indexOfGroupLoc);
         this.lowestCost[neighbourLoc] = copyArrayExceptIndex(this.lowestCost[neighbourLoc], indexOfGroupLoc);
-        this.paths[neighbourLoc][indexOfGroupLoc] = null;
+        this.paths[neighbourLoc] = copyArrayExceptIndex(this.paths[neighbourLoc], indexOfGroupLoc);
     }
 
     /**
@@ -741,6 +740,22 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
      */
     private static int[] copyArrayExceptIndex(int[] arr, int index) {
         int[] newArr = new int[arr.length - 1];
+        int newIndex = 0;
+        for (int i = 0; i < arr.length; i++) {
+            if (i != index) {
+                newArr[newIndex++] = arr[i];
+            }
+        }
+        return newArr;
+    }
+
+    /**
+     * @param arr   array to copy
+     * @param index index to exclude while copying
+     * @return array of arr.length - 1 without the element at index
+     */
+    private static int[][] copyArrayExceptIndex(int[][] arr, int index) {
+        int[][] newArr = new int[arr.length - 1][];
         int newIndex = 0;
         for (int i = 0; i < arr.length; i++) {
             if (i != index) {
