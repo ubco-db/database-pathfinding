@@ -59,6 +59,8 @@ public class DBAStar implements SearchAlgorithm {
         int[] subgoalList;
         int currentIndex;
 
+        this.subgoals.clear();
+
         if (records != null && !records.isEmpty()) {
             currentRecord = records.getFirst();
 //            logger.debug(currentRecord);
@@ -105,6 +107,11 @@ public class DBAStar implements SearchAlgorithm {
 
                 if (newPath == null) {
                     logger.warn("DBAStar: Unable to find subgoal path between " + problem.idToString(currentStart.id) + " and " + problem.idToString(currentGoal.id));
+                    map.outputImage("error.png", path, subgoals);
+                    System.out.println(start.id);
+                    System.out.println(goal.id);
+                    SearchState[] searchStates = {new SearchState(currentStart), new SearchState(currentGoal)};
+                    map.drawPoints("error2.png", searchStates, Color.RED);
                     return null;
                 }
 
