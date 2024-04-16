@@ -238,8 +238,71 @@ public class DBAStarUtil {
             boolean isBetweenVertical = !isVerticalWall && isBetweenWallAndOtherRegion(NEIGHBOR_S, NEIGHBOR_N, REGION_ID);
             boolean isBetweenHorizontal = !isHorizontalWall && isBetweenWallAndOtherRegion(NEIGHBOR_W, NEIGHBOR_E, REGION_ID);
 
+            // If the diagonal state is open, but the cardinal ones surrounding it are not, we may have partition
+            boolean isOpenDiagonalNW = isOpenDiagonal(NEIGHBOR_W, NEIGHBOR_NW, NEIGHBOR_N);
+            boolean isOpenDiagonalNE = isOpenDiagonal(NEIGHBOR_N, NEIGHBOR_NE, NEIGHBOR_E);
+            boolean isOpenDiagonalSE = isOpenDiagonal(NEIGHBOR_E, NEIGHBOR_SE, NEIGHBOR_S);
+            boolean isOpenDiagonalSW = isOpenDiagonal(NEIGHBOR_S, NEIGHBOR_SW, NEIGHBOR_W);
+
+            boolean isPotentialPartition = isVerticalWall || isHorizontalWall || isBetweenVertical || isBetweenHorizontal || isOpenDiagonalNW || isOpenDiagonalNE || isOpenDiagonalSE || isOpenDiagonalSW;
+            boolean isPartition = false;
+
+            // Find first neighbour that is in same region as where the wall was placed
+            // Must exist since this is not elimination, must touch by construction
+
+            System.out.println(isPotentialPartition);
+
+            if (isPotentialPartition) {
+                // Get neighbour states
+                // Take first neighbour state that has same region id as state where wall was placed to start BFS
+                SearchState s = null;
+                ArrayList<SearchState> neighbourStates = map.getNeighbors(WALL_ROW, WALL_COL);
+                for (SearchState neighbourState : neighbourStates) {
+                    if (map.squares[map.getRow(neighbourState.id)][map.getCol(neighbourState.id)] == REGION_ID) {
+                        s = neighbourState;
+                        break;
+                    }
+                }
+
+                if (s == null) {
+                    throw new Exception("State without neighbours in same region!");
+                }
+
+                // Run BFS in sector and count states
+                Queue<Integer> stateIds = new LinkedList<>();
+                ExpandArray neighbors = new ExpandArray(10);
+
+                stateIds.add(s.id);
+                HashSet<Integer> visited = new HashSet<>();
+                visited.add(s.id);
+                while (!stateIds.isEmpty()) {
+                    int id = stateIds.remove();
+
+                    int row = map.getRow(id);
+                    int col = map.getCol(id);
+
+                    map.getNeighbors(row, col, neighbors);
+
+                    for (int n = 0; n < neighbors.num(); n++) {
+                        int nid = neighbors.get(n);
+                        int nr = map.getRow(nid);
+                        int nc = map.getCol(nid);
+                        if (map.isInRange(nr, nc, END_ROW, END_COL) && !visited.contains(nid)) {
+                            stateIds.add(nid);
+                            visited.add(nid);
+                        }
+                    }
+                }
+
+                if (visited.size() != groupRecord.getNumStates() - 1) {
+                    System.out.println("Visited num states: " + visited.size());
+                    System.out.println("Stored num states: " + groupRecord.getNumStates());
+                    isPartition = true;
+                }
+            }
+
             // If we are placing a wall in the corner of a sector, we may have a pathblocker case
-            if (isAtSectorEdge && !isBetweenVertical && !isBetweenHorizontal && !isVerticalWall && !isHorizontalWall) {
+            if (!isPartition && isAtSectorEdge && !isBetweenVertical && !isBetweenHorizontal && !isVerticalWall && !isHorizontalWall) {
                 boolean isNorthEdge = WALL_ROW == START_ROW;
                 boolean isEastEdge = WALL_COL == END_COL;
                 boolean isSouthEdge = WALL_ROW == END_ROW;
@@ -312,54 +375,7 @@ public class DBAStarUtil {
             }
 
             // Region Partition case
-
-            boolean verticalPartition = false;
-            boolean horizontalPartition = false;
-            boolean diagonalPartition;
-
-            // TODO: Do the start points for these paths make sense?
-            if (isVerticalWall || isBetweenVertical) {
-                // Check that we can still reach west to east without leaving the region
-                verticalPartition = !isPathPossible(map.squares, new int[]{WALL_ROW, WALL_COL - 1}, new int[]{WALL_ROW, WALL_COL + 1}, REGION_ID);
-            }
-
-            if (isHorizontalWall || isBetweenHorizontal) {
-                // Check that we can still reach north to south without leaving the region
-                horizontalPartition = !isPathPossible(map.squares, new int[]{WALL_ROW - 1, WALL_COL}, new int[]{WALL_ROW + 1, WALL_COL}, REGION_ID);
-            }
-
-            // If the diagonal state is open, but the cardinal ones surrounding it are not, we may have partition
-            boolean isOpenDiagonalNW = isOpenDiagonal(NEIGHBOR_W, NEIGHBOR_NW, NEIGHBOR_N);
-            boolean isOpenDiagonalNE = isOpenDiagonal(NEIGHBOR_N, NEIGHBOR_NE, NEIGHBOR_E);
-            boolean isOpenDiagonalSE = isOpenDiagonal(NEIGHBOR_E, NEIGHBOR_SE, NEIGHBOR_S);
-            boolean isOpenDiagonalSW = isOpenDiagonal(NEIGHBOR_S, NEIGHBOR_SW, NEIGHBOR_W);
-
-            boolean partitionNW = false;
-            boolean partitionNE = false;
-            boolean partitionSE = false;
-            boolean partitionSW = false;
-
-            // TODO: Do the start points for these paths make sense? Can we collapse cases?
-            if (isOpenDiagonalNW) {
-                // Check whether we can still reach southeast to northwest
-                partitionNW = !isPathPossible(map.squares, new int[]{WALL_ROW + 1, WALL_COL + 1}, new int[]{WALL_ROW - 1, WALL_COL - 1}, REGION_ID);
-            }
-            if (isOpenDiagonalNE) {
-                // Check whether we can still reach southwest to northeast
-                partitionNE = !isPathPossible(map.squares, new int[]{WALL_ROW + 1, WALL_COL - 1}, new int[]{WALL_ROW - 1, WALL_COL + 1}, REGION_ID);
-            }
-            if (isOpenDiagonalSE) {
-                // Check whether we can still reach northwest to southeast
-                partitionSE = !isPathPossible(map.squares, new int[]{WALL_ROW - 1, WALL_COL - 1}, new int[]{WALL_ROW + 1, WALL_COL + 1}, REGION_ID);
-            }
-            if (isOpenDiagonalSW) {
-                // Check whether we can still reach northeast to southwest
-                partitionSW = !isPathPossible(map.squares, new int[]{WALL_ROW - 1, WALL_COL + 1}, new int[]{WALL_ROW + 1, WALL_COL - 1}, REGION_ID);
-            }
-
-            diagonalPartition = partitionNW || partitionNE || partitionSE || partitionSW;
-
-            if (verticalPartition || horizontalPartition || diagonalPartition) {
+            if (isPartition) {
                 logger.info("Addition: Region Partition Case (wall at " + wallLoc + ")");
                 // Get neighbours
                 ArrayList<Integer> neighborIds = new ArrayList<>(groupRecord.getNeighborIds());
@@ -850,8 +866,71 @@ public class DBAStarUtil {
             boolean isBetweenVertical = !isVerticalWall && isBetweenWallAndOtherRegion(NEIGHBOR_S, NEIGHBOR_N, REGION_ID);
             boolean isBetweenHorizontal = !isHorizontalWall && isBetweenWallAndOtherRegion(NEIGHBOR_W, NEIGHBOR_E, REGION_ID);
 
+            // If the diagonal state is open, but the cardinal ones surrounding it are not, we may have partition
+            boolean isOpenDiagonalNW = isOpenDiagonal(NEIGHBOR_W, NEIGHBOR_NW, NEIGHBOR_N);
+            boolean isOpenDiagonalNE = isOpenDiagonal(NEIGHBOR_N, NEIGHBOR_NE, NEIGHBOR_E);
+            boolean isOpenDiagonalSE = isOpenDiagonal(NEIGHBOR_E, NEIGHBOR_SE, NEIGHBOR_S);
+            boolean isOpenDiagonalSW = isOpenDiagonal(NEIGHBOR_S, NEIGHBOR_SW, NEIGHBOR_W);
+
+            boolean isPotentialPartition = isVerticalWall || isHorizontalWall || isBetweenVertical || isBetweenHorizontal || isOpenDiagonalNW || isOpenDiagonalNE || isOpenDiagonalSE || isOpenDiagonalSW;
+            boolean isPartition = false;
+
+            // Find first neighbour that is in same region as where the wall was placed
+            // Must exist since this is not elimination, must touch by construction
+
+            System.out.println(isPotentialPartition);
+
+            if (isPotentialPartition) {
+                // Get neighbour states
+                // Take first neighbour state that has same region id as state where wall was placed to start BFS
+                SearchState s = null;
+                ArrayList<SearchState> neighbourStates = map.getNeighbors(WALL_ROW, WALL_COL);
+                for (SearchState neighbourState : neighbourStates) {
+                    if (map.squares[map.getRow(neighbourState.id)][map.getCol(neighbourState.id)] == REGION_ID) {
+                        s = neighbourState;
+                        break;
+                    }
+                }
+
+                if (s == null) {
+                    throw new Exception("State without neighbours in same region!");
+                }
+
+                // Run BFS in sector and count states
+                Queue<Integer> stateIds = new LinkedList<>();
+                ExpandArray neighbors = new ExpandArray(10);
+
+                stateIds.add(s.id);
+                HashSet<Integer> visited = new HashSet<>();
+                visited.add(s.id);
+                while (!stateIds.isEmpty()) {
+                    int id = stateIds.remove();
+
+                    int row = map.getRow(id);
+                    int col = map.getCol(id);
+
+                    map.getNeighbors(row, col, neighbors);
+
+                    for (int n = 0; n < neighbors.num(); n++) {
+                        int nid = neighbors.get(n);
+                        int nr = map.getRow(nid);
+                        int nc = map.getCol(nid);
+                        if (map.isInRange(nr, nc, END_ROW, END_COL) && !visited.contains(nid)) {
+                            stateIds.add(nid);
+                            visited.add(nid);
+                        }
+                    }
+                }
+
+                if (visited.size() != groupRecord.getNumStates() - 1) {
+                    System.out.println("Visited num states: " + visited.size());
+                    System.out.println("Stored num states: " + groupRecord.getNumStates());
+                    isPartition = true;
+                }
+            }
+
             // If we are placing a wall in the corner of a sector, we may have a pathblocker case
-            if (isAtSectorEdge && !isBetweenVertical && !isBetweenHorizontal && !isVerticalWall && !isHorizontalWall) {
+            if (!isPartition && isAtSectorEdge && !isBetweenVertical && !isBetweenHorizontal && !isVerticalWall && !isHorizontalWall) {
                 boolean isNorthEdge = WALL_ROW == START_ROW;
                 boolean isEastEdge = WALL_COL == END_COL;
                 boolean isSouthEdge = WALL_ROW == END_ROW;
@@ -923,54 +1002,7 @@ public class DBAStarUtil {
 
             // Region Partition case
 
-//            boolean verticalPartition = false;
-//            boolean horizontalPartition = false;
-//            boolean diagonalPartition;
-//
-//            // TODO: Do the start points for these paths make sense?
-//            if (isVerticalWall || isBetweenVertical) {
-//                // Check that we can still reach west to east without leaving the region
-//                verticalPartition = !isPathPossible(map.squares, new int[]{WALL_ROW, WALL_COL - 1}, new int[]{WALL_ROW, WALL_COL + 1}, REGION_ID); // 2062
-//            }
-//
-//            if (isHorizontalWall || isBetweenHorizontal) {
-//                // Check that we can still reach north to south without leaving the region
-//                horizontalPartition = !isPathPossible(map.squares, new int[]{WALL_ROW - 1, WALL_COL}, new int[]{WALL_ROW + 1, WALL_COL}, REGION_ID); // 2594
-//            }
-//
-//            // If the diagonal state is open, but the cardinal ones surrounding it are not, we may have partition
-            boolean isOpenDiagonalNW = isOpenDiagonal(NEIGHBOR_W, NEIGHBOR_NW, NEIGHBOR_N);
-            boolean isOpenDiagonalNE = isOpenDiagonal(NEIGHBOR_N, NEIGHBOR_NE, NEIGHBOR_E);
-            boolean isOpenDiagonalSE = isOpenDiagonal(NEIGHBOR_E, NEIGHBOR_SE, NEIGHBOR_S);
-            boolean isOpenDiagonalSW = isOpenDiagonal(NEIGHBOR_S, NEIGHBOR_SW, NEIGHBOR_W);
-//
-//            boolean partitionNW = false;
-//            boolean partitionNE = false;
-//            boolean partitionSE = false;
-//            boolean partitionSW = false;
-//
-//            // TODO: Do the start points for these paths make sense? Can we collapse cases?
-//            if (isOpenDiagonalNW) {
-//                // Check whether we can still reach southeast to northwest
-//                partitionNW = !isPathPossible(map.squares, new int[]{WALL_ROW + 1, WALL_COL + 1}, new int[]{WALL_ROW - 1, WALL_COL - 1}, REGION_ID);
-//            }
-//            if (isOpenDiagonalNE) {
-//                // Check whether we can still reach southwest to northeast
-//                partitionNE = !isPathPossible(map.squares, new int[]{WALL_ROW + 1, WALL_COL - 1}, new int[]{WALL_ROW - 1, WALL_COL + 1}, REGION_ID);
-//            }
-//            if (isOpenDiagonalSE) {
-//                // Check whether we can still reach northwest to southeast
-//                partitionSE = !isPathPossible(map.squares, new int[]{WALL_ROW - 1, WALL_COL - 1}, new int[]{WALL_ROW + 1, WALL_COL + 1}, REGION_ID);
-//            }
-//            if (isOpenDiagonalSW) {
-//                // Check whether we can still reach northeast to southwest
-//                partitionSW = !isPathPossible(map.squares, new int[]{WALL_ROW - 1, WALL_COL + 1}, new int[]{WALL_ROW + 1, WALL_COL - 1}, REGION_ID);
-//            }
-//
-//            diagonalPartition = partitionNW || partitionNE || partitionSE || partitionSW;
-
-            if (isBetweenVertical || isVerticalWall || isBetweenHorizontal || isHorizontalWall || isOpenDiagonalNE || isOpenDiagonalNW || isOpenDiagonalSE || isOpenDiagonalSW) {
-
+            if (isPartition) {
                 // Get neighbours
                 ArrayList<Integer> neighborIds = new ArrayList<>(groupRecord.getNeighborIds());
 
