@@ -1037,12 +1037,12 @@ public class DBAStarUtil {
                             if (rec == null) {    // New group
                                 GroupRecord newRec = new GroupRecord();
                                 newRec.groupId = groupId;
-                                newRec.groupRepId = map.getId(row, col);
+                                newRec.groupRepId = -1;
                                 newRec.setNumStates(1);
                                 newRec.setNeighborIds(new HashSet<>());
                                 map.addGroup(groupId, newRec); // 13656
                                 newRecs[count++] = newRec;
-                            } else {    // Update group
+                            } else if (rec.groupRepId == -1){    // Update group
                                 rec.incrementNumStates();
                             }
                         }
@@ -1327,7 +1327,7 @@ public class DBAStarUtil {
                                     newRec.setNeighborIds(new HashSet<>());
                                     map.addGroup(groupId, newRec); // 4041
                                     newRecs[count++] = newRec;
-                                } else {    // Update group
+                                } else if (neighbouringRegionsInSameSector.contains(groupId)) {    // Update group
                                     rec.incrementNumStates();
                                 }
                             }
