@@ -7,6 +7,7 @@ import map.GameMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 public class DBAStar implements SearchAlgorithm {
@@ -34,6 +35,8 @@ public class DBAStar implements SearchAlgorithm {
 
         long startTime = System.nanoTime(), endTime;
 
+        this.subgoals.clear();
+
         // Search the database for records
         int startRegionId = map.getRegionFromState(start.id);
         int goalRegionId = map.getRegionFromState(goal.id);
@@ -58,8 +61,6 @@ public class DBAStar implements SearchAlgorithm {
         SubgoalDBRecord currentRecord;
         int[] subgoalList;
         int currentIndex;
-
-        this.subgoals.clear();
 
         if (records != null && !records.isEmpty()) {
             currentRecord = records.getFirst();
