@@ -250,8 +250,6 @@ public class DBAStarUtil {
             // Find first neighbour that is in same region as where the wall was placed
             // Must exist since this is not elimination, must touch by construction
 
-            System.out.println(isPotentialPartition);
-
             if (isPotentialPartition) {
                 // Get neighbour states
                 // Take first neighbour state that has same region id as state where wall was placed to start BFS
@@ -877,8 +875,6 @@ public class DBAStarUtil {
 
             // Find first neighbour that is in same region as where the wall was placed
             // Must exist since this is not elimination, must touch by construction
-
-            System.out.println(isPotentialPartition);
 
             if (isPotentialPartition) {
                 // Get neighbour states
