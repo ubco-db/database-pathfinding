@@ -35,7 +35,7 @@ public class RandomStartsAndGoals {
 
         logger.info("Number of open states: " + openStates.size());
 
-        int NUM_PATHS = 100_000;
+        int NUM_PATHS = 38_142_976;
 
         for (int i = 0; i < 10; i++) {
             // Find 100_000 random start and 1_000_000 random goals
