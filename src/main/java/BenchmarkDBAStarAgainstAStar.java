@@ -42,13 +42,24 @@ public class BenchmarkDBAStarAgainstAStar {
 
             for (int startId : goalIds) {
                 for (int goalId : goalIds) {
-//                    dbaStarUtil.recomputeWallAdditionNoLogging(goalId, dbaStar);
-//                    dbaStarUtil.recomputeWallRemovalNoLogging(goalId, dbaStar);
+                    dbaStarUtil.recomputeWallAdditionNoLogging(goalId, dbaStar);
+                    dbaStarUtil.recomputeWallRemovalNoLogging(goalId, dbaStar);
                     dbaStar.computePath(new SearchState(startId), new SearchState(goalId), new StatsRecord());
                 }
             }
 
-            logger.info("Time taken for DBAStar pathfinding: " + (System.currentTimeMillis() - startTimeDBAStar));
+            logger.info("Time taken for DBAStar pathfinding (partial recomputation): " + (System.currentTimeMillis() - startTimeDBAStar));
+
+            long startTimeFullDBAStar = System.currentTimeMillis();
+
+            for (int startId : goalIds) {
+                for (int goalId : goalIds) {
+                    dbaStar = dbaStarUtil.computeDBAStarDatabase(startingMap, "");
+                    dbaStar.computePath(new SearchState(startId), new SearchState(goalId), new StatsRecord());
+                }
+            }
+
+            logger.info("Time taken for DBAStar pathfinding (full recomputation): " + (System.currentTimeMillis() - startTimeFullDBAStar));
 
             AStar aStar = new AStar(dbaStar.getProblem());
 
