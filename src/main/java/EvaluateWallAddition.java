@@ -1,6 +1,6 @@
 import dynamic.Walls;
 import map.GameMap;
-import search.DBAStar3;
+import search.DBAStar;
 import search.SearchState;
 import util.DBAStarUtil;
 
@@ -37,7 +37,7 @@ public class EvaluateWallAddition {
         startTime = System.currentTimeMillis();
 
         // Compute full database
-        DBAStar3 dbaStarBW = dbaStarUtil.computeDBAStarDatabase(startingMap, "BW"); // BW = before wall
+        DBAStar dbaStarBW = dbaStarUtil.computeDBAStarDatabase(startingMap, "BW"); // BW = before wall
         dbaStarUtil.getDBAStarPath(startId, goalId, "BW", dbaStarBW);
 
         endTime = System.currentTimeMillis();
@@ -73,7 +73,7 @@ public class EvaluateWallAddition {
         // Recompute entire database to see if I matched it and compute path after full recomputation
         Walls.addWall(PATH_TO_MAP, wallLocation, startingMap);
         startingMap = new GameMap(PATH_TO_MAP, GRID_SIZE);
-        DBAStar3 dbaStarAW = dbaStarUtil.computeDBAStarDatabase(startingMap, "AW"); // AW = after wall
+        DBAStar dbaStarAW = dbaStarUtil.computeDBAStarDatabase(startingMap, "AW"); // AW = after wall
         dbaStarUtil.getDBAStarPath(startId, goalId, "AW", dbaStarAW);
 
         endTime = System.currentTimeMillis();

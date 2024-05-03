@@ -1,0 +1,107 @@
+Adding and removing wall on goal (all starts, all goals, 012.map) before finding path:
+
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 9029099
+Time taken for AStar pathfinding: 6483676
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 8979095
+Time taken for AStar pathfinding: 6493620
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 8955790
+Time taken for AStar pathfinding: 6489819
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 8975214
+Time taken for AStar pathfinding: 6472180
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 8974305
+Time taken for AStar pathfinding: 6480160
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 8962215
+Time taken for AStar pathfinding: 6478236
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 8966367
+Time taken for AStar pathfinding: 6494082
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 8936873
+Time taken for AStar pathfinding: 6479032
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 8960513
+Time taken for AStar pathfinding: 6498074
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 8952942
+Time taken for AStar pathfinding: 6496378
+
+
+Adding and removing wall on goal (all starts, all goals, 012.map) before finding path (reverse base paths):
+
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 5509185
+Time taken for AStar pathfinding: 6607533
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 5510537
+Time taken for AStar pathfinding: 6568853
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 5541465
+Time taken for AStar pathfinding: 6597873
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 5528472
+Time taken for AStar pathfinding: 6603317
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 5559631
+Time taken for AStar pathfinding: 6596792
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 5554496
+Time taken for AStar pathfinding: 6602412
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 5537101
+Time taken for AStar pathfinding: 6607586
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 5497743
+Time taken for AStar pathfinding: 6616951
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 5571504
+Time taken for AStar pathfinding: 6608293
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 5567708
+Time taken for AStar pathfinding: 6606551
+
+
+Adding and removing wall on goal (all starts, all goals, 012.map) before finding path (reverse base paths and improved neighbor recomp):
+
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 5601545
+Time taken for AStar pathfinding: 6651323
+
+
+No map changes (all starts, all goals, 012.map) before finding path:
+
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 551920
+Time taken for AStar pathfinding: 6831679
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 552752
+Time taken for AStar pathfinding: 6820106
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 554231
+Time taken for AStar pathfinding: 6818808
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 552984
+Time taken for AStar pathfinding: 6814802
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 553892
+Time taken for AStar pathfinding: 6862273
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 554231
+Time taken for AStar pathfinding: 6853892
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 555759
+Time taken for AStar pathfinding: 6913315
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 557126
+Time taken for AStar pathfinding: 6874180
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 554833
+Time taken for AStar pathfinding: 6868357
+Number of goals: 6176
+Time taken for DBAStar pathfinding: 555855
+Time taken for AStar pathfinding: 6870310

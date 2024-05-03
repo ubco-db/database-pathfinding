@@ -1,6 +1,6 @@
 import dynamic.Walls;
 import map.GameMap;
-import search.DBAStar3;
+import search.DBAStar;
 import search.SearchState;
 import util.DBAStarUtil;
 
@@ -27,7 +27,7 @@ public class EvaluateWallRemoval {
         GameMap startingMap = new GameMap(PATH_TO_MAP, GRID_SIZE);
 
         // Build DBAStar Database with starting map and compute path on starting map
-        DBAStar3 dbaStarBW = dbaStarUtil.computeDBAStarDatabase(startingMap, "BW"); // BW = before wall
+        DBAStar dbaStarBW = dbaStarUtil.computeDBAStarDatabase(startingMap, "BW"); // BW = before wall
         dbaStarUtil.getDBAStarPath(startId, goalId, "BW", dbaStarBW);
 
         // Set wall
@@ -62,7 +62,7 @@ public class EvaluateWallRemoval {
         // Recompute entire database to see if I matched it and compute path after full recomputation
         Walls.removeWall(PATH_TO_MAP, wallLocation, startingMap);
         startingMap = new GameMap(PATH_TO_MAP, GRID_SIZE);
-        DBAStar3 dbaStarRW = dbaStarUtil.computeDBAStarDatabase(startingMap, "RW"); // RW = removed wall
+        DBAStar dbaStarRW = dbaStarUtil.computeDBAStarDatabase(startingMap, "RW"); // RW = removed wall
         dbaStarUtil.getDBAStarPath(startId, goalId, "RW", dbaStarRW);
 
         endTime = System.currentTimeMillis();

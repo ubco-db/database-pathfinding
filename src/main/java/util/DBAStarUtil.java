@@ -34,7 +34,7 @@ public class DBAStarUtil {
         this.dbaStarDbPath = dbaStarDbPath;
     }
 
-    public DBAStar3 computeDBAStarDatabase(GameMap map, String wallStatus) throws Exception {
+    public DBAStar computeDBAStarDatabase(GameMap map, String wallStatus) throws Exception {
         long currentTime;
 
         SearchProblem problem = new MapSearchProblem(map);
@@ -83,37 +83,37 @@ public class DBAStarUtil {
 
         logger.debug("Databases loaded.");
 
-        return new DBAStar3(problem, map, database);
+        return new DBAStar(problem, map, database);
     }
 
     /**
      * @param startId  state id for start of path
      * @param goalId   state id for start of path
-     * @param dbaStar3 DBAStar3 object
+     * @param dbaStar DBAStar object
      * @return path as ArrayList of SearchStates
      */
-    public ArrayList<SearchState> getDBAStarPath(int startId, int goalId, DBAStar3 dbaStar3) {
+    public ArrayList<SearchState> getDBAStarPath(int startId, int goalId, DBAStar dbaStar) {
         StatsRecord stats = new StatsRecord();
         SearchState start = new SearchState(startId);
         SearchState goal = new SearchState(goalId);
 
         // ArrayList<SearchState> subgoals = dbaStar.getSubgoals();
-        return dbaStar3.computePath(start, goal, stats);
+        return dbaStar.computePath(start, goal, stats);
     }
 
     /**
      * @param startId    state id for start of path
      * @param goalId     state id for start of path
      * @param wallStatus used to name output files, either BW = before wall, AW = after wall, or RW = removed wall
-     * @param dbaStar3   DBAStar3 object
+     * @param dbaStar   DBAStar object
      */
-    public void getDBAStarPath(int startId, int goalId, String wallStatus, DBAStar3 dbaStar3) {
-        GameMap map = dbaStar3.getMap();
+    public void getDBAStarPath(int startId, int goalId, String wallStatus, DBAStar dbaStar) {
+        GameMap map = dbaStar.getMap();
 
-        AStar aStar = new AStar(dbaStar3.getProblem());
+        AStar aStar = new AStar(dbaStar.getProblem());
 
         StatsRecord dbaStats = new StatsRecord();
-        ArrayList<SearchState> path = dbaStar3.computePath(new SearchState(startId), new SearchState(goalId), dbaStats);
+        ArrayList<SearchState> path = dbaStar.computePath(new SearchState(startId), new SearchState(goalId), dbaStats);
 
         StatsRecord aStarStats = new StatsRecord();
         ArrayList<SearchState> optimalPath = aStar.computePath(new SearchState(startId), new SearchState(goalId), aStarStats);
@@ -124,8 +124,8 @@ public class DBAStarUtil {
         if (path == null || path.isEmpty()) {
             logger.warn(String.format("No path was found between %d and %d!%n", startId, goalId));
         }
-        map.computeCentroidMap().outputImage(dbaStarDbPath + wallStatus + "path_" + startId + "_" + goalId + ".png", path, dbaStar3.getSubgoals());
-        // map.computeCentroidMap().outputImage(dbaStarDbPath + wallStatus + "_optimal_path_" + startId + "_" + goalId + ".png", optimalPath, dbaStar3.getSubgoals());
+        map.computeCentroidMap().outputImage(dbaStarDbPath + wallStatus + "path_" + startId + "_" + goalId + ".png", path, dbaStar.getSubgoals());
+        // map.computeCentroidMap().outputImage(dbaStarDbPath + wallStatus + "_optimal_path_" + startId + "_" + goalId + ".png", optimalPath, dbaStar.getSubgoals());
     }
 
 
@@ -141,7 +141,7 @@ public class DBAStarUtil {
      * @param wallLoc   state id where wall will be place
      * @param dbaStarBW DBAStar object returned from computeDBAStarDatabaseUsingSubgoalDynamicDB3
      */
-    public void recomputeWallAddition(int wallLoc, DBAStar3 dbaStarBW) throws Exception {
+    public void recomputeWallAddition(int wallLoc, DBAStar dbaStarBW) throws Exception {
         // Extract map, problem, and database from dbaStarBW
         GameMap map = dbaStarBW.getMap();
         MapSearchProblem problem = (MapSearchProblem) dbaStarBW.getProblem();
@@ -221,11 +221,11 @@ public class DBAStarUtil {
 
             // Need to check boundaries for bottom row of map (if not on map, treat square as wall)
             // TODO: Do I really need to check all of these?
-            int NEIGHBOR_NE = map.isValid(WALL_ROW - 1, WALL_COL + 1) ? map.squares[WALL_ROW - 1][WALL_COL + 1] : GameMap.WALL_CHAR;
-            int NEIGHBOR_E = map.isValid(WALL_ROW, WALL_COL + 1) ? map.squares[WALL_ROW][WALL_COL + 1] : GameMap.WALL_CHAR;
-            int NEIGHBOR_SE = map.isValid(WALL_ROW + 1, WALL_COL + 1) ? map.squares[WALL_ROW + 1][WALL_COL + 1] : GameMap.WALL_CHAR;
-            int NEIGHBOR_S = map.isValid(WALL_ROW + 1, WALL_COL) ? map.squares[WALL_ROW + 1][WALL_COL] : GameMap.WALL_CHAR;
-            int NEIGHBOR_SW = map.isValid(WALL_ROW + 1, WALL_COL - 1) ? map.squares[WALL_ROW + 1][WALL_COL - 1] : GameMap.WALL_CHAR;
+            int NEIGHBOR_NE = map.isInBounds(WALL_ROW - 1, WALL_COL + 1) ? map.squares[WALL_ROW - 1][WALL_COL + 1] : GameMap.WALL_CHAR;
+            int NEIGHBOR_E = map.isInBounds(WALL_ROW, WALL_COL + 1) ? map.squares[WALL_ROW][WALL_COL + 1] : GameMap.WALL_CHAR;
+            int NEIGHBOR_SE = map.isInBounds(WALL_ROW + 1, WALL_COL + 1) ? map.squares[WALL_ROW + 1][WALL_COL + 1] : GameMap.WALL_CHAR;
+            int NEIGHBOR_S = map.isInBounds(WALL_ROW + 1, WALL_COL) ? map.squares[WALL_ROW + 1][WALL_COL] : GameMap.WALL_CHAR;
+            int NEIGHBOR_SW = map.isInBounds(WALL_ROW + 1, WALL_COL - 1) ? map.squares[WALL_ROW + 1][WALL_COL - 1] : GameMap.WALL_CHAR;
 
             int NEIGHBOR_W = map.squares[WALL_ROW][WALL_COL - 1];
             int NEIGHBOR_NW = map.squares[WALL_ROW - 1][WALL_COL - 1];
@@ -238,8 +238,69 @@ public class DBAStarUtil {
             boolean isBetweenVertical = !isVerticalWall && isBetweenWallAndOtherRegion(NEIGHBOR_S, NEIGHBOR_N, REGION_ID);
             boolean isBetweenHorizontal = !isHorizontalWall && isBetweenWallAndOtherRegion(NEIGHBOR_W, NEIGHBOR_E, REGION_ID);
 
+            // If the diagonal state is open, but the cardinal ones surrounding it are not, we may have partition
+            boolean isOpenDiagonalNW = isOpenDiagonal(NEIGHBOR_W, NEIGHBOR_NW, NEIGHBOR_N);
+            boolean isOpenDiagonalNE = isOpenDiagonal(NEIGHBOR_N, NEIGHBOR_NE, NEIGHBOR_E);
+            boolean isOpenDiagonalSE = isOpenDiagonal(NEIGHBOR_E, NEIGHBOR_SE, NEIGHBOR_S);
+            boolean isOpenDiagonalSW = isOpenDiagonal(NEIGHBOR_S, NEIGHBOR_SW, NEIGHBOR_W);
+
+            boolean isPotentialPartition = isVerticalWall || isHorizontalWall || isBetweenVertical || isBetweenHorizontal || isOpenDiagonalNW || isOpenDiagonalNE || isOpenDiagonalSE || isOpenDiagonalSW;
+            boolean isPartition = false;
+
+            // Find first neighbour that is in same region as where the wall was placed
+            // Must exist since this is not elimination, must touch by construction
+
+            if (isPotentialPartition) {
+                // Get neighbour states
+                // Take first neighbour state that has same region id as state where wall was placed to start BFS
+                SearchState s = null;
+                ArrayList<SearchState> neighbourStates = map.getNeighbors(WALL_ROW, WALL_COL);
+                for (SearchState neighbourState : neighbourStates) {
+                    if (map.squares[map.getRow(neighbourState.id)][map.getCol(neighbourState.id)] == REGION_ID) {
+                        s = neighbourState;
+                        break;
+                    }
+                }
+
+                if (s == null) {
+                    throw new Exception("State without neighbours in same region!");
+                }
+
+                // Run BFS in sector and count states
+                Queue<Integer> stateIds = new LinkedList<>();
+                ExpandArray neighbors = new ExpandArray(10);
+
+                stateIds.add(s.id);
+                HashSet<Integer> visited = new HashSet<>();
+                visited.add(s.id);
+                while (!stateIds.isEmpty()) {
+                    int id = stateIds.remove();
+
+                    int row = map.getRow(id);
+                    int col = map.getCol(id);
+
+                    map.getNeighbors(row, col, neighbors);
+
+                    for (int n = 0; n < neighbors.num(); n++) {
+                        int nid = neighbors.get(n);
+                        int nr = map.getRow(nid);
+                        int nc = map.getCol(nid);
+                        if (map.isInRange(nr, nc, END_ROW, END_COL) && !visited.contains(nid)) {
+                            stateIds.add(nid);
+                            visited.add(nid);
+                        }
+                    }
+                }
+
+                if (visited.size() != groupRecord.getNumStates() - 1) {
+                    System.out.println("Visited num states: " + visited.size());
+                    System.out.println("Stored num states: " + groupRecord.getNumStates());
+                    isPartition = true;
+                }
+            }
+
             // If we are placing a wall in the corner of a sector, we may have a pathblocker case
-            if (isAtSectorEdge && !isBetweenVertical && !isBetweenHorizontal && !isVerticalWall && !isHorizontalWall) {
+            if (!isPartition && isAtSectorEdge && !isBetweenVertical && !isBetweenHorizontal && !isVerticalWall && !isHorizontalWall) {
                 boolean isNorthEdge = WALL_ROW == START_ROW;
                 boolean isEastEdge = WALL_COL == END_COL;
                 boolean isSouthEdge = WALL_ROW == END_ROW;
@@ -297,6 +358,14 @@ public class DBAStarUtil {
                     neighboursOfEx.remove(REGION_ID);
 
                     dbBW.recomputeCornerBlocker(REGION_ID, neighbourRegion);
+
+                    // If region rep in corner:
+                    int newRegionRep = map.recomputeCentroid(REGION_ID, groupRecord, START_ROW, END_ROW, START_COL, END_COL);
+
+                    if (REGION_REP != newRegionRep) {
+                        logger.info("Addition: Moved region rep from " + groupRecord.groupRepId + " to " + newRegionRep);
+                        dbBW.recomputeBasePaths(REGION_ID, problem, groups);
+                    }
                     return;
                 }
 
@@ -304,54 +373,7 @@ public class DBAStarUtil {
             }
 
             // Region Partition case
-
-            boolean verticalPartition = false;
-            boolean horizontalPartition = false;
-            boolean diagonalPartition;
-
-            // TODO: Do the start points for these paths make sense?
-            if (isVerticalWall || isBetweenVertical) {
-                // Check that we can still reach west to east without leaving the region
-                verticalPartition = !isPathPossible(map.squares, new int[]{WALL_ROW, WALL_COL - 1}, new int[]{WALL_ROW, WALL_COL + 1}, REGION_ID);
-            }
-
-            if (isHorizontalWall || isBetweenHorizontal) {
-                // Check that we can still reach north to south without leaving the region
-                horizontalPartition = !isPathPossible(map.squares, new int[]{WALL_ROW - 1, WALL_COL}, new int[]{WALL_ROW + 1, WALL_COL}, REGION_ID);
-            }
-
-            // If the diagonal state is open, but the cardinal ones surrounding it are not, we may have partition
-            boolean isOpenDiagonalNW = isOpenDiagonal(NEIGHBOR_W, NEIGHBOR_NW, NEIGHBOR_N);
-            boolean isOpenDiagonalNE = isOpenDiagonal(NEIGHBOR_N, NEIGHBOR_NE, NEIGHBOR_E);
-            boolean isOpenDiagonalSE = isOpenDiagonal(NEIGHBOR_E, NEIGHBOR_SE, NEIGHBOR_S);
-            boolean isOpenDiagonalSW = isOpenDiagonal(NEIGHBOR_S, NEIGHBOR_SW, NEIGHBOR_W);
-
-            boolean partitionNW = false;
-            boolean partitionNE = false;
-            boolean partitionSE = false;
-            boolean partitionSW = false;
-
-            // TODO: Do the start points for these paths make sense? Can we collapse cases?
-            if (isOpenDiagonalNW) {
-                // Check whether we can still reach southeast to northwest
-                partitionNW = !isPathPossible(map.squares, new int[]{WALL_ROW + 1, WALL_COL + 1}, new int[]{WALL_ROW - 1, WALL_COL - 1}, REGION_ID);
-            }
-            if (isOpenDiagonalNE) {
-                // Check whether we can still reach southwest to northeast
-                partitionNE = !isPathPossible(map.squares, new int[]{WALL_ROW + 1, WALL_COL - 1}, new int[]{WALL_ROW - 1, WALL_COL + 1}, REGION_ID);
-            }
-            if (isOpenDiagonalSE) {
-                // Check whether we can still reach northwest to southeast
-                partitionSE = !isPathPossible(map.squares, new int[]{WALL_ROW - 1, WALL_COL - 1}, new int[]{WALL_ROW + 1, WALL_COL + 1}, REGION_ID);
-            }
-            if (isOpenDiagonalSW) {
-                // Check whether we can still reach northeast to southwest
-                partitionSW = !isPathPossible(map.squares, new int[]{WALL_ROW - 1, WALL_COL + 1}, new int[]{WALL_ROW + 1, WALL_COL - 1}, REGION_ID);
-            }
-
-            diagonalPartition = partitionNW || partitionNE || partitionSE || partitionSW;
-
-            if (verticalPartition || horizontalPartition || diagonalPartition) {
+            if (isPartition) {
                 logger.info("Addition: Region Partition Case (wall at " + wallLoc + ")");
                 // Get neighbours
                 ArrayList<Integer> neighborIds = new ArrayList<>(groupRecord.getNeighborIds());
@@ -435,7 +457,7 @@ public class DBAStarUtil {
      * @param wallLoc   state id where wall will be removed
      * @param dbaStarBW DBAStar object returned from computeDBAStarDatabaseUsingSubgoalDynamicDB3
      */
-    public void recomputeWallRemoval(int wallLoc, DBAStar3 dbaStarBW) throws Exception {
+    public void recomputeWallRemoval(int wallLoc, DBAStar dbaStarBW) throws Exception {
         // Extract map, problem, and database from dbaStarBW
         GameMap map = dbaStarBW.getMap();
         MapSearchProblem problem = (MapSearchProblem) dbaStarBW.getProblem();
@@ -495,6 +517,8 @@ public class DBAStarUtil {
             // Group rep id does not need to be computed using compute centroids logic since it must be where the wall was removed
             newRec.groupRepId = map.getId(WALL_ROW, WALL_COL);
             newRec.setNumStates(1);
+            newRec.setNeighborIds(new HashSet<>());
+
             // Add the new group record to the groups map
             map.addGroup(regionId, newRec);
 
@@ -618,27 +642,35 @@ public class DBAStarUtil {
 
                 // The wall does not have multiple neighbours in different regions in the same sector
                 // and only has one neighbour out of the sector
-                if (neighbouringRegionsInSameSector.size() == 1 && neighbouringRegions.size() == 1) {
-                    // Unblocker case
-                    logger.info("Removal: Path Unblocker Case (wall at " + wallLoc + ")");
-
-                    Iterator<Integer> iterator = neighbouringRegions.iterator();
-                    int neighbourRegion = iterator.next();
-
-                    // Get the neighbours of the region
-                    HashSet<Integer> neighbours = groupRecord.getNeighborIds();
-                    // Update region’s neighbourhood in groups map
-                    neighbours.remove(neighbourRegion);
-
-                    // Get the neighbours of its soon-to-be ex-neighbor
-                    GroupRecord neighborRecord = groups.get(neighbourRegion);
-                    HashSet<Integer> neighboursOfEx = neighborRecord.getNeighborIds();
-                    // Update old neighbour’s neighbourhood in groups map
-                    neighboursOfEx.remove(regionId);
-
-                    // Database changes
-                    dbBW.recomputeUnblocker(regionId, neighbourRegion, problem, groups);
-                } else {
+//                if (neighbouringRegionsInSameSector.size() == 1 && neighbouringRegions.size() == 1) {
+//                    // Unblocker case
+//                    logger.info("Removal: Path Unblocker Case (wall at " + wallLoc + ")");
+//
+//                    Iterator<Integer> iterator = neighbouringRegions.iterator();
+//                    int neighbourRegion = iterator.next();
+//
+//                    // Get the neighbours of the region
+//                    HashSet<Integer> neighbours = groupRecord.getNeighborIds();
+//                    // Update region’s neighbourhood in groups map
+//                    neighbours.remove(neighbourRegion);
+//
+//                    // Get the neighbours of its soon-to-be ex-neighbor
+//                    GroupRecord neighborRecord = groups.get(neighbourRegion);
+//                    HashSet<Integer> neighboursOfEx = neighborRecord.getNeighborIds();
+//                    // Update old neighbour’s neighbourhood in groups map
+//                    neighboursOfEx.remove(regionId);
+//
+//                    // Database changes
+//                    dbBW.recomputeUnblocker(regionId, neighbourRegion, problem, groups);
+//
+//                    // If region rep in corner:
+//                    int newRegionRep = map.recomputeCentroid(regionId, groupRecord, START_ROW, END_ROW, START_COL, END_COL);
+//
+//                    if (groupRecord.groupRepId != newRegionRep) {
+//                        logger.info("Removal: Moved region rep from " + groupRecord.groupRepId + " to " + newRegionRep);
+//                        dbBW.recomputeBasePaths(regionId, problem, groups);
+//                    }
+//                } else {
                     // If our wall touches more than two regions that are in the same sector, we have a region merge case
                     logger.info("Removal: Region Merge Case (wall at " + wallLoc + ")");
 
@@ -690,6 +722,7 @@ public class DBAStarUtil {
                                     newRec.groupId = groupId;
                                     newRec.groupRepId = map.getId(row, col);
                                     newRec.setNumStates(1);
+                                    newRec.setNeighborIds(new HashSet<>());
                                     map.addGroup(groupId, newRec);
                                     newRecs[count++] = newRec;
                                 } else {    // Update group
@@ -713,7 +746,7 @@ public class DBAStarUtil {
 
                     // Database changes
                     dbBW.recomputeBasePathsAfterPartition(problem, groups, neighborIds);
-                }
+//                }
                 return;
             }
 
@@ -739,7 +772,7 @@ public class DBAStarUtil {
      * @param wallLoc   state id where wall will be place
      * @param dbaStarBW DBAStar object returned from computeDBAStarDatabaseUsingSubgoalDynamicDB3
      */
-    public void recomputeWallAdditionNoLogging(int wallLoc, DBAStar3 dbaStarBW) throws Exception {
+    public void recomputeWallAdditionNoLogging(int wallLoc, DBAStar dbaStarBW) throws Exception {
         // Extract map, problem, and database from dbaStarBW
         GameMap map = dbaStarBW.getMap();
         MapSearchProblem problem = (MapSearchProblem) dbaStarBW.getProblem();
@@ -764,7 +797,7 @@ public class DBAStarUtil {
         }
 
         // Get representative of region wall was placed in
-        final int REGION_REP = map.getRegionRepFromRegionId(REGION_ID);
+        final int REGION_REP = map.getRegionRepFromRegionId(REGION_ID); // 8424
 
         // If the region rep is tombstoned
         if (REGION_REP == -1) {
@@ -814,11 +847,11 @@ public class DBAStarUtil {
 
             // Need to check boundaries for bottom row of map (if not on map, treat square as wall)
             // TODO: Do I really need to check all of these?
-            int NEIGHBOR_NE = map.isValid(WALL_ROW - 1, WALL_COL + 1) ? map.squares[WALL_ROW - 1][WALL_COL + 1] : GameMap.WALL_CHAR;
-            int NEIGHBOR_E = map.isValid(WALL_ROW, WALL_COL + 1) ? map.squares[WALL_ROW][WALL_COL + 1] : GameMap.WALL_CHAR;
-            int NEIGHBOR_SE = map.isValid(WALL_ROW + 1, WALL_COL + 1) ? map.squares[WALL_ROW + 1][WALL_COL + 1] : GameMap.WALL_CHAR;
-            int NEIGHBOR_S = map.isValid(WALL_ROW + 1, WALL_COL) ? map.squares[WALL_ROW + 1][WALL_COL] : GameMap.WALL_CHAR;
-            int NEIGHBOR_SW = map.isValid(WALL_ROW + 1, WALL_COL - 1) ? map.squares[WALL_ROW + 1][WALL_COL - 1] : GameMap.WALL_CHAR;
+            int NEIGHBOR_NE = map.isInBounds(WALL_ROW - 1, WALL_COL + 1) ? map.squares[WALL_ROW - 1][WALL_COL + 1] : GameMap.WALL_CHAR;
+            int NEIGHBOR_E = map.isInBounds(WALL_ROW, WALL_COL + 1) ? map.squares[WALL_ROW][WALL_COL + 1] : GameMap.WALL_CHAR;
+            int NEIGHBOR_SE = map.isInBounds(WALL_ROW + 1, WALL_COL + 1) ? map.squares[WALL_ROW + 1][WALL_COL + 1] : GameMap.WALL_CHAR;
+            int NEIGHBOR_S = map.isInBounds(WALL_ROW + 1, WALL_COL) ? map.squares[WALL_ROW + 1][WALL_COL] : GameMap.WALL_CHAR;
+            int NEIGHBOR_SW = map.isInBounds(WALL_ROW + 1, WALL_COL - 1) ? map.squares[WALL_ROW + 1][WALL_COL - 1] : GameMap.WALL_CHAR;
 
             int NEIGHBOR_W = map.squares[WALL_ROW][WALL_COL - 1];
             int NEIGHBOR_NW = map.squares[WALL_ROW - 1][WALL_COL - 1];
@@ -831,8 +864,69 @@ public class DBAStarUtil {
             boolean isBetweenVertical = !isVerticalWall && isBetweenWallAndOtherRegion(NEIGHBOR_S, NEIGHBOR_N, REGION_ID);
             boolean isBetweenHorizontal = !isHorizontalWall && isBetweenWallAndOtherRegion(NEIGHBOR_W, NEIGHBOR_E, REGION_ID);
 
+            // If the diagonal state is open, but the cardinal ones surrounding it are not, we may have partition
+            boolean isOpenDiagonalNW = isOpenDiagonal(NEIGHBOR_W, NEIGHBOR_NW, NEIGHBOR_N);
+            boolean isOpenDiagonalNE = isOpenDiagonal(NEIGHBOR_N, NEIGHBOR_NE, NEIGHBOR_E);
+            boolean isOpenDiagonalSE = isOpenDiagonal(NEIGHBOR_E, NEIGHBOR_SE, NEIGHBOR_S);
+            boolean isOpenDiagonalSW = isOpenDiagonal(NEIGHBOR_S, NEIGHBOR_SW, NEIGHBOR_W);
+
+            boolean isPotentialPartition = isVerticalWall || isHorizontalWall || isBetweenVertical || isBetweenHorizontal || isOpenDiagonalNW || isOpenDiagonalNE || isOpenDiagonalSE || isOpenDiagonalSW;
+            boolean isPartition = false;
+
+            // Find first neighbour that is in same region as where the wall was placed
+            // Must exist since this is not elimination, must touch by construction
+
+            if (isPotentialPartition) {
+                // Get neighbour states
+                // Take first neighbour state that has same region id as state where wall was placed to start BFS
+                SearchState s = null;
+                ArrayList<SearchState> neighbourStates = map.getNeighbors(WALL_ROW, WALL_COL);
+                for (SearchState neighbourState : neighbourStates) {
+                    if (map.squares[map.getRow(neighbourState.id)][map.getCol(neighbourState.id)] == REGION_ID) {
+                        s = neighbourState;
+                        break;
+                    }
+                }
+
+                if (s == null) {
+                    throw new Exception("State without neighbours in same region!");
+                }
+
+                // Run BFS in sector and count states
+                Queue<Integer> stateIds = new LinkedList<>();
+                ExpandArray neighbors = new ExpandArray(10);
+
+                stateIds.add(s.id);
+                HashSet<Integer> visited = new HashSet<>();
+                visited.add(s.id);
+                while (!stateIds.isEmpty()) {
+                    int id = stateIds.remove();
+
+                    int row = map.getRow(id);
+                    int col = map.getCol(id);
+
+                    map.getNeighbors(row, col, neighbors);
+
+                    for (int n = 0; n < neighbors.num(); n++) {
+                        int nid = neighbors.get(n);
+                        int nr = map.getRow(nid);
+                        int nc = map.getCol(nid);
+                        if (map.isInRange(nr, nc, END_ROW, END_COL) && !visited.contains(nid)) {
+                            stateIds.add(nid);
+                            visited.add(nid);
+                        }
+                    }
+                }
+
+                if (visited.size() != groupRecord.getNumStates() - 1) {
+                    System.out.println("Visited num states: " + visited.size());
+                    System.out.println("Stored num states: " + groupRecord.getNumStates());
+                    isPartition = true;
+                }
+            }
+
             // If we are placing a wall in the corner of a sector, we may have a pathblocker case
-            if (isAtSectorEdge && !isBetweenVertical && !isBetweenHorizontal && !isVerticalWall && !isHorizontalWall) {
+            if (!isPartition && isAtSectorEdge && !isBetweenVertical && !isBetweenHorizontal && !isVerticalWall && !isHorizontalWall) {
                 boolean isNorthEdge = WALL_ROW == START_ROW;
                 boolean isEastEdge = WALL_COL == END_COL;
                 boolean isSouthEdge = WALL_ROW == END_ROW;
@@ -888,6 +982,14 @@ public class DBAStarUtil {
                     neighboursOfEx.remove(REGION_ID);
 
                     dbBW.recomputeCornerBlocker(REGION_ID, neighbourRegion);
+
+                    // If region rep in corner:
+                    int newRegionRep = map.recomputeCentroid(REGION_ID, groupRecord, START_ROW, END_ROW, START_COL, END_COL);
+
+                    if (REGION_REP != newRegionRep) {
+                        dbBW.recomputeBasePaths(REGION_ID, problem, groups); // 1016
+                    }
+
                     return;
                 }
 
@@ -896,53 +998,7 @@ public class DBAStarUtil {
 
             // Region Partition case
 
-            boolean verticalPartition = false;
-            boolean horizontalPartition = false;
-            boolean diagonalPartition;
-
-            // TODO: Do the start points for these paths make sense?
-            if (isVerticalWall || isBetweenVertical) {
-                // Check that we can still reach west to east without leaving the region
-                verticalPartition = !isPathPossible(map.squares, new int[]{WALL_ROW, WALL_COL - 1}, new int[]{WALL_ROW, WALL_COL + 1}, REGION_ID);
-            }
-
-            if (isHorizontalWall || isBetweenHorizontal) {
-                // Check that we can still reach north to south without leaving the region
-                horizontalPartition = !isPathPossible(map.squares, new int[]{WALL_ROW - 1, WALL_COL}, new int[]{WALL_ROW + 1, WALL_COL}, REGION_ID);
-            }
-
-            // If the diagonal state is open, but the cardinal ones surrounding it are not, we may have partition
-            boolean isOpenDiagonalNW = isOpenDiagonal(NEIGHBOR_W, NEIGHBOR_NW, NEIGHBOR_N);
-            boolean isOpenDiagonalNE = isOpenDiagonal(NEIGHBOR_N, NEIGHBOR_NE, NEIGHBOR_E);
-            boolean isOpenDiagonalSE = isOpenDiagonal(NEIGHBOR_E, NEIGHBOR_SE, NEIGHBOR_S);
-            boolean isOpenDiagonalSW = isOpenDiagonal(NEIGHBOR_S, NEIGHBOR_SW, NEIGHBOR_W);
-
-            boolean partitionNW = false;
-            boolean partitionNE = false;
-            boolean partitionSE = false;
-            boolean partitionSW = false;
-
-            // TODO: Do the start points for these paths make sense? Can we collapse cases?
-            if (isOpenDiagonalNW) {
-                // Check whether we can still reach southeast to northwest
-                partitionNW = !isPathPossible(map.squares, new int[]{WALL_ROW + 1, WALL_COL + 1}, new int[]{WALL_ROW - 1, WALL_COL - 1}, REGION_ID);
-            }
-            if (isOpenDiagonalNE) {
-                // Check whether we can still reach southwest to northeast
-                partitionNE = !isPathPossible(map.squares, new int[]{WALL_ROW + 1, WALL_COL - 1}, new int[]{WALL_ROW - 1, WALL_COL + 1}, REGION_ID);
-            }
-            if (isOpenDiagonalSE) {
-                // Check whether we can still reach northwest to southeast
-                partitionSE = !isPathPossible(map.squares, new int[]{WALL_ROW - 1, WALL_COL - 1}, new int[]{WALL_ROW + 1, WALL_COL + 1}, REGION_ID);
-            }
-            if (isOpenDiagonalSW) {
-                // Check whether we can still reach northeast to southwest
-                partitionSW = !isPathPossible(map.squares, new int[]{WALL_ROW - 1, WALL_COL + 1}, new int[]{WALL_ROW + 1, WALL_COL - 1}, REGION_ID);
-            }
-
-            diagonalPartition = partitionNW || partitionNE || partitionSE || partitionSW;
-
-            if (verticalPartition || horizontalPartition || diagonalPartition) {
+            if (isPartition) {
                 // Get neighbours
                 ArrayList<Integer> neighborIds = new ArrayList<>(groupRecord.getNeighborIds());
 
@@ -956,13 +1012,13 @@ public class DBAStarUtil {
                 }
 
                 // Adding the regionId to the freeSpace array in the database
-                dbBW.pushFreeSpace(REGION_ID);
+                dbBW.pushFreeSpace(REGION_ID); // 1117
 
                 // Perform abstraction (go over sector and recompute regions), this updates free space
-                int numRegionsInSector = map.sectorReAbstractWithFreeSpace(START_ROW, START_COL, END_ROW, END_COL, REGION_ID, map, dbBW);
+                int numRegionsInSector = map.sectorReAbstractWithFreeSpace(START_ROW, START_COL, END_ROW, END_COL, REGION_ID, map, dbBW); // 6324
 
                 // Tombstone group record in groups map (recreate it later)
-                map.addGroup(REGION_ID, null);
+                map.addGroup(REGION_ID, null); // 16158
 
                 int count = 0;
                 GroupRecord[] newRecs = new GroupRecord[numRegionsInSector];
@@ -977,11 +1033,12 @@ public class DBAStarUtil {
                             if (rec == null) {    // New group
                                 GroupRecord newRec = new GroupRecord();
                                 newRec.groupId = groupId;
-                                newRec.groupRepId = map.getId(row, col);
+                                newRec.groupRepId = -1;
                                 newRec.setNumStates(1);
-                                map.addGroup(groupId, newRec);
+                                newRec.setNeighborIds(new HashSet<>());
+                                map.addGroup(groupId, newRec); // 13656
                                 newRecs[count++] = newRec;
-                            } else {    // Update group
+                            } else if (rec.groupRepId == -1){    // Update group
                                 rec.incrementNumStates();
                             }
                         }
@@ -996,20 +1053,20 @@ public class DBAStarUtil {
                 }
 
                 // Recompute neighbourhood
-                map.recomputeNeighbors(START_ROW, START_COL, END_ROW, END_COL, neighborIds);
+                map.recomputeNeighbors(REGION_ID, START_ROW, START_COL, END_ROW, END_COL, neighborIds); // 7160
 
                 // Database changes
-                dbBW.recomputeBasePathsAfterPartition(problem, groups, neighborIds); // 40ms
+                dbBW.recomputeBasePathsAfterPartition(problem, groups, neighborIds); // 262039
                 return;
             }
 
             groupRecord.decrementNumStates();
 
             // Compute newRegionRep (it may or may not be the same as before)
-            map.recomputeCentroid(REGION_ID, groupRecord, START_ROW, END_ROW, START_COL, END_COL);
+            map.recomputeCentroid(REGION_ID, groupRecord, START_ROW, END_ROW, START_COL, END_COL); // 15504
 
             // Database changes
-            dbBW.recomputeBasePaths(REGION_ID, problem, groups); // 600ms
+            dbBW.recomputeBasePaths(REGION_ID, problem, groups); // 2085714
         }
     }
 
@@ -1017,7 +1074,7 @@ public class DBAStarUtil {
      * @param wallLoc   state id where wall will be removed
      * @param dbaStarBW DBAStar object returned from computeDBAStarDatabaseUsingSubgoalDynamicDB3
      */
-    public void recomputeWallRemovalNoLogging(int wallLoc, DBAStar3 dbaStarBW) throws Exception {
+    public void recomputeWallRemovalNoLogging(int wallLoc, DBAStar dbaStarBW) throws Exception {
         // Extract map, problem, and database from dbaStarBW
         GameMap map = dbaStarBW.getMap();
         MapSearchProblem problem = (MapSearchProblem) dbaStarBW.getProblem();
@@ -1073,6 +1130,7 @@ public class DBAStarUtil {
             // Group rep id does not need to be computed using compute centroids logic since it must be where the wall was removed
             newRec.groupRepId = map.getId(WALL_ROW, WALL_COL);
             newRec.setNumStates(1);
+            newRec.setNeighborIds(new HashSet<>());
             // Add the new group record to the groups map
             map.addGroup(regionId, newRec);
 
@@ -1097,7 +1155,7 @@ public class DBAStarUtil {
                     // Get region id of current neighbour state of wall (if it is not a wall)
                     int neighbourRegion = map.getRegionFromState(neighbourState);
                     // Store neighbour regions in set
-                    neighbouringRegions.add(neighbourRegion);
+                    neighbouringRegions.add(neighbourRegion); // 10782
                     // If the neighbour state is in the same sector as the wall
                     if (neighbourSector == SECTOR_ID) {
                         // If there is multiple regions with the same sector id touching the wall being removed, we would have a merge case
@@ -1141,7 +1199,7 @@ public class DBAStarUtil {
                 map.addGroup(regionId, newRec);
 
                 // Database changes
-                dbBW.recomputeBasePathsIfConnected(regionId, problem, groups, neighbouringRegions);
+                dbBW.recomputeBasePathsIfConnected(regionId, problem, groups, neighbouringRegions); // 1034
                 return;
             }
 
@@ -1179,7 +1237,7 @@ public class DBAStarUtil {
             HashSet<Integer> neighboursFromGroupRec = groupRecord.getNeighborIds();
             // Removing the set of neighbours of the region from the neighbour states of the wall. If there are any elements
             // left, the wall must have at least one neighbour state that is not currently considered a neighbour
-            neighbouringRegions.removeAll(neighboursFromGroupRec);
+            neighbouringRegions.removeAll(neighboursFromGroupRec); // 3456
             neighbouringRegions.remove(regionId);
             if (!neighbouringRegions.isEmpty()) {
                 // neighbouringRegions contains all regions the removed wall was touching
@@ -1187,25 +1245,32 @@ public class DBAStarUtil {
 
                 // The wall does not have multiple neighbours in different regions in the same sector
                 // and only has one neighbour out of the sector
-                if (neighbouringRegionsInSameSector.size() == 1 && neighbouringRegions.size() == 1) {
-                    // Unblocker case
-                    Iterator<Integer> iterator = neighbouringRegions.iterator();
-                    int neighbourRegion = iterator.next();
-
-                    // Get the neighbours of the region
-                    HashSet<Integer> neighbours = groupRecord.getNeighborIds();
-                    // Update region’s neighbourhood in groups map
-                    neighbours.remove(neighbourRegion);
-
-                    // Get the neighbours of its soon-to-be ex-neighbor
-                    GroupRecord neighborRecord = groups.get(neighbourRegion);
-                    HashSet<Integer> neighboursOfEx = neighborRecord.getNeighborIds();
-                    // Update old neighbour’s neighbourhood in groups map
-                    neighboursOfEx.remove(regionId);
-
-                    // Database changes
-                    dbBW.recomputeUnblocker(regionId, neighbourRegion, problem, groups);
-                } else {
+//                if (neighbouringRegionsInSameSector.size() == 1 && neighbouringRegions.size() == 1) {
+//                    // Unblocker case
+//                    Iterator<Integer> iterator = neighbouringRegions.iterator();
+//                    int neighbourRegion = iterator.next();
+//
+//                    // Get the neighbours of the region
+//                    HashSet<Integer> neighbours = groupRecord.getNeighborIds();
+//                    // Update region’s neighbourhood in groups map
+//                    neighbours.remove(neighbourRegion);
+//
+//                    // Get the neighbours of its soon-to-be ex-neighbor
+//                    GroupRecord neighborRecord = groups.get(neighbourRegion);
+//                    HashSet<Integer> neighboursOfEx = neighborRecord.getNeighborIds();
+//                    // Update old neighbour’s neighbourhood in groups map
+//                    neighboursOfEx.remove(regionId);
+//
+//                    // Database changes
+//                    dbBW.recomputeUnblocker(regionId, neighbourRegion, problem, groups);
+//
+//                    // If region rep in corner:
+//                    int newRegionRep = map.recomputeCentroid(regionId, groupRecord, START_ROW, END_ROW, START_COL, END_COL);
+//
+//                    if (groupRecord.groupRepId != newRegionRep) {
+//                        dbBW.recomputeBasePaths(regionId, problem, groups);
+//                    }
+//                } else {
                     // If our wall touches more than two regions that are in the same sector, we have a region merge case
 
                     // Iterate over old regions inside squares array and ‘erase’ them (assign ‘32’ instead of the old region ids)
@@ -1226,7 +1291,7 @@ public class DBAStarUtil {
                             neighborIdsSet.addAll(groups.get(neighbouringRegionInSameSector).getNeighborIds());
                         }
                         // Tombstone group record in groups map (recreate it later)
-                        map.addGroup(neighbouringRegionInSameSector, null);
+                        map.addGroup(neighbouringRegionInSameSector, null); // 6186
                     }
 
                     // Remove regions that will merge
@@ -1238,7 +1303,7 @@ public class DBAStarUtil {
 
                     // Perform abstraction (go over sector and recompute regions), this updates free space
                     // TODO: Should I even pass regionId here?
-                    int numRegionsInSector = map.sectorReAbstractWithFreeSpace(START_ROW, START_COL, END_ROW, END_COL, regionId, map, dbBW);
+                    int numRegionsInSector = map.sectorReAbstractWithFreeSpace(START_ROW, START_COL, END_ROW, END_COL, regionId, map, dbBW); // 2422
 
                     int count = 0;
                     GroupRecord[] newRecs = new GroupRecord[numRegionsInSector];
@@ -1255,9 +1320,10 @@ public class DBAStarUtil {
                                     newRec.groupId = groupId;
                                     newRec.groupRepId = map.getId(row, col);
                                     newRec.setNumStates(1);
-                                    map.addGroup(groupId, newRec);
+                                    newRec.setNeighborIds(new HashSet<>());
+                                    map.addGroup(groupId, newRec); // 4041
                                     newRecs[count++] = newRec;
-                                } else {    // Update group
+                                } else if (neighbouringRegionsInSameSector.contains(groupId)) {    // Update group
                                     rec.incrementNumStates();
                                 }
                             }
@@ -1272,21 +1338,232 @@ public class DBAStarUtil {
                     }
 
                     // Recompute neighbourhood
-                    map.recomputeNeighbors(START_ROW, START_COL, END_ROW, END_COL, neighborIds);
+                    map.recomputeNeighbors(neighbouringRegionsInSameSector, START_ROW, START_COL, END_ROW, END_COL, neighborIds); // 2283
 
                     // Database changes
-                    dbBW.recomputeBasePathsAfterPartition(problem, groups, neighborIds);
-                }
+                    dbBW.recomputeBasePathsAfterPartition(problem, groups, neighborIds); // 103651
+//                }
                 return;
             }
 
             groupRecord.incrementNumStates();
 
             // Compute newRegionRep (it may or may not be the same as before)
-            map.recomputeCentroid(regionId, groupRecord, START_ROW, END_ROW, START_COL, END_COL);
+            map.recomputeCentroid(regionId, groupRecord, START_ROW, END_ROW, START_COL, END_COL); // 14090
 
             // Database changes
-            dbBW.recomputeBasePaths(regionId, problem, groups); // 590ms
+            dbBW.recomputeBasePaths(regionId, problem, groups); // 1990480
         }
+    }
+
+
+    public void recomputeWallRemovalNoChecks(int wallLoc, DBAStar dbaStarBW) throws Exception {
+        GameMap map = dbaStarBW.getMap();
+        MapSearchProblem problem = (MapSearchProblem) dbaStarBW.getProblem();
+
+        map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = GameMap.EMPTY_CHAR;
+        problem.getMap().squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = GameMap.EMPTY_CHAR;
+
+        SubgoalDynamicDB3 dbBW = (SubgoalDynamicDB3) dbaStarBW.getDatabase();
+
+        final int WALL_ROW = map.getRow(wallLoc);
+        final int WALL_COL = map.getCol(wallLoc);
+
+        final int SECTOR_ID = map.findSectorId(WALL_ROW, WALL_COL);
+
+        // Start of sector
+        final int START_ROW = map.findStartRowOfSector(SECTOR_ID);
+        final int START_COL = map.findStartColOfSector(SECTOR_ID);
+        // End of sector
+        final int END_ROW = map.findEndRowOfSector(START_ROW);
+        final int END_COL = map.findEndColOfSector(START_COL);
+
+        // Get groups containing information on all regions from map
+        TreeMap<Integer, GroupRecord> groups = map.getGroups();
+
+        // Store region ids of eight neighbour states
+        HashSet<Integer> neighbouringRegions = new HashSet<>();
+        // Store region ids of neighbour states that are in the same sector as the wall being removed
+        TreeSet<Integer> neighbouringRegionsInSameSector = new TreeSet<>(Comparator.reverseOrder());
+
+        // Get eight neighbours of state where wall was removed
+        int[] neighbourStates = map.getNeighborIds(WALL_ROW, WALL_COL);
+
+        for (int neighbourState : neighbourStates) {
+            if (!map.isWall(neighbourState)) {
+                // Get sector id of current neighbour state of wall (if it is not a wall)
+                int neighbourSector = map.findSectorId(neighbourState);
+                // Get region id of current neighbour state of wall (if it is not a wall)
+                int neighbourRegion = map.getRegionFromState(neighbourState);
+                // Store neighbour regions in set
+                neighbouringRegions.add(neighbourRegion);
+                // If the neighbour state is in the same sector as the wall
+                if (neighbourSector == SECTOR_ID) {
+                    // If there is multiple regions with the same sector id touching the wall being removed, we would have a merge case
+                    neighbouringRegionsInSameSector.add(neighbourRegion);
+                }
+            }
+        }
+
+
+        // Iterate over old regions inside squares array and ‘erase’ them (assign ‘32’ instead of the old region ids)
+        for (int row = START_ROW; row < END_ROW; row++) {
+            for (int col = START_COL; col < END_COL; col++) {
+                if (!map.isWall(row, col) && neighbouringRegionsInSameSector.contains(map.squares[row][col])) {
+                    map.squares[row][col] = GameMap.EMPTY_CHAR; // 32
+                }
+            }
+        }
+
+        HashSet<Integer> neighborIdsSet = new HashSet<>();
+        for (int neighbouringRegionInSameSector : neighbouringRegionsInSameSector) {
+            // Update freeSpace
+            dbBW.pushFreeSpace(neighbouringRegionInSameSector);
+            // Add to neighbourIds
+            if (groups.get(neighbouringRegionInSameSector) != null) {
+                neighborIdsSet.addAll(groups.get(neighbouringRegionInSameSector).getNeighborIds());
+            }
+            // Tombstone group record in groups map (recreate it later)
+            map.addGroup(neighbouringRegionInSameSector, null);
+        }
+
+        // Remove regions that will merge
+        // TODO: Is this necessary?
+        neighborIdsSet.addAll(neighbouringRegions);
+        neighborIdsSet.removeAll(neighbouringRegionsInSameSector);
+
+        ArrayList<Integer> neighborIds = new ArrayList<>(neighborIdsSet);
+
+        // Perform abstraction (go over sector and recompute regions), this updates free space
+        // TODO: Should I even pass regionId here?
+        int numRegionsInSector = map.sectorReAbstractWithFreeSpace(START_ROW, START_COL, END_ROW, END_COL, -1, map, dbBW);
+
+        int count = 0;
+        GroupRecord[] newRecs = new GroupRecord[numRegionsInSector];
+
+        // Re-create groups
+        for (int row = START_ROW; row < END_ROW; row++) {
+            for (int col = START_COL; col < END_COL; col++) {
+                int groupId = map.squares[row][col];
+                if (groupId != GameMap.EMPTY_CHAR && groupId != GameMap.WALL_CHAR) {
+                    // See if group already exists
+                    GroupRecord rec = groups.get(groupId);
+                    if (rec == null) {    // New group
+                        GroupRecord newRec = new GroupRecord();
+                        newRec.groupId = groupId;
+                        newRec.groupRepId = map.getId(row, col);
+                        newRec.setNumStates(1);
+                        newRec.setNeighborIds(new HashSet<>());
+                        map.addGroup(groupId, newRec);
+                        newRecs[count++] = newRec;
+                    } else {    // Update group
+                        rec.incrementNumStates();
+                    }
+                }
+            }
+        }
+
+        // Recompute region reps for newly added regions
+        // a newRec should never be null, if it is, something went wrong with the group generation in sectorReAbstractWithFreeSpace
+        for (GroupRecord newRec : newRecs) {
+            map.recomputeCentroid(newRec.groupId, newRec, START_ROW, END_ROW, START_COL, END_COL);
+            neighborIds.add(newRec.groupId);
+        }
+
+        // Recompute neighbourhood
+        map.recomputeNeighbors(neighbouringRegionsInSameSector, START_ROW, START_COL, END_ROW, END_COL, neighborIds);
+
+        // Database changes
+        dbBW.recomputeBasePathsAfterPartition(problem, groups, neighborIds);
+    }
+
+    public void recomputeWallAdditionNoChecks(int wallLoc, DBAStar dbaStarBW) throws Exception {
+        GameMap map = dbaStarBW.getMap();
+
+        MapSearchProblem problem = (MapSearchProblem) dbaStarBW.getProblem();
+        SubgoalDynamicDB3 dbBW = (SubgoalDynamicDB3) dbaStarBW.getDatabase();
+
+        final int WALL_ROW = map.getRow(wallLoc);
+        final int WALL_COL = map.getCol(wallLoc);
+
+        // Get id of region that wall was placed in
+        final int REGION_ID = map.squares[WALL_ROW][WALL_COL];
+
+        map.squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = '*';
+        problem.getMap().squares[map.getRow(wallLoc)][map.getCol(wallLoc)] = '*';
+
+        final int SECTOR_ID = map.findSectorId(WALL_ROW, WALL_COL);
+
+        // Start of sector
+        final int START_ROW = map.findStartRowOfSector(SECTOR_ID);
+        final int START_COL = map.findStartColOfSector(SECTOR_ID);
+        // End of sector
+        final int END_ROW = map.findEndRowOfSector(START_ROW);
+        final int END_COL = map.findEndColOfSector(START_COL);
+
+        // Get groups containing information on all regions from map
+        TreeMap<Integer, GroupRecord> groups = map.getGroups();
+
+        // Get group record containing information on the region
+        GroupRecord groupRecord = groups.get(REGION_ID);
+
+        // Get neighbours
+        ArrayList<Integer> neighborIds = new ArrayList<>(groupRecord.getNeighborIds());
+
+        // Reset region (necessary in order for me to be able to reuse the regionId)
+        for (int row = START_ROW; row < END_ROW; row++) {
+            for (int col = START_COL; col < END_COL; col++) {
+                if (!map.isWall(row, col) && map.squares[row][col] == REGION_ID) {
+                    map.squares[row][col] = GameMap.EMPTY_CHAR; // 32
+                }
+            }
+        }
+
+        // Adding the regionId to the freeSpace array in the database
+        dbBW.pushFreeSpace(REGION_ID);
+
+        // Perform abstraction (go over sector and recompute regions), this updates free space
+        int numRegionsInSector = map.sectorReAbstractWithFreeSpace(START_ROW, START_COL, END_ROW, END_COL, REGION_ID, map, dbBW);
+
+        // Tombstone group record in groups map (recreate it later)
+        map.addGroup(REGION_ID, null);
+
+        int count = 0;
+        GroupRecord[] newRecs = new GroupRecord[numRegionsInSector];
+
+        // Re-create groups
+        for (int row = START_ROW; row < END_ROW; row++) {
+            for (int col = START_COL; col < END_COL; col++) {
+                int groupId = map.squares[row][col];
+                if (groupId != GameMap.EMPTY_CHAR && groupId != GameMap.WALL_CHAR) {
+                    // See if group already exists
+                    GroupRecord rec = groups.get(groupId);
+                    if (rec == null) {    // New group
+                        GroupRecord newRec = new GroupRecord();
+                        newRec.groupId = groupId;
+                        newRec.groupRepId = map.getId(row, col);
+                        newRec.setNumStates(1);
+                        newRec.setNeighborIds(new HashSet<>());
+                        map.addGroup(groupId, newRec);
+                        newRecs[count++] = newRec;
+                    } else {    // Update group
+                        rec.incrementNumStates();
+                    }
+                }
+            }
+        }
+
+        // Recompute region reps for newly added regions
+        // a newRec should never be null, if it is, something went wrong with the group generation in sectorReAbstractWithFreeSpace
+        for (GroupRecord newRec : newRecs) {
+            map.recomputeCentroid(REGION_ID, newRec, START_ROW, END_ROW, START_COL, END_COL);
+            neighborIds.add(newRec.groupId);
+        }
+
+        // Recompute neighbourhood
+        map.recomputeNeighbors(REGION_ID, START_ROW, START_COL, END_ROW, END_COL, neighborIds);
+
+        // Database changes
+        dbBW.recomputeBasePathsAfterPartition(problem, groups, neighborIds);
     }
 }

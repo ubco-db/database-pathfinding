@@ -1,5 +1,5 @@
 import map.GameMap;
-import search.DBAStar3;
+import search.DBAStar;
 import util.DBAStarUtil;
 
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ public class AddingAllWallsEfficientlyTest {
     // private static final Logger logger = LogManager.getLogger(AddingAllWallsEfficientlyTest.class);
 
     public static void main(String[] args) throws Exception {
-        DBAStar3 dbaStar3;
+        DBAStar dbaStar;
         GameMap startingMap = new GameMap(PATH_TO_MAP, GRID_SIZE);
 
         // Initialize DBAStarUtil with settings for DBAStar run
@@ -47,16 +47,16 @@ public class AddingAllWallsEfficientlyTest {
         long startTimePartial = System.currentTimeMillis();
 
         // compute DBAStar database before adding wall
-        dbaStar3 = dbaStarUtil.computeDBAStarDatabase(startingMap, "BW"); // 70ms
+        dbaStar = dbaStarUtil.computeDBAStarDatabase(startingMap, "BW"); // 70ms
 
         for (int wallId : goalIds) {
             // Add wall & recompute database
             // logger.info("\n\nRecompute wall addition for wall at: " + wallId);
-            dbaStarUtil.recomputeWallAdditionNoLogging(wallId, dbaStar3); // 790ms
+            dbaStarUtil.recomputeWallAdditionNoLogging(wallId, dbaStar); // 790ms
 
             // Remove wall
             // logger.info("\n\nRecompute wall removal for wall at: " + wallId);
-            dbaStarUtil.recomputeWallRemovalNoLogging(wallId, dbaStar3); // 630ms
+            dbaStarUtil.recomputeWallRemovalNoLogging(wallId, dbaStar); // 630ms
         }
 
         writeResultToFile(DBA_STAR_DB_PATH + "results.txt", "Total time partial recomputation: " + (System.currentTimeMillis() - startTimePartial) + "ms\n");

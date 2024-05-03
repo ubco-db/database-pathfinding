@@ -13,11 +13,11 @@ import java.util.*;
 
 public class SubgoalDynamicDB3 extends SubgoalDB {
     private int numGroups;              // Number of abstract regions
-    private int[][] neighborLoc;        // neighborLoc[i] stores list of neighbors for i. neighborLoc[i][j] is location in neighbourLoc of jth neighbor of i.
+    private int[][] neighbors;          // neighbors[i] stores list of neighbors for i. neighbors[i][j] is location in neighbours of jth neighbor of i.
     private int[][] lowestCost;         // Lowest cost for DP table. lowestCost[i][j] is the cost of the lowest path from region i to region neighborId[i][j]
     private int[][][] paths;            // paths[i][j] is array representing a compressed path of state ids from region i to region neighborId[i][j] of lowest cost path
-    private int[] freeSpace;
-    private int freeSpaceCount;
+    private int[] freeSpace;            // stores free array locations offset by GameMap.START_NUM = stores region ids that are not taken
+    private int freeSpaceCount;         // stores index of last element in free space
 
     private static final Logger logger = LogManager.getLogger(SubgoalDynamicDB3.class);
 
@@ -26,8 +26,6 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
      * Record produced dynamically from data in DP table by combining base paths between regions (non-real-time).
      */
     public ArrayList<SubgoalDBRecord> findNearest(SearchProblem problem, int startGroupId, int goalGroupId, SearchAlgorithm searchAlg, StatsRecord stats) {
-        // TODO: Check whether this actually works
-
         ArrayList<SubgoalDBRecord> result = new ArrayList<>(1);
 
         // Need to calculate record as will not be stored
@@ -47,10 +45,8 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             }
         } else {
             // This code builds only the path required on demand (may incur more time as have to continually merge paths but may save time by avoiding storing/copying lists to do construction)
-            pathSize = GameDB.mergePaths4(startGroupId, goalGroupId, this.paths, this.lowestCost, this.neighborLoc, path);
+            pathSize = GameDB.mergePaths4(startGroupId, goalGroupId, this.paths, this.lowestCost, this.neighbors, path);
         }
-
-        // System.out.println(Arrays.toString(path));
 
         if (pathSize == 0) return null; // No path between two states
         int startId = path[0];
@@ -59,7 +55,6 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         subgoals = SearchUtil.computeSubgoalsBinaryByIds(path, searchAlg, tmp, pathSize);
 
         SubgoalDBRecord rec = new SubgoalDBRecord(startId, goalId, subgoals, 0);
-        // System.out.println("Created record between: "+startId+" and "+goalId+" Record: "+rec.toString(problem));
         result.add(rec);
         return result;
     }
@@ -89,15 +84,15 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             this.numGroups = Integer.parseInt(sc.nextLine());
             this.lowestCost = new int[numGroups][];
             this.paths = new int[numGroups][][];
-            this.neighborLoc = new int[numGroups][];
+            this.neighbors = new int[numGroups][];
             for (int i = 0; i < numGroups; i++) {    // Read each group which has # neighbors as N, neighborId[N], lowest cost[N] and paths on each line
                 int numNeighbors = sc.nextInt();
                 this.lowestCost[i] = new int[numNeighbors];
-                this.neighborLoc[i] = new int[numNeighbors];
+                this.neighbors[i] = new int[numNeighbors];
                 this.paths[i] = new int[numNeighbors][];
 
                 for (int j = 0; j < numNeighbors; j++)
-                    this.neighborLoc[i][j] = sc.nextInt();
+                    this.neighbors[i][j] = sc.nextInt();
                 for (int j = 0; j < numNeighbors; j++)
                     this.lowestCost[i][j] = sc.nextInt();
                 for (int j = 0; j < numNeighbors; j++) {
@@ -131,12 +126,12 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             out.println("numGroups: ");
             out.println(this.numGroups);
             for (int i = 0; i < this.numGroups; i++) {    // Read each group which has # neighbors as N, neighborId[N], lowest cost[N], neighbor[] and paths on each line
-                int numNeighbors = this.neighborLoc[i].length;
+                int numNeighbors = this.neighbors[i].length;
                 out.println("numNeighbours for " + i + ": ");
                 out.println(numNeighbors);
                 out.println("neighbourIds: ");
                 for (int j = 0; j < numNeighbors; j++) {
-                    out.print(this.neighborLoc[i][j] + "\t");
+                    out.print(this.neighbors[i][j] + "\t");
                 }
                 out.println();
                 out.println("lowestCosts: ");
@@ -166,20 +161,14 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         int arraySize = (int) (numGroups * 1.1);
         this.lowestCost = new int[arraySize][];
         this.paths = new int[arraySize][][];
-        this.neighborLoc = new int[arraySize][];
+        this.neighbors = new int[arraySize][];
 
         // How big should I make this? Technically, we could wipe out all regions, in which case freeSpace would be filled up to arraySize
         this.freeSpace = new int[arraySize];
         this.freeSpaceCount = arraySize - numGroups;
         // Initialize free space to contain indices of final 10% for arrays of length arraySize (in reverse order)
         for (int i = 0; i < this.freeSpaceCount; i++) {
-            this.freeSpace[i] = arraySize - (i + 1);
-        }
-
-        // TODO: Currently doing this because freeSpace stores locations which can be 0, so initializing to -1
-        // Ideally would add offset of GameMap.START_NUM to avoid this
-        for (int i = freeSpaceCount; i < freeSpace.length; i++) {
-            freeSpace[i] = -1;
+            this.freeSpace[i] = arraySize - (i + 1) + GameMap.START_NUM;
         }
 
         logger.debug("Initial free space allocation: " + Arrays.toString(freeSpace));
@@ -230,7 +219,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
 
             int numNeighbors = neighbors.size();
             this.lowestCost[startGroupLoc] = new int[numNeighbors];
-            this.neighborLoc[startGroupLoc] = new int[numNeighbors];
+            this.neighbors[startGroupLoc] = new int[numNeighbors];
             this.paths[startGroupLoc] = new int[numNeighbors][];
 
             Iterator<Integer> it = neighbors.iterator();
@@ -251,7 +240,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
                 // Save information
                 SearchUtil.computePathCost(path, stats, problem);
                 int pathCost = stats.getPathCost();
-                this.neighborLoc[startGroupLoc][count] = goalGroupLoc;
+                this.neighbors[startGroupLoc][count] = goalGroupLoc;
                 this.lowestCost[startGroupLoc][count] = pathCost;
 
                 if (asSubgoals) { // This is always true?
@@ -289,8 +278,8 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             this.paths = resizedPath;
 
             int[][] resizedNeighborId = new int[arraySize][];
-            System.arraycopy(this.neighborLoc, 0, resizedNeighborId, 0, this.neighborLoc.length);
-            this.neighborLoc = resizedNeighborId;
+            System.arraycopy(this.neighbors, 0, resizedNeighborId, 0, this.neighbors.length);
+            this.neighbors = resizedNeighborId;
 
             logger.warn("Arrays have been resized since there was no more free space.");
 
@@ -315,13 +304,13 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         int groupLoc = regionId - GameMap.START_NUM;
 
         // Iterate over neighbours of the region to eliminate to scrub references to it
-        for (int i = 0; i < this.neighborLoc[groupLoc].length; i++) {
+        for (int i = 0; i < this.neighbors[groupLoc].length; i++) {
             // Grab location of neighbour
-            int neighbourLoc = this.neighborLoc[groupLoc][i];
+            int neighbourLoc = this.neighbors[groupLoc][i];
             // Iterate over neighbours of neighbour to find region to eliminate
             int indexOfRegionToEliminate = -1;
-            for (int j = 0; j < this.neighborLoc[neighbourLoc].length; j++) {
-                if (this.neighborLoc[neighbourLoc][j] == groupLoc) {
+            for (int j = 0; j < this.neighbors[neighbourLoc].length; j++) {
+                if (this.neighbors[neighbourLoc][j] == groupLoc) {
                     indexOfRegionToEliminate = j;
                     break;
                 }
@@ -335,13 +324,12 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             }
 
             // Copying into smaller arrays here
-            this.neighborLoc[neighbourLoc] = copyArrayExceptIndex(this.neighborLoc[neighbourLoc], indexOfRegionToEliminate);
+            this.neighbors[neighbourLoc] = copyArrayExceptIndex(this.neighbors[neighbourLoc], indexOfRegionToEliminate);
             this.lowestCost[neighbourLoc] = copyArrayExceptIndex(this.lowestCost[neighbourLoc], indexOfRegionToEliminate);
-            // Simply setting path to null (not copying paths array)
-            this.paths[neighbourLoc][indexOfRegionToEliminate] = null;
+            this.paths[neighbourLoc] = copyArrayExceptIndex(this.paths[neighbourLoc], indexOfRegionToEliminate);
         }
         // Tombstone eliminated region
-        this.neighborLoc[groupLoc] = null;
+        this.neighbors[groupLoc] = null;
         this.paths[groupLoc] = null;
         this.lowestCost[groupLoc] = null;
         // Update freeSpace
@@ -383,7 +371,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             }
 
             // Overwrite the neighbourId array of the region
-            this.neighborLoc[groupLoc] = neighbourArray;
+            this.neighbors[groupLoc] = neighbourArray;
             // Create new lowest cost and paths arrays of correct size
             // FIXME: This is throwing away useful data, find a way to not to
             // all but the paths to the new regions should be unaffected, so throwing those away and recomputing them is a waste
@@ -395,9 +383,9 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             // Iterate over neighbours of the region
             int groupLoc = id - GameMap.START_NUM;
 
-            for (int i = 0; i < this.neighborLoc[groupLoc].length; i++) {
+            for (int i = 0; i < this.neighbors[groupLoc].length; i++) {
                 // Grab location of neighbour
-                int neighbourLoc = this.neighborLoc[groupLoc][i];
+                int neighbourLoc = this.neighbors[groupLoc][i];
                 int[] tmp = new int[5000];
                 // TODO: May want to pass this as parameter
                 SearchAlgorithm searchAlg = new HillClimbing(problem, 10000);
@@ -409,8 +397,8 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
                 // Update lowestCost
                 this.lowestCost[groupLoc][i] = pathCost;
                 int indexToUpdate = -1;
-                for (int j = 0; j < this.neighborLoc[neighbourLoc].length; j++) {
-                    if (this.neighborLoc[neighbourLoc][j] == groupLoc) {
+                for (int j = 0; j < this.neighbors[neighbourLoc].length; j++) {
+                    if (this.neighbors[neighbourLoc][j] == groupLoc) {
                         indexToUpdate = j;
                         break;
                     }
@@ -421,11 +409,15 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
                     // of the region were eliminating did not have said region set as a neighbour
                     logger.error("groupLoc: " + groupLoc);
                     logger.error("neighbourLoc: " + neighbourLoc);
-                    logger.error("neighborIds of neighbourLoc: " + Arrays.toString(this.neighborLoc[neighbourLoc]));
+                    logger.error("neighborIds of neighbourLoc: " + Arrays.toString(this.neighbors[neighbourLoc]));
                     throw new Exception("There is an issue with the neighbours of region: " + id + ", region rep: " + groups.get(id).groupRepId);
                 }
                 // Update lowestCost of neighbour
                 this.lowestCost[neighbourLoc][indexToUpdate] = pathCost;
+
+                if (path == null) {
+                    logger.error("Path from " + neighbourLoc + " to " + groupLoc + " is null");
+                }
 
                 this.paths[groupLoc][i] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
             }
@@ -437,7 +429,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
      * @param problem  MapSearchProblem used in A*
      * @param groups   groups mapping
      */
-    public void recomputeBasePaths(int regionId, MapSearchProblem problem, TreeMap<Integer, GroupRecord> groups) {
+    public void recomputeBasePaths(int regionId, MapSearchProblem problem, TreeMap<Integer, GroupRecord> groups) throws Exception {
         // This is for all cases where the paths change but the neighbourhood does not:
         // E.g. wall on region rep, wall that moves region rep, wall that changes shortest path
 
@@ -453,9 +445,9 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
 
         // Update region’s paths to its neighbours (and their costs)
         // Update the region’s neighbours paths to it (and their costs)
-        for (int i = 0; i < this.neighborLoc[groupLoc].length; i++) {
+        for (int i = 0; i < this.neighbors[groupLoc].length; i++) {
             // Grab location of neighbour
-            int neighbourLoc = this.neighborLoc[groupLoc][i];
+            int neighbourLoc = this.neighbors[groupLoc][i];
             int[] tmp = new int[5000];
             // TODO: May want to pass this as parameter
             SearchAlgorithm searchAlg = new HillClimbing(problem, 10000);
@@ -469,20 +461,30 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             // Update path to region
             this.paths[groupLoc][i] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
 
-            path = astar.computePath(new SearchState(groups.get(neighbourLoc + GameMap.START_NUM).groupRepId), new SearchState(groups.get(regionId).groupRepId), stats);
-            SearchUtil.computePathCost(path, stats, problem);
-            pathCost = stats.getPathCost();
-
             // Need to find correct neighborId to update
-            for (int j = 0; j < this.neighborLoc[neighbourLoc].length; j++) {
-                if (this.neighborLoc[neighbourLoc][j] == groupLoc) {
-                    // Update lowestCost of neighbour
-                    this.lowestCost[neighbourLoc][j] = pathCost;
-                    // Update path to neighbour
-                    this.paths[neighbourLoc][j] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(new ArrayList<>(path)), searchAlg, tmp, path.size());
+            int indexToUpdate = -1;
+            for (int j = 0; j < this.neighbors[neighbourLoc].length; j++) {
+                if (this.neighbors[neighbourLoc][j] == groupLoc) {
+                    indexToUpdate = j;
                     break;
                 }
             }
+
+            // If the region to update was not stored as a neighbour of its neighbour
+            if (indexToUpdate == -1) {
+                // If we get here, then the neighbour lists must be messed up, because one of the neighbours
+                // of the region were eliminating did not have said region set as a neighbour
+                logger.error("groupLoc: " + groupLoc);
+                logger.error("neighbourLoc: " + neighbourLoc);
+                logger.error("neighborIds of neighbourLoc: " + Arrays.toString(this.neighbors[neighbourLoc]));
+                throw new Exception("There is an issue with the neighbours of region: " + regionId + ", region rep: " + groups.get(regionId).groupRepId);
+            }
+
+            // Update lowestCost of neighbour
+            this.lowestCost[neighbourLoc][indexToUpdate] = pathCost;
+            // Update path to neighbour
+            path = new ArrayList<>(path.reversed());
+            this.paths[neighbourLoc][indexToUpdate] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(new ArrayList<>(path)), searchAlg, tmp, path.size());
         }
     }
 
@@ -501,7 +503,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         int groupLoc = regionId - GameMap.START_NUM;
 
         // Create arrays for new group
-        this.neighborLoc[groupLoc] = new int[0];
+        this.neighbors[groupLoc] = new int[0];
         this.lowestCost[groupLoc] = new int[0];
         this.paths[groupLoc] = new int[0][];
     }
@@ -526,7 +528,7 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         int numNeighbours = neighborIds.size();
 
         // Create arrays for new group
-        this.neighborLoc[groupLoc] = new int[numNeighbours];
+        this.neighbors[groupLoc] = new int[numNeighbours];
         this.lowestCost[groupLoc] = new int[numNeighbours];
         this.paths[groupLoc] = new int[numNeighbours][];
 
@@ -549,19 +551,19 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             SearchUtil.computePathCost(path, stats, problem);
             int pathCost = stats.getPathCost();
 
-            this.neighborLoc[groupLoc][i] = neighbourLoc;
+            this.neighbors[groupLoc][i] = neighbourLoc;
             // Update lowestCost of region
             this.lowestCost[groupLoc][i] = pathCost;
             // Update path to region
             this.paths[groupLoc][i] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
 
             // Need to increase size of arrays of neighbour
-            int len = this.neighborLoc[neighbourLoc].length;
+            int len = this.neighbors[neighbourLoc].length;
 
             // Resize arrays
             int[] resizedNeighbourId = new int[len + 1];
-            System.arraycopy(this.neighborLoc[neighbourLoc], 0, resizedNeighbourId, 0, len);
-            this.neighborLoc[neighbourLoc] = resizedNeighbourId;
+            System.arraycopy(this.neighbors[neighbourLoc], 0, resizedNeighbourId, 0, len);
+            this.neighbors[neighbourLoc] = resizedNeighbourId;
 
             int[][] resizedPaths = new int[len + 1][];
             System.arraycopy(this.paths[neighbourLoc], 0, resizedPaths, 0, len);
@@ -572,12 +574,10 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             this.lowestCost[neighbourLoc] = resizedCosts;
 
             // Assign neighbourId
-            this.neighborLoc[neighbourLoc][len] = groupLoc;
+            this.neighbors[neighbourLoc][len] = groupLoc;
 
-            path = astar.computePath(new SearchState(groups.get(neighbourLoc + GameMap.START_NUM).groupRepId), new SearchState(groups.get(regionId).groupRepId), stats);
-            SearchUtil.computePathCost(path, stats, problem);
-            pathCost = stats.getPathCost();
-
+            // Reverse path
+            path = new ArrayList<>(path.reversed());
             // Assign lowest cost and new path
             this.lowestCost[neighbourLoc][len] = pathCost;
             this.paths[neighbourLoc][len] = SearchUtil.compressPath(SubgoalDB.convertPathToIds(path), searchAlg, tmp, path.size());
@@ -621,14 +621,14 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         int pathCost = stats.getPathCost();
 
         // Index of last element of array after resizing (= length before resizing)
-        int idx = this.neighborLoc[groupLoc].length;
+        int idx = this.neighbors[groupLoc].length;
 
         // Need to increase size of arrays of region
-        increaseArrayLengthBy1AtIndex(this.neighborLoc, groupLoc, idx);
+        increaseArrayLengthBy1AtIndex(this.neighbors, groupLoc, idx);
         increaseArrayLengthBy1AtIndex(this.lowestCost, groupLoc, idx);
 
         // Assign values
-        this.neighborLoc[groupLoc][idx] = neighbourLoc;
+        this.neighbors[groupLoc][idx] = neighbourLoc;
         this.lowestCost[groupLoc][idx] = pathCost;
 
         // Find null in paths array (may be present due to prior blocker)
@@ -660,9 +660,9 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
 
         // Update region’s neighbourhood
         int indexOfNeighborLoc = -1;
-        for (int i = 0; i < this.neighborLoc[groupLoc].length; i++) {
+        for (int i = 0; i < this.neighbors[groupLoc].length; i++) {
             // Need to find index of neighbourLoc
-            if (this.neighborLoc[groupLoc][i] == neighbourLoc) {
+            if (this.neighbors[groupLoc][i] == neighbourLoc) {
                 indexOfNeighborLoc = i;
                 break;
             }
@@ -675,14 +675,14 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             throw new Exception("There is an issue with the neighbours of region: " + regionId);
         }
         
-        this.neighborLoc[groupLoc] = copyArrayExceptIndex(this.neighborLoc[groupLoc], indexOfNeighborLoc);
+        this.neighbors[groupLoc] = copyArrayExceptIndex(this.neighbors[groupLoc], indexOfNeighborLoc);
         this.lowestCost[groupLoc] = copyArrayExceptIndex(this.lowestCost[groupLoc], indexOfNeighborLoc);
-        this.paths[groupLoc][indexOfNeighborLoc] = null;
+        this.paths[groupLoc] = copyArrayExceptIndex(this.paths[groupLoc], indexOfNeighborLoc);
 
         int indexOfGroupLoc = -1;
-        for (int i = 0; i < this.neighborLoc[neighbourLoc].length; i++) {
+        for (int i = 0; i < this.neighbors[neighbourLoc].length; i++) {
             // Need to find index of groupLoc
-            if (this.neighborLoc[neighbourLoc][i] == groupLoc) {
+            if (this.neighbors[neighbourLoc][i] == groupLoc) {
                 indexOfGroupLoc = i;
                 break;
             }
@@ -692,9 +692,9 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
             throw new Exception("There is an issue with the neighbours of region: " + neighbourId);
         }
 
-        this.neighborLoc[neighbourLoc] = copyArrayExceptIndex(this.neighborLoc[neighbourLoc], indexOfGroupLoc);
+        this.neighbors[neighbourLoc] = copyArrayExceptIndex(this.neighbors[neighbourLoc], indexOfGroupLoc);
         this.lowestCost[neighbourLoc] = copyArrayExceptIndex(this.lowestCost[neighbourLoc], indexOfGroupLoc);
-        this.paths[neighbourLoc][indexOfGroupLoc] = null;
+        this.paths[neighbourLoc] = copyArrayExceptIndex(this.paths[neighbourLoc], indexOfGroupLoc);
     }
 
     /**
@@ -705,12 +705,12 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
         // Return lowest freeSpace index from the end of the array
         logger.debug("Free space before popping: " + Arrays.toString(this.freeSpace));
         logger.debug("Free space count: " + freeSpaceCount);
-        if (freeSpace[freeSpaceCount - 1] == -1) {
+        if (freeSpace[freeSpaceCount - 1] == 0) {
             throw new Exception("Indexing is off");
         }
         this.numGroups++;
-        int temp = freeSpace[freeSpaceCount - 1] + GameMap.START_NUM;
-        this.freeSpace[--freeSpaceCount] = -1;
+        int temp = freeSpace[freeSpaceCount - 1];
+        this.freeSpace[--freeSpaceCount] = 0;
         logger.debug("Free space after popping: " + Arrays.toString(this.freeSpace));
         logger.debug("Free space count: " + freeSpaceCount);
         return temp;
@@ -723,12 +723,12 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
     public void pushFreeSpace(int regionId) throws Exception {
         logger.debug("Free space before pushing: " + Arrays.toString(this.freeSpace));
         logger.debug("Free space count: " + this.freeSpaceCount);
-        if (this.freeSpace[this.freeSpaceCount] != -1) {
+        if (this.freeSpace[this.freeSpaceCount] != 0) {
             throw new Exception("Overwriting existing free space!");
         }
         // Write into freeSpace
         this.numGroups--;
-        this.freeSpace[this.freeSpaceCount++] = regionId - GameMap.START_NUM;
+        this.freeSpace[this.freeSpaceCount++] = regionId;
         logger.debug("Free space after pushing: " + Arrays.toString(this.freeSpace));
         logger.debug("Free space count: " + this.freeSpaceCount);
     }
@@ -740,6 +740,22 @@ public class SubgoalDynamicDB3 extends SubgoalDB {
      */
     private static int[] copyArrayExceptIndex(int[] arr, int index) {
         int[] newArr = new int[arr.length - 1];
+        int newIndex = 0;
+        for (int i = 0; i < arr.length; i++) {
+            if (i != index) {
+                newArr[newIndex++] = arr[i];
+            }
+        }
+        return newArr;
+    }
+
+    /**
+     * @param arr   array to copy
+     * @param index index to exclude while copying
+     * @return array of arr.length - 1 without the element at index
+     */
+    private static int[][] copyArrayExceptIndex(int[][] arr, int index) {
+        int[][] newArr = new int[arr.length - 1][];
         int newIndex = 0;
         for (int i = 0; i < arr.length; i++) {
             if (i != index) {
