@@ -32,39 +32,41 @@ public class RandomStartsAndGoals {
             }
         }
 
-        final int NUM_PATHS = 100_000;
-        final int SEARCHES_PER_WALL_CHANGE = 10;
+        final int NUM_PATHS = 1_000_000;
 
-        System.out.println("Map: " + MAP_FILE_NAME);
-        System.out.println("Grid size: " + GRID_SIZE);
-        System.out.println("Number of goals: " + NUM_PATHS);
-        System.out.println("Searches per wall change: " + SEARCHES_PER_WALL_CHANGE);
+        logger.info("Map: " + MAP_FILE_NAME);
+        logger.info("Grid size: " + GRID_SIZE);
+        logger.info("Number of goals: " + NUM_PATHS);
 
-        for (int i = 0; i < 10; i++) {
-            // Find 100_000 random start and 100_000 random goals
-            SearchState[] randomStarts = new SearchState[NUM_PATHS];
-            SearchState[] randomGoals = new SearchState[NUM_PATHS];
+        for (int s = 1; s < 10; s++) {
+            logger.info("Searches per wall change: {}", s);
 
-            Random random = new Random();
-            for (int j = 0; j < NUM_PATHS; j++) {
-                randomStarts[j] = new SearchState(openStates.get(random.nextInt(openStates.size())));
-                randomGoals[j] = new SearchState(openStates.get(random.nextInt(openStates.size())));
-            }
+            for (int i = 0; i < 10; i++) {
+                // Find 100_000 random start and 100_000 random goals
+                SearchState[] randomStarts = new SearchState[NUM_PATHS];
+                SearchState[] randomGoals = new SearchState[NUM_PATHS];
 
-            DBAStarUtil dbaStarUtil = new DBAStarUtil(1, MAP_FILE_NAME, DBA_STAR_DB_PATH);
-            DBAStar dbaStar = dbaStarUtil.computeDBAStarDatabase(startingMap, "");
-
-            long startTimeDBAStar = System.currentTimeMillis();
-            for (int j = 0; j < NUM_PATHS; j++) {
-                dbaStarUtil.recomputeWallAdditionNoLogging(randomGoals[j].id, dbaStar);
-                dbaStarUtil.recomputeWallRemovalNoLogging(randomGoals[j].id, dbaStar);
-
-                for (int k = 0; k < SEARCHES_PER_WALL_CHANGE; k++) {
-                    dbaStar.computePath(randomStarts[j], randomGoals[j], new StatsRecord());
+                Random random = new Random();
+                for (int j = 0; j < NUM_PATHS; j++) {
+                    randomStarts[j] = new SearchState(openStates.get(random.nextInt(openStates.size())));
+                    randomGoals[j] = new SearchState(openStates.get(random.nextInt(openStates.size())));
                 }
-            }
 
-            logger.info("Time taken for DBA* pathfinding (partial recomputation) with " + SEARCHES_PER_WALL_CHANGE + " searches: {}", System.currentTimeMillis() - startTimeDBAStar);
+                DBAStarUtil dbaStarUtil = new DBAStarUtil(1, MAP_FILE_NAME, DBA_STAR_DB_PATH);
+                DBAStar dbaStar = dbaStarUtil.computeDBAStarDatabase(startingMap, "");
+
+                long startTimeDBAStar = System.currentTimeMillis();
+                for (int j = 0; j < NUM_PATHS; j++) {
+                    dbaStarUtil.recomputeWallAdditionNoLogging(randomGoals[j].id, dbaStar);
+                    dbaStarUtil.recomputeWallRemovalNoLogging(randomGoals[j].id, dbaStar);
+
+                    for (int k = 0; k < s; k++) {
+                        dbaStar.computePath(randomStarts[j], randomGoals[j], new StatsRecord());
+                    }
+                }
+
+                logger.info("Time taken for DBA* pathfinding (partial recomputation) with {} searches: {}", s, System.currentTimeMillis() - startTimeDBAStar);
+            }
         }
     }
 }
