@@ -293,8 +293,6 @@ public class DBAStarUtil {
                 }
 
                 if (visited.size() != groupRecord.getNumStates() - 1) {
-                    System.out.println("Visited num states: " + visited.size());
-                    System.out.println("Stored num states: " + groupRecord.getNumStates());
                     isPartition = true;
                 }
             }
@@ -919,8 +917,6 @@ public class DBAStarUtil {
                 }
 
                 if (visited.size() != groupRecord.getNumStates() - 1) {
-                    System.out.println("Visited num states: " + visited.size());
-                    System.out.println("Stored num states: " + groupRecord.getNumStates());
                     isPartition = true;
                 }
             }
