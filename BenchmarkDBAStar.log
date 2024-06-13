@@ -1,0 +1,102 @@
+Map: 012.map
+Grid size: 16
+Number of goals: 1000000
+Searches per wall change: 1
+Time taken for DBA* pathfinding (partial recomputation) with 1 searches: 151539
+Time taken for DBA* pathfinding (partial recomputation) with 1 searches: 150262
+Time taken for DBA* pathfinding (partial recomputation) with 1 searches: 149941
+Time taken for DBA* pathfinding (partial recomputation) with 1 searches: 151024
+Time taken for DBA* pathfinding (partial recomputation) with 1 searches: 150220
+Time taken for DBA* pathfinding (partial recomputation) with 1 searches: 150568
+Time taken for DBA* pathfinding (partial recomputation) with 1 searches: 150426
+Time taken for DBA* pathfinding (partial recomputation) with 1 searches: 150714
+Time taken for DBA* pathfinding (partial recomputation) with 1 searches: 150381
+Time taken for DBA* pathfinding (partial recomputation) with 1 searches: 150419
+Searches per wall change: 2
+Time taken for DBA* pathfinding (partial recomputation) with 2 searches: 165613
+Time taken for DBA* pathfinding (partial recomputation) with 2 searches: 164889
+Time taken for DBA* pathfinding (partial recomputation) with 2 searches: 168102
+Time taken for DBA* pathfinding (partial recomputation) with 2 searches: 168947
+Time taken for DBA* pathfinding (partial recomputation) with 2 searches: 168867
+Time taken for DBA* pathfinding (partial recomputation) with 2 searches: 168081
+Time taken for DBA* pathfinding (partial recomputation) with 2 searches: 168544
+Time taken for DBA* pathfinding (partial recomputation) with 2 searches: 168454
+Time taken for DBA* pathfinding (partial recomputation) with 2 searches: 169479
+Time taken for DBA* pathfinding (partial recomputation) with 2 searches: 166278
+Searches per wall change: 3
+Time taken for DBA* pathfinding (partial recomputation) with 3 searches: 179765
+Time taken for DBA* pathfinding (partial recomputation) with 3 searches: 178233
+Time taken for DBA* pathfinding (partial recomputation) with 3 searches: 179153
+Time taken for DBA* pathfinding (partial recomputation) with 3 searches: 178071
+Time taken for DBA* pathfinding (partial recomputation) with 3 searches: 179056
+Time taken for DBA* pathfinding (partial recomputation) with 3 searches: 178414
+Time taken for DBA* pathfinding (partial recomputation) with 3 searches: 179137
+Time taken for DBA* pathfinding (partial recomputation) with 3 searches: 178750
+Time taken for DBA* pathfinding (partial recomputation) with 3 searches: 179431
+Time taken for DBA* pathfinding (partial recomputation) with 3 searches: 178878
+Searches per wall change: 4
+Time taken for DBA* pathfinding (partial recomputation) with 4 searches: 191971
+Time taken for DBA* pathfinding (partial recomputation) with 4 searches: 193520
+Time taken for DBA* pathfinding (partial recomputation) with 4 searches: 195565
+Time taken for DBA* pathfinding (partial recomputation) with 4 searches: 195356
+Time taken for DBA* pathfinding (partial recomputation) with 4 searches: 195478
+Time taken for DBA* pathfinding (partial recomputation) with 4 searches: 191413
+Time taken for DBA* pathfinding (partial recomputation) with 4 searches: 191885
+Time taken for DBA* pathfinding (partial recomputation) with 4 searches: 193576
+Time taken for DBA* pathfinding (partial recomputation) with 4 searches: 194754
+Time taken for DBA* pathfinding (partial recomputation) with 4 searches: 193633
+Searches per wall change: 5
+Time taken for DBA* pathfinding (partial recomputation) with 5 searches: 207519
+Time taken for DBA* pathfinding (partial recomputation) with 5 searches: 207674
+Time taken for DBA* pathfinding (partial recomputation) with 5 searches: 206551
+Time taken for DBA* pathfinding (partial recomputation) with 5 searches: 207475
+Time taken for DBA* pathfinding (partial recomputation) with 5 searches: 205956
+Time taken for DBA* pathfinding (partial recomputation) with 5 searches: 204630
+Time taken for DBA* pathfinding (partial recomputation) with 5 searches: 204027
+Time taken for DBA* pathfinding (partial recomputation) with 5 searches: 204076
+Time taken for DBA* pathfinding (partial recomputation) with 5 searches: 204268
+Time taken for DBA* pathfinding (partial recomputation) with 5 searches: 204101
+Searches per wall change: 6
+Time taken for DBA* pathfinding (partial recomputation) with 6 searches: 218677
+Time taken for DBA* pathfinding (partial recomputation) with 6 searches: 221222
+Time taken for DBA* pathfinding (partial recomputation) with 6 searches: 220774
+Time taken for DBA* pathfinding (partial recomputation) with 6 searches: 219180
+Time taken for DBA* pathfinding (partial recomputation) with 6 searches: 217776
+Time taken for DBA* pathfinding (partial recomputation) with 6 searches: 218406
+Time taken for DBA* pathfinding (partial recomputation) with 6 searches: 217104
+Time taken for DBA* pathfinding (partial recomputation) with 6 searches: 218575
+Time taken for DBA* pathfinding (partial recomputation) with 6 searches: 217893
+Time taken for DBA* pathfinding (partial recomputation) with 6 searches: 217709
+Searches per wall change: 7
+Time taken for DBA* pathfinding (partial recomputation) with 7 searches: 231035
+Time taken for DBA* pathfinding (partial recomputation) with 7 searches: 229405
+Time taken for DBA* pathfinding (partial recomputation) with 7 searches: 229641
+Time taken for DBA* pathfinding (partial recomputation) with 7 searches: 230905
+Time taken for DBA* pathfinding (partial recomputation) with 7 searches: 229000
+Time taken for DBA* pathfinding (partial recomputation) with 7 searches: 231001
+Time taken for DBA* pathfinding (partial recomputation) with 7 searches: 232039
+Time taken for DBA* pathfinding (partial recomputation) with 7 searches: 233968
+Time taken for DBA* pathfinding (partial recomputation) with 7 searches: 229824
+Time taken for DBA* pathfinding (partial recomputation) with 7 searches: 229698
+Searches per wall change: 8
+Time taken for DBA* pathfinding (partial recomputation) with 8 searches: 241204
+Time taken for DBA* pathfinding (partial recomputation) with 8 searches: 242061
+Time taken for DBA* pathfinding (partial recomputation) with 8 searches: 241795
+Time taken for DBA* pathfinding (partial recomputation) with 8 searches: 241339
+Time taken for DBA* pathfinding (partial recomputation) with 8 searches: 242046
+Time taken for DBA* pathfinding (partial recomputation) with 8 searches: 242037
+Time taken for DBA* pathfinding (partial recomputation) with 8 searches: 241442
+Time taken for DBA* pathfinding (partial recomputation) with 8 searches: 241614
+Time taken for DBA* pathfinding (partial recomputation) with 8 searches: 241146
+Time taken for DBA* pathfinding (partial recomputation) with 8 searches: 241185
+Searches per wall change: 9
+Time taken for DBA* pathfinding (partial recomputation) with 9 searches: 254355
+Time taken for DBA* pathfinding (partial recomputation) with 9 searches: 255132
+Time taken for DBA* pathfinding (partial recomputation) with 9 searches: 258683
+Time taken for DBA* pathfinding (partial recomputation) with 9 searches: 255249
+Time taken for DBA* pathfinding (partial recomputation) with 9 searches: 255759
+Time taken for DBA* pathfinding (partial recomputation) with 9 searches: 251298
+Time taken for DBA* pathfinding (partial recomputation) with 9 searches: 251480
+Time taken for DBA* pathfinding (partial recomputation) with 9 searches: 250947
+Time taken for DBA* pathfinding (partial recomputation) with 9 searches: 249976
+Time taken for DBA* pathfinding (partial recomputation) with 9 searches: 250450
