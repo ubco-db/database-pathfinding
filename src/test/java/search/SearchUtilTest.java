@@ -119,6 +119,9 @@ public class SearchUtilTest {
 
         SearchState start, goal;
         int startId, goalId;
+
+        long unequalPathsCounter = 0, equalPathsCounter = 0;
+
         for (int i = 0; i < numNeighbours; i++) {
             for (int[] path: paths[i]) {
                 startId = path[0];
@@ -132,11 +135,22 @@ public class SearchUtilTest {
                 ArrayList<SearchState> dbaStarPath = dbaStarUtil.getDBAStarPath(startId, goalId, dbaStarBW);
                 ArrayList<SearchState> aStarPath = aStar.computePath(start, goal, new StatsRecord());
 
-                System.out.println(dbaStarPath);
-                System.out.println(aStarPath);
+//                System.out.println(dbaStarPath);
+//                System.out.println(aStarPath);
 
-                assertEquals(dbaStarPath, aStarPath);
+                if (!aStarPath.equals(dbaStarPath)) {
+                    unequalPathsCounter++;
+                    System.out.println(aStarPath);
+                    System.out.println(dbaStarPath);
+                } else {
+                    equalPathsCounter++;
+                }
             }
         }
+
+        System.out.println("Number of paths that are not equal after compression: " + unequalPathsCounter);
+        System.out.println("Number of paths that are equal after compression: " + equalPathsCounter);
+
+        assertEquals(0, unequalPathsCounter);
     }
 }

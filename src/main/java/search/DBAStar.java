@@ -42,7 +42,7 @@ public class DBAStar implements SearchAlgorithm {
         int goalRegionId = map.getRegionFromState(goal.id);
 
         // If the start region and goal region are the same, or if they are neighbours, use AStar instead
-        if (startRegionId == goalRegionId || areNeighbours(startRegionId, goalRegionId)) { // 15509
+        if (startRegionId == goalRegionId) { // 15509
             path = astar.computePath(start, goal, stats); // 40904
             return path;
         }
