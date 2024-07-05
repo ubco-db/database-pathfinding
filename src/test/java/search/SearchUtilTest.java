@@ -3,13 +3,11 @@ package search;
 import database.SubgoalDB;
 import database.SubgoalDynamicDB3;
 import map.GameMap;
-import map.GroupRecord;
 import org.junit.Test;
 import util.DBAStarUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.TreeMap;
 
 import static org.junit.Assert.assertEquals;
 
@@ -116,37 +114,29 @@ public class SearchUtilTest {
 
         AStar aStar = new AStar(new MapSearchProblem(dbaStarBW.getMap()));
 
-        int[][] neighbours = ((SubgoalDynamicDB3) dbaStarBW.getDatabase()).getNeighbors();
+        int[][][] paths = ((SubgoalDynamicDB3) dbaStarBW.getDatabase()).getPaths();
         int numNeighbours = ((SubgoalDynamicDB3) dbaStarBW.getDatabase()).getNumGroups();
 
         SearchState start, goal;
+        int startId, goalId;
         for (int i = 0; i < numNeighbours; i++) {
+            for (int[] path: paths[i]) {
+                startId = path[0];
+                goalId = path[path.length - 1];
 
-            int startId = i + GameMap.START_NUM;
-            start = new SearchState(startId);
-
-            for (int stateId: neighbours[i]) {
-
-                int goalId = stateId + GameMap.START_NUM;
+                start = new SearchState(startId);
                 goal = new SearchState(goalId);
-                System.out.println(start + " " + goal);
+
+//                System.out.println(start + " " + goal);
 
                 ArrayList<SearchState> dbaStarPath = dbaStarUtil.getDBAStarPath(startId, goalId, dbaStarBW);
                 ArrayList<SearchState> aStarPath = aStar.computePath(start, goal, new StatsRecord());
-                // System.out.println(aStarPath);
+
+                System.out.println(dbaStarPath);
+                System.out.println(aStarPath);
 
                 assertEquals(dbaStarPath, aStarPath);
             }
         }
-
-        for (int i = 0; i < numNeighbours; i++) {
-            int startId = i + GameMap.START_NUM;
-            for (int stateId: neighbours[i]) {
-                int goalId = stateId + GameMap.START_NUM;
-                System.out.println(startId + " " + goalId);
-            }
-        }
-
-        System.out.println(Arrays.deepToString(neighbours));
     }
 }
