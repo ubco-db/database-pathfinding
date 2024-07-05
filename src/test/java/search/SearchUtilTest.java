@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.TreeMap;
 
+import static org.junit.Assert.assertEquals;
+
 public class SearchUtilTest {
     @Test
     public void hillClimbingPathCompressionEqualAStarPath() {
@@ -112,15 +114,39 @@ public class SearchUtilTest {
         GameMap startingMap = new GameMap(PATH_TO_MAP, GRID_SIZE);
         DBAStar dbaStarBW = dbaStarUtil.computeDBAStarDatabase(startingMap, "BW");
 
+        AStar aStar = new AStar(new MapSearchProblem(dbaStarBW.getMap()));
+
         int[][] neighbours = ((SubgoalDynamicDB3) dbaStarBW.getDatabase()).getNeighbors();
         int numNeighbours = ((SubgoalDynamicDB3) dbaStarBW.getDatabase()).getNumGroups();
 
+        SearchState start, goal;
         for (int i = 0; i < numNeighbours; i++) {
-            System.out.println(i);
+
+            int startId = i + GameMap.START_NUM;
+            start = new SearchState(startId);
+
             for (int stateId: neighbours[i]) {
-                System.out.print(stateId + " ");
+
+                int goalId = stateId + GameMap.START_NUM;
+                goal = new SearchState(goalId);
+                System.out.println(start + " " + goal);
+
+                ArrayList<SearchState> dbaStarPath = dbaStarUtil.getDBAStarPath(startId, goalId, dbaStarBW);
+                ArrayList<SearchState> aStarPath = aStar.computePath(start, goal, new StatsRecord());
+                // System.out.println(aStarPath);
+
+                assertEquals(dbaStarPath, aStarPath);
             }
-            System.out.println();
         }
+
+        for (int i = 0; i < numNeighbours; i++) {
+            int startId = i + GameMap.START_NUM;
+            for (int stateId: neighbours[i]) {
+                int goalId = stateId + GameMap.START_NUM;
+                System.out.println(startId + " " + goalId);
+            }
+        }
+
+        System.out.println(Arrays.deepToString(neighbours));
     }
 }
