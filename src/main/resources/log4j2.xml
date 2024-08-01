@@ -5,10 +5,13 @@
     <!-- Appenders will publish log files -->
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
-<!--            <LevelRangeFilter minLevel="ERROR" maxLevel="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>-->
-            <PatternLayout pattern="${layout}"/>
+            <!--            <LevelRangeFilter minLevel="ERROR" maxLevel="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>-->
+<!--            <PatternLayout pattern="${layout}"/>-->
+            <PatternLayout>
+                <Pattern>%m%n</Pattern>
+            </PatternLayout>
         </Console>
-        <File name="LogFile" fileName="LabBenchmarks2.log">
+        <File name="LogFile" fileName="Static.log">
             <PatternLayout>
                 <Pattern>%m%n</Pattern>
             </PatternLayout>
@@ -17,6 +20,7 @@
     <Loggers>
         <Root level="info">
             <AppenderRef ref="LogFile"/>
+            <AppenderRef ref="Console"/>
         </Root>
     </Loggers>
 </Configuration>

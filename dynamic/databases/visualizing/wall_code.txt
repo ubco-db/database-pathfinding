@@ -1,3 +1,0 @@
-        // setting up walls
-        ArrayList<SearchState> wallLocation = new ArrayList<>();
-        wallLocation.add(new SearchState(8195));

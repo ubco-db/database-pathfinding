@@ -1,47 +1,24 @@
 package search;
 
-import map.GroupRecord;
-import util.ExpandArray;
-import util.HeuristicFunction;
+import java.util.List;
 
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.TreeMap;
-
-/**
- * Generic class for search problems.
- *
- * @author rlawrenc
- */
 public abstract class SearchProblem {
+    public static final char EDGE_COST_CARDINAL = 10;
+    public static final char EDGE_COST_DIAGONAL = 14;
 
-    public abstract ArrayList<SearchState> getNeighbors(SearchState state);
+    public abstract void getNeighbours(SearchState currentState, List<SearchState> neighbours);
 
-    public abstract void getNeighbors(int stateId, ExpandArray neighbors);
+    public abstract int getNeighbours(SearchState currentState, SearchState[] neighbours);
 
-    public abstract int computeDistance(SearchState start, SearchState goal);
+    public abstract void getNeighbourIds(int currentId, List<Integer> neighbourIds);
 
-    public abstract int computeDistance(SearchState start, SearchState goal, HeuristicFunction heuristic);
-
-    public abstract int computeDistance(int startId, int goalId);
-
-    public abstract int computeDistance(int startId, int goalId, HeuristicFunction heuristic);
-
-    public abstract int getMaxSize();
+    public abstract int getNeighbourIds(int currentId, int[] neighbourIds);
 
     public abstract int getMoveCost(SearchState start, SearchState goal);
 
-    public abstract int getMoveCost(int startId, int goalId);
+    public abstract int getMoveCost(int startStateId, int goalStateId);
 
-    public abstract void initIterator();
+    public abstract int getOctileDistance(int startStateId, int goalStateId);
 
-    public abstract boolean nextState(SearchState state);
-
-    public abstract SearchState generateRandomState(Random generator);
-
-    public abstract TreeMap<Integer, GroupRecord> getGroups();
-
-    public abstract void computeNeighbors();
-
-    public abstract String idToString(int id);
+    public abstract int getMaxSize();
 }

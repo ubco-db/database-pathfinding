@@ -1,132 +1,212 @@
 package search;
 
 import map.GameMap;
-import map.GroupRecord;
-import util.ExpandArray;
-import util.HeuristicFunction;
 
 import java.util.ArrayList;
-import java.util.Random;
-import java.util.TreeMap;
+import java.util.HashSet;
+import java.util.List;
 
-/**
- * Supports grid-based search problems (for game maps).
- *
- * @author rlawrenc
- */
 public class MapSearchProblem extends SearchProblem {
-    private final GameMap map;
-    private int row;
-    private int col;
+    private final GameMap gameMap;
 
-    public MapSearchProblem(GameMap map) {
-        this.map = map;
+    public MapSearchProblem(GameMap gameMap) {
+        this.gameMap = gameMap;
     }
 
-    public int computeDistance(SearchState start, SearchState goal) {
-        // return GameMap.computeDistance(map.getRow(start.id), map.getCol(start.id), map.getRow(goal.id), map.getCol(goal.id));
-        return GameMap.computeDistance(start.id, goal.id, map.cols);
+    public static List<SearchState> getOpenStateList(GameMap gameMap) {
+        List<SearchState> openStates = new ArrayList<>(gameMap.getNumOpenStates());
 
-    }
-
-    public int computeDistance(SearchState start, SearchState goal, HeuristicFunction heuristic) {
-        // return GameMap.computeDistance(map.getRow(start.id), map.getCol(start.id), map.getRow(goal.id), map.getCol(goal.id));
-        return GameMap.computeDistance(start.id, goal.id, map.cols, heuristic);
-
-    }
-
-    public int computeDistance(int startId, int goalId) {
-        //return GameMap.computeDistance(map.getRow(startId), map.getCol(startId), map.getRow(goalId), map.getCol(goalId));
-        return GameMap.computeDistance(startId, goalId, map.cols);
-    }
-
-    public int computeDistance(int startId, int goalId, HeuristicFunction heuristic) {
-        //return GameMap.computeDistance(map.getRow(startId), map.getCol(startId), map.getRow(goalId), map.getCol(goalId));
-        return GameMap.computeDistance(startId, goalId, map.cols, heuristic);
-    }
-
-    public ArrayList<SearchState> getNeighbors(SearchState state) {
-        return map.getNeighbors(map.getRow(state.id), map.getCol(state.id));
-    }
-
-    public int getMaxSize() {
-        return map.rows * map.cols;
-    }
-
-
-    public GameMap getMap() {
-        return map;
-    }
-
-    public void initIterator() {
-        row = 0;
-        col = 0;
-    }
-
-    public boolean nextState(SearchState state) {
-        return getNextState(state);
-    }
-
-    private boolean getNextState(SearchState state) {
-        for (; row < map.rows; row++) {
-            for (; col < map.cols; col++) {
-                if (map.squares[row][col] != GameMap.WALL_CHAR) {
-                    state.id = map.getId(row, col);
-                    state.cost = map.squares[row][col++] - GameMap.START_NUM;
-                    return true;
+        for (int r = 0; r < gameMap.getNumRows(); r++) {
+            for (int c = 0; c < gameMap.getNumCols(); c++) {
+                if (!gameMap.isWall(r, c)) {
+                    openStates.add(new SearchState(gameMap.getStateId(r, c)));
                 }
             }
-            col = 0;
         }
-        return false;
+
+        return openStates;
     }
 
-    public SearchState generateRandomState(Random generator) {
-        int row, col;
-        int maxRow = map.rows;
-        int maxCol = map.cols;
+    @Override
+    public void getNeighbours(SearchState currentState, List<SearchState> neighbours) {
+        if (!neighbours.isEmpty()) {
+            throw new RuntimeException();
+        }
 
-        do {
-            row = generator.nextInt(maxRow);
-            col = generator.nextInt(maxCol);
-        } while (map.isWall(row, col));
-        return new SearchState(map.getId(row, col));
-    }
+        int stateId = currentState.getStateId();
 
-    public String idToString(int id) {
-        return "(" + map.getRow(id) + ", " + map.getCol(id) + ")";
-    }
+        int row = gameMap.getRowFromStateId(stateId);
+        int col = gameMap.getColFromStateId(stateId);
 
-    public TreeMap<Integer, GroupRecord> getGroups() {
-        try {
-            return map.getGroups();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        boolean isOpenNorth = false, isOpenEast = false, isOpenSouth = false, isOpenWest = false;
+
+        if (gameMap.isInBoundsAndNotWall(row - 1, col)) { // north
+            neighbours.add(new SearchState(gameMap.getStateId(row - 1, col)));
+            isOpenNorth = true;
+        }
+        if (gameMap.isInBoundsAndNotWall(row, col + 1)) { // east
+            neighbours.add(new SearchState(gameMap.getStateId(row, col + 1)));
+            isOpenEast = true;
+        }
+        if (gameMap.isInBoundsAndNotWall(row + 1, col)) { // south
+            neighbours.add(new SearchState(gameMap.getStateId(row + 1, col)));
+            isOpenSouth = true;
+        }
+        if (gameMap.isInBoundsAndNotWall(row, col - 1)) { // west
+            neighbours.add(new SearchState(gameMap.getStateId(row, col - 1)));
+            isOpenWest = true;
+        }
+
+        // Diagonal states are only open if either of the corresponding cardinal states are open
+        if ((isOpenNorth || isOpenEast) && gameMap.isInBoundsAndNotWall(row - 1, col + 1)) { // north-east
+            neighbours.add(new SearchState(gameMap.getStateId(row - 1, col + 1)));
+        }
+        if ((isOpenSouth || isOpenEast) && gameMap.isInBoundsAndNotWall(row + 1, col + 1)) { // south-east
+            neighbours.add(new SearchState(gameMap.getStateId(row + 1, col + 1)));
+        }
+        if ((isOpenSouth || isOpenWest) && gameMap.isInBoundsAndNotWall(row + 1, col - 1)) { // south-west
+            neighbours.add(new SearchState(gameMap.getStateId(row + 1, col - 1)));
+        }
+        if ((isOpenNorth || isOpenWest) && gameMap.isInBoundsAndNotWall(row - 1, col - 1)) { // north-west
+            neighbours.add(new SearchState(gameMap.getStateId(row - 1, col - 1)));
         }
     }
 
-    public void computeNeighbors() {
-        map.computeNeighbors();
+    @Override
+    public int getNeighbours(SearchState currentState, SearchState[] neighbours) {
+        int i = 0;
+
+        int stateId = currentState.getStateId();
+
+        int row = gameMap.getRowFromStateId(stateId);
+        int col = gameMap.getColFromStateId(stateId);
+
+        boolean isOpenNorth = false, isOpenEast = false, isOpenSouth = false, isOpenWest = false;
+
+        if (gameMap.isInBoundsAndNotWall(row - 1, col)) { // north
+            neighbours[i++] = new SearchState(gameMap.getStateId(row - 1, col));
+            isOpenNorth = true;
+        }
+        if (gameMap.isInBoundsAndNotWall(row, col + 1)) { // east
+            neighbours[i++] = new SearchState(gameMap.getStateId(row, col + 1));
+            isOpenEast = true;
+        }
+        if (gameMap.isInBoundsAndNotWall(row + 1, col)) { // south
+            neighbours[i++] = new SearchState(gameMap.getStateId(row + 1, col));
+            isOpenSouth = true;
+        }
+        if (gameMap.isInBoundsAndNotWall(row, col - 1)) { // west
+            neighbours[i++] = new SearchState(gameMap.getStateId(row, col - 1));
+            isOpenWest = true;
+        }
+
+        // Diagonal states are only open if either of the corresponding cardinal states are open
+        if ((isOpenNorth || isOpenEast) && gameMap.isInBoundsAndNotWall(row - 1, col + 1)) { // north-east
+            neighbours[i++] = new SearchState(gameMap.getStateId(row - 1, col + 1));
+        }
+        if ((isOpenSouth || isOpenEast) && gameMap.isInBoundsAndNotWall(row + 1, col + 1)) { // south-east
+            neighbours[i++] = new SearchState(gameMap.getStateId(row + 1, col + 1));
+        }
+        if ((isOpenSouth || isOpenWest) && gameMap.isInBoundsAndNotWall(row + 1, col - 1)) { // south-west
+            neighbours[i++] = new SearchState(gameMap.getStateId(row + 1, col - 1));
+        }
+        if ((isOpenNorth || isOpenWest) && gameMap.isInBoundsAndNotWall(row - 1, col - 1)) { // north-west
+            neighbours[i++] = new SearchState(gameMap.getStateId(row - 1, col - 1));
+        }
+
+        return i;
     }
 
-    public int getMoveCost(int startId, int goalId) {    // Assumes they are not the same state (as move cost would be zero then)
-        // This was current code for a diagonal movement
+    @Override
+    public void getNeighbourIds(int currentId, List<Integer> neighbourIds) {
+        gameMap.getStateNeighbourIds(currentId, neighbourIds);
+    }
+
+    @Override
+    public int getNeighbourIds(int currentId, int[] neighbourIds) {
+        return gameMap.getStateNeighbourIds(currentId, neighbourIds);
+    }
+
+    public int getNeighbourIds(int currentId, int[] neighbourIds, HashSet<Integer> closedSet) {
+        return gameMap.getStateNeighbourIds(currentId, neighbourIds, closedSet);
+    }
+
+    /**
+     * @param startId stateId of start
+     * @param goalId  stateId of goal
+     * @return The cost of moving from one adjacent state to the next
+     */
+    @Override
+    public int getMoveCost(int startId, int goalId) {
+        if (startId == goalId) return 0;
+
+        int numCols = gameMap.getNumCols();
+
         int diff = startId - goalId;
         int bit31 = diff >> 31;
         diff = (diff ^ bit31) - bit31;
 
-        if (diff == 1 || diff == map.cols)
-            return 10;
-        else
-            return 14;
+        if (diff == 1 || diff == numCols) {
+            return EDGE_COST_CARDINAL;
+        } else if (diff == numCols - 1 || diff == numCols + 1) {
+            return EDGE_COST_DIAGONAL;
+        } else {
+            throw new RuntimeException("startId=" + startId + " goalId=" + goalId + " diff=" + diff + " on " + gameMap.getName());
+        }
     }
 
+    @Override
     public int getMoveCost(SearchState start, SearchState goal) {
-        return getMoveCost(start.id, goal.id);
+        return getMoveCost(start.getStateId(), goal.getStateId());
     }
 
-    public void getNeighbors(int stateId, ExpandArray neighbors) {
-        map.getNeighbors(map.getRow(stateId), map.getCol(stateId), neighbors);
+    public boolean isAdjacent(int startId, int goalId) {
+        int numCols = gameMap.getNumCols();
+
+        int diff = startId - goalId;
+        int bit31 = diff >> 31;
+        diff = (diff ^ bit31) - bit31;
+
+        return diff == 1 || diff == numCols || diff == numCols - 1 || diff == numCols + 1;
     }
 
+    public boolean isAdjacent(SearchState start, SearchState goal) {
+        return isAdjacent(start.getStateId(), goal.getStateId());
+    }
+
+    /**
+     * @param startId stateId of the start state
+     * @param goalId  stateId of the goal state
+     * @return the octile distance (movement in all eight directions) between start and goal state
+     */
+    @Override
+    public int getOctileDistance(int startId, int goalId) {
+        return gameMap.getOctileDistance(startId, goalId);
+    }
+
+    @Override
+    public int getMaxSize() {
+        return gameMap.getNumRows() * gameMap.getNumCols();
+    }
+
+    public boolean isTouchingWall(SearchState currentState) {
+        int stateId = currentState.getStateId();
+
+        int row = gameMap.getRowFromStateId(stateId);
+        int col = gameMap.getColFromStateId(stateId);
+
+        for (int r = -1; r <= 1; r++) {
+            for (int c = -1; c <= 1; c++) {
+                if (r == 0 && col == 0) {
+                    continue;
+                }
+
+                if (gameMap.isOutOfBoundsOrWall(row + r, col + c)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 }

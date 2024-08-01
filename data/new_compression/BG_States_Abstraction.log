@@ -1,0 +1,24 @@
+012 map
+gridSize, numStatesExpandedBFSDBA*, numStatesExpandedDBA*, numStatesExpandedHCCompressionDBA*, numStatesExpandedBFSPRA*, numStatesExpandedPRA*, numStatesExpandedHCCompressionPRA*
+16,6176,6600,2419,6176,0,0
+32,6176,11831,5072,6176,0,0
+64,6176,6262,2562,6176,0,0
+128,6176,3792,1247,6176,0,0
+516 map
+gridSize, numStatesExpandedBFSDBA*, numStatesExpandedDBA*, numStatesExpandedHCCompressionDBA*, numStatesExpandedBFSPRA*, numStatesExpandedPRA*, numStatesExpandedHCCompressionPRA*
+16,7637,4603,821,7637,0,0
+32,7637,4760,2492,7637,0,0
+64,7637,3098,2092,7637,0,0
+128,7637,5182,2748,7637,0,0
+603 map
+gridSize, numStatesExpandedBFSDBA*, numStatesExpandedDBA*, numStatesExpandedHCCompressionDBA*, numStatesExpandedBFSPRA*, numStatesExpandedPRA*, numStatesExpandedHCCompressionPRA*
+16,13765,9372,2886,13765,0,0
+32,13765,7868,4196,13765,0,0
+64,13765,9119,4509,13765,0,0
+128,13765,23071,7102,13765,0,0
+701 map
+gridSize, numStatesExpandedBFSDBA*, numStatesExpandedDBA*, numStatesExpandedHCCompressionDBA*, numStatesExpandedBFSPRA*, numStatesExpandedPRA*, numStatesExpandedHCCompressionPRA*
+16,16142,14150,4978,16142,0,0
+32,16142,20558,11148,16142,0,0
+64,16142,22248,8709,16142,0,0
+128,16142,18814,6653,16142,0,0
