@@ -1,4 +1,0 @@
-ArrayList<SearchState> wallLocation = new ArrayList<>();
-
-// singular wall
-wallLocation.add(new SearchState(13558));

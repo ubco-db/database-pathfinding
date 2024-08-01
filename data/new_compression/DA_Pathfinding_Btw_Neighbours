@@ -1,0 +1,100 @@
+hrt000d map
+gridSize, totalNumberOfStatesExpandedDBA, dbaPathfindingTime, dbaTotalTime, totalNumberOfStatesExpandedPRA, praPathfindingTime, praTotalTime
+16, 61704, 23.395597, 24.152801
+32, 32581, 11.46529, 11.737199
+64, 17664, 2.531703, 2.6461
+128, 10980, 0.975005, 1.0113
+78431, 24.069113, 25.0326
+61393, 15.1172, 15.402099
+91525, 33.027595, 33.230101
+283637, 69.173501, 69.246101
+orz100d map
+gridSize, totalNumberOfStatesExpandedDBA, dbaPathfindingTime, dbaTotalTime, totalNumberOfStatesExpandedPRA, praPathfindingTime, praTotalTime
+16, 57044, 8.257103, 8.619999
+32, 31202, 3.563099, 3.770301
+64, 19002, 1.818102, 1.8667
+128, 9995, 0.944902, 0.978
+76648, 18.882506, 19.3757
+79353, 22.177301, 22.372599
+180563, 41.769903, 41.8937
+152498, 36.603598, 36.660001
+orz103d map
+gridSize, totalNumberOfStatesExpandedDBA, dbaPathfindingTime, dbaTotalTime, totalNumberOfStatesExpandedPRA, praPathfindingTime, praTotalTime
+16, 23488, 6.359897, 6.6037
+32, 12034, 1.641102, 1.7477
+64, 9088, 1.102703, 1.149499
+128, 5796, 0.500098, 0.5175
+28296, 6.362806, 6.6062
+23315, 5.060102, 5.156
+47200, 9.927298, 9.974601
+72311, 20.006701, 20.036001
+orz300d map
+gridSize, totalNumberOfStatesExpandedDBA, dbaPathfindingTime, dbaTotalTime, totalNumberOfStatesExpandedPRA, praPathfindingTime, praTotalTime
+16, 48438, 12.357896, 12.879699
+32, 25232, 2.941304, 3.107501
+64, 13380, 1.353303, 1.412099
+128, 7721, 0.805598, 0.833599
+66416, 16.081584, 16.519
+64882, 15.396601, 15.5599
+85059, 18.601302, 18.6681
+134871, 35.374401, 35.4236
+orz700d map
+gridSize, totalNumberOfStatesExpandedDBA, dbaPathfindingTime, dbaTotalTime, totalNumberOfStatesExpandedPRA, praPathfindingTime, praTotalTime
+16, 53669, 9.355203, 9.989199
+32, 30244, 9.203002, 9.438101
+64, 19743, 2.108603, 2.198199
+128, 15381, 1.371001, 1.404399
+58821, 14.665092, 15.3266
+44981, 10.773996, 11.0536
+77518, 18.240403, 18.353399
+123522, 26.948399, 27.010399
+orz702d map
+gridSize, totalNumberOfStatesExpandedDBA, dbaPathfindingTime, dbaTotalTime, totalNumberOfStatesExpandedPRA, praPathfindingTime, praTotalTime
+16, 39550, 6.0212, 6.3753
+32, 20240, 2.462899, 2.670899
+64, 13453, 1.416101, 1.4774
+128, 8809, 0.909303, 0.929101
+43501, 12.878097, 13.31
+29422, 6.725498, 6.8155
+38932, 8.744, 8.7828
+105668, 25.045899, 25.0645
+orz900d map
+gridSize, totalNumberOfStatesExpandedDBA, dbaPathfindingTime, dbaTotalTime, totalNumberOfStatesExpandedPRA, praPathfindingTime, praTotalTime
+16, 55705, 8.854602, 9.155
+32, 31210, 4.009797, 4.1978
+64, 18358, 1.951303, 2.0317
+128, 13617, 1.2427, 1.261199
+61887, 13.711699, 14.0809
+54640, 11.852692, 12.000301
+62329, 13.1968, 13.2716
+103367, 28.397799, 28.438599
+ost000a map
+gridSize, totalNumberOfStatesExpandedDBA, dbaPathfindingTime, dbaTotalTime, totalNumberOfStatesExpandedPRA, praPathfindingTime, praTotalTime
+16, 77136, 11.144107, 11.6419
+32, 38765, 4.471398, 4.638999
+64, 22017, 4.071598, 4.161801
+128, 14299, 1.349101, 1.3834
+102639, 25.175784, 25.5785
+81761, 18.045393, 18.2242
+100434, 22.964603, 23.038
+189421, 44.708897, 44.7568
+ost000t map
+gridSize, totalNumberOfStatesExpandedDBA, dbaPathfindingTime, dbaTotalTime, totalNumberOfStatesExpandedPRA, praPathfindingTime, praTotalTime
+16, 62027, 9.306102, 9.7761
+32, 31247, 3.613403, 3.7736
+64, 16577, 1.6602, 1.7161
+128, 10366, 0.997703, 1.021599
+77230, 17.608307, 18.080401
+63364, 14.145707, 14.3328
+65598, 17.402606, 17.467399
+147071, 34.1669, 34.2008
+ost100d map
+gridSize, totalNumberOfStatesExpandedDBA, dbaPathfindingTime, dbaTotalTime, totalNumberOfStatesExpandedPRA, praPathfindingTime, praTotalTime
+16, 76039, 12.380895, 12.9696
+32, 38716, 5.045201, 5.2003
+64, 19720, 2.065602, 2.1255
+128, 12986, 1.407798, 1.4353
+87018, 32.859203, 33.4077
+57697, 19.916401, 20.1942
+53009, 18.7727, 18.8227
+157336, 56.877301, 56.895901

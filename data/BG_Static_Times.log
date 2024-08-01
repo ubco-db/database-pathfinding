@@ -1,0 +1,24 @@
+012 map
+gridSize, timeToAbstractRegionsDBA*, timeToDetermineNeighbourhoodsDBA*, totalAbstractionTimeDBA*, timeToFindPathsOfflineDBA*, timeToPerformHCCompressionDBA*, timeToGenerateDatabaseDBA*, totalTimeDBA*, timeToAbstractRegionsPRA*, timeToDetermineNeighbourhoodsPRA*, totalAbstractionTimePRA*, timeToFindPathsOfflinePRA*, timeToPerformHCCompressionPRA*, timeToGenerateDatabasePRA*, totalTimePRA*
+16,2.62208,1.08104,3.89842,7.53424,0.92444,8.83822,13.52326,1.84102,0.72032,2.70194,0.0,0.0,0.0,3.38508
+32,1.6962,0.46638,2.16934,9.25538,1.00784,10.33904,12.58806,1.68512,0.40574,2.10048,0.0,0.0,0.0,2.1441
+64,1.47492,0.17596,1.65686,5.30578,0.55436,5.89624,7.59722,1.42474,0.13692,1.56902,0.0,0.0,0.0,1.61484
+128,1.14556,0.09214,1.24262,3.40056,0.18936,3.6079,4.89568,1.12134,0.086,1.21356,0.0,0.0,0.0,1.2571
+516 map
+gridSize, timeToAbstractRegionsDBA*, timeToDetermineNeighbourhoodsDBA*, totalAbstractionTimeDBA*, timeToFindPathsOfflineDBA*, timeToPerformHCCompressionDBA*, timeToGenerateDatabaseDBA*, totalTimeDBA*, timeToAbstractRegionsPRA*, timeToDetermineNeighbourhoodsPRA*, totalAbstractionTimePRA*, timeToFindPathsOfflinePRA*, timeToPerformHCCompressionPRA*, timeToGenerateDatabasePRA*, totalTimePRA*
+16,1.30302,0.2179,1.5284,3.73708,0.11594,4.0299,5.64046,1.25738,0.23376,1.50184,0.0,0.0,0.0,1.58194
+32,0.84764,0.15274,1.00698,3.38052,0.28714,3.73914,4.83346,0.93296,0.16506,1.10556,0.0,0.0,0.0,1.1935
+64,0.55536,0.11666,0.67582,2.44632,0.12702,2.59414,3.32102,0.52308,0.11814,0.64576,0.0,0.0,0.0,0.69244
+128,0.50612,0.1016,0.611,2.7536,0.15386,2.91848,3.57374,0.45912,0.10354,0.5663,0.0,0.0,0.0,0.60468
+603 map
+gridSize, timeToAbstractRegionsDBA*, timeToDetermineNeighbourhoodsDBA*, totalAbstractionTimeDBA*, timeToFindPathsOfflineDBA*, timeToPerformHCCompressionDBA*, timeToGenerateDatabaseDBA*, totalTimeDBA*, timeToAbstractRegionsPRA*, timeToDetermineNeighbourhoodsPRA*, totalAbstractionTimePRA*, timeToFindPathsOfflinePRA*, timeToPerformHCCompressionPRA*, timeToGenerateDatabasePRA*, totalTimePRA*
+16,0.82904,0.37116,1.20502,4.29214,0.23634,4.70708,5.9751,0.81712,0.37738,1.19958,0.0,0.0,0.0,1.26122
+32,0.81274,0.28084,1.09784,2.62922,0.29914,2.99052,4.17338,1.0792,0.28678,1.36996,0.0,0.0,0.0,1.43034
+64,0.98206,0.22184,1.21374,3.84696,0.30492,4.18538,5.47234,1.81564,0.23222,2.06304,0.0,0.0,0.0,2.15678
+128,0.79742,0.19584,0.99608,9.26442,0.39334,9.6809,10.73888,0.83304,0.20016,1.03636,0.0,0.0,0.0,1.0986
+701 map
+gridSize, timeToAbstractRegionsDBA*, timeToDetermineNeighbourhoodsDBA*, totalAbstractionTimeDBA*, timeToFindPathsOfflineDBA*, timeToPerformHCCompressionDBA*, timeToGenerateDatabaseDBA*, totalTimeDBA*, timeToAbstractRegionsPRA*, timeToDetermineNeighbourhoodsPRA*, totalAbstractionTimePRA*, timeToFindPathsOfflinePRA*, timeToPerformHCCompressionPRA*, timeToGenerateDatabasePRA*, totalTimePRA*
+16,0.9165,0.4164,1.33616,4.18288,0.3834,4.75824,6.14704,0.96226,0.40694,1.37716,0.0,0.0,0.0,1.43478
+32,0.93668,0.3424,1.28318,8.33904,0.71308,9.15456,10.49556,1.05426,0.33062,1.39104,0.0,0.0,0.0,1.4498
+64,0.90174,0.2333,1.13762,9.12242,0.49406,9.65008,10.83982,0.92236,0.23568,1.16088,0.0,0.0,0.0,1.2167
+128,0.90944,0.20352,1.11596,12.80698,0.40594,13.23926,14.4096,1.20128,0.21144,1.4172,0.0,0.0,0.0,1.47422

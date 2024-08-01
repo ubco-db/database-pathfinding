@@ -1,1 +1,0 @@
-After adding a wall at 6157, no path was found between 13411 and 6009!

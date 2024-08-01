@@ -1,58 +1,44 @@
 package search;
 
-
 public class SearchState implements Comparable<SearchState> {
-    public int id;
-    public double cost;    // f
-    public int g;
-    public int h;
-    public Object stateData;
-    public boolean updated = false;
+    private int stateId;
+    private int cost;
+    private int g;
+    private int h;
 
-    public SearchState prev;
+    private SearchState parent; // parent SearchState for reconstruction
 
-    public SearchState() {
+    public SearchState(int stateId) {
+        this.stateId = stateId;
+        this.cost = 0;
+        this.g = 0;
+        this.h = 0;
+        this.parent = null;
     }
 
-    public SearchState(SearchState st) {
-        this.id = st.id;
-        this.cost = st.cost;
-        this.g = st.g;
-        this.h = st.h;
-        this.prev = st.prev;
-        stateData = st.stateData;
-        this.updated = st.updated;
-    }
-
-    public SearchState(int id) {
-        this.id = id;
-        cost = 0;
-        g = 0;
-        h = 0;
-        prev = null;
-        stateData = null;
+    public SearchState(int stateId, int g, int h, SearchState parent) {
+        this.stateId = stateId;
+        this.g = g;
+        this.h = h;
+        this.cost = g + h;
+        this.parent = parent;
     }
 
     public void updateCost(int g, int h) {
-        this.h = h;
         this.g = g;
+        this.h = h;
         this.cost = this.g + this.h;
     }
 
-    public boolean equals(SearchState s1) {
-        return this.id == s1.id;
+    public int getStateId() {
+        return stateId;
     }
 
-    public int compareTo(SearchState o) {
-        if (this.cost == o.cost) return o.g - this.g;
-        return (int) (this.cost - o.cost);
+    public int getG() {
+        return g;
     }
 
-    public String toString() {
-        return "Id: " + id + " U: " + updated + " f: " + cost + " g: " + g + " h: " + h + " Cost: " + cost;
-    }
-
-    public double getCost() {
+    public int getCost() {
         return cost;
     }
 
@@ -60,7 +46,59 @@ public class SearchState implements Comparable<SearchState> {
         this.cost = cost;
     }
 
-    public int getId() {
-        return id;
+    public int getH() {
+        return h;
+    }
+
+    public SearchState getParent() {
+        return parent;
+    }
+
+    public void setParent(SearchState parent) {
+        this.parent = parent;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SearchState that = (SearchState) o;
+        return stateId == that.stateId;
+    }
+
+//    @Override
+//    public String toString() {
+//        return "SearchState{" +
+//                "stateId=" + stateId +
+//                ", cost=" + cost +
+//                ", g=" + g +
+//                ", h=" + h +
+//                ", parent=" + parent +
+//                '}';
+//    }
+
+    @Override
+    public String toString() {
+        return stateId + "";
+    }
+
+    // Used by PriorityQueue during A*
+    @Override
+    public int compareTo(SearchState o) {
+        // Sort descending based on cost (lowest cost first), if costs are equal, sort ascending based on g cost
+        // (highest g cost first)
+        if (this.cost == o.cost) {
+            return o.g - this.g;
+        } else {
+            return this.cost - o.cost;
+        }
+    }
+
+    public void initialize(int stateId) {
+        this.stateId = stateId;
+        this.cost = 0;
+        this.g = 0;
+        this.h = 0;
+        this.parent = null;
     }
 }

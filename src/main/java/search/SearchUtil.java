@@ -1,227 +1,55 @@
 package search;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import map.AbstractedMap;
+import map.GameMap;
+import search.algorithms.CompressAStar;
+import search.algorithms.HillClimbing;
+import search.algorithms.HillClimbingWithClosedSet;
+import stats.SearchStats;
+
+import java.util.List;
 
 public class SearchUtil {
 
-    /**
-     * Merges path 2 onto end of path 1 removing the last element of path 1 which is assumed to be the same as the first element in path2
-     *
-     * @param path1
-     * @param path2
-     * @return ArrayList<SearchState>
-     */
-    public static ArrayList<SearchState> mergePaths(ArrayList<SearchState> path1, ArrayList<SearchState> path2) {
-        if (path1.size() > 0) path1.remove(path1.size() - 1);    // Remove last element
-        path1.ensureCapacity(path1.size() + path2.size());
+    private SearchUtil() throws Exception {
+        throw new Exception("This is a utility class and should not be instantiated.");
+    }
+
+    public static void removeLastN(List<SearchState> path, int statesToRemove) {
+        for (int i = 0; i < statesToRemove; i++) {
+            path.removeLast();
+        }
+    }
+
+    public static void mergePaths(List<SearchState> path1, List<SearchState> path2) {
+        if (!path1.isEmpty()) {
+            path1.removeLast();
+        }
         path1.addAll(path2);
-        return path1;
     }
 
-
-    // Merges the reverse of path2 onto the end of path 1 removing the last element of path 1.
-    public static ArrayList<SearchState> mergeReversePaths(ArrayList<SearchState> path1, ArrayList<SearchState> path2) {
-        if (path1.size() > 0) path1.remove(path1.size() - 1);    // Remove last element
-        path1.ensureCapacity(path1.size() + path2.size());
-        for (int i = path2.size() - 1; i >= 0; i--)
-            path1.add(path2.get(i));
-        return path1;
-    }
-
-    public static void printPath(ArrayList<SearchState> path) {
-        if (path == null) System.out.println("No path");
-        else {
-            for (SearchState searchState : path) System.out.println(searchState.id);
-        }
-    }
-
-
-    public static int countRevisits(ArrayList<SearchState> path) {
-        if (path == null) return 0;
-        else {
-            HashMap<Integer, Integer> states = new HashMap<>(path.size());
-            int revisits = 0;
-            for (SearchState searchState : path) {
-                int id = searchState.id;
-                if (states.containsKey(id)) revisits++;
-                else states.put(id, id);
-            }
-            return revisits;
-        }
-    }
-
-
-    /*
-     * Returns the total amount of distance between revisits.
-     */
-    public static int distanceRevisits(ArrayList<SearchState> path) {
-        int total = 0;
-        if (path == null) return 0;
-        else {
-            HashMap<Integer, Integer> states = new HashMap<>(path.size());
-            int revisits = 0;
-            for (int i = 0; i < path.size(); i++) {
-                int id = path.get(i).id;
-                if (states.containsKey(id)) {
-                    revisits++;
-                    int lastLoc = states.get(id);
-                    total += (i - lastLoc - 1);
-                    //	System.out.println("Distance: "+(i-lastLoc-1));
-                }
-                states.put(id, i);    // Always put the latest version as may revisit a state multiple times
-            }
-            return total;
-        }
-    }
-
-    public static void printPath(SearchProblem problem, ArrayList<SearchState> path) {
-        if (path == null) System.out.println("No path");
-        else {
-            for (SearchState searchState : path) System.out.print(problem.idToString(searchState.id) + " ");
-            System.out.println();
-        }
-    }
-
-    public static void computePathCost(ArrayList<SearchState> path, StatsRecord stats, SearchProblem problem) {
-        int cost = 0, size = 0;
-
-        if (path != null && path.size() > 0) {
-            SearchState last = path.get(0);
-            for (int i = 1; i < path.size(); i++) {
-                SearchState current = path.get(i);
-                // cost += problem.computeDistance(last, current);
-                cost += problem.getMoveCost(last, current);
-                last = current;
-            }
-            size = path.size();
-        }
-        stats.setPathCost(cost);
-        stats.setPathLength(size);
-    }
-
-    /**
-     * Given an optimal A* path.  Computes the hill-climbable subgoals needed using binary rather than linear search.
-     * Adds start and end points as subgoals to be consistent with linear version.
-     * Basically compresses A* path into HC subgoal array.
-     *
-     * @return ArrayList<SearchState>
-     */
-    public static ArrayList<SearchState> computeSubgoalsBinary(ArrayList<SearchState> path, SearchAlgorithm searchAlg, ArrayList<SearchState> subgoals) {
-        subgoals.clear();
-        StatsRecord stats = new StatsRecord();
-
-        int current, startIndex = 0, best = startIndex + 1;
-        int endIndex = path.size() - 1;
-        SearchState currentGoal, currentStart = path.get(startIndex);
-        subgoals.add(currentStart);
-
-        while (startIndex < path.size() - 1) {
-            currentGoal = path.get(endIndex);
-            if (searchAlg.isPath(currentStart, currentGoal, stats)) break;
-
-            while (startIndex < endIndex) {
-                current = (startIndex + endIndex) / 2;            // Get mid-point
-                // Determine if  this point can be reached from the current start using HC
-                currentGoal = path.get(current);
-                if (!searchAlg.isPath(currentStart, currentGoal, stats)) endIndex = current - 1;
-                else {    // Can HC reach to here from current start, but can we do better?
-                    if (current != startIndex) best = current;
-                    startIndex = current + 1;
-                }
-            }
-            // Save current best as a subgoal
-            SearchState bestState = path.get(best);
-            subgoals.add(bestState);
-            currentStart = bestState;
-            startIndex = best;
-            best = startIndex + 1;
-            endIndex = path.size() - 1;
-        }
-
-        subgoals.add(path.get(endIndex));
-        return subgoals;
-    }
-
-    // Returns the farthest state on the path that is HC-reachable from the start
-    public static SearchState computeBinaryReachable(ArrayList<SearchState> path, SearchAlgorithm searchAlg, SearchState currentStart, StatsRecord stats) {
-        int current, startIndex = 0, best = startIndex + 1;
-        int endIndex = path.size() - 1;
-        SearchState currentGoal;
-
-        while (startIndex <= endIndex) {
-            current = (startIndex + endIndex) / 2;            // Get mid-point
-            // System.out.println("Binary current: "+path.get(current)+" Start: "+path.get(startIndex)+" End: "+path.get(endIndex));
-            // Determine if this point can be reached from the current start using HC
-            currentGoal = path.get(current);
-            if (!searchAlg.isPath(currentStart, currentGoal, stats)) endIndex = current - 1;
-            else {    // Can HC reach to here from current start, but can we do better?
-                best = current;
-                startIndex = current + 1;
+    public static int findInArray(int[] arr, int key) {
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] == key) {
+                return i;
             }
         }
-        // System.out.println("Binary current: "+path.get(best));
-        return path.get(best);
+        return -1;
     }
-	/*
-	// Returns the earliest state on the path that can HC-reachable to the goal
-	public static SearchState computeBinaryReachableFrom(ArrayList<SearchState> path, SearchAlgorithm searchAlg, SearchState goal, StatsRecord stats)
-	{	
-		int endIndex = path.size()-1;
-		int current, startIndex = 0, best = -1;		
-		SearchState currentStart;		
-			
-		while (startIndex <= endIndex)
-		{	
-			current = (startIndex+endIndex)/2;			// Get mid-point
-			System.out.println("Binary current: "+path.get(path.size()-1-current)+" Start: "+path.get(startIndex)+" End: "+path.get(endIndex));
-			// Determine if this point can be reached from the current start using HC
-			currentStart = path.get(path.size()-1-current);
-			if (!searchAlg.isPath(currentStart, goal, stats))
-				endIndex = current-1;
-			else
-			{	// Can HC reach to here from current start, but can we do better?
-				best = current;
-				startIndex = current+1;
-			}	
-		}
-		if (best == -1)
-			return null;		// Note: This check is to handle the case that none of the states on the path can HC-reach goal.  Only happens if you have not verified that every state in region can both HC to and from them during abstraction.
-		System.out.println("Success current: "+path.get(path.size()-1-best));
-		return path.get(path.size()-1-best);		
-	}
-	*/
 
-    // Returns the earliest state on the path that can HC-reachable to the goal
-    public static SearchState computeBinaryReachableFrom(ArrayList<SearchState> path, SearchAlgorithm searchAlg, SearchState goal, StatsRecord stats) {
-        int endIndex = path.size() - 1;
-        int current, startIndex = 0, best = -1;
-        SearchState currentStart;
-
-        while (startIndex <= endIndex) {
-            current = (startIndex + endIndex) / 2;            // Get mid-point
-            //System.out.println("Binary current: "+path.get(current)+" Start: "+path.get(startIndex)+" End: "+path.get(endIndex));
-            // Determine if this point can be reached from the current start using HC
-            currentStart = path.get(current);
-            if (searchAlg.isPath(currentStart, goal, stats)) {
-                endIndex = current - 1;
-                best = current;
-            } else {    // Cannot HC reach from here to goal - try farther along path
-                startIndex = current + 1;
-            }
+    public static int findPathCost(List<SearchState> path, SearchProblem problem) {
+        int cost = 0;
+        SearchState last = path.getLast();
+        for (int i = path.size() - 1; i >= 0; i--) {
+            SearchState current = path.get(i);
+            cost += problem.getMoveCost(last, current);
+            last = current;
         }
-        if (best == -1)
-            return null;        // Note: This check is to handle the case that none of the states on the path can HC-reach goal.  Only happens if you have not verified that every state in region can both HC to and from them during abstraction.
-        //System.out.println("Success current: "+path.get(best));
-        return path.get(best);
+
+        return cost;
     }
 
-    /*
-     * Compresses path but path is in form of array of state ids rather than an ArrayList of states.
-     */
-    public static int[] computeSubgoalsBinaryByIds(int[] path, SearchAlgorithm searchAlg, int[] tmp, int pathSize) {
-        StatsRecord stats = new StatsRecord();
-
+    public static int[] computeSubgoalsBinaryByIds(int[] path, HillClimbing hillClimbing, int[] tmp, int pathSize, SearchStats searchStats) {
         int current, startIndex = 0, best = startIndex + 1;
         int endIndex = pathSize - 1;
         int currentGoalId, currentStartId = path[startIndex];
@@ -229,13 +57,14 @@ public class SearchUtil {
 
         while (startIndex < pathSize - 1) {
             currentGoalId = path[endIndex];
-            if (searchAlg.isPath(currentStartId, currentGoalId, stats)) break;
+            if (hillClimbing.pathExists(currentStartId, currentGoalId, searchStats)) break;
 
             while (startIndex <= endIndex) {
                 current = (startIndex + endIndex) / 2;                  // Get mid-point
                 // Determine if you can reach this point from the current start using HC
                 currentGoalId = path[current];
-                if (!searchAlg.isPath(currentStartId, currentGoalId, stats)) endIndex = current - 1;
+                if (!hillClimbing.pathExists(currentStartId, currentGoalId, searchStats))
+                    endIndex = current - 1;
                 else {    // Can HC reach to here from current start, but can we do better?
                     if (current != startIndex) best = current;
                     startIndex = current + 1;
@@ -256,60 +85,163 @@ public class SearchUtil {
         return result;
     }
 
-    /**
-     * Similar to computeSubgoalsBinaryByIds but start and goal are both included in the compressed path.
-     *
-     * @param path
-     * @param searchAlg
-     * @param tmp
-     * @param pathSize
-     * @return int[]
-     */
-    public static int[] compressPath(int[] path, SearchAlgorithm searchAlg, int[] tmp, int pathSize) {
-        StatsRecord stats = new StatsRecord();
+    public static int[] findCompressedPath(List<SearchState> path, HillClimbing hillClimbing, SearchStats searchStats) {
+        int start = path.getFirst().getStateId();
+        int goal = path.getLast().getStateId();
 
-        int current, startIndex = 0, best = startIndex + 1;
-        int endIndex = pathSize - 1;
-        int currentGoalId, currentStartId = path[startIndex];
+        // If it is possible to hill climb directly from start to goal, simply return {start, goal} as the compressed path
+        if (hillClimbing.pathExists(start, goal, searchStats)) {
+            return new int[]{start, goal};
+        }
+
+        // Else, perform a binary search on the path
+        int lowIdx = 0, midIdx, highIdx = path.size() - 1;
+        int bestIdx = lowIdx + 1;
+
+        int[] tmp = new int[path.size() + 1];
         int count = 0;
+        tmp[count++] = start;
 
-        // Add start to path
-        tmp[count++] = path[0];
+        while (true) {
+            goal = path.get(highIdx).getStateId();
+            if (hillClimbing.pathExists(start, goal, searchStats)) {
+                break;
+            }
 
-        while (startIndex < pathSize - 1) {
-            currentGoalId = path[endIndex];
-            if (searchAlg.isPath(currentStartId, currentGoalId, stats)) break;
-
-            while (startIndex <= endIndex) {
-                current = (startIndex + endIndex) / 2;            // Get mid-point
-                // Determine if this point can be reached from the current start using HC
-                currentGoalId = path[current];
-                if (!searchAlg.isPath(currentStartId, currentGoalId, stats)) endIndex = current - 1;
-                else {    // Can HC reach to here from current start, but can we do better?
-                    if (current != startIndex) best = current;
-                    startIndex = current + 1;
+            while (lowIdx <= highIdx) {
+                midIdx = lowIdx + (highIdx - lowIdx) / 2; //
+                goal = path.get(midIdx).getStateId();
+                if (!hillClimbing.pathExists(start, goal, searchStats)) {
+                    highIdx = midIdx - 1;
+                } else {
+                    if (midIdx != lowIdx) {
+                        bestIdx = midIdx;
+                    }
+                    lowIdx = midIdx + 1;
                 }
             }
-            // Save current best as a subgoal
-            tmp[count++] = path[best];
-            currentStartId = path[best];
-            startIndex = best;
-            best = startIndex + 1;
-            endIndex = pathSize - 1;
+            tmp[count++] = path.get(bestIdx).getStateId();
+            start = path.get(bestIdx).getStateId();
+            lowIdx = bestIdx;
+            bestIdx = lowIdx + 1;
+            highIdx = path.size() - 1;
         }
 
         // Add end to path
-        tmp[count++] = path[pathSize - 1];
-        int[] result = new int[count];
-        System.arraycopy(tmp, 0, result, 0, count);
-        // System.out.println("Path states: "+pathSize+" Compressed size: "+count);
-        return result;
+        tmp[count++] = path.getLast().getStateId();
+
+        // Copy tmp into compressed path of length count
+        int[] compressedPath = new int[count];
+        System.arraycopy(tmp, 0, compressedPath, 0, count);
+
+        return compressedPath;
     }
 
-    public static boolean inStateList(ArrayList<SearchState> path, SearchState state) {
-        for (SearchState s : path) {
-            if (s.id == state.id) return true;
+    public static int[] findOptimallyCompressedPath(List<SearchState> optimalPath, HillClimbingWithClosedSet hc, CompressAStar compressAStar, SearchStats searchStats) {
+        int currentStart = optimalPath.getFirst().getStateId();
+        int currentGoal = optimalPath.getLast().getStateId();
+
+        // If it is possible to hill climb directly from start to goal, simply return {start, goal} as the compressed path
+        if (compressAStar.pathSizeEqualsClosedSetSize(optimalPath.size())) {
+            return new int[]{currentStart, currentGoal};
         }
-        return false;
+
+        // Else, perform a binary search on the path
+        int startIdx = 0, endIdx = optimalPath.size() - 1;
+        int currentIdx, bestIdx = startIdx + 1;
+
+        int[] tmp = new int[optimalPath.size() + 1];
+        int count = 0;
+
+        // Add start to path
+        tmp[count++] = currentStart;
+
+        int currentStartIdx = startIdx;
+
+        while (true) {
+            currentGoal = optimalPath.get(endIdx).getStateId();
+
+            // If we can hill-climb from start to goal while staying on the path
+            // TODO: Can we use some information we gain here below?
+            if (hc.pathExistsAndFollowsOptimal(currentStart, currentGoal, currentStartIdx, optimalPath, searchStats)) {
+                break;
+            }
+
+            while (startIdx <= endIdx) {
+                currentIdx = startIdx + (endIdx - startIdx) / 2; // Find midpoint
+                currentGoal = optimalPath.get(currentIdx).getStateId();
+
+                // If we can't hill-climb from current start to current goal while staying on the path
+                if (!hc.pathExistsAndFollowsOptimal(currentStart, currentGoal, currentStartIdx, optimalPath, searchStats)) {
+                    endIdx = currentIdx - 1;
+                } else {
+                    bestIdx = currentIdx;
+                    startIdx = currentIdx + 1;
+                }
+            }
+
+            // Add furthest hc-reachable state (best) to list of subgoals
+            tmp[count++] = optimalPath.get(bestIdx).getStateId();
+
+            // Setup for next iteration, now finding path from subgoal to goal
+            currentStart = optimalPath.get(bestIdx).getStateId();
+            startIdx = bestIdx + 1;
+            currentStartIdx = bestIdx;
+            // Increment best index (otherwise if can't hill-climb between neighbours same state will keep being added as subgoal)
+            bestIdx++;
+            endIdx = optimalPath.size() - 1;
+        }
+
+        // Add end to path
+        tmp[count++] = optimalPath.getLast().getStateId();
+
+        // Copy tmp into compressed path of length count
+        int[] compressedPath = new int[count];
+        System.arraycopy(tmp, 0, compressedPath, 0, count);
+
+        return compressedPath;
+    }
+
+    public static void printPath(List<SearchState> path) {
+        for (SearchState state : path) {
+            System.out.print(state.getStateId() + ", ");
+        }
+        System.out.println();
+    }
+
+    public static boolean isContinuousPath(List<SearchState> path, MapSearchProblem mapSearchProblem) {
+        SearchState prev = path.getFirst();
+        for (SearchState state : path) {
+            if (state.equals(prev)) {
+                continue;
+            }
+            if (!mapSearchProblem.isAdjacent(prev, state)) {
+                return false;
+            }
+            prev = state;
+        }
+        return true;
+    }
+
+    public static void placeWall(int wallId, GameMap gameMap, AbstractedMap abstractedMap) {
+        boolean previousWall = gameMap.isWall(wallId) && abstractedMap.isWall(wallId);
+
+        if (previousWall) {
+            throw new RuntimeException("There is a wall at " + wallId + " already!");
+        }
+
+        gameMap.placeWallAt(wallId);
+        abstractedMap.placeWallAt(wallId);
+    }
+
+    public static void placeOpenState(int wallId, GameMap gameMap, AbstractedMap abstractedMap) {
+        boolean previousWall = gameMap.isWall(wallId) && abstractedMap.isWall(wallId);
+
+        if (!previousWall) {
+            throw new RuntimeException("There isn't a wall at " + wallId + " to remove!");
+        }
+
+        gameMap.placeOpenStateAt(wallId);
+        abstractedMap.placeOpenStateAt(wallId);
     }
 }

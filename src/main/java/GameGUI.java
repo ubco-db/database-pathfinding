@@ -1,163 +1,106 @@
-/**
- * Implements a GUI that allows the user to load a map, compute hill-climbable regions, and show how A* or LRTA* would find a path between two user selected points.
- */
-
-import database.DBStatsRecord;
-import database.GameDB;
-import database.SubgoalDB;
-import database.SubgoalDBRecord;
-import map.ChangeRecord;
 import map.GameMap;
-import map.SparseMask;
-import search.AStar;
-import search.AStarHeuristic;
-import search.HillClimbing;
+import map.VisualizeMap;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import search.MapSearchProblem;
 import search.SearchState;
-import search.SearchUtil;
-import search.StatsRecord;
-import util.HeuristicFunction;
+import search.algorithms.DBAStar;
+import search.algorithms.HillClimbing;
+import search.algorithms.PRAStar;
+import search.algorithms.visual.VisualAStar;
+import stats.SearchStats;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.ArrayList;
-
+import java.awt.event.*;
+import java.util.List;
 
 /**
- * Implements a GUI that allows the user to load a map, and show how A* or would find a path between two user selected points.
+ * Implements a GUI that allows the user to load a map, and show how different algorithms would find a path between two
+ * user selected points.
  */
 public class GameGUI extends JFrame {
-    private final MapPanel panel;
+    final int DEFAULT_FRAME_WIDTH = 800;
+    final int DEFAULT_FRAME_HEIGHT = 800;
 
-    // Menu items
-    private final JMenuItem exitMenuItem;
-    private final JMenuItem computeMenuItem;
-    private final JMenuItem visualizeMenuItem;
-    private final JMenuItem nextMenuItem;
-    private final JMenuItem prevMenuItem;
-    private final JMenuItem loadMenuItem;
-    private final JMenuItem rotateMenuItem;
-    private final JMenuItem exportMapMenuItem;
-    private final JMenuItem exportDBMenuItem;
-    private final JMenuItem computeDBMenuItem;
-    private final JMenuItem coverageDBMenuItem;
+    final int GRID_SIZE = 32;
 
-    private final JTextField speedField;
-    private final JComboBox<String> cbxSearchMethod;
-    private String currentPath = System.getProperty("user.dir");
-    private SparseMask pathMask;
+    private static final String A_STAR = "A*";
+    private static final String HILL_CLIMBING = "Hill-climbing";
+    private static final String PRA_STAR = "PRA*";
+    private static final String DBA_STAR = "DBA*";
+
+    String fileName = "src/main/resources/maps/012.map";
+
+    private final JComboBox<String> searchMethodComboBox;
     private final JTextField locationField;
-    private ArrayList<HeuristicFunction> heuristicList;
+    private final MapPanel mapPanel;
 
-    /*
-     * Configuration constants
-     */
-    private final int CUTOFF = 25;                // Maximum # of HC moves
+    private static final Logger logger = LogManager.getLogger(GameGUI.class);
+
+    public GameGUI() {
+        setSize(DEFAULT_FRAME_WIDTH, DEFAULT_FRAME_HEIGHT);
+
+        Container contentPane = getContentPane();
+
+        // TODO: Let user select map
+        GameMap map = new GameMap(fileName);
+        mapPanel = new MapPanel(map);
+
+        // Add map to contentPane inside centerPanel
+        JPanel centerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        centerPanel.add(mapPanel);
+        contentPane.add(centerPanel, BorderLayout.CENTER);
+
+        // Add location field
+        this.locationField = new JTextField(15);
+
+        // Add combo box to select algorithm / search method
+        this.searchMethodComboBox = new JComboBox<>();
+        this.searchMethodComboBox.addItem(A_STAR);
+        this.searchMethodComboBox.addItem(HILL_CLIMBING);
+        this.searchMethodComboBox.addItem(PRA_STAR);
+        this.searchMethodComboBox.addItem(DBA_STAR);
+
+        this.locationField.addActionListener(e -> {
+            String input = e.getActionCommand();
+            try {
+                int sid = Integer.parseInt(input);
+
+                int row = map.getRowFromStateId(sid);
+                int col = map.getColFromStateId(sid);
+
+                System.out.println(sid);
+
+                if (map.isInBounds(row, col)) {
+                    System.out.println("HERE");
+                    mapPanel.drawPointsAndFindPath(new Point(row, col), row, col);
+                } else {
+                    JOptionPane.showMessageDialog(this, sid + " is not within bounds");
+                }
+            } catch (NumberFormatException ignored) {
+            }
+        });
+
+        // Add controls to contentPane inside JPanel
+        JPanel controls = new JPanel();
+        controls.add(new JLabel("Location on Map: "));
+        controls.add(this.locationField);
+        controls.add(new JLabel("Search Method:"));
+        controls.add(this.searchMethodComboBox);
+        contentPane.add(controls, BorderLayout.SOUTH);
+
+        this.setResizable(false);
+
+        // Stops the program if the window is closed
+        WindowCloser windowCloser = new WindowCloser();
+        addWindowListener(windowCloser);
+    }
 
     public static void main(String[] args) {
         GameGUI frame = new GameGUI();
-        frame.setTitle("Map Abstraction GUI");
+        frame.setTitle("Game Pathfinding Visualization");
         frame.setVisible(true);
-    }
-
-    public GameGUI() {
-        final int DEFAULT_FRAME_WIDTH = 1000;
-        final int DEFAULT_FRAME_HEIGHT = 1000;
-        setSize(DEFAULT_FRAME_WIDTH, DEFAULT_FRAME_HEIGHT);
-
-        // Add menu
-        MenuListener listener = new MenuListener();
-        JMenuBar menuBar = new JMenuBar();
-        setJMenuBar(menuBar);
-        JMenu fileMenu = new JMenu("File");
-        menuBar.add(fileMenu);
-        loadMenuItem = new JMenuItem("Load...");
-        loadMenuItem.addActionListener(listener);
-        fileMenu.add(loadMenuItem);
-        computeMenuItem = new JMenuItem("Compute Abstractions");
-        computeMenuItem.addActionListener(listener);
-        fileMenu.add(computeMenuItem);
-        computeDBMenuItem = new JMenuItem("Compute Database");
-        computeDBMenuItem.addActionListener(listener);
-        fileMenu.add(computeDBMenuItem);
-        coverageDBMenuItem = new JMenuItem("Database Coverage");
-        coverageDBMenuItem.addActionListener(listener);
-        fileMenu.add(coverageDBMenuItem);
-        visualizeMenuItem = new JMenuItem("Visualize Greedy Abstraction");
-        visualizeMenuItem.addActionListener(listener);
-        fileMenu.add(visualizeMenuItem);
-        nextMenuItem = new JMenuItem("Next");
-        nextMenuItem.addActionListener(listener);
-        fileMenu.add(nextMenuItem);
-        prevMenuItem = new JMenuItem("Previous");
-        prevMenuItem.addActionListener(listener);
-        fileMenu.add(prevMenuItem);
-        rotateMenuItem = new JMenuItem("Rotate Map");
-        rotateMenuItem.addActionListener(listener);
-        fileMenu.add(rotateMenuItem);
-        exportMapMenuItem = new JMenuItem("Export Map");
-        fileMenu.add(exportMapMenuItem);
-        exportMapMenuItem.addActionListener(listener);
-        exportDBMenuItem = new JMenuItem("Export DB");
-        fileMenu.add(exportDBMenuItem);
-        exportDBMenuItem.addActionListener(listener);
-        exitMenuItem = new JMenuItem("Exit");
-        fileMenu.add(exitMenuItem);
-
-        exitMenuItem.addActionListener(listener);
-
-        // add components to content pane
-        Container contentPane = getContentPane();
-        locationField = new JTextField(15);
-        speedField = new JTextField(10);
-        speedField.addActionListener(new TextFieldListener());
-        JPanel p = new JPanel();
-        p.add(new JLabel("Map location: "));
-        p.add(locationField);
-        p.add(new JLabel("Animation speed:"));
-        p.add(speedField);
-        cbxSearchMethod = new JComboBox<>();
-        cbxSearchMethod.addItem("A*");
-        cbxSearchMethod.addItem("Hill-climbing");
-        cbxSearchMethod.addItem("Wall hugging");
-        cbxSearchMethod.addItem("orz103d");
-        cbxSearchMethod.addItem("ost000a");
-        cbxSearchMethod.addItem("lak505d");
-        p.add(new JLabel("Search method:"));
-        p.add(cbxSearchMethod);
-        contentPane.add(p, "South");
-
-        // Load heuristics
-        heuristicList = new ArrayList<HeuristicFunction>();
-        heuristicList = HeuristicCompare.createHeuristics();
-
-        GameMap mp = new GameMap("maps/smallMaps/012.map", 16);
-        //GameMap mp = new GameMap("maps/wc3maps/divideandconquer.map");
-        panel = new MapPanel(mp);
-        contentPane.add(panel, "Center");
-        WindowCloser winlist = new WindowCloser();
-        addWindowListener(winlist);
-
-        addKeyListener(new KeyAdapt());
-    }
-
-    private class TextFieldListener implements ActionListener {
-        public void actionPerformed(ActionEvent event) {    // get user input
-            String input = speedField.getText();
-            if (input != null) {
-                int speed = Integer.parseInt(input);
-                panel.changeSpeed(speed);
-            }
-        }
     }
 
     private static class WindowCloser extends WindowAdapter {
@@ -166,466 +109,195 @@ public class GameGUI extends JFrame {
         }
     }
 
-    private class MenuListener implements ActionListener {
-        public void actionPerformed(ActionEvent event) {  // find the menu that was selected
-            Object source = event.getSource();
-            if (source == exitMenuItem)
-                System.exit(0);
-            else if (source == computeMenuItem)
-                panel.compute();
-            else if (source == visualizeMenuItem)
-                panel.visualize();
-            else if (source == nextMenuItem)
-                panel.next();
-            else if (source == prevMenuItem)
-                panel.prev();
-            else if (source == computeDBMenuItem)
-                panel.computeDB();
-            else if (source == coverageDBMenuItem)
-                panel.coverageDB();
-            else if (source == rotateMenuItem)
-                panel.rotate();
-            else if (source == exportMapMenuItem || source == exportDBMenuItem) {
-                JFileChooser jfile = new JFileChooser(currentPath);
-                int returnVal = jfile.showSaveDialog(null);
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    String fileName = jfile.getSelectedFile().getAbsolutePath();
-                    if (source == exportMapMenuItem)
-                        panel.exportMap(fileName);
-                    else
-                        panel.exportDB(fileName);
-                }
-                currentPath = jfile.getSelectedFile().getPath();
-            } else if (source == loadMenuItem) {
-                JFileChooser jfile = new JFileChooser(currentPath);
-                int returnVal = jfile.showOpenDialog(null);
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    String fileName = jfile.getSelectedFile().getAbsolutePath();
-                    panel.load(fileName);
-                    currentPath = jfile.getSelectedFile().getPath();
-                }
-            }
-            panel.requestFocusInWindow();
-        }
-    }
-
-    private class KeyAdapt extends KeyAdapter {
-        public void keyPressed(KeyEvent evt) {
-            int key = evt.getKeyCode();
-
-            switch (key) {
-                case 38:        // Up arrow (back to prev)
-                    panel.prev();
-                    break;
-                case 40:        // Down arrow (advance to next)
-                    panel.next();
-                    break;
-            }
-        }
-    }
-
     private class MapPanel extends JPanel implements MouseListener, MouseMotionListener {
-        private final GameMap map;                      // Current base map being displayed
-        private SubgoalDB subgoalDB = null;             // Stores database of subgoals
-        private final ArrayList<GameMap> maps;          // Stores list of maps which may be derived from base map
-        private final ArrayList<String> mapDesc;        // One line text description associated with each derived map
-        private int currentIndex;                       // Current index of map in list being displayed
+        private final int HEIGHT_OFFSET = 0;
 
-        private Timer timer;                            // Timer is used when animating and implements delay between moves
-        private int speed = 10;                         // Delay in ms between moves that are displayed.  Set at 10, but controllable by the user.
+        private final VisualizeMap visualizeMap;
+        private final GameMap map;
+        private Point startPoint, goalPoint;
 
-        public MapPanel(GameMap mp) {
-            map = mp;
-            maps = new ArrayList<GameMap>();
-            mapDesc = new ArrayList<String>();
-            maps.add(map);
-            mapDesc.add("Original Map. States: " + map.states);
-            currentIndex = 0;
+        public MapPanel(GameMap map) {
+            int DEFAULT_PANEL_WIDTH = DEFAULT_FRAME_WIDTH - 50;
+            int DEFAULT_PANEL_HEIGHT = DEFAULT_FRAME_HEIGHT - 50;
+            this.map = map;
+            this.visualizeMap = new VisualizeMap(map, DEFAULT_PANEL_WIDTH, DEFAULT_PANEL_HEIGHT, HEIGHT_OFFSET);
+
+            // FIXME: Not sure where these numbers come from, found them experimentally
+            this.setPreferredSize(new Dimension(DEFAULT_PANEL_WIDTH - 10, DEFAULT_PANEL_HEIGHT - 55));
+
             addMouseListener(this);
-            this.addMouseMotionListener(this);
-            addKeyListener(new KeyAdapt());
+            addMouseMotionListener(this);
         }
 
-        public void rotate() {
-            maps.get(currentIndex).rotate();
-            repaint();
-        }
 
-        public void exportMap(String fileName) {
-            maps.get(currentIndex).save(fileName);
-        }
-
-        public void exportDB(String fileName) {
-            map.outputImage(fileName, null, null);
-        }
-
-        public void computeDB() {
-            GameMap tmp = maps.get(currentIndex);
-            MapSearchProblem problem = new MapSearchProblem(tmp);
-            // Stores groups of cells
-            GameDB database = new GameDB(problem);
-            Object[] possibilities = {"RANDOM - 1000", "RANDOM - 10000", "RANDOM - 20000", "ABSTRACT", "HC REGIONS"};
-            String s = (String) JOptionPane.showInputDialog(this, "Enter database type:", "Compute a Database", JOptionPane.PLAIN_MESSAGE, null, possibilities, "RANDOM - 1000");
-            DBStatsRecord dbstat = new DBStatsRecord(20);
-
-            //If a string was returned, say so.
-            if ((s != null) && (s.length() > 0)) {
-                if (s.contains("RANDOM")) { // Random database
-                    int size = Integer.parseInt(s.substring(9));
-                    subgoalDB = new SubgoalDB();
-                    subgoalDB = database.computeRandomDB(size, new HillClimbing(problem, 25), dbstat, subgoalDB);
-                }
-//			    else if(s.equals("ABSTRACT"))
-//			    {
-//			    	subgoalDB = new SubgoalDBDLRTA();
-//			    	subgoalDB = (SubgoalDB) database.computeAbstractDB(dbstat, (SubgoalDBDLRTA) subgoalDB);
-//			    }
-                else {    // HC Regions
-                    subgoalDB = database.computeDBDP2(subgoalDB, new HillClimbing(problem, 25), dbstat, 2);
-                }
-                JFileChooser jfile = new JFileChooser(currentPath);
-                jfile.setDialogTitle("Save subgoal database file");
-                int returnVal = jfile.showSaveDialog(null);
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    String fileName = jfile.getSelectedFile().getAbsolutePath();
-                    this.subgoalDB.exportDB(fileName);
-                    currentPath = jfile.getSelectedFile().getPath();
-                }
-            }
-        }
-
-        public void coverageDB() {
-            // Prompt for a database
-            JFileChooser jfile = new JFileChooser(currentPath);
-            jfile.setDialogTitle("Load subgoal database file");
-            int returnVal = jfile.showOpenDialog(null);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                String fileName = jfile.getSelectedFile().getAbsolutePath();
-                currentPath = jfile.getSelectedFile().getPath();
-
-                // Compute the coverage
-                byte[][] coverage = new byte[map.rows][map.cols];
-                subgoalDB = new SubgoalDB();
-                subgoalDB.load(fileName);
-                Cursor hourglassCursor = new Cursor(Cursor.WAIT_CURSOR);
-                setCursor(hourglassCursor);
-                // int cutoff = 25;
-                // double coverageVal = subgoalDB.computeCoverage(map, coverage, cutoff);
-                double coverageVal = 0;    //TODO:
-                Cursor normalCursor = new Cursor(Cursor.DEFAULT_CURSOR);
-                setCursor(normalCursor);
-
-                System.out.println("Overall coverage percentage: " + coverageVal);
-                SparseMask currentMask = map.createCoverageMask(coverage);
-                map.clearMasks();
-                map.addMask(currentMask);
-                map.resetMask();
-                this.repaint();
-            }    // end successful DB load
-        }
-
-        public void load(String fileName) {
-            map.load(fileName);
-            maps.clear();
-            mapDesc.clear();
-            maps.add(map);
-            mapDesc.add("Original Map. States: " + map.states);
-            currentIndex = 0;
-            this.subgoalDB = null;
-            repaint();
-        }
-
-        public void visualize() {
-            maps.clear();
-            mapDesc.clear();
-            maps.add(map);
-            mapDesc.add("Original Map. States: " + map.states);
-            currentIndex = 0;
-
-            TimerAction action = new TimerAction();
-            timer = new Timer(speed, action);
-            timer.start();
-        }
-
-        public void changeSpeed(int speed) {
-            this.speed = speed;
-            if (timer != null)
-                timer.setDelay(speed);
-        }
-
-        private class TimerAction implements ActionListener {
-            public void actionPerformed(ActionEvent evt) {
-
-                if (!map.nextMask()) {
-                    timer.stop();
-                    map.prevMask();
-                    repaint();
-                    return;
-                }
-                repaint();
-            }
-        }
-
-        public void compute() {
-            String st;
-			/*
-			// This code computes clique abstraction at various levels
-			GameMap prev = map;
-			for (int k = 1; k <= 5; k++)
-			{				
-				GameMap nmap = prev.cliqueAbstract();
-				MapSearchProblem problem = new MapSearchProblem(nmap);
-				st = "Abstraction Level "+k+".  States: "+nmap.states;
-				GameDB database = new GameDB(problem);
-				// Remove these next three lines if you do not want to see centroid in group abstraction
-				database.computeGroups();
-				database.computeCentroids();
-				GameMap nmapCentroid = database.computeCentroidMap();
-				
-				maps.add(nmapCentroid);
-				mapDesc.add(st);
-				// nmap.print();
-				prev = nmap;
-			}			
-			*/
-            // Computer greedy abstraction
-            DBStatsRecord dbstat = new DBStatsRecord();
-            MapSearchProblem problem = new MapSearchProblem(map);
-            GameMap greedyMap = map.reachableAbstract(new HillClimbing(problem, CUTOFF * 2), dbstat);
-            // GameMap greedyMap = map.reachableAbstract(new GenHillClimbing(map, cutoff*2), dbstat);
-            st = "Greedy abstraction.  States: " + greedyMap.states;
-            maps.add(greedyMap);
-            mapDesc.add(st);
-            // currentIndex = maps.size()-1;
-
-            // A map that takes greedy map and condensed groups that only have one neighbour
-            GameMap neighborMap = greedyMap.neighbourCondense();
-            st = "Neighbor condense.  States: " + neighborMap.states;
-            maps.add(neighborMap);
-            mapDesc.add(st);
-			/* 	
-			// A map that displays all border points in the map
-			GameMap borderMap = map.computeBorder();
-			st = "Map border points.  States: "+borderMap.states;
-			maps.add(borderMap);
-			mapDesc.add(st);
-			repaint();
-			*/
-
-            repaint();
-        }
-
-        public void next() {
-            // Advance first by mask then by map
-            if (!maps.get(currentIndex).nextMask()) {
-                if (currentIndex < maps.size() - 1)
-                    currentIndex++;
-            }
-            repaint();
-        }
-
-        public void prev() {
-            if (currentIndex > 0)
-                currentIndex--;
-            repaint();
-        }
-
+        @Override
         public void paintComponent(Graphics g) {
             super.paintComponent(g);
-            Graphics2D g2 = (Graphics2D) g;
-            Font f = new Font("Serif", Font.BOLD, 18);
-            g2.setFont(f);
-            if (currentIndex >= mapDesc.size())
-                return;
-            g2.drawString(mapDesc.get(currentIndex), 10, 15);
-            GameMap map = maps.get(currentIndex);
-            map.draw(g2);
+
+            visualizeMap.draw((Graphics2D) g, false);
         }
 
-        public void mouseClicked(MouseEvent arg0) {
-            // Add point
-            // Check if a valid square
-            Point p = map.getSquare(arg0.getPoint());
-            if (p == null) // Invalid point selected
-                return;
-            System.out.println("In click. Point: " + p.x + " , " + p.y);
-            MapSearchProblem problem = new MapSearchProblem(map);
-            if (map.squares[p.x][p.y] != GameMap.WALL_CHAR) {
-                if (map.startPoint == null) {
-                    map.startPoint = p;
-                    pathMask = new SparseMask();
-                    pathMask.add(new ChangeRecord(p.x, p.y, Color.GREEN, 1));
-                    map.addMask(pathMask);
-                    map.resetMask();
-                } else if (map.goalPoint == null) {
-                    map.goalPoint = p;
-                    pathMask.add(new ChangeRecord(p.x, p.y, Color.BLUE, 1));
-                    String searchMethod = (String) cbxSearchMethod.getSelectedItem();
+        /**
+         * Convert clicked point to point on map
+         *
+         * @param clickedPoint point clicked by cursor
+         * @return point on map (x and y coordinates now correspond to row and column in the 2D states array in the GameMap)
+         */
+        private Point getPointOnMap(Point clickedPoint) {
+            int x = (int) clickedPoint.getX();
+            int y = (int) clickedPoint.getY() - this.HEIGHT_OFFSET;
 
-                    if (searchMethod.contains("Query") && subgoalDB != null) {    // Database lookup query
-                        ArrayList<SubgoalDBRecord> records;
-                        StatsRecord stats = new StatsRecord();
-                        if (searchMethod.equals("Query subgoals")) {    // Show closest 10 subgoals in database
-                            records = subgoalDB.findNearest(problem, new SearchState(map.getId(map.startPoint.x, map.startPoint.y)), new SearchState(map.getId(map.goalPoint.x, map.goalPoint.y)), 10);
-                        } else {    // Show up to 10 closes hill-climbable reachable subgoals in the database
-                            records = subgoalDB.findNearest(problem, new SearchState(map.getId(map.startPoint.x, map.startPoint.y)), new SearchState(map.getId(map.goalPoint.x, map.goalPoint.y)), new HillClimbing(problem, CUTOFF), 10, stats, null);
+            int row = y / visualizeMap.getCellHeight();
+            int col = x / visualizeMap.getCellWidth();
+
+            if (row >= map.getNumRows() || col >= map.getNumCols()) {
+                return null;
+            }
+
+            return new Point(row, col);
+        }
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            Point mapPoint = getPointOnMap(e.getPoint());
+
+            if (mapPoint == null) return;
+
+            int r = mapPoint.x;
+            int c = mapPoint.y;
+
+            logger.info(String.format("Selected point: %d, %d (%s)", r, c, map.getStateId(r, c)));
+
+            drawPointsAndFindPath(mapPoint, r, c);
+        }
+
+        private void drawPointsAndFindPath(Point mapPoint, int r, int c) {
+            if (!map.isWall(r, c)) {
+                if (startPoint == null) {
+                    startPoint = mapPoint;
+                    visualizeMap.initPathMask();
+                    visualizeMap.addToPathMask(r, c, Color.GREEN);
+                } else if (goalPoint == null) {
+                    goalPoint = mapPoint;
+
+                    visualizeMap.addToPathMask(r, c, Color.BLUE);
+
+                    // Get pathfinding algorithm
+                    String searchMethod = (String) searchMethodComboBox.getSelectedItem();
+
+                    // Find id
+                    int startStateId = map.getStateId(startPoint.x, startPoint.y);
+                    int goalStateId = map.getStateId(goalPoint.x, goalPoint.y);
+
+                    SearchState startState = new SearchState(startStateId);
+                    SearchState goalState = new SearchState(goalStateId);
+                    MapSearchProblem mapSearchProblem = new MapSearchProblem(map);
+
+                    List<SearchState> path;
+                    List<SearchState> subgoals = null;
+                    List<SearchState> expanded = null;
+
+                    SearchStats searchStats = new SearchStats();
+
+                    switch (searchMethod) {
+                        case HILL_CLIMBING -> {
+                            HillClimbing hillClimbing = new HillClimbing(mapSearchProblem);
+                            path = hillClimbing.findPath(startState, goalState);
                         }
-                        // Create the masks to show these choices
-                        // Just modify existing mask
-                        SparseMask currentMask = pathMask;
-                        int max = 5;
-                        Color[] colors = new Color[]{Color.RED, Color.yellow, Color.orange, Color.green, Color.pink, Color.cyan, Color.magenta, Color.lightGray, Color.darkGray, Color.gray};
-                        for (int l = 0; l < records.size() && l < max; l++) {
-                            SubgoalDBRecord rec = records.get(l);
-                            ChangeRecord r = new ChangeRecord(map.getRow(rec.getStartId()), map.getCol(rec.getStartId()), colors[l], 1);
-                            currentMask.add(r);
-                            r = new ChangeRecord(map.getRow(rec.getGoalId()), map.getCol(rec.getGoalId()), colors[l], 1);
-                            currentMask.add(r);
+                        case A_STAR -> {
+                            VisualAStar aStar = new VisualAStar(mapSearchProblem);
+                            path = aStar.findPath(startState, goalState);
+                            expanded = aStar.getStatesExpanded();
                         }
-                        // map.addMask(currentMask);
-                    } else {    // Path search cases
-                        ArrayList<SearchState> path, subgoalPath = new ArrayList<>(50), subgoals = new ArrayList<>(), expanded = null;
-                        // Auto compute A*
-                        StatsRecord stats = new StatsRecord();
-                        switch (searchMethod) {
-                            case "A*":
-                                AStar astar = new AStar(problem);
-                                path = astar.computePath(new SearchState(map.getId(map.startPoint.x, map.startPoint.y)), new SearchState(map.getId(map.goalPoint.x, map.goalPoint.y)), stats);
-                                SearchUtil.printPath(path);
-                                expanded = astar.getStatesExpanded();
-                                break;
-                            case "Wall hugging": {
-                                AStarHeuristic alg = new AStarHeuristic(problem, heuristicList.get(7));
-                                path = alg.computePath(new SearchState(map.getId(map.startPoint.x, map.startPoint.y)), new SearchState(map.getId(map.goalPoint.x, map.goalPoint.y)), stats);
-                                SearchUtil.printPath(path);
-                                expanded = alg.getStatesExpanded();
-                                break;
-                            }
-                            case "orz103d": {
-                                AStarHeuristic alg = new AStarHeuristic(problem, heuristicList.get(5));
-                                path = alg.computePath(new SearchState(map.getId(map.startPoint.x, map.startPoint.y)), new SearchState(map.getId(map.goalPoint.x, map.goalPoint.y)), stats);
-                                SearchUtil.printPath(path);
-                                expanded = alg.getStatesExpanded();
-                                break;
-                            }
-                            case "lak505d": {
-                                AStarHeuristic alg = new AStarHeuristic(problem, heuristicList.get(4));
-                                path = alg.computePath(new SearchState(map.getId(map.startPoint.x, map.startPoint.y)), new SearchState(map.getId(map.goalPoint.x, map.goalPoint.y)), stats);
-                                SearchUtil.printPath(path);
-                                expanded = alg.getStatesExpanded();
-                                break;
-                            }
-                            case "ost000a": {
-                                AStarHeuristic alg = new AStarHeuristic(problem, heuristicList.get(6));
-                                path = alg.computePath(new SearchState(map.getId(map.startPoint.x, map.startPoint.y)), new SearchState(map.getId(map.goalPoint.x, map.goalPoint.y)), stats);
-                                SearchUtil.printPath(path);
-                                expanded = alg.getStatesExpanded();
-                                break;
-                            }
-                            case "Hill-climbing":
-                                HillClimbing hc = new HillClimbing(problem, 10000);
-                                path = hc.computePath(new SearchState(map.getId(map.startPoint.x, map.startPoint.y)), new SearchState(map.getId(map.goalPoint.x, map.goalPoint.y)), stats);
-                                break;
-                            default:
-                                path = null;
-                                break;
+                        case PRA_STAR -> {
+                            // FIXME: Pass MapSearchProblem instead of map for consistency?
+                            PRAStar praStar = new PRAStar(map, GRID_SIZE);
+                            path = praStar.findPath(startState, goalState, searchStats);
+                            subgoals = praStar.getSubgoals();
                         }
-
-                        map.path = path;
-                        SparseMask currentMask = new SparseMask(pathMask);
-                        ChangeRecord last = null;
-                        Color pathColor = Color.RED;
-                        if (path == null) {
-                            JOptionPane.showMessageDialog(this, "No path found between: " + map.startPoint + " and " + map.goalPoint);
-                            // return;
+                        case DBA_STAR -> {
+                            // FIXME: Pass MapSearchProblem instead of map for consistency?
+                            DBAStar dbaStar = new DBAStar(map, GRID_SIZE, true);
+                            path = dbaStar.findPath(startState, goalState, searchStats);
+                            subgoals = dbaStar.getSubgoals();
                         }
-                        if (expanded != null) {
-                            for (SearchState current : expanded) {
-                                int row = map.getRow(current.id);
-                                int col = map.getCol(current.id);
+                        case null -> throw new RuntimeException("Search method was null!");
+                        default -> throw new IllegalStateException("Unexpected value: " + searchMethod);
+                    }
 
-                                // Visualize changes
-                                if ((row == map.goalPoint.x && col == map.goalPoint.y) || (row == map.startPoint.x && col == map.startPoint.y))
-                                    continue;    // Do not overwrite special characters
+                    // Give user feedback if no path could be found
+                    if (path == null) {
+                        JOptionPane.showMessageDialog(this, "No path found between: " + startPoint + " and " + goalPoint);
+                        return;
+                    }
 
-                                currentMask = new SparseMask(currentMask);
+                    // Draw states that were expanded during the search in yellow
+                    if (expanded != null) {
+                        draw(expanded, Color.YELLOW);
+                    }
 
-                                //if (AStar.inStateList(path, current))
-                                //	continue;
+                    // Draw the path in red
+                    draw(path, Color.RED);
 
-                                ChangeRecord rec = new ChangeRecord(row, col, Color.yellow, 1);
-
-                                currentMask.add(rec);
-                                last = rec;
-                                map.addMask(currentMask);
-                            }
-                        }
-                        if (path != null) {
-                            for (SearchState current : path) {
-                                int row = map.getRow(current.id);
-                                int col = map.getCol(current.id);
-
-                                // Visualize changes
-                                if ((row == map.goalPoint.x && col == map.goalPoint.y) || (row == map.startPoint.x && col == map.startPoint.y))
-                                    continue;    // Do not overwrite special characters
-
-                                currentMask = new SparseMask(currentMask);
-                                if (last != null) last.color = Color.orange;
-
-                                Color color = pathColor;
-                                if (subgoalPath != null) {    // Color subgoals a slightly different color within the path
-                                    // Shows subgoals that would be produced in a DB entry
-                                    if (subgoalPath.contains(current)) color = Color.orange;
-                                }
-                                if (SearchUtil.inStateList(subgoals, current))    // This shows subgoals actually used by the various search algorithms
-                                    color = Color.orange;
-
-                                ChangeRecord rec = new ChangeRecord(row, col, color, 1);
-
-                                currentMask.add(rec);
-                                last = rec;
-                                map.addMask(currentMask);
-                            }
-                        }
-                        System.out.println("Stats: " + stats);    // Print out the stats to the console (TODO: May want to print to textbox in GUI.)
-                        TimerAction action = new TimerAction();
-                        timer = new Timer(speed, action);
-                        timer.start();
-                    } // end of path search cases
+                    if (subgoals != null) {
+                        draw(subgoals, Color.ORANGE);
+                    }
                 } else {
-                    map.goalPoint = null;
-                    map.path = null;
-                    map.startPoint = p;
-                    pathMask.clear();
-                    pathMask.add(new ChangeRecord(p.x, p.y, Color.GREEN, 1));
-                    map.clearMasks();
-                    map.addMask(pathMask);
-                    map.resetMask();
+                    goalPoint = null;
+                    startPoint = mapPoint;
+                    visualizeMap.clearPathMask();
+                    visualizeMap.addToPathMask(mapPoint.x, mapPoint.y, Color.GREEN);
                 }
                 repaint();
+            } else {
+                JOptionPane.showMessageDialog(this, map.getStateId(r, c) + " is a wall!");
             }
         }
 
-        public void mouseEntered(MouseEvent e) {
+        private void draw(List<SearchState> searchStates, Color color) {
+            for (SearchState current : searchStates) {
+                int row = map.getRowFromStateId(current.getStateId());
+                int col = map.getColFromStateId(current.getStateId());
+
+                // Don't overwrite start and goal (they have already been marked)
+                if ((row == goalPoint.x && col == goalPoint.y) || (row == startPoint.x && col == startPoint.y)) {
+                    continue;
+                }
+
+                visualizeMap.addToPathMask(row, col, color);
+            }
         }
 
-        public void mouseExited(MouseEvent e) {
+        @Override
+        public void mouseMoved(MouseEvent e) {
+            Point mapPoint = getPointOnMap(e.getPoint());
+
+            if (mapPoint == null) return;
+
+            int r = mapPoint.x;
+            int c = mapPoint.y;
+
+            locationField.setText(String.format("%d, %d (%s)", r, c, map.getStateId(r, c)));
         }
 
+        @Override
         public void mousePressed(MouseEvent e) {
         }
 
+        @Override
         public void mouseReleased(MouseEvent e) {
         }
 
-        public void mouseDragged(MouseEvent arg0) {
+        @Override
+        public void mouseEntered(MouseEvent e) {
         }
 
-        public void mouseMoved(MouseEvent e) {
-            Point p = map.getSquare(e.getPoint());
-            if (p == null) return;    // Invalid point selected
-            locationField.setText(p.x + ", " + p.y + " (" + map.getId(p.x, p.y) + ")");
+        @Override
+        public void mouseExited(MouseEvent e) {
+        }
+
+        @Override
+        public void mouseDragged(MouseEvent e) {
         }
     }
 }
-
