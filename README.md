@@ -1,0 +1,4 @@
+# Video Game Path Finding and Path Caching
+
+Efficient grid-based path finding is important in video games especially for larger maps and when moving many agents. Algorithms based on abstraction have an order of magnitude faster search time performance than A* at the cost of a small amount of memory and increased suboptimality. Some approaches also compute and store paths to improve search performance. This paper evaluates new and existing algorithm variants for abstraction and path computation and investigates their performance for video game path finding with map changes. The results show that abstraction has significant advantages over A* and can be implemented efficiently for changing maps. Computing, storing, and reusing paths also has benefits especially when several searches can be performed before the map changes.
+
